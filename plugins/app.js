@@ -10,13 +10,6 @@ const pageTitle = document.getElementById("pageTitle");
 
 const DEFAULT_MENU = [
   {
-    title: "执行计划",
-    icon: "⌂",
-    children: [
-      { title: "执行计划", url: "files/plan.html" }
-    ]
-  },
-  {
     title: "后台端-会员中心",
     icon: "▤",
     children: [
