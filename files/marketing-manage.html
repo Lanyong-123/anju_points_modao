@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>营销管理</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .canvas-board { display: grid; grid-template-columns: 220px 1fr; gap: 14px; }
+    .node-palette { border-right: 1px solid #dbe4ee; padding-right: 12px; }
+    .node-chip { margin-bottom: 10px; padding: 10px 12px; border: 1px solid #d4dfeb; border-radius: 6px; background: #f8fafc; color: var(--navy); font-weight: 800; cursor: move; }
+    .canvas-flow { min-height: 230px; padding: 18px; border: 1px dashed #b9c7d8; border-radius: 6px; background: #fbfdff; overflow-x: auto; }
+    .flow-row { display: flex; align-items: stretch; gap: 12px; min-width: 900px; }
+    .flow-node { width: 180px; min-height: 96px; padding: 12px; border: 1px solid #d8e2ee; border-radius: 6px; background: #fff; box-shadow: 0 4px 10px rgba(18, 49, 82, .05); }
+    .flow-node h4 { margin-bottom: 8px; color: var(--navy); font-size: 15px; }
+    .flow-node p { color: #607286; line-height: 1.5; font-size: 13px; }
+    .flow-arrow { display: grid; place-items: center; color: #8b99aa; font-weight: 900; }
+    .logic-table input, .logic-table select { min-height: 34px; }
+    .field label.required::before {
+      content: "*";
+      margin-right: 3px;
+      color: var(--red);
+      font-weight: 700;
+    }
+    .marketing-form-section {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .section-title {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+    }
+    .section-title h4 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 15px;
+    }
+    .section-body {
+      padding: 14px;
+    }
+    .frequency-row,
+    .reward-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      min-height: 34px;
+    }
+    .points-reward-field {
+      grid-column: 1 / -1;
+    }
+    .points-reward-row {
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+    .frequency-row input,
+    .reward-row input {
+      width: 92px;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+    }
+    .frequency-row select,
+    .reward-row select {
+      width: 108px;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+    }
+    .inline-radio {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .cost-note {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 10px;
+      border: 1px solid #f1d7a3;
+      border-radius: 5px;
+      background: #fff8e8;
+      color: #8a5f12;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .customer-scope {
+      display: grid;
+      gap: 12px;
+    }
+    .condition-block {
+      border: 1px solid #d7e2ee;
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .condition-block-hd {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--line);
+    }
+    .condition-block-hd h4 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 15px;
+    }
+    .condition-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .condition-table th,
+    .condition-table td {
+      padding: 10px 8px;
+      white-space: normal;
+    }
+    .condition-table select,
+    .condition-table input {
+      width: 100%;
+      min-width: 120px;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+    }
+    .form-tip {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .participant-modal {
+      width: min(1180px, calc(100vw - 48px));
+    }
+    .participant-modal .panel-bd {
+      max-height: calc(100vh - 180px);
+      overflow: auto;
+    }
+    .participant-filter {
+      grid-template-columns: 1.2fr 1fr 1fr 1fr auto auto;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>活动名称/编号</label><input placeholder="活动名称、活动编号"></div>
+      <div class="field"><label>触发条件</label><select><option>全部触发条件</option><option>优惠券领取后7天未核销</option><option>新会员注册</option><option>会员实名认证成功</option></select></div>
+      <div class="field"><label>活动状态</label><select><option>全部状态</option><option>草稿</option><option>待发布</option><option>进行中</option><option>已暂停</option><option>已结束</option></select></div>
+      <div class="field"><label>发放组织</label><select><option>全部组织</option><option>安居集团</option><option>南山项目</option><option>福田项目</option></select></div>
+      <div class="field"><label>活动时间</label><input value="2026-05-01 至 2026-05-31"></div>
+      <button class="btn primary">查询</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>营销活动列表</h3>
+        <div class="toolbar">
+          <button class="btn primary" data-edit="new">新增活动</button>
+          <button class="btn" data-status="batch-publish">批量发布</button>
+          <button class="btn" data-status="batch-pause">批量暂停</button>
+          <button class="btn">导出</button>
+        </div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>活动编号</th>
+              <th>活动名称</th>
+              <th>发放组织</th>
+              <th>活动时间</th>
+              <th>触达频次</th>
+              <th>触发条件</th>
+              <th>营销方式</th>
+              <th>已参与</th>
+              <th>活动状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td>MK202605001</td><td><span class="link" data-detail="MK202605001">优惠券领取后7天未核销</span></td><td>安居集团</td><td>2026-06-01 至 2026-06-30</td><td>多次触达</td><td>优惠券领取后7天未核销</td><td>发放积分</td><td><span class="link" data-participants="MK202605001">12,860</span></td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="MK202605001">详情</span>　<span class="link" data-edit="MK202605001">修改</span>　<span class="link" data-status="pause">暂停</span>　<span class="link" data-delete="MK202605001">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>MK202605002</td><td><span class="link" data-detail="MK202605002">新会员注册</span></td><td>南山项目</td><td>2026-06-01 至 2026-06-30</td><td>单次触达</td><td>新会员注册</td><td>发放礼卷</td><td><span class="link" data-participants="MK202605002">8,326</span></td><td><span class="badge">待发布</span></td><td><span class="link" data-detail="MK202605002">详情</span>　<span class="link" data-edit="MK202605002">修改</span>　<span class="link" data-status="publish">发布</span>　<span class="link" data-delete="MK202605002">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>MK202605003</td><td><span class="link" data-detail="MK202605003">会员实名认证成功</span></td><td>福田项目</td><td>2026-06-10 至 2026-07-10</td><td>单次触达</td><td>会员实名认证成功</td><td>发放积分</td><td><span class="link" data-participants="MK202605003">1,208</span></td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="MK202605003">详情</span>　<span class="link" data-edit="MK202605003">修改</span>　<span class="link" data-delete="MK202605003">删除</span></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 68 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><span>跳至</span><input value="1"><span>页</span></div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="drawer" id="detailDrawer">
+    <div class="panel-hd"><h3>营销活动详情</h3><button class="btn" data-close-drawer>关闭</button></div>
+    <div class="panel-bd">
+      <div class="detail-list">
+        <span>活动编号</span><strong id="dCode">MK202605001</strong>
+        <span>活动名称</span><strong id="dName">优惠券领取后7天未核销</strong>
+        <span>发放组织</span><strong id="dOrg">安居集团</strong>
+        <span>活动时间</span><strong id="dTime">2026-06-01 至 2026-06-30</strong>
+        <span>触达频次</span><strong id="dFrequency">多次触达</strong>
+        <span>触发条件</span><strong id="dTrigger">优惠券领取后7天未核销</strong>
+        <span>营销方式</span><strong id="dMethod">发放积分</strong>
+        <span>客户范围</span><strong id="dScope">会员等级=金卡会员，且身份标签=项目住户</strong>
+        <span>参与人数</span><strong id="dJoin">12,860</strong>
+        <span>活动状态</span><strong id="dStatus">进行中</strong>
+      </div>
+      <div class="panel" style="margin-top:14px; box-shadow:none">
+        <div class="panel-hd"><h3>活动效果</h3></div>
+        <div class="panel-bd">
+          <table><thead><tr><th>日期</th><th>参与人数</th><th>发放积分/券</th><th>核销/使用</th><th>转化率</th></tr></thead><tbody>
+            <tr><td>2026-05-26</td><td>826</td><td>82,600积分</td><td>318</td><td>38.5%</td></tr>
+            <tr><td>2026-05-25</td><td>792</td><td>79,200积分</td><td>306</td><td>38.6%</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="modal-mask" id="editModal">
+    <div class="modal level-edit-modal">
+      <div class="panel-hd"><h3 id="editTitle">新增营销活动</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd level-edit-body">
+        <div class="marketing-form-section">
+          <div class="section-title"><h4>1. 进入条件</h4></div>
+          <div class="section-body">
+            <div class="grid cols-2">
+              <div class="field"><label class="required">活动名称</label><input id="editName" value="优惠券领取后7天未核销"></div>
+              <div class="field"><label class="required">发放组织</label><select><option>安居集团</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option></select></div>
+              <div class="field"><label class="required">活动时间</label><input value="2026-06-01 至 2026-06-30"></div>
+              <div class="field">
+                <label class="required">触达频次</label>
+                <div class="frequency-row">
+                  <label class="inline-radio"><input type="radio" name="touchFrequency" value="single" checked> 单次触达</label>
+                  <label class="inline-radio"><input type="radio" name="touchFrequency" value="multiple"> 多次触达</label>
+                </div>
+              </div>
+              <div class="field" id="repeatSetting" style="display:none">
+                <label>重复触达设置</label>
+                <div class="frequency-row">
+                  <span>每</span><input value="7"><select><option>天</option><option>小时</option><option>分钟</option></select><span>触达，用户最多被重复触达</span><input value="3"><span>次</span>
+                </div>
+              </div>
+              <div class="field">
+                <label class="required">触发条件</label>
+                <select id="triggerCondition">
+                  <option>优惠券领取后7天未核销</option>
+                  <option>新会员注册</option>
+                  <option>会员实名认证成功</option>
+                </select>
+              </div>
+              <div class="field">
+                <label class="required">营销方式</label>
+                <select id="marketingMethod">
+                  <option>发放积分</option>
+                  <option>发放礼卷</option>
+                </select>
+              </div>
+              <div class="field points-reward-field" id="pointsReward">
+                <label class="required">积分发放配置</label>
+                <div class="reward-row points-reward-row">
+                  <span>发放量</span><input value="10000"><span>份</span>
+                  <span>每份积分</span><input value="100"><span>分</span>
+                  <span>每份积分成本</span><input value="1.00"><span>元/份</span>
+                  <span class="cost-note">预计成本 10,000 元</span>
+                </div>
+              </div>
+              <div class="field" id="couponReward" style="display:none">
+                <label class="required">礼卷发放配置</label>
+                <select>
+                  <option>2000积分兑家政服务</option>
+                  <option>500积分兑礼物</option>
+                  <option>500积分兑场地预约优先</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="marketing-form-section">
+          <div class="section-title">
+            <h4>2. 客户范围</h4>
+            <button class="btn primary" type="button">新增条件块</button>
+          </div>
+          <div class="section-body">
+            <div class="customer-scope">
+              <div class="condition-block">
+                <div class="condition-block-hd">
+                  <h4>条件块 1</h4>
+                  <div class="toolbar"><button class="btn" type="button">新增条件行</button><button class="btn" type="button">删除条件块</button></div>
+                </div>
+                <table class="condition-table">
+                  <thead><tr><th>关联条件</th><th>发布对象</th><th>与上一行关系</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr><td><select><option>会员等级</option><option>身份标签</option><option>特定项目</option><option>客户分群</option></select></td><td><select><option>金卡会员</option><option>银卡会员</option><option>普通会员</option><option>黑金会员</option></select></td><td><select><option>起始条件</option><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+                    <tr><td><select><option>身份标签</option><option>会员等级</option><option>特定项目</option><option>客户分群</option></select></td><td><select><option>项目住户</option><option>新入会客户</option><option>近30日活跃</option><option>近30日投诉客户</option></select></td><td><select><option>且</option><option>或</option><option>起始条件</option></select></td><td><span class="link">删除</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="condition-block">
+                <div class="condition-block-hd">
+                  <h4>条件块 2</h4>
+                  <div class="toolbar"><button class="btn" type="button">新增条件行</button><button class="btn" type="button">删除条件块</button></div>
+                </div>
+                <table class="condition-table">
+                  <thead><tr><th>关联条件</th><th>发布对象</th><th>与上一行关系</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr><td><select><option>特定项目</option><option>会员等级</option><option>身份标签</option><option>客户分群</option></select></td><td><select><option>南山项目</option><option>福田项目</option><option>宝安项目</option><option>集团总部</option></select></td><td><select><option>起始条件</option><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <p class="form-tip">客户范围按条件块组织：块内条件行可选择“且/或”，多个条件块之间按“或”关系合并目标客户。</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-action-toast="暂存成功" data-close-modal>暂存</button><button class="btn primary" data-action-toast="提交成功" data-close-modal>提交</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="statusModal">
+    <div class="modal"><div class="panel-hd"><h3 id="statusTitle">活动状态设置</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="notice" id="statusNotice"><strong>暂停活动</strong>暂停后活动不再对会员展示，已领取权益不受影响。</div><div class="field" style="margin-top:12px"><label>操作原因</label><input value="运营节奏调整"></div></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div></div>
+  </div>
+
+  <div class="modal-mask" id="deleteModal">
+    <div class="modal"><div class="panel-hd"><h3>删除营销活动</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="notice"><strong>删除确认</strong>删除后该营销活动不再展示，已产生的参与、发放和核销记录保留。</div><div class="field" style="margin-top:12px"><label>删除原因</label><input value="活动配置作废"></div></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认删除</button></div></div>
+  </div>
+
+  <div class="modal-mask" id="participantModal">
+    <div class="modal participant-modal">
+      <div class="panel-hd"><h3 id="participantTitle">会员领取明细清单</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="filter participant-filter">
+          <div class="field"><label>会员关键词</label><input placeholder="微信昵称/用户名/会员ID/联系方式"></div>
+          <div class="field"><label>领取时间</label><input value="2026-06-01 至 2026-06-10"></div>
+          <div class="field"><label>商品核销状态</label><select><option>全部状态</option><option>未核销</option><option>已核销</option><option>已失效</option></select></div>
+          <div class="field"><label>商品到期状态</label><select><option>全部状态</option><option>未到期</option><option>即将到期</option><option>已到期</option></select></div>
+          <button class="btn primary">查询</button>
+          <button class="btn">重置</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>微信昵称</th>
+              <th>用户名</th>
+              <th>会员ID</th>
+              <th>联系方式</th>
+              <th>领取时间</th>
+              <th>核销码</th>
+              <th>商品核销状态</th>
+              <th>商品到期状态</th>
+              <th>核销时间</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>海风</td><td>李明</td><td>AJ202605180018</td><td>138****6021</td><td>2026-06-02 10:18</td><td>HX202606020018</td><td><span class="badge green">已核销</span></td><td><span class="badge green">未到期</span></td><td>2026-06-04 16:28</td></tr>
+            <tr><td>周女士</td><td>周敏</td><td>AJ202604220091</td><td>136****8519</td><td>2026-06-03 09:46</td><td>HX202606030091</td><td><span class="badge">未核销</span></td><td><span class="badge gold">即将到期</span></td><td>-</td></tr>
+            <tr><td>陈先生</td><td>陈宇</td><td>AJ202605010027</td><td>139****5208</td><td>2026-06-05 14:12</td><td>HX202606050027</td><td><span class="badge">未核销</span></td><td><span class="badge green">未到期</span></td><td>-</td></tr>
+            <tr><td>Sunny</td><td>王珊</td><td>AJ202603150062</td><td>137****1866</td><td>2026-06-07 18:30</td><td>HX202606070062</td><td><span class="badge gray">已失效</span></td><td><span class="badge gray">已到期</span></td><td>-</td></tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 12,860 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>关闭</button><button class="btn primary">导出清单</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="actionToast" style="position:fixed; right:24px; bottom:24px; z-index:20; display:none; min-width:180px; padding:12px 14px; border-radius:6px; background:#123152; color:#fff; box-shadow:0 14px 32px rgba(18,49,82,.22); font-size:13px; font-weight:700"></div>
+
+  <script>
+    const marketingData = {
+      MK202605001: ["MK202605001", "优惠券领取后7天未核销", "安居集团", "2026-06-01 至 2026-06-30", "多次触达", "优惠券领取后7天未核销", "发放积分", "会员等级=金卡会员，且身份标签=项目住户", "12,860", "进行中"],
+      MK202605002: ["MK202605002", "新会员注册", "南山项目", "2026-06-01 至 2026-06-30", "单次触达", "新会员注册", "发放礼卷", "身份标签=新入会客户，且特定项目=南山项目", "8,326", "待发布"],
+      MK202605003: ["MK202605003", "会员实名认证成功", "福田项目", "2026-06-10 至 2026-07-10", "单次触达", "会员实名认证成功", "发放积分", "会员等级=普通会员，或身份标签=项目住户", "1,208", "已结束"]
+    };
+    const drawer = document.getElementById("detailDrawer");
+    document.querySelectorAll("[data-detail]").forEach(el => el.addEventListener("click", () => {
+      const data = marketingData[el.dataset.detail] || marketingData.MK202605001;
+      ["Code", "Name", "Org", "Time", "Frequency", "Trigger", "Method", "Scope", "Join", "Status"].forEach((key, index) => document.getElementById(`d${key}`).textContent = data[index]);
+      drawer.classList.add("open");
+    }));
+    document.querySelectorAll("[data-participants]").forEach(el => el.addEventListener("click", () => {
+      const data = marketingData[el.dataset.participants] || marketingData.MK202605001;
+      document.getElementById("participantTitle").textContent = `${data[1]} - 会员领取明细清单`;
+      document.querySelector("#participantModal .pagination span").textContent = `共 ${data[8]} 条`;
+      document.getElementById("participantModal").classList.add("open");
+    }));
+    document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
+    document.querySelectorAll("[data-edit]").forEach(el => el.addEventListener("click", () => {
+      const data = marketingData[el.dataset.edit];
+      document.getElementById("editTitle").textContent = data ? "编辑营销活动" : "新增营销活动";
+      if (data) {
+        document.getElementById("editName").value = data[1];
+      } else {
+        document.getElementById("editName").value = "优惠券领取后7天未核销";
+      }
+      document.getElementById("editModal").classList.add("open");
+    }));
+    const statusCopy = {
+      publish: ["发布活动", "发布后活动按配置时间和对象在小程序端展示。", "确认活动配置无误"],
+      pause: ["暂停活动", "暂停后活动不再对会员展示，已领取权益不受影响。", "运营节奏调整"],
+      "batch-publish": ["批量发布活动", "将对已勾选活动批量发布。", "批量上线"],
+      "batch-pause": ["批量暂停活动", "将对已勾选活动批量暂停。", "批量运营调整"]
+    };
+    document.querySelectorAll("[data-status]").forEach(el => el.addEventListener("click", () => {
+      const copy = statusCopy[el.dataset.status] || statusCopy.pause;
+      document.getElementById("statusTitle").textContent = copy[0];
+      document.getElementById("statusNotice").innerHTML = `<strong>${copy[0]}</strong>${copy[1]}`;
+      document.querySelector("#statusModal input").value = copy[2];
+      document.getElementById("statusModal").classList.add("open");
+    }));
+    document.querySelectorAll("[data-delete]").forEach(el => el.addEventListener("click", () => document.getElementById("deleteModal").classList.add("open")));
+    document.querySelectorAll("[data-close-modal]").forEach(el => el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open")));
+    function refreshFrequency() {
+      const multiple = document.querySelector("input[name='touchFrequency'][value='multiple']").checked;
+      document.getElementById("repeatSetting").style.display = multiple ? "block" : "none";
+    }
+    function refreshMarketingMethod() {
+      const method = document.getElementById("marketingMethod").value;
+      document.getElementById("pointsReward").style.display = method === "发放积分" ? "block" : "none";
+      document.getElementById("couponReward").style.display = method === "发放礼卷" ? "block" : "none";
+    }
+    function showActionToast(message) {
+      const toast = document.getElementById("actionToast");
+      toast.textContent = message;
+      toast.style.display = "block";
+      window.clearTimeout(showActionToast.timer);
+      showActionToast.timer = window.setTimeout(() => toast.style.display = "none", 1600);
+    }
+    document.querySelectorAll("input[name='touchFrequency']").forEach(el => el.addEventListener("change", refreshFrequency));
+    document.getElementById("marketingMethod").addEventListener("change", refreshMarketingMethod);
+    document.querySelectorAll("[data-action-toast]").forEach(el => el.addEventListener("click", () => showActionToast(el.dataset.actionToast)));
+    refreshFrequency();
+    refreshMarketingMethod();
+  </script>
+</body>
+</html>

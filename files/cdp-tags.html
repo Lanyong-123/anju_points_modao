@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>客户标签管理</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .tag-layout {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .tag-tree {
+      display: grid;
+      gap: 6px;
+    }
+    .tag-tree-item {
+      position: relative;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid #dfe6ee;
+      border-radius: 6px;
+      background: #fff;
+      color: #36485c;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tag-tree-item.root {
+      min-height: 40px;
+      background: #f8fafc;
+    }
+    .tag-tree-children {
+      position: relative;
+      display: grid;
+      gap: 6px;
+      margin-left: 14px;
+      padding-left: 14px;
+    }
+    .tag-tree-children::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 18px;
+      width: 1px;
+      background: #dfe6ee;
+    }
+    .tag-tree-item.child::before {
+      content: "";
+      position: absolute;
+      left: -14px;
+      top: 50%;
+      width: 14px;
+      height: 1px;
+      background: #dfe6ee;
+    }
+    .tag-tree-item.active {
+      border-color: #b81f2d;
+      background: #fff6f7;
+      color: #b81f2d;
+    }
+    .tag-tree-item em {
+      color: #8a99a8;
+      font-style: normal;
+      font-weight: 700;
+    }
+    .tag-table {
+      min-width: 1080px;
+    }
+    .tag-table th,
+    .tag-table td {
+      padding: 10px 8px;
+      vertical-align: middle;
+    }
+    .tag-name-cell {
+      display: grid;
+      gap: 4px;
+      white-space: normal;
+    }
+    .tag-name-cell strong {
+      color: var(--navy);
+    }
+    .tag-name-cell span {
+      color: #667789;
+      font-size: 12px;
+    }
+    .tag-update-btn {
+      height: 28px;
+      padding: 0 10px;
+      margin-left: 6px;
+    }
+    .field label.required::before,
+    .tag-required::before {
+      content: "*";
+      margin-right: 3px;
+      color: var(--red);
+      font-weight: 700;
+    }
+    .relation-builder {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      padding-left: 22px;
+    }
+    .relation-builder::before {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 16px;
+      bottom: 16px;
+      width: 2px;
+      background: #1d6fd8;
+    }
+    .logic-node {
+      position: absolute;
+      left: -3px;
+      top: 50%;
+      z-index: 1;
+      width: 28px;
+      height: 32px;
+      border-radius: 3px;
+      background: #1d6fd8;
+      transform: translateY(-50%);
+    }
+    .logic-node select {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      border-radius: 3px;
+      background: #1d6fd8;
+      color: #fff;
+      font-weight: 700;
+      text-align: center;
+      text-align-last: center;
+      cursor: pointer;
+      appearance: none;
+    }
+    .relation-group {
+      position: relative;
+      border: 1px solid #dfe6ee;
+      border-radius: 5px;
+      background: #fbfdff;
+    }
+    .relation-group-hd {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 14px;
+      border-bottom: 1px solid #e8eef5;
+      color: var(--navy);
+      font-weight: 700;
+    }
+    .relation-group-hd span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toggle-symbol {
+      width: 14px;
+      height: 14px;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid #7b8a9b;
+      border-radius: 2px;
+      background: #fff;
+      color: #24384e;
+      font-size: 12px;
+      line-height: 1;
+    }
+    .add-condition {
+      border: 0;
+      background: transparent;
+      color: #0a63c7;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .relation-group-bd {
+      display: grid;
+      gap: 8px;
+      padding: 12px 14px;
+    }
+    .relation-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, .72fr) minmax(0, 1fr) minmax(0, .62fr);
+      gap: 8px;
+      align-items: center;
+    }
+    .relation-row input,
+    .relation-row select {
+      min-width: 0;
+      width: 100%;
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+    }
+    .relation-empty {
+      color: #667789;
+      line-height: 1.7;
+    }
+    .tag-valid-period {
+      display: none;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .tag-valid-period.show {
+      display: grid;
+    }
+    .schedule-config {
+      display: none;
+      grid-column: 1 / -1;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid #dfe6ee;
+      border-radius: 6px;
+      background: #fbfdff;
+    }
+    .schedule-config.show {
+      display: grid;
+    }
+    .schedule-row {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr) minmax(0, 1fr);
+      gap: 10px;
+    }
+    .schedule-field {
+      display: none;
+    }
+    .schedule-field.show {
+      display: block;
+    }
+    .wide-modal {
+      width: min(1080px, calc(100vw - 48px));
+      max-height: calc(100vh - 24px);
+      display: flex;
+      flex-direction: column;
+    }
+    .wide-modal .panel-bd {
+      max-height: calc(100vh - 150px);
+    }
+    .drawer-table {
+      min-width: 760px;
+    }
+    .import-hint {
+      margin-top: 8px;
+      color: #667789;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>标签名称</label><input placeholder="请输入标签名称"></div>
+      <div class="field"><label>标签分类</label><select><option>全部分类</option><option>基本标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option><option>高价值客户标签</option></select></div>
+      <div class="field"><label>标签状态</label><select><option>全部状态</option><option>启用</option><option>停用</option><option>草稿</option></select></div>
+      <button class="btn primary">查询</button>
+    </div>
+
+    <div class="tag-layout">
+      <div class="panel">
+        <div class="panel-hd">
+          <h3>标签分类</h3>
+          <button class="btn" data-category>新增</button>
+        </div>
+        <div class="panel-bd">
+          <div class="tag-tree">
+            <div class="tag-tree-item root active" data-filter-category="全部分类"><span>全部标签</span><em>128</em></div>
+            <div class="tag-tree-children">
+              <div class="tag-tree-item child" data-filter-category="基本标签"><span>基本标签</span><em>26</em></div>
+              <div class="tag-tree-item child" data-filter-category="行为标签"><span>行为标签</span><em>24</em></div>
+              <div class="tag-tree-item child" data-filter-category="偏好标签"><span>偏好标签</span><em>18</em></div>
+              <div class="tag-tree-item child" data-filter-category="营销响应标签"><span>营销响应标签</span><em>12</em></div>
+              <div class="tag-tree-item child" data-filter-category="高价值客户标签"><span>高价值客户标签</span><em>48</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd">
+          <h3>客户标签列表</h3>
+          <div class="toolbar">
+            <button class="btn primary" data-edit="new">新增标签</button>
+            <button class="btn">导出</button>
+          </div>
+        </div>
+        <div class="panel-bd">
+          <table class="tag-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox"></th>
+                <th>标签名称</th>
+                <th>标签分类</th>
+                <th>打标方式</th>
+                <th>覆盖客户数</th>
+                <th>更新方式</th>
+                <th>最后执行时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-category-row="基本标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="身份类型">身份类型</span></strong><span>年龄、性别、职业、城市、身份类型等</span></div></td><td>基本标签</td><td>数据同步</td><td><span class="link" data-customer="身份类型">38,240</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 14:20</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="身份类型">详情</span>　<span class="link" data-edit="身份类型">编辑</span>　<span class="link" data-log="身份类型">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="行为标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="签到频率">签到频率</span></strong><span>浏览偏好、点击习惯、签到频率等</span></div></td><td>行为标签</td><td>规则自动</td><td><span class="link" data-customer="签到频率">8,936</span></td><td>周期更新 每周一 03:00</td><td>2026-06-08 03:10</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="签到频率">详情</span>　<span class="link" data-edit="签到频率">编辑</span>　<span class="link" data-log="签到频率">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="偏好标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="服务需求偏好">服务需求偏好</span></strong><span>产品偏好、服务需求偏好等</span></div></td><td>偏好标签</td><td>手动维护</td><td><span class="link" data-customer="服务需求偏好">5,182</span></td><td>手动更新</td><td>2026-06-07 18:32</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="服务需求偏好">详情</span>　<span class="link" data-edit="服务需求偏好">编辑</span>　<span class="link" data-log="服务需求偏好">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="服务需求偏好">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="营销响应标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="优惠券使用偏好">优惠券使用偏好</span></strong><span>活动参与度、优惠券使用偏好等</span></div></td><td>营销响应标签</td><td>规则自动</td><td><span class="link" data-customer="优惠券使用偏好">12,680</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 02:05</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="优惠券使用偏好">详情</span>　<span class="link" data-edit="优惠券使用偏好">编辑</span>　<span class="link" data-log="优惠券使用偏好">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="高价值客户标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="活动参与类型热力点">活动参与类型热力点</span></strong><span>高价值客户活动参与类型分布</span></div></td><td>高价值客户标签</td><td>手动维护</td><td><span class="link" data-customer="活动参与类型热力点">326</span></td><td>手动更新</td><td>2026-06-06 10:16</td><td><span class="badge gray">停用</span></td><td><span class="link" data-detail="活动参与类型热力点">详情</span>　<span class="link" data-edit="活动参与类型热力点">编辑</span>　<span class="link" data-log="活动参与类型热力点">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="活动参与类型热力点">更新</button>　<span class="link" data-status="enable">启用</span></td></tr>
+              <tr data-category-row="高价值客户标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="个人表达意愿强烈">个人表达意愿强烈</span></strong><span>高价值客户主动反馈和表达倾向</span></div></td><td>高价值客户标签</td><td>手动维护</td><td><span class="link" data-customer="个人表达意愿强烈">1,286</span></td><td>手动更新</td><td>2026-06-06 11:20</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="个人表达意愿强烈">详情</span>　<span class="link" data-edit="个人表达意愿强烈">编辑</span>　<span class="link" data-log="个人表达意愿强烈">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="个人表达意愿强烈">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="高价值客户标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="多次参与社区活动 / 公益">多次参与社区活动 / 公益</span></strong><span>高价值客户社区活动和公益参与度</span></div></td><td>高价值客户标签</td><td>规则自动</td><td><span class="link" data-customer="多次参与社区活动 / 公益">2,406</span></td><td>周期更新 每周一 03:00</td><td>2026-06-08 03:12</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="多次参与社区活动 / 公益">详情</span>　<span class="link" data-edit="多次参与社区活动 / 公益">编辑</span>　<span class="link" data-log="多次参与社区活动 / 公益">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="高价值客户标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="社群主理人">社群主理人</span></strong><span>高价值客户社群组织和带动能力</span></div></td><td>高价值客户标签</td><td>手动维护</td><td><span class="link" data-customer="社群主理人">428</span></td><td>手动更新</td><td>2026-06-05 16:42</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="社群主理人">详情</span>　<span class="link" data-edit="社群主理人">编辑</span>　<span class="link" data-log="社群主理人">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="社群主理人">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="高价值客户标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="积分高 / 使用频繁">积分高 / 使用频繁</span></strong><span>高价值客户积分沉淀和使用活跃度</span></div></td><td>高价值客户标签</td><td>规则自动</td><td><span class="link" data-customer="积分高 / 使用频繁">3,618</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 02:18</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="积分高 / 使用频繁">详情</span>　<span class="link" data-edit="积分高 / 使用频繁">编辑</span>　<span class="link" data-log="积分高 / 使用频繁">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
+            </tbody>
+          </table>
+          <div class="pagination"><span>共 128 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button><button class="page-btn">下一页</button><select><option>10 条/页</option><option>20 条/页</option></select></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="drawer" id="detailDrawer">
+    <div class="panel-hd"><h3 id="drawerTitle">标签详情</h3><button class="btn" data-close-drawer>关闭</button></div>
+    <div class="panel-bd">
+      <div class="detail-list">
+        <span>标签名称</span><strong id="dName">身份类型</strong>
+        <span>标签分类</span><strong id="dCategory">基本标签</strong>
+        <span>覆盖客户数</span><strong id="dCount">12,680</strong>
+        <span>更新方式</span><strong id="dFrequency">周期更新 每日 02:00</strong>
+        <span>规则摘要</span><strong id="dRule">近90天消费金额大于3000元，且权益领取不少于2次。</strong>
+        <span>数据来源</span><strong id="dSource">会员中心、积分中心、权益中心</strong>
+        <span>状态</span><strong id="dStatus">启用</strong>
+      </div>
+      <div class="panel" style="margin-top:14px; box-shadow:none">
+        <div class="panel-hd"><h3>最近打标日志</h3><button class="btn" data-log-from-drawer>查看全部</button></div>
+        <div class="panel-bd">
+          <table class="drawer-table">
+            <thead><tr><th>执行时间</th><th>任务类型</th><th>新增客户</th><th>移除客户</th><th>结果</th></tr></thead>
+            <tbody>
+              <tr><td>2026-06-08 02:05</td><td>规则自动</td><td>168</td><td>42</td><td><span class="badge green">成功</span></td></tr>
+              <tr><td>2026-06-07 02:04</td><td>规则自动</td><td>152</td><td>36</td><td><span class="badge green">成功</span></td></tr>
+              <tr><td>2026-06-06 02:05</td><td>规则自动</td><td>146</td><td>51</td><td><span class="badge green">成功</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="modal-mask" id="editModal">
+    <div class="modal wide-modal">
+      <div class="panel-hd"><h3 id="editTitle">新增标签</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="grid cols-2">
+          <div class="field"><label class="required">标签名称</label><input id="editName" value="身份类型"></div>
+          <div class="field"><label class="required">标签分类</label><select id="editCategory"><option>基本标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option><option>高价值客户标签</option></select></div>
+          <div class="field"><label class="required">更新方式</label><select id="editFrequency"><option>周期更新</option><option>手动更新</option></select></div>
+          <div class="field"><label class="required">标签状态</label><select id="editStatus"><option>启用</option><option>停用</option><option>草稿</option></select></div>
+          <div class="field"><label class="required">标签有效期</label><select id="editValidity"><option>永久有效</option><option>指定周期有效</option></select></div>
+          <div class="field tag-valid-period" id="validPeriodFields">
+            <div><label class="required">开始时间</label><input value="2026-06-08"></div>
+            <div><label class="required">结束时间</label><input value="2026-12-31"></div>
+          </div>
+          <div class="schedule-config" id="scheduleConfig">
+            <div class="schedule-row">
+              <div class="field"><label class="required">周期类型</label><select id="scheduleType"><option>每日</option><option>每周</option><option>每月</option></select></div>
+              <div class="field schedule-field" id="weeklyField"><label class="required">每周几</label><select><option>每周一</option><option>每周二</option><option>每周三</option><option>每周四</option><option>每周五</option><option>每周六</option><option>每周日</option></select></div>
+              <div class="field schedule-field" id="monthlyField"><label class="required">每月哪日</label><select><option>1日</option><option>5日</option><option>10日</option><option>15日</option><option>20日</option><option>25日</option><option>月底</option></select></div>
+              <div class="field"><label class="required">具体时间点</label><input id="scheduleTime" value="02:00"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px; box-shadow:none">
+          <div class="panel-hd"><h3 class="tag-required">标签规则</h3><span class="muted">依赖实体管理配置的表级关系，通过且/或条件限定标签命中范围</span></div>
+          <div class="panel-bd">
+            <div class="relation-builder">
+              <div class="logic-node"><select aria-label="规则组关系"><option>且</option><option>或</option></select></div>
+              <div class="relation-group">
+                <div class="relation-group-hd"><span><i class="toggle-symbol">+</i>用户属性满足</span><button class="add-condition" type="button" data-add-condition>+ 添加</button></div>
+                <div class="relation-group-bd">
+                  <div class="relation-row">
+                    <select><option>用户主表</option><option>住户认证表</option><option>合同关系表</option></select>
+                    <select><option>用户主表.会员ID = 住户认证表.会员ID</option><option>用户主表.手机号 = 合同关系表.联系电话</option></select>
+                    <select><option>认证状态</option><option>所属项目</option><option>会员等级</option><option>注册渠道</option></select>
+                    <select><option>等于</option><option>包含</option><option>不等于</option><option>为空</option></select>
+                    <input value="身份类型">
+                    <select><option>起始条件</option><option>且</option><option>或</option></select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relation-group">
+                <div class="relation-group-hd"><span><i class="toggle-symbol">+</i>用户行为满足</span><button class="add-condition" type="button" data-add-condition>+ 添加</button></div>
+                <div class="relation-group-bd">
+                  <div class="relation-row">
+                    <select><option>消费订单表</option><option>积分流水表</option><option>权益领取表</option></select>
+                    <select><option>用户主表.会员ID = 消费订单表.会员ID</option><option>用户主表.会员ID = 积分流水表.会员ID</option></select>
+                    <select><option>近90天消费金额</option><option>近30天积分获取次数</option><option>权益领取次数</option></select>
+                    <select><option>大于</option><option>大于等于</option><option>等于</option><option>小于</option></select>
+                    <input value="3000">
+                    <select><option>且</option><option>或</option></select>
+                  </div>
+                  <div class="relation-row">
+                    <select><option>权益领取表</option><option>消费订单表</option><option>积分流水表</option></select>
+                    <select><option>用户主表.会员ID = 权益领取表.会员ID</option><option>用户主表.会员ID = 消费订单表.会员ID</option></select>
+                    <select><option>权益领取次数</option><option>核销次数</option><option>领取后未核销次数</option></select>
+                    <select><option>大于等于</option><option>大于</option><option>等于</option></select>
+                    <input value="2">
+                    <select><option>且</option><option>或</option></select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relation-group">
+                <div class="relation-group-hd"><span><i class="toggle-symbol">-</i>行为序列满足</span><button class="add-condition" type="button" data-add-condition>+ 添加</button></div>
+                <div class="relation-group-bd">
+                  <div class="relation-row">
+                    <select><option>活动报名表</option><option>活动签到表</option><option>权益核销表</option></select>
+                    <select><option>活动报名表.会员ID = 活动签到表.会员ID</option><option>权益领取表.券码 = 权益核销表.核销码</option></select>
+                    <select><option>报名后未签到次数</option><option>领取后核销次数</option><option>连续参与活动次数</option></select>
+                    <select><option>大于等于</option><option>大于</option><option>等于</option></select>
+                    <input value="3">
+                    <select><option>或</option><option>且</option></select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relation-group">
+                <div class="relation-group-hd"><span><i class="toggle-symbol">+</i>用户标签满足</span><button class="add-condition" type="button" data-add-condition>+ 添加</button></div>
+                <div class="relation-group-bd">
+                  <div class="relation-empty">可选择已有标签作为限定条件，例如“身份类型”且“签到频率”，用于组合生成基本标签或行为标签。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label class="required">标签说明</label>
+          <input id="editDesc" value="识别高贡献、高活跃客户，用于权益推荐、营销活动和客户分层运营。">
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="logModal">
+    <div class="modal wide-modal">
+      <div class="panel-hd"><h3 id="logTitle">标签日志</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="filter compact-filter">
+          <div class="field"><label>任务类型</label><select><option>全部类型</option><option>规则自动</option><option>手动维护</option><option>名单导入</option></select></div>
+          <div class="field"><label>执行结果</label><select><option>全部结果</option><option>成功</option><option>失败</option></select></div>
+          <div class="field"><label>执行时间</label><input value="2026-06-01 至 2026-06-08"></div>
+          <button class="btn primary">查询</button>
+        </div>
+        <table>
+          <thead><tr><th>执行时间</th><th>标签名称</th><th>任务类型</th><th>处理客户数</th><th>新增</th><th>移除</th><th>操作人</th><th>结果</th></tr></thead>
+          <tbody>
+            <tr><td>2026-06-08 02:05</td><td>优惠券使用偏好</td><td>规则自动</td><td>12,680</td><td>168</td><td>42</td><td>系统任务</td><td><span class="badge green">成功</span></td></tr>
+            <tr><td>2026-06-07 18:32</td><td>服务需求偏好</td><td>手动维护</td><td>5,182</td><td>860</td><td>0</td><td>运营管理员</td><td><span class="badge green">成功</span></td></tr>
+            <tr><td>2026-06-06 10:16</td><td>活动参与类型热力点</td><td>手动维护</td><td>326</td><td>36</td><td>12</td><td>运营管理员</td><td><span class="badge green">成功</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="customerModal">
+    <div class="modal wide-modal">
+      <div class="panel-hd"><h3 id="customerTitle">标签客户明细</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="filter compact-filter">
+          <div class="field"><label>微信昵称/用户名</label><input placeholder="请输入微信昵称或用户名"></div>
+          <div class="field"><label>会员ID</label><input placeholder="请输入会员ID"></div>
+          <div class="field"><label>所属项目</label><select><option>全部项目</option><option>南山项目</option><option>福田项目</option><option>集团总部</option></select></div>
+          <button class="btn primary">查询</button>
+        </div>
+        <table>
+          <thead><tr><th>微信昵称</th><th>用户名</th><th>会员ID</th><th>手机号</th><th>会员等级</th><th>所属项目</th><th>标签命中时间</th><th>标签来源</th></tr></thead>
+          <tbody>
+            <tr><td>这一刻</td><td>李明</td><td>AJ202605180018</td><td>136****5520</td><td>金卡会员</td><td>南山项目</td><td>2026-06-08 02:05</td><td>规则自动</td></tr>
+            <tr><td>周女士</td><td>周女士</td><td>AJ202604220091</td><td>139****6812</td><td>黑金会员</td><td>福田项目</td><td>2026-06-08 02:05</td><td>规则自动</td></tr>
+            <tr><td>陈先生</td><td>陈先生</td><td>AJ202605010027</td><td>137****2098</td><td>银卡会员</td><td>南山项目</td><td>2026-06-07 18:32</td><td>手动维护</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="statusModal">
+    <div class="modal">
+      <div class="panel-hd"><h3 id="statusTitle">标签状态设置</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice" id="statusNotice"><strong>停用标签</strong>停用后标签不再参与自动打标和人群圈选，历史客户标签仍可查询。</div>
+        <div class="field" style="margin-top:12px"><label>操作原因</label><input value="标签规则调整"></div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="categoryModal">
+    <div class="modal">
+      <div class="panel-hd"><h3>新增标签分类</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="field"><label class="required">分类名称</label><input value="客户偏好"></div>
+        <div class="field" style="margin-top:12px"><label class="required">上级分类</label><select><option>基本标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option><option>高价值客户标签</option></select></div>
+        <div class="field" style="margin-top:12px"><label class="required">分类说明</label><input value="用于承载客户属性、行为、偏好和营销响应相关标签。"></div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
+    </div>
+  </div>
+
+  <script>
+    const tagData = {
+      "身份类型": ["身份类型", "基本标签", "38,240", "周期更新 每日 02:00", "由年龄、性别、职业、城市、身份类型等基础资料生成。", "会员中心、住户认证、租赁系统", "启用"],
+      "签到频率": ["签到频率", "行为标签", "8,936", "周期更新 每周一 03:00", "统计浏览偏好、点击习惯、签到频率等行为特征。", "积分中心、营销活动、行为日志", "启用"],
+      "服务需求偏好": ["服务需求偏好", "偏好标签", "5,182", "手动更新", "识别产品偏好、服务需求偏好，用于服务推荐和运营触达。", "权益中心、手动维护", "启用"],
+      "优惠券使用偏好": ["优惠券使用偏好", "营销响应标签", "12,680", "周期更新 每日 02:00", "统计活动参与度、优惠券领取与使用偏好。", "营销中心、优惠券中心", "启用"],
+      "活动参与类型热力点": ["活动参与类型热力点", "高价值客户标签", "326", "手动更新", "识别高价值客户活动参与类型分布，用于活动推荐和服务运营。", "活动中心、积分中心、手动维护", "停用"],
+      "个人表达意愿强烈": ["个人表达意愿强烈", "高价值客户标签", "1,286", "手动更新", "识别主动反馈、建议、评论和表达频次较高的高价值客户。", "客户互动、社区活动、手动维护", "启用"],
+      "多次参与社区活动 / 公益": ["多次参与社区活动 / 公益", "高价值客户标签", "2,406", "周期更新 每周一 03:00", "识别多次参与社区活动或公益活动的高价值客户。", "活动中心、公益活动", "启用"],
+      "社群主理人": ["社群主理人", "高价值客户标签", "428", "手动更新", "识别具备社群组织、活动发起和成员带动能力的高价值客户。", "社群运营、手动维护", "启用"],
+      "积分高 / 使用频繁": ["积分高 / 使用频繁", "高价值客户标签", "3,618", "周期更新 每日 02:00", "识别积分余额较高或积分使用频繁的高价值客户。", "积分中心、兑换记录", "启用"]
+    };
+
+    const drawer = document.getElementById("detailDrawer");
+    function updateScheduleVisibility() {
+      const isCycle = document.getElementById("editFrequency").value === "周期更新";
+      const type = document.getElementById("scheduleType").value;
+      document.getElementById("scheduleConfig").classList.toggle("show", isCycle);
+      document.getElementById("weeklyField").classList.toggle("show", isCycle && type === "每周");
+      document.getElementById("monthlyField").classList.toggle("show", isCycle && type === "每月");
+    }
+    function setScheduleByText(text) {
+      const frequency = document.getElementById("editFrequency");
+      const scheduleType = document.getElementById("scheduleType");
+      const scheduleTime = document.getElementById("scheduleTime");
+      frequency.value = text.includes("手动") ? "手动更新" : "周期更新";
+      scheduleType.value = text.includes("每周") ? "每周" : text.includes("每月") ? "每月" : "每日";
+      const time = text.match(/(\d{2}:\d{2})/);
+      scheduleTime.value = time ? time[1] : "02:00";
+      updateScheduleVisibility();
+    }
+    function fillDrawer(name) {
+      const data = tagData[name] || tagData["身份类型"];
+      ["Name", "Category", "Count", "Frequency", "Rule", "Source", "Status"].forEach((key, index) => {
+        document.getElementById(`d${key}`).textContent = data[index];
+      });
+      document.getElementById("drawerTitle").textContent = `${data[0]} - 标签详情`;
+      drawer.classList.add("open");
+    }
+
+    document.querySelectorAll("[data-detail]").forEach(el => {
+      el.addEventListener("click", () => fillDrawer(el.dataset.detail));
+    });
+    document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
+
+    document.querySelectorAll("[data-edit]").forEach(el => {
+      el.addEventListener("click", () => {
+        const data = tagData[el.dataset.edit];
+        document.getElementById("editTitle").textContent = data ? "编辑标签" : "新增标签";
+        document.getElementById("editName").value = data ? data[0] : "身份类型";
+        document.getElementById("editCategory").value = data ? data[1] : "基本标签";
+        setScheduleByText(data ? data[3] : "周期更新 每日 02:00");
+        document.getElementById("editStatus").value = data ? data[6] : "草稿";
+        document.getElementById("editValidity").value = "永久有效";
+        document.getElementById("validPeriodFields").classList.remove("show");
+        document.getElementById("editDesc").value = data ? data[4] : "用于识别客户服务偏好，支持后续人群圈选和权益推荐。";
+        document.getElementById("editModal").classList.add("open");
+      });
+    });
+
+    document.getElementById("editValidity").addEventListener("change", event => {
+      document.getElementById("validPeriodFields").classList.toggle("show", event.target.value === "指定周期有效");
+    });
+    document.getElementById("editFrequency").addEventListener("change", updateScheduleVisibility);
+    document.getElementById("scheduleType").addEventListener("change", updateScheduleVisibility);
+
+    document.querySelectorAll("[data-add-condition]").forEach(button => {
+      button.addEventListener("click", () => {
+        const body = button.closest(".relation-group").querySelector(".relation-group-bd");
+        const empty = body.querySelector(".relation-empty");
+        if (empty) empty.remove();
+        body.insertAdjacentHTML("beforeend", `<div class="relation-row"><select><option>用户主表</option><option>住户认证表</option><option>消费订单表</option><option>积分流水表</option><option>权益领取表</option></select><select><option>用户主表.会员ID = 关联表.会员ID</option><option>用户主表.手机号 = 关联表.手机号</option><option>权益领取表.券码 = 权益核销表.核销码</option></select><select><option>请选择字段</option><option>认证状态</option><option>近90天消费金额</option><option>积分获取次数</option><option>权益领取次数</option><option>已有标签</option></select><select><option>等于</option><option>大于</option><option>大于等于</option><option>包含</option><option>命中</option></select><input value=""><select><option>且</option><option>或</option></select></div>`);
+      });
+    });
+
+    document.querySelectorAll("[data-filter-category]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.querySelectorAll("[data-filter-category]").forEach(item => item.classList.remove("active"));
+        el.classList.add("active");
+        const category = el.dataset.filterCategory;
+        document.querySelectorAll("[data-category-row]").forEach(row => {
+          row.style.display = category === "全部分类" || row.dataset.categoryRow === category ? "" : "none";
+        });
+      });
+    });
+
+    document.querySelector("[data-category]").addEventListener("click", () => document.getElementById("categoryModal").classList.add("open"));
+    document.querySelectorAll("[data-log]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("logTitle").textContent = `${el.dataset.log} - 标签日志`;
+        document.getElementById("logModal").classList.add("open");
+      });
+    });
+    document.querySelector("[data-log-from-drawer]").addEventListener("click", () => {
+      document.getElementById("logTitle").textContent = `${document.getElementById("dName").textContent} - 标签日志`;
+      document.getElementById("logModal").classList.add("open");
+    });
+    document.querySelectorAll("[data-customer]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("customerTitle").textContent = `${el.dataset.customer} - 客户明细`;
+        document.getElementById("customerModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-status]").forEach(el => {
+      el.addEventListener("click", () => {
+        const isEnable = el.dataset.status === "enable";
+        document.getElementById("statusTitle").textContent = isEnable ? "启用标签" : "停用标签";
+        document.getElementById("statusNotice").innerHTML = isEnable
+          ? "<strong>启用标签</strong>启用后标签可参与自动打标、人群圈选和客户画像。"
+          : "<strong>停用标签</strong>停用后标签不再参与自动打标和人群圈选，历史客户标签仍可查询。";
+        document.getElementById("statusModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-update-tag]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("statusTitle").textContent = "更新标签";
+        document.getElementById("statusNotice").innerHTML = `<strong>更新标签</strong>将按当前规则立即刷新“${el.dataset.updateTag}”标签命中客户，并生成更新日志。`;
+        document.getElementById("statusModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+  </script>
+</body>
+</html>

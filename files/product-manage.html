@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>商品管理</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .product-form { display: grid; gap: 18px; }
+    .form-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0 2px;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 800;
+    }
+    .form-section-title::before {
+      content: "";
+      width: 4px;
+      height: 16px;
+      border-radius: 3px;
+      background: #1769d8;
+    }
+    .product-row {
+      display: grid;
+      grid-template-columns: 118px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .product-label {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 2px;
+      color: #36485c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .product-label.required::before { content: "*"; color: var(--red); }
+    .product-control input,
+    .product-control select,
+    .product-control textarea {
+      width: 100%;
+      min-height: 34px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+    .product-control textarea {
+      min-height: 72px;
+      padding: 8px 10px;
+      resize: vertical;
+    }
+    .product-hint {
+      margin-top: 7px;
+      color: #8a99a8;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .upload-box {
+      width: 96px;
+      height: 96px;
+      display: grid;
+      place-items: center;
+      border: 1px dashed #cfd9e5;
+      border-radius: 6px;
+      background: #fbfdff;
+      color: #526477;
+      text-align: center;
+      cursor: pointer;
+    }
+    .upload-box strong { display: block; font-size: 24px; line-height: 1; font-weight: 400; }
+    .upload-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .radio-line {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .radio-line label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #526477;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .radio-line input[type="radio"],
+    .radio-line input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      accent-color: #1769d8;
+    }
+    .help-tip {
+      position: relative;
+      width: 16px;
+      height: 16px;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid #b8c5d4;
+      border-radius: 50%;
+      color: #7a8999;
+      font-size: 12px;
+      line-height: 1;
+      cursor: help;
+    }
+    .help-tip::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 8px);
+      z-index: 30;
+      width: 300px;
+      display: none;
+      transform: translateX(-50%);
+      padding: 9px 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 6px;
+      background: #fff;
+      color: #36485c;
+      box-shadow: 0 8px 20px rgba(18, 49, 82, .16);
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: left;
+      white-space: normal;
+    }
+    .help-tip:hover::after { display: block; }
+    .scheme-box {
+      display: grid;
+      grid-template-columns: 72px 72px 1fr 52px;
+      gap: 8px;
+      align-items: center;
+      max-width: 860px;
+    }
+    .scheme-box input[disabled] {
+      background: #edf1f5;
+      color: #8a99a8;
+      cursor: not-allowed;
+    }
+    .thumb {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #d7e2ee;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #fff7e6, #eef4fb);
+      color: var(--navy);
+      font-weight: 800;
+    }
+    .product-cover {
+      width: 64px;
+      height: 46px;
+      display: block;
+      border: 1px solid #d7e2ee;
+      border-radius: 6px;
+      object-fit: cover;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(18, 49, 82, .08);
+    }
+    .image-preview-modal {
+      width: min(920px, calc(100vw - 48px));
+    }
+    .image-preview-wrap {
+      display: grid;
+      place-items: center;
+      padding: 10px;
+      background: #f3f6fa;
+    }
+    .image-preview-wrap img {
+      max-width: 100%;
+      max-height: calc(100vh - 190px);
+      border-radius: 8px;
+      box-shadow: 0 12px 26px rgba(18,49,82,.18);
+    }
+    .detail-modal-lg {
+      width: min(1180px, calc(100vw - 48px));
+      max-height: calc(100vh - 24px);
+      display: flex;
+      flex-direction: column;
+    }
+    .detail-modal-body {
+      max-height: calc(100vh - 150px);
+      overflow: auto;
+    }
+    .detail-modal-filter {
+      display: grid;
+      grid-template-columns: minmax(200px, 1fr) minmax(150px, 220px) minmax(180px, 240px) minmax(180px, 240px) auto auto;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .detail-modal-filter input,
+    .detail-modal-filter select {
+      width: 100%;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+    .avatar {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffe08a, #f8fafd);
+      color: var(--navy);
+      font-weight: 900;
+    }
+    .detail-data-table th,
+    .detail-data-table td {
+      white-space: normal;
+      line-height: 1.5;
+      vertical-align: middle;
+    }
+    .exchange-data-table {
+      table-layout: fixed;
+      min-width: 1620px;
+    }
+    .exchange-data-table th,
+    .exchange-data-table td {
+      padding: 12px 10px;
+    }
+    .exchange-data-table th:nth-child(1),
+    .exchange-data-table td:nth-child(1) { width: 44px; }
+    .exchange-data-table th:nth-child(2),
+    .exchange-data-table td:nth-child(2) { width: 140px; }
+    .exchange-data-table th:nth-child(3),
+    .exchange-data-table td:nth-child(3) { width: 130px; }
+    .exchange-data-table th:nth-child(4),
+    .exchange-data-table td:nth-child(4) { width: 130px; }
+    .exchange-data-table th:nth-child(5),
+    .exchange-data-table td:nth-child(5) { width: 280px; }
+    .exchange-data-table th:nth-child(6),
+    .exchange-data-table td:nth-child(6) { width: 128px; }
+    .exchange-data-table th:nth-child(7),
+    .exchange-data-table td:nth-child(7) { width: 82px; }
+    .exchange-data-table th:nth-child(8),
+    .exchange-data-table td:nth-child(8) { width: 112px; }
+    .exchange-data-table th:nth-child(9),
+    .exchange-data-table td:nth-child(9) { width: 98px; }
+    .exchange-data-table th:nth-child(10),
+    .exchange-data-table td:nth-child(10) { width: 84px; }
+    .exchange-data-table th:nth-child(11),
+    .exchange-data-table td:nth-child(11) { width: 144px; }
+    .exchange-data-table th:nth-child(12),
+    .exchange-data-table td:nth-child(12) { width: 98px; }
+    .exchange-data-table th:nth-child(13),
+    .exchange-data-table td:nth-child(13) { width: 72px; }
+    .exchange-data-table th:nth-child(14),
+    .exchange-data-table td:nth-child(14) { width: 86px; }
+    .exchange-data-table th:nth-child(7),
+    .exchange-data-table td:nth-child(7),
+    .exchange-data-table th:nth-child(8),
+    .exchange-data-table td:nth-child(8),
+    .exchange-data-table th:nth-child(9),
+    .exchange-data-table td:nth-child(9),
+    .exchange-data-table th:nth-child(10),
+    .exchange-data-table td:nth-child(10),
+    .exchange-data-table th:nth-child(12),
+    .exchange-data-table td:nth-child(12),
+    .exchange-data-table th:nth-child(13),
+    .exchange-data-table td:nth-child(13),
+    .exchange-data-table th:nth-child(14),
+    .exchange-data-table td:nth-child(14) {
+      text-align: center;
+    }
+    .exchange-data-table .code-cell {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      color: #273444;
+      font-family: Arial, sans-serif;
+    }
+    .exchange-data-table .badge,
+    .exchange-data-table .link {
+      white-space: nowrap;
+    }
+    .writeoff-data-table {
+      table-layout: fixed;
+      min-width: 1460px;
+    }
+    .writeoff-data-table th,
+    .writeoff-data-table td {
+      padding: 12px 10px;
+    }
+    .writeoff-data-table th:nth-child(1),
+    .writeoff-data-table td:nth-child(1) { width: 140px; }
+    .writeoff-data-table th:nth-child(2),
+    .writeoff-data-table td:nth-child(2) { width: 130px; }
+    .writeoff-data-table th:nth-child(3),
+    .writeoff-data-table td:nth-child(3) { width: 150px; }
+    .writeoff-data-table th:nth-child(4),
+    .writeoff-data-table td:nth-child(4) { width: 170px; }
+    .writeoff-data-table th:nth-child(5),
+    .writeoff-data-table td:nth-child(5) { width: 126px; }
+    .writeoff-data-table th:nth-child(6),
+    .writeoff-data-table td:nth-child(6) { width: 88px; text-align: center; }
+    .writeoff-data-table th:nth-child(7),
+    .writeoff-data-table td:nth-child(7) { width: 128px; text-align: center; }
+    .writeoff-data-table th:nth-child(8),
+    .writeoff-data-table td:nth-child(8) { width: 112px; }
+    .writeoff-data-table th:nth-child(9),
+    .writeoff-data-table td:nth-child(9) { width: 150px; }
+    .writeoff-data-table th:nth-child(10),
+    .writeoff-data-table td:nth-child(10) { width: 110px; text-align: center; }
+    .writeoff-data-table th:nth-child(11),
+    .writeoff-data-table td:nth-child(11) { width: 120px; text-align: center; }
+    .writeoff-data-table .code-cell {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      font-family: Arial, sans-serif;
+    }
+    .modal-side-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .coupon-table {
+      max-width: 980px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .coupon-table table { table-layout: fixed; }
+    .coupon-table th,
+    .coupon-table td {
+      white-space: normal;
+      line-height: 1.5;
+      vertical-align: middle;
+    }
+    .coupon-table th:nth-child(1),
+    .coupon-table td:nth-child(1) { width: 16%; }
+    .coupon-table th:nth-child(2),
+    .coupon-table td:nth-child(2) { width: 14%; }
+    .coupon-table th:nth-child(3),
+    .coupon-table td:nth-child(3) {
+      width: 28%;
+      min-width: 260px;
+      word-break: keep-all;
+    }
+    .coupon-table th:nth-child(4),
+    .coupon-table td:nth-child(4),
+    .coupon-table th:nth-child(5),
+    .coupon-table td:nth-child(5),
+    .coupon-table th:nth-child(6),
+    .coupon-table td:nth-child(6) {
+      width: 10%;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .coupon-table th:nth-child(7),
+    .coupon-table td:nth-child(7) {
+      width: 12%;
+      min-width: 96px;
+      white-space: nowrap;
+    }
+    .limit-line {
+      display: grid;
+      grid-template-columns: auto 320px;
+      gap: 14px;
+      align-items: center;
+      max-width: 560px;
+    }
+    .limit-input {
+      display: grid;
+      grid-template-columns: 126px 1fr 36px;
+      align-items: center;
+      gap: 8px;
+    }
+    .coupon-select-modal {
+      width: min(1180px, calc(100vw - 48px));
+      max-height: calc(100vh - 24px);
+      display: flex;
+      flex-direction: column;
+    }
+    .coupon-select-body {
+      max-height: calc(100vh - 150px);
+      overflow: auto;
+    }
+    .coupon-select-filter {
+      display: grid;
+      grid-template-columns: 80px minmax(260px, 1fr) 86px minmax(240px, 360px) 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .coupon-select-filter input,
+    .coupon-select-filter select {
+      width: 100%;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+    }
+    .selected-coupon-row {
+      display: grid;
+      grid-template-columns: 132px minmax(260px, 1fr);
+      gap: 12px;
+      align-items: center;
+      max-width: 720px;
+      margin-top: 18px;
+    }
+    .product-list-table th,
+    .product-list-table td {
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .product-list-table {
+      min-width: 1780px;
+    }
+    .product-list-table th:nth-child(11),
+    .product-list-table td:nth-child(11) {
+      min-width: 300px;
+    }
+    .product-list-table th:nth-child(14),
+    .product-list-table td:nth-child(14) {
+      min-width: 180px;
+    }
+    .drawer-section-title {
+      grid-column: 1 / -1;
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 1px solid #e5ebf2;
+      color: #123152;
+      font-weight: 900;
+    }
+    .drawer-section-title:first-child {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+      <div class="field"><label>商品名称/编号</label><input placeholder="商品名称、商品编号"></div>
+      <div class="field"><label>兑换方式</label><select><option>全部方式</option><option>免费</option><option>积分</option></select></div>
+      <div class="field"><label>礼卷归属</label><select><option>全部归属</option><option>安居集团</option><option>集团总部</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option><option>合作商户</option></select></div>
+      <div class="field"><label>商品状态</label><select><option>全部状态</option><option>暂存</option><option>进行中</option><option>已过期</option><option>已结束</option><option>启用</option><option>禁用</option></select></div>
+      <div class="field"><label>状态</label><select><option>全部</option><option>正常</option><option>删除</option></select></div>
+      <div class="field"><label>创建时间</label><input value="2026-05-01 至 2026-06-05"></div>
+      <button class="btn primary">查询</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>商品列表</h3>
+        <div class="toolbar">
+          <button class="btn primary" data-edit="new">新增商品</button>
+          <button class="btn" data-delete="batch">批量删除</button>
+          <button class="btn">导出</button>
+        </div>
+      </div>
+      <div class="panel-bd">
+        <table class="product-list-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>商品编号</th>
+              <th>商品封面</th>
+              <th>商品名称</th>
+              <th>兑换方案</th>
+              <th>关联礼券</th>
+              <th>礼卷归属</th>
+              <th>商品状态</th>
+              <th>已兑换人数</th>
+              <th>剩余数量</th>
+              <th>已核销人数</th>
+              <th>兑换时间</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td>PR202606050018</td><td><img class="product-cover" src="../resources/products/housekeeping-coupon.svg" alt="2000积分兑家政服务券" data-preview-image="../resources/products/housekeeping-coupon.svg"></td><td>2000积分兑家政服务</td><td>2000 积分</td><td>2000积分兑家政服务券</td><td>安居集团</td><td><span class="badge green">进行中</span></td><td><span class="link" data-exchange-detail>162</span></td><td>838</td><td><span class="link" data-writeoff-detail>32</span></td><td>2026-06-05 00:00 至 2027-01-01 23:59</td><td>2026-06-05 09:30</td><td><span class="link" data-detail="2000积分兑家政服务">详情</span>　<span class="link" data-status="disable" data-product="2000积分兑家政服务">禁用</span>　<span class="link" data-delete="2000积分兑家政服务">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>PR202606020091</td><td><span class="thumb">礼</span></td><td>生日礼券</td><td>免费</td><td>生日礼券权益</td><td>集团总部</td><td><span class="badge gray">禁用</span></td><td><span class="link" data-exchange-detail>4</span></td><td>90</td><td><span class="link" data-writeoff-detail>1</span></td><td>2026-01-14 00:00 至 2026-01-31 23:59</td><td>2026-06-02 15:42</td><td><span class="link" data-detail="生日礼券">详情</span>　<span class="link" data-status="enable" data-product="生日礼券">启用</span>　<span class="link" data-delete="生日礼券">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>PR202604280052</td><td><span class="thumb">停</span></td><td>停车抵扣券</td><td>300 积分</td><td>停车缴费抵扣券</td><td>宝安项目</td><td><span class="badge red">已过期</span></td><td><span class="link" data-exchange-detail>38</span></td><td>0</td><td><span class="link" data-writeoff-detail>16</span></td><td>2026-04-28 00:00 至 2026-05-31 23:59</td><td>2026-04-28 14:08</td><td><span class="link" data-detail="停车抵扣券">详情</span>　<span class="link" data-delete="停车抵扣券">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>PR202604180038</td><td><span class="thumb">洁</span></td><td>深度保洁服务</td><td>免费</td><td>深度保洁体验券</td><td>合作商户</td><td><span class="badge gray">已结束</span></td><td><span class="link" data-exchange-detail>76</span></td><td>24</td><td><span class="link" data-writeoff-detail>58</span></td><td>2026-04-18 00:00 至 2026-05-18 23:59</td><td>2026-04-18 10:22</td><td><span class="link" data-detail="深度保洁服务">详情</span>　<span class="link" data-delete="深度保洁服务">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>PR202605300027</td><td><span class="thumb">搬</span></td><td>免费搬家服务</td><td>1200 积分</td><td>-</td><td>南山项目</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-exchange-detail>0</span></td><td>188</td><td><span class="link" data-writeoff-detail>0</span></td><td>用户输入</td><td>2026-05-30 11:20</td><td><span class="link" data-edit="免费搬家服务">修改</span>　<span class="link" data-delete="免费搬家服务">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>PR202605260066</td><td><span class="thumb">物</span></td><td>家政服务包</td><td>500 积分</td><td>家政服务免单券</td><td>福田项目</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-exchange-detail>0</span></td><td>9999</td><td><span class="link" data-writeoff-detail>0</span></td><td>用户输入</td><td>2026-05-26 10:16</td><td><span class="link" data-edit="家政服务包">修改</span>　<span class="link" data-delete="家政服务包">删除</span></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>共 86 条</span>
+          <span>每页</span>
+          <select><option>10 条</option><option selected>20 条</option><option>50 条</option></select>
+          <button class="page-btn">上一页</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">下一页</button>
+          <span>跳至</span><input value="1"><span>页</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="drawer" id="detailDrawer">
+    <div class="panel-hd"><h3>商品信息</h3><button class="btn" data-close-drawer>关闭</button></div>
+    <div class="panel-bd">
+      <div class="detail-list">
+        <div class="drawer-section-title">基本信息</div>
+        <span>商品编号</span><strong id="drawerNo">PR202606050018</strong>
+        <span>商品名称</span><strong id="drawerName">2000积分兑家政服务</strong>
+        <span>商品封面</span><strong id="drawerCover">product-housekeeping.png</strong>
+        <span>商品焦点图</span><strong id="drawerFocusImages">housekeeping-banner-1.png、housekeeping-banner-2.png</strong>
+        <span>使用说明</span><strong id="drawerDesc">兑换后进入会员券包，可用于停车缴费抵扣。</strong>
+        <span>礼卷归属</span><strong id="drawerOrg">安居集团</strong>
+
+        <div class="drawer-section-title">关联礼券</div>
+        <span>优惠券名称</span><strong id="drawerCoupon">2000积分兑家政服务券</strong>
+        <span>内部备注名</span><strong id="drawerCouponRemark">家政服务优惠</strong>
+        <span>有效期</span><strong id="drawerCouponValid">2026-06-05 00:00 至 2027-01-01 23:59</strong>
+        <span>发放数量</span><strong id="drawerCouponTotal">838</strong>
+        <span>已领取数量</span><strong id="drawerRedeemed">162</strong>
+        <span>剩余数量</span><strong id="drawerStock">838</strong>
+
+        <div class="drawer-section-title">兑换方案</div>
+        <span>兑换时间</span><strong id="drawerExchangeTime">2026-06-05 00:00 至 2027-01-01 23:59</strong>
+        <span>总兑换次数限制</span><strong id="drawerTotalLimit">开启，838 次</strong>
+        <span>每天兑换次数限制</span><strong id="drawerDailyLimit">开启，20 次</strong>
+        <span>兑换方案</span><strong id="drawerScheme">2000 积分</strong>
+
+        <div class="drawer-section-title">状态信息</div>
+        <span>商品状态</span><strong id="drawerStatus">进行中</strong>
+        <span>创建时间</span><strong id="drawerCreate">2026-06-05 09:30</strong>
+      </div>
+    </div>
+  </aside>
+
+  <div class="modal-mask" id="editModal">
+    <div class="modal level-edit-modal">
+      <div class="panel-hd"><h3 id="editTitle">新增商品</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd level-edit-body">
+        <div class="product-form">
+          <div class="form-section-title">基本信息</div>
+          <div class="product-row">
+            <div class="product-label required">商品名称</div>
+            <div class="product-control"><input id="editName" placeholder="请输入商品名称" value="2000积分兑家政服务"></div>
+          </div>
+          <div class="product-row">
+            <div class="product-label required">商品封面</div>
+            <div class="product-control">
+              <label class="upload-box"><input type="file" style="display:none"><span><strong>+</strong>上传图片</span></label>
+              <div class="product-hint">单张图片大小限制在5M内，建议图片尺寸146*146</div>
+            </div>
+          </div>
+          <div class="product-row">
+            <div class="product-label">商品焦点图 <span class="help-tip" data-tip="用于顶部轮播展示，最多上传5张。">?</span></div>
+            <div class="product-control">
+              <div class="upload-list">
+                <label class="upload-box"><input type="file" style="display:none"><span><strong>+</strong>上传图片</span></label>
+                <label class="upload-box"><input type="file" style="display:none"><span><strong>+</strong>上传图片</span></label>
+              </div>
+              <div class="product-hint">最多可上传5张图片，图片尺寸为1比1，大小不超过5MB</div>
+            </div>
+          </div>
+          <div class="product-row">
+            <div class="product-label required">使用说明</div>
+            <div class="product-control"><textarea id="editDesc" placeholder="请输入使用说明">兑换后进入会员券包，请在有效期内按券面说明使用。</textarea></div>
+          </div>
+          <div class="product-row">
+            <div class="product-label required">关联礼券</div>
+            <div class="product-control">
+              <button class="btn primary" type="button" data-open-coupon-modal>关联礼券</button>
+              <div class="coupon-table" style="margin-top:12px">
+                <table>
+                  <thead><tr><th>优惠券名称</th><th>内部备注名</th><th>有效期</th><th>发放数量</th><th>已领取数量</th><th>剩余数量</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr><td id="linkedCouponName">2000积分兑家政服务券</td><td>家政服务优惠</td><td>2026-06-05 00:00 至 2027-01-01 23:59</td><td id="linkedCouponTotal">838</td><td>162</td><td id="linkedCouponRemain">838</td><td><span class="link" data-edit-coupon-qty>编辑</span>　<span class="link">移除</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="product-row">
+            <div class="product-label required">礼卷归属</div>
+            <div class="product-control"><select id="editOrg"><option>安居集团</option><option>集团总部</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option><option>合作商户</option></select><div class="product-hint">用于区分商品可使用的礼卷归属范围，新增或修改商品时维护。</div></div>
+          </div>
+
+          <div class="form-section-title">兑换方案</div>
+          <div class="product-row">
+            <div class="product-label required">兑换时间</div>
+            <div class="product-control"><div class="grid cols-2"><input id="editStart" placeholder="开始日期"><input id="editEnd" placeholder="结束日期"></div></div>
+          </div>
+          <div class="product-row">
+            <div class="product-label">是否限制总兑换次数</div>
+            <div class="product-control">
+              <div class="limit-line">
+                <div class="radio-line"><label><input type="checkbox" id="limitTotalSwitch" checked> 开启</label></div>
+                <div class="limit-input" data-total-limit><strong>总兑换次数上限</strong><input id="totalLimitInput" placeholder="请输入"><span>次</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="product-row">
+            <div class="product-label">是否限制每天兑换次数</div>
+            <div class="product-control">
+              <div class="limit-line">
+                <div class="radio-line"><label><input type="checkbox" id="limitDailySwitch" checked> 开启</label></div>
+                <div class="limit-input" data-daily-limit><strong>每天兑换上限</strong><input id="dailyLimitInput" placeholder="请输入"><span>次</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="product-row">
+            <div class="product-label">兑换方案 <span class="help-tip" data-tip="商品支持免费兑换或积分兑换。">?</span></div>
+            <div class="product-control">
+              <div class="scheme-box">
+                <label class="radio-line"><input type="radio" name="exchangeType" value="free"> 免费</label>
+                <label class="radio-line"><input type="radio" name="exchangeType" value="points" checked> 积分</label>
+                <input id="editPoints" placeholder="请输入">
+                <span>积分</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn" data-close-modal>暂存</button><button class="btn primary" data-close-modal>发布</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="couponModal">
+    <div class="modal coupon-select-modal">
+      <div class="panel-hd"><h3>关联礼券</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd coupon-select-body">
+        <div class="coupon-select-filter">
+          <strong>搜索：</strong>
+          <input placeholder="请输入礼券名称关键字">
+          <strong>礼券类型：</strong>
+          <select><option>全部</option><option>停车礼券</option><option>家政礼券</option><option>物业礼券</option></select>
+          <span></span>
+          <button class="btn primary">查询</button>
+          <button class="btn">重置</button>
+        </div>
+        <div class="toolbar" style="justify-content:flex-end; margin-bottom:12px">
+          <button class="btn primary" type="button" data-coupon-manage>礼券管理</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>礼券名称</th>
+              <th>礼券id</th>
+              <th>礼券类型</th>
+              <th>有效期</th>
+              <th>总数量</th>
+              <th>已锁定</th>
+              <th>剩余库存</th>
+              <th>最后操作人</th>
+              <th>最后操作时间</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#eaf8ff">
+              <td><input type="radio" name="couponPick" checked></td>
+              <td>2000积分兑家政服务券</td>
+              <td>COUPON_V8XvepSN</td>
+              <td>停车礼券</td>
+              <td>2026-06-05 00:00 至 2027-01-01 23:59</td>
+              <td>838</td>
+              <td>162</td>
+              <td>838</td>
+              <td>swtest35</td>
+              <td>2026-01-20 10:05:56</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>总记录：1</span>
+          <button class="page-btn">上一页</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">下一页</button>
+          <select><option>10 条/页</option></select>
+        </div>
+        <div class="selected-coupon-row">
+          <div class="product-label required">活动发放数量：</div>
+          <div class="product-control"><input id="couponIssueQty" value="838"></div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn primary" data-confirm-coupon>确认</button><button class="btn" data-close-modal>取消</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="couponQtyModal">
+    <div class="modal">
+      <div class="panel-hd"><h3>编辑发放数量</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="detail-list">
+          <span>优惠券名称</span><strong>2000积分兑家政服务券</strong>
+          <span>已领取数量</span><strong>162</strong>
+          <span>剩余数量</span><strong id="qtyRemainText">838</strong>
+        </div>
+        <div class="field" style="margin-top:18px">
+          <label><span style="color:var(--red)">*</span> 发放数量</label>
+          <input id="couponQtyInput" value="838">
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn primary" data-save-coupon-qty>确认</button><button class="btn" data-close-modal>取消</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="deleteModal">
+    <div class="modal">
+      <div class="panel-hd"><h3 id="deleteTitle">删除商品</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice" id="deleteNotice"><strong>删除商品</strong>删除后商品列表不再展示，请确认无进行中的兑换记录。</div>
+        <div class="field" style="margin-top:12px"><label>删除原因</label><input value="商品配置下线"></div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认删除</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="statusModal">
+    <div class="modal">
+      <div class="panel-hd"><h3 id="statusTitle">商品状态设置</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice" id="statusNotice"><strong>禁用商品</strong>禁用后商品不再在C端展示，用户不可继续兑换。</div>
+        <div class="field" style="margin-top:12px"><label>操作原因</label><input id="statusReason" value="商品配置调整"></div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="imagePreviewModal">
+    <div class="modal image-preview-modal">
+      <div class="panel-hd"><h3>图片预览</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd image-preview-wrap">
+        <img id="previewImage" src="../resources/products/housekeeping-coupon.svg" alt="2000积分兑家政服务券">
+      </div>
+      <div class="modal-ft"><button class="btn primary" data-close-modal>关闭</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="exchangeDetailModal">
+    <div class="modal detail-modal-lg">
+      <div class="panel-hd"><h3>兑换详情</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd detail-modal-body">
+        <div class="detail-modal-filter">
+          <input placeholder="请输入微信昵称/用户名/电话">
+          <input placeholder="请输入会员ID">
+          <select><option>全部核销状态</option><option>未核销</option><option>已核销</option></select>
+          <select><option>全部兑换方式</option><option>积分支付</option><option>免费兑换</option></select>
+          <button class="btn primary">查询</button>
+          <button class="btn">重置</button>
+        </div>
+        <div class="modal-side-actions">
+          <button class="btn">批量核销</button>
+          <button class="btn primary">导出列表</button>
+        </div>
+        <table class="detail-data-table exchange-data-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>微信昵称</th>
+              <th>用户名</th>
+              <th>会员ID</th>
+              <th>商品名称</th>
+              <th>核销码</th>
+              <th>联系方式</th>
+              <th>兑换方式</th>
+              <th>兑换金额(积分/元)</th>
+              <th>商品核销状态</th>
+              <th>核销人</th>
+              <th>核销时间</th>
+              <th>商品到期状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td>这一刻</td><td>这一刻·骏丰大健康测试</td><td>AJ202605180018</td><td>2000积分兑家政服务</td><td class="code-cell">h9Oa1Wzf,W9iyAZOL</td><td>18335831328</td><td>积分支付</td><td>2000</td><td><span class="badge green">未核销</span></td><td>--</td><td>--</td><td><span class="badge red">已过期</span></td><td><span class="link">核销</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>这一刻</td><td>这一刻·骏丰大健康测试</td><td>AJ202605180018</td><td>2000积分兑家政服务</td><td class="code-cell">dommnJd6</td><td>18335831328</td><td>积分支付</td><td>2000</td><td><span class="badge green">未核销</span></td><td>--</td><td>--</td><td><span class="badge red">已过期</span></td><td><span class="link">核销</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>这一刻</td><td>这一刻·骏丰大健康测试</td><td>AJ202605180018</td><td>2000积分兑家政服务</td><td class="code-cell">dESCThMR,606f2nFa,z5PmcgRg,ksZnt7jn,D8MHfkJR</td><td>18335831328</td><td>积分支付</td><td>2000</td><td><span class="badge red">已核销</span></td><td>swtest35</td><td>2026-12-28 16:54:18</td><td><span class="badge red">已过期</span></td><td><span class="badge gray">已核销</span></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>总记录：162</span>
+          <button class="page-btn">上一页</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">下一页</button>
+          <select><option>10 条/页</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="writeoffDetailModal">
+    <div class="modal detail-modal-lg">
+      <div class="panel-hd"><h3>核销详情</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd detail-modal-body">
+        <div class="detail-modal-filter">
+          <input placeholder="请输入微信昵称/用户名/电话">
+          <input placeholder="请输入会员ID">
+          <select><option>全部领取方式</option><option>案场</option><option>线上</option></select>
+          <span></span>
+          <button class="btn primary">查询</button>
+          <button class="btn">重置</button>
+        </div>
+        <div class="modal-side-actions">
+          <button class="btn primary">导出列表</button>
+        </div>
+        <table class="detail-data-table writeoff-data-table">
+          <thead>
+            <tr>
+              <th>微信昵称</th>
+              <th>用户名</th>
+              <th>会员ID</th>
+              <th>商品名称</th>
+              <th>核销码</th>
+              <th>联系方式</th>
+              <th>兑换方式</th>
+              <th>兑换金额(积分/元)</th>
+              <th>核销人</th>
+              <th>核销时间</th>
+              <th>客户领取方式</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>这一刻</td><td>这一刻·骏丰大健康测试</td><td>AJ202605180018</td><td>2000积分兑家政服务</td><td class="code-cell">YtyYkxyP</td><td>18335831328</td><td>积分支付</td><td>2000</td><td>swtest35</td><td>2025-12-29 14:23:32</td><td>案场</td></tr>
+            <tr><td>这一刻</td><td>这一刻·骏丰大健康测试</td><td>AJ202605180018</td><td>2000积分兑家政服务</td><td class="code-cell">HX202606050032</td><td>18335831328</td><td>积分支付</td><td>2000</td><td>swtest35</td><td>2026-06-08 09:18:26</td><td>线上</td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>总记录：32</span>
+          <button class="page-btn">上一页</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">下一页</button>
+          <select><option>10 条/页</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const productData = {
+      "2000积分兑家政服务": ["PR202606050018", "2000积分兑家政服务", "2000 积分", "2000积分兑家政服务券", "安居集团", "838", "162", "进行中", "2026-06-05 09:30", "product-housekeeping.png", "兑换后进入会员券包，可预约家政服务履约。", "2000"],
+      "生日礼券": ["PR202606020091", "生日礼券", "免费", "生日礼券权益", "集团总部", "90", "4", "禁用", "2026-06-02 15:42", "product-birthday.png", "会员生日月可免费兑换一次生日礼券。", ""],
+      "停车抵扣券": ["PR202604280052", "停车抵扣券", "300 积分", "停车缴费抵扣券", "宝安项目", "0", "38", "已过期", "2026-04-28 14:08", "product-parking.png", "该商品已超过兑换有效期，不再支持用户兑换。", "300"],
+      "深度保洁服务": ["PR202604180038", "深度保洁服务", "免费", "深度保洁体验券", "合作商户", "24", "76", "已结束", "2026-04-18 10:22", "product-cleaning.png", "活动已结束，保留历史兑换和核销数据用于查询。", ""],
+      "免费搬家服务": ["PR202605300027", "免费搬家服务", "1200 积分", "-", "南山项目", "800", "142", "暂存", "2026-05-30 11:20", "product-moving.png", "项目住户可使用积分兑换搬家服务。", "1200"],
+      "家政服务包": ["PR202605260066", "家政服务包", "500 积分", "家政服务免单券", "福田项目", "1,000", "0", "暂存", "2026-05-26 10:16", "product-cleaning.png", "兑换后由合作家政服务商联系履约。", "500"]
+    };
+    const productDetailData = {
+      "2000积分兑家政服务": {
+        focusImages: "housekeeping-banner-1.png、housekeeping-banner-2.png",
+        couponRemark: "家政服务优惠",
+        couponValid: "2026-06-05 00:00 至 2027-01-01 23:59",
+        couponTotal: "838",
+        exchangeTime: "2026-06-05 00:00 至 2027-01-01 23:59",
+        totalLimit: "开启，838 次",
+        dailyLimit: "开启，20 次"
+      },
+      "生日礼券": {
+        focusImages: "birthday-banner.png",
+        couponRemark: "生日权益兑换",
+        couponValid: "2026-01-14 00:00 至 2026-01-31 23:59",
+        couponTotal: "94",
+        exchangeTime: "2026-01-14 00:00 至 2026-01-31 23:59",
+        totalLimit: "开启，94 次",
+        dailyLimit: "关闭"
+      },
+      "停车抵扣券": {
+        focusImages: "parking-banner.png",
+        couponRemark: "停车缴费活动",
+        couponValid: "2026-04-28 00:00 至 2026-05-31 23:59",
+        couponTotal: "38",
+        exchangeTime: "2026-04-28 00:00 至 2026-05-31 23:59",
+        totalLimit: "开启，38 次",
+        dailyLimit: "开启，5 次"
+      },
+      "深度保洁服务": {
+        focusImages: "cleaning-banner-1.png、cleaning-banner-2.png",
+        couponRemark: "保洁服务体验",
+        couponValid: "2026-04-18 00:00 至 2026-05-18 23:59",
+        couponTotal: "100",
+        exchangeTime: "2026-04-18 00:00 至 2026-05-18 23:59",
+        totalLimit: "开启，100 次",
+        dailyLimit: "开启，10 次"
+      },
+      "免费搬家服务": {
+        focusImages: "moving-banner.png",
+        couponRemark: "--",
+        couponValid: "用户输入",
+        couponTotal: "800",
+        exchangeTime: "用户输入",
+        totalLimit: "开启，800 次",
+        dailyLimit: "开启，8 次"
+      },
+      "家政服务包": {
+        focusImages: "cleaning-pack-banner.png",
+        couponRemark: "家政免单活动",
+        couponValid: "用户输入",
+        couponTotal: "1,000",
+        exchangeTime: "用户输入",
+        totalLimit: "开启，1,000 次",
+        dailyLimit: "开启，12 次"
+      }
+    };
+
+    const drawer = document.getElementById("detailDrawer");
+    document.querySelectorAll("[data-detail]").forEach(el => {
+      el.addEventListener("click", () => {
+        const data = productData[el.dataset.detail] || productData["2000积分兑家政服务"];
+        const detail = productDetailData[el.dataset.detail] || productDetailData["2000积分兑家政服务"];
+        ["No", "Name", "Scheme", "Coupon", "Org", "Stock", "Redeemed", "Status", "Create", "Cover", "Desc"].forEach((key, index) => {
+          document.getElementById(`drawer${key}`).textContent = data[index];
+        });
+        document.getElementById("drawerFocusImages").textContent = detail.focusImages;
+        document.getElementById("drawerCouponRemark").textContent = detail.couponRemark;
+        document.getElementById("drawerCouponValid").textContent = detail.couponValid;
+        document.getElementById("drawerCouponTotal").textContent = detail.couponTotal;
+        document.getElementById("drawerExchangeTime").textContent = detail.exchangeTime;
+        document.getElementById("drawerTotalLimit").textContent = detail.totalLimit;
+        document.getElementById("drawerDailyLimit").textContent = detail.dailyLimit;
+        drawer.classList.add("open");
+      });
+    });
+    document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
+
+    function syncExchangeType() {
+      const isFree = document.querySelector("input[name='exchangeType'][value='free']").checked;
+      const pointsInput = document.getElementById("editPoints");
+      pointsInput.disabled = isFree;
+      if (isFree) pointsInput.value = "";
+      pointsInput.placeholder = isFree ? "免费兑换无需积分" : "请输入";
+    }
+
+    function syncLimitInputs() {
+      document.querySelector("[data-total-limit]").style.display = document.getElementById("limitTotalSwitch").checked ? "grid" : "none";
+      document.querySelector("[data-daily-limit]").style.display = document.getElementById("limitDailySwitch").checked ? "grid" : "none";
+    }
+
+    document.querySelectorAll("input[name='exchangeType']").forEach(el => {
+      el.addEventListener("change", syncExchangeType);
+    });
+
+    document.querySelectorAll("[data-edit]").forEach(el => {
+      el.addEventListener("click", () => {
+        const data = productData[el.dataset.edit];
+        document.getElementById("editTitle").textContent = data ? "修改商品" : "新增商品";
+        if (data) {
+          document.getElementById("editName").value = data[1];
+          document.getElementById("editOrg").value = data[4];
+          document.getElementById("editDesc").value = data[10];
+          document.getElementById("editStart").value = "";
+          document.getElementById("editEnd").value = "";
+          document.getElementById("totalLimitInput").value = "";
+          document.getElementById("dailyLimitInput").value = "";
+          document.getElementById("editPoints").value = data[11] || "";
+          document.querySelector(`input[name='exchangeType'][value='${data[2] === "免费" ? "free" : "points"}']`).checked = true;
+          syncExchangeType();
+        }
+        document.getElementById("editModal").classList.add("open");
+      });
+    });
+
+    document.getElementById("limitTotalSwitch").addEventListener("change", syncLimitInputs);
+    document.getElementById("limitDailySwitch").addEventListener("change", syncLimitInputs);
+    document.querySelector("[data-open-coupon-modal]").addEventListener("click", () => document.getElementById("couponModal").classList.add("open"));
+    document.querySelector("[data-coupon-manage]").addEventListener("click", () => {
+      const target = { title: "优惠券管理", url: "files/coupon-manage.html" };
+      if (window.parent && window.parent !== window && typeof window.parent.openTab === "function") {
+        window.parent.openTab(target);
+        return;
+      }
+      window.location.href = "coupon-manage.html";
+    });
+    document.querySelector("[data-confirm-coupon]").addEventListener("click", () => {
+      const qty = document.getElementById("couponIssueQty").value || "838";
+      document.getElementById("linkedCouponName").textContent = "2000积分兑家政服务券";
+      document.getElementById("linkedCouponTotal").textContent = qty;
+      document.getElementById("linkedCouponRemain").textContent = qty;
+      document.getElementById("totalLimitInput").value = qty;
+      document.getElementById("couponModal").classList.remove("open");
+    });
+    document.querySelector("[data-edit-coupon-qty]").addEventListener("click", () => {
+      const qty = document.getElementById("linkedCouponTotal").textContent;
+      document.getElementById("couponQtyInput").value = qty;
+      document.getElementById("qtyRemainText").textContent = document.getElementById("linkedCouponRemain").textContent;
+      document.getElementById("couponQtyModal").classList.add("open");
+    });
+    document.querySelector("[data-save-coupon-qty]").addEventListener("click", () => {
+      const qty = document.getElementById("couponQtyInput").value || "838";
+      document.getElementById("linkedCouponTotal").textContent = qty;
+      document.getElementById("linkedCouponRemain").textContent = qty;
+      document.getElementById("qtyRemainText").textContent = qty;
+      document.getElementById("couponIssueQty").value = qty;
+      document.getElementById("totalLimitInput").value = qty;
+      document.getElementById("couponQtyModal").classList.remove("open");
+    });
+    document.querySelectorAll("[data-preview-image]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("previewImage").src = el.dataset.previewImage;
+        document.getElementById("imagePreviewModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-exchange-detail]").forEach(el => {
+      el.addEventListener("click", () => document.getElementById("exchangeDetailModal").classList.add("open"));
+    });
+    document.querySelectorAll("[data-writeoff-detail]").forEach(el => {
+      el.addEventListener("click", () => document.getElementById("writeoffDetailModal").classList.add("open"));
+    });
+
+    document.querySelectorAll("[data-delete]").forEach(el => {
+      el.addEventListener("click", () => {
+        const isBatch = el.dataset.delete === "batch";
+        document.getElementById("deleteTitle").textContent = isBatch ? "批量删除商品" : "删除商品";
+        document.getElementById("deleteNotice").innerHTML = isBatch
+          ? "<strong>批量删除商品</strong>将删除已勾选商品，删除后商品列表不再展示。"
+          : `<strong>删除商品</strong>请确认删除 ${el.dataset.delete}，删除后商品列表不再展示。`;
+        document.getElementById("deleteModal").classList.add("open");
+      });
+    });
+
+    const statusCopy = {
+      enable: ["启用商品", "启用后商品可在C端展示，符合兑换条件的用户可继续兑换。", "商品恢复上线"],
+      disable: ["禁用商品", "禁用后商品不再在C端展示，用户不可继续兑换。", "商品配置调整"]
+    };
+    document.querySelectorAll("[data-status]").forEach(el => {
+      el.addEventListener("click", () => {
+        const copy = statusCopy[el.dataset.status] || statusCopy.disable;
+        const productName = el.dataset.product || "该商品";
+        document.getElementById("statusTitle").textContent = copy[0];
+        document.getElementById("statusNotice").innerHTML = `<strong>${copy[0]}</strong>请确认${copy[0].replace("商品", "")} ${productName}。${copy[1]}`;
+        document.getElementById("statusReason").value = copy[2];
+        document.getElementById("statusModal").classList.add("open");
+      });
+    });
+
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+    syncExchangeType();
+    syncLimitInputs();
+  </script>
+</body>
+</html>

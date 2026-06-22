@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>小程序-积分换卷</title><link rel="stylesheet" href="../resources/style.css"><link rel="stylesheet" href="../resources/mini.css"></head>
+<body>
+  <div class="mini-stage"><div class="phone">
+    <div class="phone-top"><div class="status"><span>9:41</span><span>微信</span><span>•••</span></div><div class="title-row"><h1>积分换卷</h1><span class="tag red">2张将过期</span></div></div>
+    <div class="mini-body">
+      <div class="tabs coupon-tabs">
+        <span class="tab active" onclick="filterCoupons('unused', this)">待使用</span>
+        <span class="tab" onclick="filterCoupons('used', this)">已使用</span>
+        <span class="tab" onclick="filterCoupons('expired', this)">已过期</span>
+        <span class="tab" onclick="filterCoupons('disabled', this)">不可用</span>
+      </div>
+      <div class="mini-card summary-card">
+        <div class="ticket-list">
+          <div class="ticket-card coupon-item" data-status="unused"><div class="ticket-left amount"><strong>家</strong></div><div class="ticket-main"><b>2000积分兑家政服务</b><span>上门保洁、维修服务可用</span></div><button onclick="couponAction(this)">兑换</button></div>
+          <div class="ticket-card coupon-item" data-status="unused"><div class="ticket-left amount"><strong>礼</strong></div><div class="ticket-main"><b>5000积分兑礼物</b><span>精选实物礼品兑换</span></div><button onclick="couponAction(this)">兑换</button></div>
+          <div class="ticket-card coupon-item" data-status="unused"><div class="ticket-left amount"><strong>场</strong></div><div class="ticket-main"><b>500积分兑场地预约优先</b><span>活动场地预约优先权益</span></div><button onclick="couponAction(this)">兑换</button></div>
+          <div class="ticket-card coupon-item" data-status="unused"><div class="ticket-left amount"><strong>三</strong></div><div class="ticket-main"><b>第三方礼卷</b><span>合作商户服务礼卷</span></div><button onclick="couponAction(this)">兑换</button></div>
+          <div class="ticket-card coupon-item" data-status="used"><div class="ticket-left amount"><strong>家</strong></div><div class="ticket-main"><b>2000积分兑家政服务</b><span>2026.05.20 已核销</span></div><button>已使用</button></div>
+          <div class="ticket-card coupon-item" data-status="expired"><div class="ticket-left amount"><strong>礼</strong></div><div class="ticket-main"><b>5000积分兑礼物</b><span>有效期至2026.04.30</span></div><button>已过期</button></div>
+          <div class="ticket-card coupon-item" data-status="disabled"><div class="ticket-left amount"><strong>三</strong></div><div class="ticket-main"><b>第三方礼卷</b><span>合作商户暂不可用</span></div><button>不可用</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav"><div class="nav-item" onclick="location.href='mini-member.html'"><i></i>会员</div><div class="nav-item" onclick="location.href='mini-notifications.html'"><i></i>通知</div></div>
+  </div></div>
+  <div class="use-modal" id="couponModal">
+    <div class="use-dialog">
+      <h3>优惠卷使用</h3>
+      <div class="qr-code">QR</div>
+      <p>请向商户出示二维码完成核销。适用范围：安居物业缴费、停车服务；核销后优惠卷状态更新为已使用。</p>
+      <button class="btn-mini primary" onclick="closeCouponModal()">知道了</button>
+    </div>
+  </div>
+  <script>
+    function filterCoupons(status, tab) {
+      document.querySelectorAll('.coupon-tabs .tab').forEach(item => item.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.coupon-item').forEach(item => {
+        item.style.display = item.dataset.status === status ? 'grid' : 'none';
+      });
+    }
+    filterCoupons('unused', document.querySelector('.coupon-tabs .tab.active'));
+    function couponAction(btn) {
+      if (btn.textContent.trim() === '兑换') {
+        btn.textContent = '待使用';
+        return;
+      }
+      document.getElementById('couponModal').classList.add('show');
+    }
+    function closeCouponModal() {
+      document.getElementById('couponModal').classList.remove('show');
+    }
+  </script>
+</body>
+</html>

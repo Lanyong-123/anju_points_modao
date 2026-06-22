@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>客户满意度管理</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .satisfaction-filter {
+      grid-template-columns: 1.2fr 1fr auto auto;
+    }
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(360px, .75fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .trend-chart {
+      min-height: 300px;
+      padding: 16px 10px 0;
+    }
+    .trend-svg {
+      width: 100%;
+      height: 220px;
+      display: block;
+    }
+    .axis-labels {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+      color: #667789;
+      font-size: 12px;
+      text-align: center;
+    }
+    .legend-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      color: #34465c;
+      font-size: 12px;
+    }
+    .legend-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-row i {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .pie-layout {
+      display: grid;
+      grid-template-columns: 210px minmax(0, 1fr);
+      gap: 20px;
+      align-items: center;
+      min-height: 300px;
+    }
+    .pie-chart {
+      width: 190px;
+      height: 190px;
+      justify-self: center;
+      border-radius: 50%;
+      background: conic-gradient(#16845b 0 68%, #d7a84d 68% 88%, #b81f2d 88% 100%);
+      box-shadow: inset 0 0 0 34px #fff, 0 0 0 1px #dfe6ee;
+      position: relative;
+    }
+    .pie-chart::after {
+      content: "满意度分布";
+      position: absolute;
+      inset: 58px;
+      display: grid;
+      place-items: center;
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 800;
+      text-align: center;
+    }
+    .pie-list {
+      display: grid;
+      gap: 12px;
+      color: #34465c;
+      font-size: 13px;
+    }
+    .pie-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #dfe6ee;
+    }
+    .pie-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+    .pie-item span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 700;
+    }
+    .pie-item i {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+    .pie-item strong {
+      color: var(--navy);
+      font-size: 16px;
+    }
+    .drill-modal {
+      width: min(920px, calc(100vw - 48px));
+    }
+    .drill-modal .panel-bd {
+      max-height: calc(100vh - 180px);
+      overflow: auto;
+    }
+    @media (max-width: 1180px) {
+      .content-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 980px) {
+      .satisfaction-filter { grid-template-columns: 1fr; }
+      .pie-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter satisfaction-filter">
+      <div class="field"><label>统计时间</label><input value="2026-06-01 至 2026-06-10"></div>
+      <div class="field"><label>所属组织</label><select><option>全部组织</option><option>安居集团</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option></select></div>
+      <button class="btn primary">查询</button>
+      <button class="btn">重置</button>
+    </div>
+
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-hd">
+          <h3>满意度趋势</h3>
+        </div>
+        <div class="panel-bd">
+          <div class="trend-chart">
+            <svg class="trend-svg" viewBox="0 0 980 220" preserveAspectRatio="none" aria-label="满意数、一般数、不满意数趋势">
+              <defs>
+                <pattern id="sGrid" width="1" height="44" patternUnits="userSpaceOnUse">
+                  <path d="M 0 44 H 980" fill="none" stroke="#e5edf4" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect x="0" y="0" width="980" height="220" fill="url(#sGrid)"/>
+              <polyline points="18,112 176,104 334,96 492,84 650,72 808,62 962,54" fill="none" stroke="#16845b" stroke-width="4"/>
+              <polyline points="18,148 176,142 334,134 492,130 650,124 808,118 962,110" fill="none" stroke="#d7a84d" stroke-width="4"/>
+              <polyline points="18,174 176,166 334,158 492,164 650,154 808,146 962,138" fill="none" stroke="#b81f2d" stroke-width="4"/>
+            </svg>
+            <div class="axis-labels"><span>2025-12</span><span>2026-01</span><span>2026-02</span><span>2026-03</span><span>2026-04</span><span>2026-05</span><span>2026-06</span></div>
+            <div class="legend-row">
+              <span><i style="background:#16845b"></i>满意数</span>
+              <span><i style="background:#d7a84d"></i>一般数</span>
+              <span><i style="background:#b81f2d"></i>不满意数</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><h3>满意度分布</h3></div>
+        <div class="panel-bd">
+          <div class="pie-layout">
+            <div class="pie-chart"></div>
+            <div class="pie-list">
+              <div class="pie-item"><span><i style="background:#16845b"></i>满意数</span><strong>42,860</strong></div>
+              <div class="pie-item"><span><i style="background:#d7a84d"></i>一般数</span><strong>8,316</strong></div>
+              <div class="pie-item"><span><i style="background:#b81f2d"></i>不满意数</span><strong>3,204</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-hd">
+        <h3>组织满意度清单</h3>
+        <div class="toolbar"><button class="btn">导出清单</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr>
+              <th>组织名称</th>
+              <th>满意数</th>
+              <th>一般数</th>
+              <th>不满意数</th>
+              <th>满意率</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="link" data-drill="安居集团">安居集团</span></td><td>42,860</td><td>8,316</td><td>3,204</td><td><span class="badge green">88.6%</span></td></tr>
+            <tr><td><span class="link" data-drill="南山项目">南山项目</span></td><td>12,640</td><td>2,086</td><td>716</td><td><span class="badge green">90.4%</span></td></tr>
+            <tr><td><span class="link" data-drill="福田项目">福田项目</span></td><td>10,928</td><td>2,314</td><td>982</td><td><span class="badge green">86.7%</span></td></tr>
+            <tr><td><span class="link" data-drill="宝安项目">宝安项目</span></td><td>8,532</td><td>1,902</td><td>1,016</td><td><span class="badge gold">84.1%</span></td></tr>
+            <tr><td><span class="link" data-drill="商业运营部">商业运营部</span></td><td>6,318</td><td>1,126</td><td>490</td><td><span class="badge green">89.8%</span></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 32 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="drillModal">
+    <div class="modal drill-modal">
+      <div class="panel-hd"><h3 id="drillTitle">组织下钻</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <table>
+          <thead><tr><th>组织名称</th><th>满意数</th><th>一般数</th><th>不满意数</th><th>满意率</th></tr></thead>
+          <tbody>
+            <tr><td>一区服务中心</td><td>3,286</td><td>612</td><td>184</td><td><span class="badge green">91.4%</span></td></tr>
+            <tr><td>二区服务中心</td><td>2,946</td><td>584</td><td>236</td><td><span class="badge green">89.0%</span></td></tr>
+            <tr><td>商业配套组</td><td>1,826</td><td>426</td><td>214</td><td><span class="badge gold">85.5%</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>关闭</button></div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll("[data-drill]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("drillTitle").textContent = `${el.dataset.drill} - 下级组织满意度`;
+        document.getElementById("drillModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+  </script>
+</body>
+</html>

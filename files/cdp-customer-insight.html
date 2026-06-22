@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>客户画像</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .insight-filter {
+      grid-template-columns: 1.2fr 1fr 1fr 1fr auto auto;
+    }
+    .insight-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+    .profile-drawer {
+      width: min(980px, calc(100vw - 48px));
+    }
+    .profile-drawer .panel-bd {
+      overflow: auto;
+    }
+    .customer-table {
+      width: 100%;
+      min-width: 0;
+      table-layout: fixed;
+      font-size: 13px;
+    }
+    .customer-table th,
+    .customer-table td {
+      padding: 11px 10px;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      vertical-align: top;
+    }
+    .customer-table th:nth-child(1),
+    .customer-table td:nth-child(1) { width: 150px; }
+    .customer-table th:nth-child(2),
+    .customer-table td:nth-child(2) { width: 90px; }
+    .customer-table th:nth-child(3),
+    .customer-table td:nth-child(3) { width: 150px; }
+    .customer-table th:nth-child(4),
+    .customer-table td:nth-child(4) { width: 180px; }
+    .customer-table th:nth-child(5),
+    .customer-table td:nth-child(5) { width: 100px; }
+    .customer-table th:nth-child(6),
+    .customer-table td:nth-child(6) { width: 110px; }
+    .customer-table th:nth-child(7),
+    .customer-table td:nth-child(7) { width: auto; }
+    .customer-table th:nth-child(8),
+    .customer-table td:nth-child(8) {
+      width: 72px;
+      text-align: left;
+    }
+    .customer-table tr.active td {
+      background: #fff7f7;
+    }
+    .customer-table .tag-list {
+      gap: 4px;
+    }
+    .profile-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 14px;
+    }
+    .identity-card {
+      min-height: 130px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .identity-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .identity-title h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 18px;
+    }
+    .identity-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 16px;
+      font-size: 13px;
+    }
+    .identity-grid span {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .identity-grid strong {
+      color: var(--ink);
+    }
+    .score-card {
+      width: 220px;
+      min-height: 130px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .score-card strong {
+      color: var(--navy);
+      font-size: 36px;
+      line-height: 1;
+    }
+    .score-card span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .feature-card {
+      min-height: 138px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .feature-card h4 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 15px;
+    }
+    .feature-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: #36485c;
+      font-size: 13px;
+    }
+    .feature-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #dfe6ee;
+    }
+    .feature-list li:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+    .visual-panel {
+      margin-bottom: 14px;
+    }
+    .visual-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .chart-card {
+      min-height: 260px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .chart-card h4 {
+      margin: 0 0 12px;
+      color: var(--navy);
+      font-size: 14px;
+    }
+    .pie-wrap {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+    }
+    .pie-chart {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: conic-gradient(#1f5f99 0 22%, #16845b 22% 42%, #7a5fc8 42% 58%, #b81f2d 58% 72%, #c9a35b 72% 92%, #8a99a8 92% 100%);
+      box-shadow: inset 0 0 0 28px #fff, 0 0 0 1px #dfe6ee;
+    }
+    .legend-list {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 13px;
+    }
+    .legend-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: #36485c;
+    }
+    .legend-list i {
+      width: 10px;
+      height: 10px;
+      display: inline-block;
+      margin-right: 6px;
+      border-radius: 2px;
+      vertical-align: -1px;
+    }
+    .trend-chart {
+      height: 178px;
+      position: relative;
+      border-left: 1px solid #cfd9e5;
+      border-bottom: 1px solid #cfd9e5;
+      background:
+        linear-gradient(to bottom, #edf2f7 1px, transparent 1px) 0 0 / 100% 44px,
+        linear-gradient(to right, #f4f7fb 1px, transparent 1px) 0 0 / 16.66% 100%;
+    }
+    .trend-line {
+      position: absolute;
+      inset: 16px 18px 22px 18px;
+    }
+    .trend-line svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .trend-labels {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+    .trend-summary {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .tag-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .tag-box {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .tag-box h4 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 14px;
+    }
+    .analysis-table th,
+    .analysis-table td {
+      padding: 10px 8px;
+      white-space: normal;
+      vertical-align: top;
+    }
+    .tag-box .analysis-table {
+      font-size: 12px;
+    }
+    .tag-box .analysis-table th,
+    .tag-box .analysis-table td {
+      padding: 9px 7px;
+    }
+    .report-modal {
+      width: min(980px, calc(100vw - 48px));
+      max-height: calc(100vh - 40px);
+      display: flex;
+      flex-direction: column;
+    }
+    .report-modal .panel-bd {
+      max-height: calc(100vh - 150px);
+      overflow: auto;
+    }
+    .report-paper {
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+    .report-paper h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter insight-filter">
+      <div class="field"><label>客户关键词</label><input placeholder="姓名/手机号/OneID/会员ID" value="李明"></div>
+      <div class="field"><label>身份认证状态</label><select><option>全部状态</option><option>已认证</option><option>未认证</option></select></div>
+      <div class="field"><label>来源渠道</label><select><option>全部渠道</option><option>小程序注册</option><option>线下导入</option><option>智能客服</option><option>第三方系统</option></select></div>
+      <div class="field"><label>客户类型</label><select><option>全部类型</option><option>项目住户</option><option>企业客户</option><option>政府关联客户</option></select></div>
+      <button class="btn primary">查询</button>
+      <button class="btn">重置</button>
+    </div>
+
+    <div class="insight-layout">
+      <div class="panel">
+        <div class="panel-hd"><h3>客户列表</h3></div>
+        <div class="panel-bd">
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>积分账户</th>
+                <th>会员名称</th>
+                <th>会员ID</th>
+                <th>唯一标识 OneID</th>
+                <th>认证状态</th>
+                <th>会员等级</th>
+                <th>核心标签</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-customer-row="liming"><td>PA202605180018</td><td>李明</td><td>AJ202605180018</td><td>ONE202606080018</td><td><span class="badge green">已认证</span></td><td>黑金会员</td><td><div class="tag-list"><span class="tag-chip">项目住户</span><span class="tag-chip manual">高价值</span></div></td><td><span class="link" data-customer-detail="liming">详情</span></td></tr>
+              <tr data-customer-row="zhou"><td>PA202604220091</td><td>周女士</td><td>AJ202604220091</td><td>ONE202604220091</td><td><span class="badge green">已认证</span></td><td>金卡会员</td><td><div class="tag-list"><span class="tag-chip">企业客户</span><span class="tag-chip">服务偏好</span></div></td><td><span class="link" data-customer-detail="zhou">详情</span></td></tr>
+              <tr data-customer-row="chen"><td>PA202605010027</td><td>陈先生</td><td>AJ202605010027</td><td>ONE202605010027</td><td><span class="badge gold">待完善</span></td><td>银卡会员</td><td><div class="tag-list"><span class="tag-chip">政府关联客户</span><span class="tag-chip manual">风险关注</span></div></td><td><span class="link" data-customer-detail="chen">详情</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <aside class="drawer profile-drawer" id="profileDrawer">
+        <div class="panel-hd"><h3>客户画像详情</h3><button class="btn" data-close-profile>关闭</button></div>
+        <div class="panel-bd">
+        <div class="profile-head">
+          <div class="identity-card">
+            <div class="identity-title">
+              <h3 id="profileTitle">李明基础画像</h3>
+              <div class="toolbar">
+                <button class="btn" data-open-report>查看报告</button>
+              </div>
+            </div>
+            <div class="identity-grid">
+              <div><span>姓名</span><strong id="profileName">李明</strong></div>
+              <div><span>手机号</span><strong id="profilePhone">136****5520</strong></div>
+              <div><span>认证状态</span><strong id="profileAuth"><span class="badge green">已认证</span></strong></div>
+              <div><span>唯一标识 OneID</span><strong id="profileOneId">ONE202606080018</strong></div>
+              <div><span>客户身份</span><strong id="profileIdentity">项目住户</strong></div>
+              <div><span>会员等级</span><strong id="profileLevel">黑金会员</strong></div>
+              <div><span>成长值</span><strong id="profileGrowth">8,620</strong></div>
+              <div><span>积分账户</span><strong id="profileAccount">PA202605180018</strong></div>
+              <div><span>会员ID</span><strong id="profileMemberId">AJ202605180018</strong></div>
+              <div><span>来源渠道</span><strong id="profileSource">小程序注册、智能客服</strong></div>
+            </div>
+          </div>
+          <div class="score-card">
+            <div><strong id="profileScore">92</strong><br><span>画像完整度</span></div>
+          </div>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h4>身份信息</h4>
+            <ul class="feature-list">
+              <li><span>身份类型</span><strong id="featureIdentity">项目住户</strong></li>
+              <li><span>认证来源</span><strong id="featureAuthSource">住户认证表</strong></li>
+              <li><span>关联项目</span><strong id="featureProject">南山项目</strong></li>
+            </ul>
+          </div>
+          <div class="feature-card">
+            <h4>会员信息</h4>
+            <ul class="feature-list">
+              <li><span>会员等级</span><strong id="featureLevel">黑金会员</strong></li>
+              <li><span>成长值</span><strong id="featureGrowth">8,620</strong></li>
+              <li><span>积分余额</span><strong id="featurePoints">36,800</strong></li>
+            </ul>
+          </div>
+          <div class="feature-card">
+            <h4>近期行为</h4>
+            <ul class="feature-list">
+              <li><span>近1个月咨询</span><strong id="featureConsult">2 次</strong></li>
+              <li><span>近3个月权益兑换</span><strong id="featureExchange">1 次</strong></li>
+              <li><span>近30天权益领取</span><strong id="featureCoupon">3 次</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="panel visual-panel">
+          <div class="panel-hd"><h3>客户画像可视化</h3></div>
+          <div class="panel-bd">
+            <div class="visual-grid">
+              <div class="chart-card">
+                <h4>标签占比</h4>
+                <div class="pie-wrap">
+                  <div class="pie-chart" aria-label="标签占比饼图"></div>
+                  <ul class="legend-list">
+                    <li><span><i style="background:#1f5f99"></i>基本属性标签</span><strong>22%</strong></li>
+                    <li><span><i style="background:#16845b"></i>行为标签</span><strong>20%</strong></li>
+                    <li><span><i style="background:#7a5fc8"></i>偏好标签</span><strong>16%</strong></li>
+                    <li><span><i style="background:#b81f2d"></i>营销响应标签</span><strong>14%</strong></li>
+                    <li><span><i style="background:#c9a35b"></i>高价值客户标签</span><strong>20%</strong></li>
+                    <li><span><i style="background:#8a99a8"></i>来源渠道标签</span><strong>8%</strong></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="chart-card">
+                <h4>近1个月行为活跃趋势</h4>
+                <div class="trend-chart" aria-label="行为活跃趋势折线图">
+                  <div class="trend-line">
+                    <svg viewBox="0 0 560 140" role="img" aria-label="行为活跃折线">
+                      <polyline points="0,112 112,92 224,104 336,70 448,82 560,38" fill="none" stroke="#1f5f99" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                      <polyline points="0,120 112,118 224,96 336,88 448,64 560,58" fill="none" stroke="#c9a35b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                      <g fill="#1f5f99"><circle cx="0" cy="112" r="5"></circle><circle cx="112" cy="92" r="5"></circle><circle cx="224" cy="104" r="5"></circle><circle cx="336" cy="70" r="5"></circle><circle cx="448" cy="82" r="5"></circle><circle cx="560" cy="38" r="5"></circle></g>
+                    </svg>
+                  </div>
+                </div>
+                <div class="trend-labels"><span>第1周</span><span>第2周</span><span>第3周</span><span>第4周</span><span>本周</span><span>今日</span></div>
+                <div class="trend-summary">
+                  <span class="tag-chip">签到频率提升</span>
+                  <span class="tag-chip">权益领取稳定</span>
+                  <span class="tag-chip manual">近1个月高价值行为增强</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tag-section">
+          <div class="tag-box">
+            <h4>核心标签</h4>
+            <div class="tag-list" id="coreTags">
+              <span class="tag-chip manual">高价值客户</span>
+              <span class="tag-chip">项目住户</span>
+              <span class="tag-chip">浏览偏好</span>
+              <span class="tag-chip">点击习惯</span>
+              <span class="tag-chip">签到频率高</span>
+              <span class="tag-chip">产品偏好</span>
+              <span class="tag-chip">服务需求偏好</span>
+              <span class="tag-chip">活动参与度</span>
+              <span class="tag-chip">积分高 / 使用频繁</span>
+              <span class="tag-chip">优惠券使用偏好</span>
+              <span class="tag-chip manual">活动参与类型热力点</span>
+              <span class="tag-chip manual">个人表达意愿强烈</span>
+              <span class="tag-chip manual">多次参与社区活动 / 公益</span>
+              <span class="tag-chip manual">社群主理人</span>
+            </div>
+          </div>
+          <div class="tag-box">
+            <h4>画像详情分析</h4>
+            <table class="analysis-table">
+              <thead><tr><th>分析维度</th><th>数据来源</th><th>分析结果</th></tr></thead>
+              <tbody id="analysisRows">
+                <tr><td>身份信息</td><td>会员中心、住户认证表、OneID识别结果</td><td>客户已完成实名与住户认证，OneID 已合并手机号、会员ID和住户记录。</td></tr>
+                <tr><td>标签数据</td><td>客户标签管理、行为标签、偏好标签、营销响应标签、高价值客户标签</td><td>命中浏览偏好、点击习惯、签到频率、服务需求偏好、活动参与度、优惠券使用偏好、社群主理人、积分高 / 使用频繁等标签。</td></tr>
+                <tr><td>行为特征</td><td>智能客服咨询记录、浏览点击记录、活动参与记录、权益领取记录</td><td>近1个月咨询2次，近3个月权益兑换1次，近30天权益领取3次，且多次参与社区活动 / 公益。</td></tr>
+                <tr><td>来源渠道</td><td>小程序注册、智能客服、权益中心、第三方业务系统</td><td>小程序为首次来源，智能客服为近期主要触达渠道。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="reportModal">
+    <div class="modal report-modal">
+      <div class="panel-hd"><h3>客户基础画像报告</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="report-paper">
+          <h2 id="reportTitle">李明 - 客户基础画像报告</h2>
+          <div class="detail-list">
+            <span>生成时间</span><strong>2026-06-09 10:30</strong>
+            <span>可查看系统</span><strong>管理端、智能客服系统、权益中心、第三方业务系统</strong>
+            <span>核心特征</span><strong id="reportFeature">项目住户、黑金会员、高价值客户、近1个月咨询2次、近3个月权益兑换1次</strong>
+            <span>数据来源</span><strong>会员中心、OneID识别、标签管理、智能客服、行为记录、权益记录、来源渠道记录</strong>
+            <span>分析结果</span><strong id="reportResult">该客户画像完整度高，近期行为活跃，适合纳入高价值客户运营人群。</strong>
+          </div>
+          <table>
+            <thead><tr><th>标签类型</th><th>命中标签</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td>基本属性标签</td><td>项目住户、黑金会员</td><td>来自会员中心和住户认证。</td></tr>
+              <tr><td>行为标签</td><td>浏览偏好、点击习惯、签到频率高、近1个月咨询2次</td><td>来自小程序行为与智能客服。</td></tr>
+              <tr><td>偏好标签</td><td>产品偏好、服务需求偏好</td><td>来自权益浏览、服务咨询和预约记录。</td></tr>
+              <tr><td>营销响应标签</td><td>活动参与度、优惠券使用偏好</td><td>来自营销活动参与和券领取使用记录。</td></tr>
+              <tr><td>高价值客户标签</td><td>活动参与类型热力点、个人表达意愿强烈、多次参与社区活动 / 公益、社群主理人、积分高 / 使用频繁</td><td>来自活动、社群、积分和权益行为汇总。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>关闭</button><button class="btn primary">导出报告</button></div>
+    </div>
+  </div>
+
+  <script>
+    const customerProfiles = {
+      liming: {
+        name: "李明",
+        phone: "136****5520",
+        authHtml: '<span class="badge green">已认证</span>',
+        oneId: "ONE202606080018",
+        identity: "项目住户",
+        level: "黑金会员",
+        growth: "8,620",
+        account: "PA202605180018",
+        memberId: "AJ202605180018",
+        source: "小程序注册、智能客服",
+        score: "92",
+        authSource: "住户认证表",
+        project: "南山项目",
+        points: "36,800",
+        consult: "2 次",
+        exchange: "1 次",
+        coupon: "3 次",
+        tags: [["高价值客户", "manual"], ["项目住户", ""], ["浏览偏好", ""], ["点击习惯", ""], ["签到频率高", ""], ["产品偏好", ""], ["服务需求偏好", ""], ["活动参与度", ""], ["积分高 / 使用频繁", ""], ["优惠券使用偏好", ""], ["活动参与类型热力点", "manual"], ["个人表达意愿强烈", "manual"], ["多次参与社区活动 / 公益", "manual"], ["社群主理人", "manual"]],
+        analysis: [
+          ["身份信息", "会员中心、住户认证表、OneID识别结果", "客户已完成实名与住户认证，OneID 已合并手机号、会员ID和住户记录。"],
+          ["标签数据", "客户标签管理、行为标签、偏好标签、营销响应标签、高价值客户标签", "命中浏览偏好、点击习惯、签到频率、服务需求偏好、活动参与度、优惠券使用偏好、社群主理人、积分高 / 使用频繁等标签。"],
+          ["行为特征", "智能客服咨询记录、浏览点击记录、活动参与记录、权益领取记录", "近1个月咨询2次，近3个月权益兑换1次，近30天权益领取3次，且多次参与社区活动 / 公益。"],
+          ["来源渠道", "小程序注册、智能客服、权益中心、第三方业务系统", "小程序为首次来源，智能客服为近期主要触达渠道。"]
+        ],
+        reportResult: "该客户画像完整度高，近期行为活跃，适合纳入高价值客户运营人群。"
+      },
+      zhou: {
+        name: "周女士",
+        phone: "139****6812",
+        authHtml: '<span class="badge green">已认证</span>',
+        oneId: "ONE202604220091",
+        identity: "企业客户",
+        level: "金卡会员",
+        growth: "5,180",
+        account: "PA202604220091",
+        memberId: "AJ202604220091",
+        source: "线下导入、企业服务",
+        score: "86",
+        authSource: "企业客户档案",
+        project: "福田项目",
+        points: "9,630",
+        consult: "5 次",
+        exchange: "2 次",
+        coupon: "1 次",
+        tags: [["企业客户", ""], ["服务偏好", ""], ["金卡会员", ""], ["权益兑换活跃", ""], ["企业服务咨询", "manual"], ["缴费关注", ""], ["优惠券使用偏好", ""]],
+        analysis: [
+          ["身份信息", "会员中心、企业客户档案、OneID识别结果", "客户已完成实名与企业客户识别，OneID 已合并手机号、会员ID和企业服务记录。"],
+          ["标签数据", "客户标签管理、企业服务记录、权益领取记录", "命中企业客户、服务偏好、权益兑换活跃、缴费关注等标签。"],
+          ["行为特征", "智能客服咨询记录、权益兑换记录、缴费服务记录", "近1个月咨询5次，近3个月权益兑换2次，对企业服务响应较高。"],
+          ["来源渠道", "线下导入、企业服务、智能客服", "线下导入为首次来源，企业服务为主要触达渠道。"]
+        ],
+        reportResult: "该客户服务诉求明确，适合纳入企业客户专属服务和权益推荐人群。"
+      },
+      chen: {
+        name: "陈先生",
+        phone: "137****2098",
+        authHtml: '<span class="badge gold">待完善</span>',
+        oneId: "ONE202605010027",
+        identity: "政府关联客户",
+        level: "银卡会员",
+        growth: "2,460",
+        account: "PA202605010027",
+        memberId: "AJ202605010027",
+        source: "第三方系统、小程序注册",
+        score: "74",
+        authSource: "第三方业务系统",
+        project: "南山项目",
+        points: "18,420",
+        consult: "1 次",
+        exchange: "0 次",
+        coupon: "2 次",
+        tags: [["政府关联客户", ""], ["风险关注", "manual"], ["银卡会员", ""], ["第三方来源", ""], ["低频咨询", ""], ["积分余额较高", "manual"]],
+        analysis: [
+          ["身份信息", "会员中心、第三方业务系统、OneID识别结果", "客户身份来自第三方系统，实名资料待进一步补齐，OneID 已关联手机号和会员ID。"],
+          ["标签数据", "客户标签管理、第三方来源标签、积分账户记录", "命中政府关联客户、风险关注、第三方来源、积分余额较高等标签。"],
+          ["行为特征", "小程序行为记录、权益领取记录、积分账户记录", "近1个月咨询1次，近30天权益领取2次，积分余额较高但兑换行为偏少。"],
+          ["来源渠道", "第三方业务系统、小程序注册", "第三方系统为首次来源，小程序为后续触达渠道。"]
+        ],
+        reportResult: "该客户资料完整度一般，建议先补齐认证资料，再进入精细化运营。"
+      }
+    };
+
+    function tagHtml(tags) {
+      return tags.map(([text, cls]) => `<span class="tag-chip ${cls}">${text}</span>`).join("");
+    }
+    function renderProfile(key) {
+      const data = customerProfiles[key] || customerProfiles.liming;
+      document.getElementById("profileTitle").textContent = `${data.name}基础画像`;
+      document.getElementById("profileName").textContent = data.name;
+      document.getElementById("profilePhone").textContent = data.phone;
+      document.getElementById("profileAuth").innerHTML = data.authHtml;
+      document.getElementById("profileOneId").textContent = data.oneId;
+      document.getElementById("profileIdentity").textContent = data.identity;
+      document.getElementById("profileLevel").textContent = data.level;
+      document.getElementById("profileGrowth").textContent = data.growth;
+      document.getElementById("profileAccount").textContent = data.account;
+      document.getElementById("profileMemberId").textContent = data.memberId;
+      document.getElementById("profileSource").textContent = data.source;
+      document.getElementById("profileScore").textContent = data.score;
+      document.getElementById("featureIdentity").textContent = data.identity;
+      document.getElementById("featureAuthSource").textContent = data.authSource;
+      document.getElementById("featureProject").textContent = data.project;
+      document.getElementById("featureLevel").textContent = data.level;
+      document.getElementById("featureGrowth").textContent = data.growth;
+      document.getElementById("featurePoints").textContent = data.points;
+      document.getElementById("featureConsult").textContent = data.consult;
+      document.getElementById("featureExchange").textContent = data.exchange;
+      document.getElementById("featureCoupon").textContent = data.coupon;
+      document.getElementById("coreTags").innerHTML = tagHtml(data.tags);
+      document.getElementById("analysisRows").innerHTML = data.analysis.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("");
+      document.getElementById("reportTitle").textContent = `${data.name} - 客户基础画像报告`;
+      document.getElementById("reportFeature").textContent = `${data.identity}、${data.level}、${data.tags.slice(0, 4).map(tag => tag[0]).join("、")}`;
+      document.getElementById("reportResult").textContent = data.reportResult;
+      document.querySelectorAll("[data-customer-row]").forEach(row => row.classList.toggle("active", row.dataset.customerRow === key));
+      document.getElementById("profileDrawer").classList.add("open");
+    }
+
+    document.querySelectorAll("[data-customer-detail]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        renderProfile(btn.dataset.customerDetail);
+      });
+    });
+    document.querySelectorAll("[data-open-report]").forEach(btn => {
+      btn.addEventListener("click", () => document.getElementById("reportModal").classList.add("open"));
+    });
+    document.querySelector("[data-close-profile]").addEventListener("click", () => {
+      document.getElementById("profileDrawer").classList.remove("open");
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(btn => {
+      btn.addEventListener("click", () => btn.closest(".modal-mask").classList.remove("open"));
+    });
+  </script>
+</body>
+</html>

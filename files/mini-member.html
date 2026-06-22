@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>小程序-会员中心</title><link rel="stylesheet" href="../resources/style.css"><link rel="stylesheet" href="../resources/mini.css">
+  <style>
+    .benefit-level-tabs { margin-top: 8px; }
+    .ticket-card.no-action { grid-template-columns: 64px 1fr; padding-right: 12px; }
+  </style>
+</head>
+<body>
+  <div class="mini-stage"><div class="phone">
+    <div class="phone-top"><div class="status"><span>9:41</span><span>微信</span><span>•••</span></div><div class="title-row"><h1>会员中心</h1><span class="mini-dot"></span></div></div>
+    <div class="mini-body">
+      <div class="member-card">
+        <div class="member-head">
+          <div>
+            <h2>李明</h2>
+            <div class="level-line"><span class="level-icon">金</span><strong>金卡会员</strong><span class="expire-text">2026-12-13 到期</span><button class="help-dot" onclick="alert('2026-12-13积分自动清零')">?</button></div>
+          </div>
+          <span class="tag gold">项目住户</span>
+        </div>
+        <div class="row"><b>当前成长值 8,260</b><span>距黑金会员 21,740</span></div>
+        <div class="progress"><i style="width:42%"></i></div>
+        <div class="points-strip">
+          <div class="point-link" onclick="location.href='mini-points.html'"><span>消费积分</span><strong>41,600</strong></div>
+          <div class="point-link" onclick="location.href='mini-points.html'"><span class="carbon-label">碳积分 <button class="mini-help" data-tip="碳积分需要兑换为消费积分使用" onclick="event.stopPropagation()">?</button></span><strong>8,200</strong></div>
+          <div class="exchange-wrap"><button class="exchange-btn" onclick="document.getElementById('carbonModal').classList.add('show')">兑换</button></div>
+        </div>
+      </div>
+      <div class="mini-grid action-list" style="margin-top:12px">
+        <div class="mini-action" onclick="location.href='mini-auth.html'"><em class="check-mark"></em><i class="action-icon">认</i><strong>身份认证</strong></div>
+        <div class="mini-action" onclick="document.getElementById('scanModal').classList.add('show')"><i class="action-icon">扫</i><strong>扫码核验</strong></div>
+        <div class="mini-action"><i class="action-icon">注</i><strong>会员注销</strong></div>
+      </div>
+      <div class="mini-card summary-card">
+        <div class="section-title"><h3 id="benefitTitle">金卡会员专享权益</h3><button onclick="location.href='mini-benefits.html'">全部</button></div>
+        <div class="tabs benefit-level-tabs">
+          <span class="tab" onclick="switchBenefitLevel('normal', this)">普通</span>
+          <span class="tab" onclick="switchBenefitLevel('silver', this)">银卡</span>
+          <span class="tab active" onclick="switchBenefitLevel('gold', this)">金卡</span>
+          <span class="tab" onclick="switchBenefitLevel('black', this)">黑金</span>
+        </div>
+        <div class="ticket-list" id="benefitList">
+        </div>
+      </div>
+      <div class="mini-card summary-card">
+        <div class="section-title"><h3>积分换卷</h3><button onclick="location.href='mini-coupons.html'">全部</button></div>
+        <div class="ticket-list">
+          <div class="ticket-card"><div class="ticket-left amount"><strong>家</strong></div><div class="ticket-main"><b>2000积分兑家政服务</b><span>上门保洁、维修服务可用</span></div><button>兑换</button></div>
+          <div class="ticket-card"><div class="ticket-left amount"><strong>礼</strong></div><div class="ticket-main"><b>5000积分兑礼物</b><span>精选实物礼品兑换</span></div><button>兑换</button></div>
+          <div class="ticket-card"><div class="ticket-left amount"><strong>场</strong></div><div class="ticket-main"><b>500积分兑场地预约优先</b><span>活动场地预约优先权益</span></div><button>兑换</button></div>
+          <div class="ticket-card"><div class="ticket-left amount"><strong>三</strong></div><div class="ticket-main"><b>第三方礼卷</b><span>合作商户服务礼卷</span></div><button>兑换</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav"><div class="nav-item active" onclick="location.href='mini-member.html'"><i></i>会员</div><div class="nav-item" onclick="location.href='mini-notifications.html'"><i></i>通知</div></div>
+  </div></div>
+  <div class="use-modal" id="useModal">
+    <div class="use-dialog">
+      <h3>权益使用</h3>
+      <div class="qr-code">QR</div>
+      <p>请向工作人员出示二维码完成核验。适用门店：南山项目服务中心；核销后权益状态同步更新为已使用。</p>
+      <button class="btn-mini primary" onclick="closeUseModal()">知道了</button>
+    </div>
+  </div>
+  <div class="use-modal" id="scanModal">
+    <div class="use-dialog verify-dialog">
+      <h3>扫码核验</h3>
+      <div class="qr-code">SCAN</div>
+      <div class="verify-info">
+        <div><span>会员名称</span><b>李明</b></div>
+        <div><span>会员等级</span><b>金卡会员</b></div>
+        <div><span>核销权益</span><b>优先选房权益</b></div>
+        <div><span>权益状态</span><b>待核销</b></div>
+        <div><span>有效期</span><b>2026.08.31前</b></div>
+      </div>
+      <p>请管理员核对会员身份及权益内容，确认无误后完成权益核销。</p>
+      <button class="btn-mini primary" onclick="confirmScan()">确认核销</button>
+      <button class="btn-mini" onclick="closeScanModal()">取消</button>
+    </div>
+  </div>
+  <div class="use-modal" id="carbonModal">
+    <div class="use-dialog verify-dialog">
+      <h3>碳积分兑换</h3>
+      <p>兑换说明：100碳积分兑换为50消费积分。</p>
+      <label class="carbon-input"><span>碳积分兑换数量</span><input value="100"></label>
+      <button class="btn-mini primary" onclick="confirmCarbonExchange()">兑换</button>
+      <button class="btn-mini" onclick="closeCarbonModal()">取消</button>
+    </div>
+  </div>
+  <script>
+    const benefitLevels = {
+      normal: {
+        title: "普通会员专享权益",
+        items: [
+          { icon: "礼", title: "生日礼券权益", desc: "生日月自动发放至券包", action: "" },
+          { icon: "积", title: "积分基础权益", desc: "签到、任务可获得消费积分", action: "去使用" },
+          { icon: "券", title: "基础礼卷权益", desc: "可兑换普通积分礼卷", action: "去使用" }
+        ]
+      },
+      silver: {
+        title: "银卡会员专享权益",
+        items: [
+          { icon: "礼", title: "生日礼券权益", desc: "银卡生日礼券自动发放", action: "" },
+          { icon: "1.1x", title: "积分倍享权益", desc: "银卡会员消费积分加速", action: "立即领取" },
+          { icon: "场", title: "场地预约优先", desc: "社区活动场地优先预约", action: "立即领取" }
+        ]
+      },
+      gold: {
+        title: "金卡会员专享权益",
+        items: [
+          { icon: "礼", title: "生日礼券权益", desc: "金卡生日礼券自动发放", action: "" },
+          { icon: "1.2x", title: "积分倍享权益", desc: "金卡会员消费积分加速", action: "立即领取" },
+          { icon: "房", title: "优先选房权益", desc: "2026.08.31前可预约", action: "立即领取" },
+          { icon: "服", title: "专属客服权益", desc: "1v1贴身管家服务", action: "立即领取" },
+          { icon: "搬", title: "免费搬家权益", desc: "剩余1次可使用", action: "去使用" }
+        ]
+      },
+      black: {
+        title: "黑金会员专享权益",
+        items: [
+          { icon: "礼", title: "生日礼券权益", desc: "黑金生日礼券自动发放", action: "" },
+          { icon: "1.5x", title: "积分倍享权益", desc: "黑金会员消费积分加速", action: "立即领取" },
+          { icon: "管", title: "专属管家权益", desc: "高优先级服务响应", action: "去使用" },
+          { icon: "家", title: "家政服务权益", desc: "年度家政服务礼遇", action: "立即领取" },
+          { icon: "车", title: "停车优惠权益", desc: "项目停车服务折扣", action: "立即领取" }
+        ]
+      }
+    };
+    function renderBenefitLevel(level) {
+      const data = benefitLevels[level] || benefitLevels.gold;
+      document.getElementById('benefitTitle').textContent = data.title;
+      document.getElementById('benefitList').innerHTML = data.items.map(item => {
+        const action = item.action ? `<button onclick="benefitAction(this)">${item.action}</button>` : "";
+        const noAction = item.action ? "" : " no-action";
+        return `<div class="ticket-card${noAction}"><div class="ticket-left"><strong>${item.icon}</strong></div><div class="ticket-main"><b>${item.title}</b><span>${item.desc}</span></div>${action}</div>`;
+      }).join("");
+    }
+    function switchBenefitLevel(level, tab) {
+      document.querySelectorAll('.benefit-level-tabs .tab').forEach(item => item.classList.remove('active'));
+      tab.classList.add('active');
+      renderBenefitLevel(level);
+    }
+    function benefitAction(btn) {
+      if (btn.textContent.trim() === '立即领取') {
+        btn.textContent = '去使用';
+        return;
+      }
+      document.getElementById('useModal').classList.add('show');
+    }
+    function closeUseModal() {
+      document.getElementById('useModal').classList.remove('show');
+    }
+    function confirmScan() {
+      alert('权益核销已确认');
+      closeScanModal();
+    }
+    function closeScanModal() {
+      document.getElementById('scanModal').classList.remove('show');
+    }
+    function confirmCarbonExchange() {
+      alert('兑换成功，消费积分增加50');
+      closeCarbonModal();
+    }
+    function closeCarbonModal() {
+      document.getElementById('carbonModal').classList.remove('show');
+    }
+    renderBenefitLevel('gold');
+  </script>
+</body>
+</html>

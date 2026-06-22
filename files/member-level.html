@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>会员等级管理</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .field label.required::before {
+      content: "*";
+      margin-right: 3px;
+      color: var(--red);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>等级名称</label><input placeholder="请输入等级名称"></div>
+      <div class="field"><label>等级状态</label><select><option>全部状态</option><option>启用</option><option>停用</option></select></div>
+      <div class="field"><label>更新时间</label><input value="2026-05-01 至 2026-05-26"></div>
+      <button class="btn primary">查询</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>会员等级列表</h3>
+        <div class="toolbar">
+          <button class="btn primary" data-open-level="add">新增等级</button>
+          <button class="btn">导出</button>
+        </div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>等级名称</th>
+              <th>权益等级</th>
+              <th>成长值门槛</th>
+              <th>等级状态</th>
+              <th>会员数</th>
+              <th>更新时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td>普通会员</td><td>1</td><td>0</td><td><span class="badge green">启用</span></td><td>896,430</td><td>2026-05-20 09:30</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>银卡会员</td><td>2</td><td>2,000</td><td><span class="badge green">启用</span></td><td>282,160</td><td>2026-05-18 15:42</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>金卡会员</td><td>3</td><td>8,000</td><td><span class="badge green">启用</span></td><td>96,720</td><td>2026-05-16 11:08</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>黑金会员</td><td>4</td><td>30,000</td><td><span class="badge red">停用</span></td><td>1,120</td><td>2026-05-10 10:16</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="enable">启用</span>　<span class="link" data-delete>删除</span></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>共 4 条</span>
+          <span>每页</span>
+          <select><option selected>20 条</option><option>50 条</option></select>
+          <button class="page-btn">上一页</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">下一页</button>
+          <span>跳至</span><input value="1"><span>页</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="levelModal">
+    <div class="modal level-edit-modal">
+      <div class="panel-hd"><h3 id="levelModalTitle">新增等级</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd level-edit-body">
+        <div class="grid cols-2">
+          <div class="field"><label class="required">等级名称</label><input id="levelName" value="铂金会员"></div>
+          <div class="field"><label class="required">权益等级</label><input id="levelSort" value="5"></div>
+          <div class="field"><label class="required">等级状态</label><select id="levelStatus"><option>启用</option><option>停用</option></select></div>
+          <div class="field"><label class="required">达到该等级所需成长值</label><input id="levelNeedGrowth" value="50000"></div>
+        </div>
+        <div class="panel" style="margin-top:14px; box-shadow:none">
+          <div class="panel-hd">
+            <h3>升级成长值规则配置</h3>
+            <div class="toolbar"><button class="btn primary">新增规则块</button><button class="btn">批量删除</button></div>
+          </div>
+          <div class="panel-bd rule-blocks">
+            <div class="rule-block">
+              <div class="rule-block-hd">
+                <strong>规则块 1</strong>
+                <div class="toolbar"><button class="btn">新增条件行</button><button class="btn">删除规则块</button></div>
+              </div>
+              <table>
+                <thead><tr><th><input type="checkbox"></th><th>条件类型</th><th>条件值</th><th>获得成长值</th><th>与上一行关系</th><th>操作</th></tr></thead>
+                <tbody id="thresholdRows">
+                  <tr><td><input type="checkbox"></td><td><select><option>用户积分数</option><option>业主身份</option><option>居住时长</option></select></td><td><input value="每 100 积分"></td><td><input value="1"></td><td><select><option>起始条件</option><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+                  <tr><td><input type="checkbox"></td><td><select><option>业主身份</option><option>用户积分数</option><option>居住时长</option></select></td><td><select><option>业主</option><option>租户</option><option>游客</option></select></td><td><input value="10"></td><td><select><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+                  <tr><td><input type="checkbox"></td><td><select><option>居住时长</option><option>用户积分数</option><option>业主身份</option></select></td><td><select><option>满 1 年</option><option>满 6 个月</option><option>满 2 年</option></select></td><td><input value="1"></td><td><select><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="rule-block">
+              <div class="rule-block-hd">
+                <strong>规则块 2</strong>
+                <div class="toolbar"><button class="btn">新增条件行</button><button class="btn">删除规则块</button></div>
+              </div>
+              <table>
+                <thead><tr><th><input type="checkbox"></th><th>条件类型</th><th>条件值</th><th>获得成长值</th><th>与上一行关系</th><th>操作</th></tr></thead>
+                <tbody>
+                  <tr><td><input type="checkbox"></td><td><select><option>用户积分数</option><option>业主身份</option><option>居住时长</option></select></td><td><input value="每 200 积分"></td><td><input value="1"></td><td><select><option>起始条件</option><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+                  <tr><td><input type="checkbox"></td><td><select><option>业主身份</option><option>用户积分数</option><option>居住时长</option></select></td><td><select><option>租户</option><option>业主</option><option>游客</option></select></td><td><input value="5"></td><td><select><option>或</option><option>且</option></select></td><td><span class="link">删除</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="deleteModal">
+    <div class="modal">
+      <div class="panel-hd"><h3>删除等级</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice"><strong>删除等级</strong>存在会员关联的等级不可删除，请先调整会员等级或停用该等级。</div>
+        <div class="field" style="margin-top:12px"><label>删除原因</label><input value="等级配置调整"></div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认删除</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="toggleLevelModal">
+    <div class="modal">
+      <div class="panel-hd"><h3 id="toggleLevelTitle">等级启停</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice" id="toggleLevelNotice"><strong>停用等级</strong>停用后该等级不再参与自动升级计算，已关联会员保留当前等级至重新计算。</div>
+        <div class="field" style="margin-top:12px"><label class="required">操作原因</label><input id="toggleLevelReason" value="等级配置调整"></div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal id="toggleLevelConfirm">确认</button></div>
+    </div>
+  </div>
+
+  <script>
+    const levelModal = document.getElementById("levelModal");
+    const conditionValueOptions = {
+      "业主身份": ["业主", "租户", "游客"],
+      "居住时长": ["满 1 年", "满 6 个月", "满 2 年"],
+      "学历": ["博士", "研究生", "本科", "大专", "其它"]
+    };
+    function createOptionSelect(options, selectedValue) {
+      const select = document.createElement("select");
+      options.forEach(optionText => {
+        const option = document.createElement("option");
+        option.textContent = optionText;
+        option.value = optionText;
+        if (optionText === selectedValue) option.selected = true;
+        select.appendChild(option);
+      });
+      return select;
+    }
+    function createValueInput(type, oldValue) {
+      const value = oldValue || (type === "用户积分数" ? "每 100 积分" : "");
+      const input = document.createElement("input");
+      input.value = value;
+      return input;
+    }
+    function syncConditionValue(typeSelect) {
+      const row = typeSelect.closest("tr");
+      const valueCell = row.children[2];
+      const currentControl = valueCell.querySelector("input, select");
+      const oldValue = currentControl ? currentControl.value : "";
+      valueCell.innerHTML = "";
+      if (conditionValueOptions[typeSelect.value]) {
+        valueCell.appendChild(createOptionSelect(conditionValueOptions[typeSelect.value], oldValue));
+      } else {
+        valueCell.appendChild(createValueInput(typeSelect.value, oldValue));
+      }
+    }
+    function setupConditionRows() {
+      document.querySelectorAll(".rule-block tbody tr").forEach(row => {
+        const typeSelect = row.children[1].querySelector("select");
+        if (!typeSelect) return;
+        if (![...typeSelect.options].some(option => option.value === "学历" || option.textContent === "学历")) {
+          const educationOption = document.createElement("option");
+          educationOption.textContent = "学历";
+          educationOption.value = "学历";
+          typeSelect.appendChild(educationOption);
+        }
+        if (!typeSelect.dataset.educationBound) {
+          typeSelect.dataset.educationBound = "true";
+          typeSelect.addEventListener("change", () => syncConditionValue(typeSelect));
+        }
+      });
+    }
+    setupConditionRows();
+    document.querySelectorAll("[data-open-level]").forEach(el => {
+      el.addEventListener("click", () => {
+        const isEdit = el.dataset.openLevel === "edit";
+        document.getElementById("levelModalTitle").textContent = isEdit ? "编辑等级" : "新增等级";
+        document.getElementById("levelName").value = isEdit ? "金卡会员" : "铂金会员";
+        document.getElementById("levelSort").value = isEdit ? "3" : "5";
+        document.getElementById("levelNeedGrowth").value = isEdit ? "30000" : "50000";
+        setupConditionRows();
+        levelModal.classList.add("open");
+      });
+    });
+
+    document.querySelectorAll("[data-delete]").forEach(el => el.addEventListener("click", () => document.getElementById("deleteModal").classList.add("open")));
+    document.querySelectorAll("[data-toggle-level]").forEach(el => {
+      el.addEventListener("click", () => {
+        const isEnable = el.dataset.toggleLevel === "enable";
+        const title = isEnable ? "启用等级" : "停用等级";
+        document.getElementById("toggleLevelTitle").textContent = title;
+        document.getElementById("toggleLevelNotice").innerHTML = isEnable
+          ? "<strong>启用等级</strong>启用后该等级将参与会员等级自动计算和升级规则判断。"
+          : "<strong>停用等级</strong>停用后该等级不再参与自动升级计算，已关联会员保留当前等级至重新计算。";
+        document.getElementById("toggleLevelReason").value = isEnable ? "等级重新开放使用" : "等级配置调整，暂时停用";
+        document.getElementById("toggleLevelConfirm").textContent = isEnable ? "确认启用" : "确认停用";
+        document.getElementById("toggleLevelModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+  </script>
+</body>
+</html>

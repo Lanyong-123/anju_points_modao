@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>优惠券结算报表</title><link rel="stylesheet" href="../resources/style.css"></head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>结算日期</label><input value="2026-05-26"></div>
+      <div class="field"><label>优惠券/礼卷名称</label><input placeholder="优惠券、礼卷名称"></div>
+      <div class="field"><label>核销商户</label><select><option>全部商户</option><option>安居物业</option><option>停车服务商</option><option>合作商户平台</option></select></div>
+      <div class="field"><label>结算主体</label><select><option>全部主体</option><option>安居集团</option><option>南山项目</option><option>合作商户</option></select></div>
+      <button class="btn primary">查询</button>
+    </div>
+    <div class="panel"><div class="panel-hd"><h3>优惠券结算报表</h3><div class="toolbar"><button class="btn">导出Excel</button></div></div><div class="panel-bd">
+      <table><thead><tr><th>结算批次</th><th>优惠券/礼卷名称</th><th>核销商户</th><th>核销积分数量</th><th>结算金额</th><th>结算主体</th><th>结算日期</th><th>操作</th></tr></thead><tbody>
+        <tr><td>CPSET20260526001</td><td>2000积分兑家政服务</td><td>安居物业</td><td>5,326</td><td>532.60元</td><td>安居集团</td><td>2026-05-26</td><td><span class="link" data-detail="2000积分兑家政服务">交易单</span></td></tr>
+        <tr><td>CPSET20260526002</td><td>5000积分兑礼物</td><td>停车服务商</td><td>1,908</td><td>381.60元</td><td>南山项目</td><td>2026-05-26</td><td><span class="link" data-detail="5000积分兑礼物">交易单</span></td></tr>
+        <tr><td>CPSET20260526003</td><td>500积分兑场地预约优先</td><td>合作商户平台</td><td>2,126</td><td>636.60元</td><td>合作商户</td><td>2026-05-26</td><td><span class="link" data-detail="500积分兑场地预约优先">交易单</span></td></tr>
+        <tr><td>CPSET20260526004</td><td>2000积分兑贴身管家服务</td><td>合作商户平台</td><td>1,166</td><td>466.40元</td><td>合作商户</td><td>2026-05-26</td><td><span class="link" data-detail="2000积分兑贴身管家服务">交易单</span></td></tr>
+      </tbody></table>
+    </div></div>
+  </div>
+  <div class="modal-mask" id="tradeModal"><div class="modal" style="width:980px"><div class="panel-hd"><h3 id="tradeTitle">优惠券核销交易单</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd">
+    <div class="notice"><strong>财务对账原始凭证</strong>交易单包含优惠券码、核销商户、核销金额及核销流水，可作为财务对账原始凭证。</div>
+    <table style="margin-top:12px"><thead><tr><th>核销流水号</th><th>优惠券码</th><th>会员名称</th><th>会员ID</th><th>核销商户</th><th>核销金额</th><th>关联订单号</th><th>核销时间</th></tr></thead><tbody>
+      <tr><td>CV202605260018</td><td>CPN-AJ-202605-00018</td><td>李明</td><td>AJ202605180018</td><td>安居物业</td><td>10元</td><td>ORD202605260088</td><td>2026-05-26 09:18</td></tr>
+      <tr><td>CV202605260026</td><td>CPN-AJ-202605-00026</td><td>周女士</td><td>AJ202604220091</td><td>安居物业</td><td>10元</td><td>ORD202605260126</td><td>2026-05-26 10:42</td></tr>
+      <tr><td>CV202605260039</td><td>CPN-AJ-202605-00039</td><td>陈先生</td><td>AJ202605010027</td><td>安居物业</td><td>10元</td><td>ORD202605260239</td><td>2026-05-26 14:20</td></tr>
+    </tbody></table>
+    <div class="pagination"><span>共 5,326 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button></div>
+  </div></div></div>
+  <script>document.querySelectorAll("[data-detail]").forEach(el=>el.addEventListener("click",()=>{document.getElementById("tradeTitle").textContent=`${el.dataset.detail} - 优惠券核销交易单`;document.getElementById("tradeModal").classList.add("open")}));document.querySelectorAll("[data-close-modal]").forEach(el=>el.addEventListener("click",()=>el.closest(".modal-mask").classList.remove("open")));</script>
+</body></html>

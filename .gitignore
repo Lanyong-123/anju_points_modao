@@ -1,0 +1,11 @@
+.DS_Store
+__pycache__/
+*.pyc
+xlsx_build/node_modules
+rendered_*/
+xlsx_build/
+images/
+*.py
+*.png
+*.docx
+*.xlsx

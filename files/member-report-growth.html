@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>会员新增/注销报表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .chart-wrap { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; margin-bottom: 14px; }
+    .chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .chart-head h3 { margin: 0; color: var(--navy); font-size: 15px; }
+    .legend { display: flex; gap: 14px; color: #526477; font-size: 12px; }
+    .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+    .new-dot { background: #2f6fbd; }
+    .cancel-dot { background: #c61f32; }
+    .net-dot { background: #2f9b6b; }
+    .trend-area { height: 260px; display: grid; grid-template-columns: 54px 1fr; gap: 10px; }
+    .axis-y { display: grid; grid-template-rows: repeat(5, 1fr); color: var(--muted); font-size: 11px; text-align: right; padding-right: 6px; }
+    .bars { position: relative; display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; align-items: end; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 14px 14px 28px; background: linear-gradient(to top, rgba(224,233,242,.72) 1px, transparent 1px) 0 14px / 100% 20%; }
+    .bar-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; align-items: end; height: 190px; }
+    .bar { border-radius: 5px 5px 0 0; min-height: 8px; }
+    .bar.new { background: #2f6fbd; }
+    .bar.cancel { background: #c61f32; }
+    .bar.net { background: #2f9b6b; }
+    .x-label { position: absolute; bottom: 7px; transform: translateX(-50%); color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .channel-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 58px; height: 24px; border-radius: 999px; background: #eef4fb; color: #123152; font-weight: 800; font-size: 12px; }
+    @media (max-width: 1100px) {
+      .trend-area { grid-template-columns: 1fr; }
+      .axis-y { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>统计时间</label><input value="2026-06-01 至 2026-06-30"></div>
+      <div class="field"><label>时间维度</label><select id="dimensionSelect"><option selected>日</option><option>周</option><option>月</option></select></div>
+      <div class="field"><label>渠道</label><select id="channelSelect"><option>全部渠道</option><option>APP</option><option>小程序</option><option>公众号</option></select></div>
+      <button class="btn primary" id="queryBtn">查询</button>
+      <button class="btn" id="resetBtn">重置</button>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-head">
+        <h3>会员新增/注销趋势</h3>
+        <div class="legend"><span><i class="new-dot"></i>新增数量</span><span><i class="cancel-dot"></i>注销数量</span><span><i class="net-dot"></i>净增数量</span></div>
+      </div>
+      <div class="trend-area">
+        <div class="axis-y"><span>2,000</span><span>1,500</span><span>1,000</span><span>500</span><span>0</span></div>
+        <div class="bars" id="trendBars"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>会员新增/注销统计列表</h3>
+        <div class="toolbar"><button class="btn">导出</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr><th>统计周期</th><th>时间维度</th><th>渠道</th><th>会员新增数量</th><th>会员注销数量</th><th>净增数量</th><th>新增占比</th><th>操作</th></tr>
+          </thead>
+          <tbody id="reportRows"></tbody>
+        </table>
+        <div class="pagination"><span>共 9 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const data = [
+      { period: "2026-06-01", dimension: "日", channel: "APP", added: 286, canceled: 12 },
+      { period: "2026-06-01", dimension: "日", channel: "小程序", added: 468, canceled: 18 },
+      { period: "2026-06-01", dimension: "日", channel: "公众号", added: 166, canceled: 6 },
+      { period: "2026-06-05", dimension: "日", channel: "APP", added: 352, canceled: 16 },
+      { period: "2026-06-05", dimension: "日", channel: "小程序", added: 624, canceled: 19 },
+      { period: "2026-06-05", dimension: "日", channel: "公众号", added: 204, canceled: 7 },
+      { period: "2026-06-10", dimension: "日", channel: "APP", added: 426, canceled: 18 },
+      { period: "2026-06-10", dimension: "日", channel: "小程序", added: 782, canceled: 28 },
+      { period: "2026-06-10", dimension: "日", channel: "公众号", added: 222, canceled: 9 }
+    ];
+    const trend = [
+      { label: "06-01", added: 920, canceled: 36 },
+      { label: "06-05", added: 1180, canceled: 42 },
+      { label: "06-10", added: 1430, canceled: 55 },
+      { label: "06-15", added: 1210, canceled: 48 },
+      { label: "06-20", added: 1560, canceled: 62 },
+      { label: "06-25", added: 1320, canceled: 51 },
+      { label: "06-30", added: 806, canceled: 32 }
+    ];
+
+    function format(num) {
+      return num.toLocaleString("zh-CN");
+    }
+
+    function renderBars() {
+      const max = 1700;
+      const bars = document.getElementById("trendBars");
+      bars.innerHTML = trend.map((item, index) => {
+        const net = item.added - item.canceled;
+        const left = ((index + .5) / trend.length) * 100;
+        return `
+          <div class="bar-group">
+            <div class="bar new" title="新增 ${format(item.added)}" style="height:${item.added / max * 190}px"></div>
+            <div class="bar cancel" title="注销 ${format(item.canceled)}" style="height:${Math.max(item.canceled / max * 190, 8)}px"></div>
+            <div class="bar net" title="净增 ${format(net)}" style="height:${net / max * 190}px"></div>
+          </div>
+          <span class="x-label" style="left:${left}%">${item.label}</span>
+        `;
+      }).join("");
+    }
+
+    function renderRows() {
+      const rows = document.getElementById("reportRows");
+      const totalAdded = data.reduce((sum, item) => sum + item.added, 0);
+      rows.innerHTML = data.map(item => {
+        const net = item.added - item.canceled;
+        const rate = (item.added / totalAdded * 100).toFixed(1);
+        return `
+          <tr>
+            <td>${item.period}</td>
+            <td>${item.dimension}</td>
+            <td><span class="channel-pill">${item.channel}</span></td>
+            <td>${format(item.added)}</td>
+            <td>${format(item.canceled)}</td>
+            <td>${format(net)}</td>
+            <td>${rate}%</td>
+            <td><a class="link" href="member-info.html" data-member-info>查看明细</a></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    document.getElementById("reportRows").addEventListener("click", event => {
+      const link = event.target.closest("[data-member-info]");
+      if (!link) return;
+      event.preventDefault();
+      try {
+        if (window.parent && window.parent !== window && typeof window.parent.openTab === "function") {
+          window.parent.openTab({ title: "会员信息管理", url: "files/member-info.html" });
+          return;
+        }
+      } catch (error) {
+        // 本地 file 方式预览时可能无法访问父页面方法，退回到当前 iframe 跳转。
+      }
+      window.location.href = "member-info.html";
+    });
+
+    document.getElementById("queryBtn").addEventListener("click", () => {
+      renderRows();
+      renderBars();
+    });
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("dimensionSelect").value = "日";
+      document.getElementById("channelSelect").value = "全部渠道";
+      renderRows();
+    });
+    renderRows();
+    renderBars();
+  </script>
+</body>
+</html>

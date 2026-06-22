@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>客户画像构建</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .profile-filter {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto auto;
+    }
+    .profile-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .profile-table {
+      min-width: 1180px;
+    }
+    .profile-table th,
+    .profile-table td {
+      padding: 10px 8px;
+      vertical-align: middle;
+    }
+    .model-name {
+      display: grid;
+      gap: 4px;
+      white-space: normal;
+    }
+    .model-name strong {
+      color: var(--navy);
+    }
+    .model-name span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag-cloud span {
+      min-height: 26px;
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #f0f4f8;
+      color: #23415f;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .wide-modal {
+      width: min(1180px, calc(100vw - 48px));
+      max-height: calc(100vh - 32px);
+      display: flex;
+      flex-direction: column;
+    }
+    .wide-modal .panel-bd {
+      max-height: calc(100vh - 142px);
+      overflow: auto;
+    }
+    .form-section {
+      margin-bottom: 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .form-section-hd {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--soft);
+      color: var(--navy);
+      font-weight: 800;
+    }
+    .form-section-bd {
+      padding: 12px;
+    }
+    .profile-form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+    .field label.required::before,
+    .profile-required::before {
+      content: "*";
+      margin-right: 3px;
+      color: var(--red);
+      font-weight: 700;
+    }
+    .crowd-build-grid {
+      display: grid;
+      grid-template-columns: 1.4fr .85fr .85fr;
+      gap: 10px;
+      align-items: end;
+    }
+    .estimate-row {
+      display: grid;
+      grid-template-columns: minmax(220px, 280px) auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .file-input-wrap {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+    }
+    .file-input-wrap input {
+      display: none;
+    }
+    .upload-btn {
+      min-height: 26px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 8px;
+      border: 1px solid #cfd9e5;
+      border-radius: 4px;
+      background: #f8fbfe;
+      color: var(--navy);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .file-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--muted);
+    }
+    .estimate-card {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #f8fbfe;
+      color: var(--navy);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .hint-line {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .rule-block-list {
+      display: grid;
+      gap: 12px;
+    }
+    .profile-rule-block {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+    }
+    .profile-rule-block-hd {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      background: var(--soft);
+    }
+    .profile-rule-block-hd strong {
+      color: var(--navy);
+    }
+    .block-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .profile-rule-block-bd {
+      padding: 10px;
+    }
+    .rule-condition-head,
+    .rule-condition-row {
+      display: grid;
+      grid-template-columns: 1.15fr 1.35fr .9fr 1.25fr 1fr 56px;
+      gap: 10px;
+      align-items: center;
+    }
+    .rule-condition-head {
+      min-height: 34px;
+      padding: 0 8px;
+      background: #eef3f8;
+      color: #36485c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .rule-condition-row {
+      padding: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .rule-condition-row:last-child {
+      border-bottom: 0;
+    }
+    .rule-condition-row select,
+    .rule-condition-row input {
+      width: 100%;
+      height: 30px;
+      min-width: 0;
+      padding: 0 8px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+    }
+    .schedule-config {
+      display: none;
+    }
+    .schedule-start {
+      grid-column: 1;
+    }
+    .schedule-config.show {
+      display: contents;
+    }
+    .schedule-row {
+      display: contents;
+    }
+    .schedule-field {
+      display: none;
+    }
+    .schedule-field.show {
+      display: block;
+    }
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .mini-chart {
+      min-height: 170px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      padding: 12px;
+    }
+    .mini-chart h4 {
+      margin: 0 0 12px;
+      color: var(--navy);
+      font-size: 14px;
+    }
+    .radar {
+      width: 128px;
+      height: 128px;
+      margin: 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, #fff 0 34%, transparent 35%),
+        conic-gradient(#1f5f99 0 24%, #c9a35b 24% 46%, #16845b 46% 68%, #b81f2d 68% 82%, #8a99a8 82% 100%);
+    }
+    .radar span {
+      width: 72px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #fff;
+      color: var(--navy);
+      font-weight: 800;
+    }
+    .compact-detail {
+      width: min(980px, calc(100vw - 48px));
+    }
+    .compact-detail .compact-filter {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter profile-filter">
+      <div class="field"><label>画像名称</label><input placeholder="请输入画像名称"></div>
+      <div class="field"><label>画像类型</label><select><option>全部类型</option><option>客户价值画像</option><option>服务偏好画像</option><option>营销响应画像</option><option>风险关注画像</option></select></div>
+      <div class="field"><label>构建状态</label><select><option>全部状态</option><option>已构建</option><option>构建中</option><option>待构建</option><option>已停用</option></select></div>
+      <div class="field"><label>更新时间</label><input value="2026-06-01 至 2026-06-08"></div>
+      <button class="btn primary">查询</button>
+      <button class="btn">重置</button>
+    </div>
+
+    <div class="profile-grid">
+      <div class="panel">
+        <div class="panel-hd">
+          <h3>客户画像模型列表</h3>
+          <div class="toolbar">
+            <button class="btn primary" data-open="modelModal">新增画像</button>
+            <button class="btn">导出画像</button>
+          </div>
+        </div>
+        <div class="panel-bd">
+          <table class="profile-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox"></th>
+                <th>画像名称</th>
+                <th>画像类型</th>
+                <th>关联标签</th>
+                <th>覆盖客户数</th>
+                <th>更新方式</th>
+                <th>构建状态</th>
+                <th>最近构建时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td><div class="model-name"><strong>高价值客户画像</strong><span>按价值贡献、活跃度、权益偏好综合识别</span></div></td>
+                <td>客户价值画像</td>
+                <td><span class="link" data-tags="高价值客户画像">12</span></td>
+                <td><span class="link" data-customers="高价值客户画像">8,936</span></td>
+                <td>每日 02:30</td>
+                <td><span class="badge green">已构建</span></td>
+                <td>2026-06-08 02:35</td>
+                <td><span class="link" data-open="resultModal">结果</span> <span class="link" data-open="modelModal">编辑</span> <span class="link" data-open="runModal">执行</span> <span class="link">停用</span></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td><div class="model-name"><strong>服务需求偏好画像</strong><span>识别家政、搬家、场地预约、贴身管家等服务偏好</span></div></td>
+                <td>服务偏好画像</td>
+                <td><span class="link" data-tags="服务需求偏好画像">9</span></td>
+                <td><span class="link" data-customers="服务需求偏好画像">5,182</span></td>
+                <td>每小时 1 小时</td>
+                <td><span class="badge green">已构建</span></td>
+                <td>2026-06-08 14:20</td>
+                <td><span class="link" data-open="resultModal">结果</span> <span class="link" data-open="modelModal">编辑</span> <span class="link" data-open="runModal">执行</span> <span class="link">停用</span></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td><div class="model-name"><strong>营销响应画像</strong><span>结合活动参与度、优惠券使用偏好、积分兑换行为</span></div></td>
+                <td>营销响应画像</td>
+                <td><span class="link" data-tags="营销响应画像">15</span></td>
+                <td><span class="link" data-customers="营销响应画像">12,680</span></td>
+                <td>每周一 03:00</td>
+                <td><span class="badge green">已构建</span></td>
+                <td>2026-06-08 03:10</td>
+                <td><span class="link" data-open="resultModal">结果</span> <span class="link" data-open="modelModal">编辑</span> <span class="link" data-open="runModal">执行</span> <span class="link">停用</span></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td><div class="model-name"><strong>风险关注画像</strong><span>综合非法转租、租金逾期、多次投诉等标签</span></div></td>
+                <td>风险关注画像</td>
+                <td><span class="link" data-tags="风险关注画像">6</span></td>
+                <td><span class="link" data-customers="风险关注画像">326</span></td>
+                <td>手动更新</td>
+                <td><span class="badge gray">已停用</span></td>
+                <td>-</td>
+                <td><span class="link" data-open="modelModal">编辑</span> <span class="link">启用</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="pagination"><span>共 36 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option><option>20 条/页</option></select></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal-mask" id="modelModal">
+    <div class="modal wide-modal">
+      <div class="panel-hd"><h3>新增画像模型</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="form-section">
+          <div class="form-section-hd">基础信息</div>
+          <div class="form-section-bd">
+            <div class="profile-form-grid">
+              <div class="field"><label class="required">画像名称</label><input value="高价值客户画像"></div>
+              <div class="field"><label class="required">画像类型</label><select><option>客户价值画像</option><option>服务偏好画像</option><option>营销响应画像</option><option>风险关注画像</option></select></div>
+              <div class="field"><label class="required">画像状态</label><select><option>启用</option><option>停用</option></select></div>
+              <div class="field schedule-start"><label class="required">更新方式</label><select id="profileFrequency"><option>周期更新</option><option>手动更新</option></select></div>
+              <div class="schedule-config" id="profileScheduleConfig">
+                <div class="schedule-row">
+                  <div class="field"><label class="required">周期类型</label><select id="profileScheduleType"><option>分钟</option><option>每小时</option><option>每日</option><option>每周</option><option>每月</option></select></div>
+                  <div class="field schedule-field" id="profileMinuteField"><label class="required">间隔分钟</label><input value="30"></div>
+                  <div class="field schedule-field" id="profileHourField"><label class="required">间隔小时</label><input value="1"></div>
+                  <div class="field schedule-field" id="profileWeeklyField"><label class="required">每周几</label><select><option>每周一</option><option>每周二</option><option>每周三</option><option>每周四</option><option>每周五</option><option>每周六</option><option>每周日</option></select></div>
+                  <div class="field schedule-field" id="profileMonthlyField"><label class="required">每月哪日</label><select><option>1日</option><option>5日</option><option>10日</option><option>15日</option><option>20日</option><option>25日</option><option>月底</option></select></div>
+                  <div class="field schedule-field" id="profileTimeField"><label class="required">具体时间点</label><input id="profileScheduleTime" value="02:30"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-hd">人群导入与运算</div>
+          <div class="form-section-bd">
+            <div class="crowd-build-grid">
+              <div class="field">
+                <label>上传客户名单（Excel格式）</label>
+                <label class="file-input-wrap"><span class="upload-btn">选择文件</span><span class="file-name">customer_member_id_list.xlsx</span><input type="file" accept=".xls,.xlsx"></label>
+              </div>
+              <div class="field"><label>名单匹配字段</label><select><option>会员ID</option><option>手机号</option><option>OneID</option></select></div>
+              <div class="field"><label>运算方式</label><select><option>交集</option><option>并集</option><option>差集</option></select></div>
+            </div>
+            <div class="hint-line">支持上传客户名单导入人群，并通过交集、并集、差集运算生成新人群；点击预估后计算预计覆盖人数。</div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-hd"><span class="profile-required">画像规则配置</span><button class="btn" id="addRuleBlock" type="button">新增规则</button></div>
+          <div class="form-section-bd">
+            <div class="rule-block-list" id="profileRuleBlocks">
+              <div class="profile-rule-block">
+                <div class="profile-rule-block-hd">
+                  <strong>规则块 1</strong>
+                  <div class="block-tools">
+                    <button class="btn" type="button" data-add-rule-condition>新增标签分类</button>
+                    <button class="btn" type="button" data-delete-rule-block>删除规则</button>
+                  </div>
+                </div>
+                <div class="profile-rule-block-bd">
+                  <div class="rule-condition-head"><span>标签分类</span><span>标签名称</span><span>判断关系</span><span>阈值</span><span>与上一行关系</span><span>操作</span></div>
+                  <div class="rule-condition-row">
+                    <select><option>高价值客户标签</option><option>基本标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option></select>
+                    <select><option>积分高 / 使用频繁</option><option>活动参与类型热力点</option><option>签到频率</option><option>优惠券使用偏好</option></select>
+                    <select><option>命中</option><option>大于</option><option>大于等于</option><option>等于</option></select>
+                    <input value="命中">
+                    <select><option>起始条件</option><option>且</option><option>或</option></select>
+                    <span class="link" data-delete-rule-condition>删除</span>
+                  </div>
+                  <div class="rule-condition-row">
+                    <select><option>行为标签</option><option>偏好标签</option><option>高价值客户标签</option><option>基本标签</option><option>营销响应标签</option></select>
+                    <select><option>签到频率</option><option>服务需求偏好</option><option>积分高 / 使用频繁</option><option>个人表达意愿强烈</option></select>
+                    <select><option>大于等于</option><option>命中</option><option>大于</option><option>等于</option></select>
+                    <input value="每周 3 次">
+                    <select><option>且</option><option>或</option></select>
+                    <span class="link" data-delete-rule-condition>删除</span>
+                  </div>
+                </div>
+              </div>
+              <div class="profile-rule-block">
+                <div class="profile-rule-block-hd">
+                  <strong>规则块 2</strong>
+                  <div class="block-tools">
+                    <button class="btn" type="button" data-add-rule-condition>新增标签分类</button>
+                    <button class="btn" type="button" data-delete-rule-block>删除规则</button>
+                  </div>
+                </div>
+                <div class="profile-rule-block-bd">
+                  <div class="rule-condition-head"><span>标签分类</span><span>标签名称</span><span>判断关系</span><span>阈值</span><span>与上一行关系</span><span>操作</span></div>
+                  <div class="rule-condition-row">
+                    <select><option>营销响应标签</option><option>偏好标签</option><option>行为标签</option><option>高价值客户标签</option><option>基本标签</option></select>
+                    <select><option>优惠券使用偏好</option><option>个人表达意愿强烈</option><option>服务需求偏好</option><option>活动参与类型热力点</option></select>
+                    <select><option>命中</option><option>大于</option><option>大于等于</option><option>等于</option></select>
+                    <input value="命中">
+                    <select><option>起始条件</option><option>且</option><option>或</option></select>
+                    <span class="link" data-delete-rule-condition>删除</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-hd">人群预估</div>
+          <div class="form-section-bd">
+            <div class="estimate-row">
+              <div class="field"><label>预估人数</label><div class="estimate-card" id="crowdEstimateCount">未预估</div></div>
+              <button class="btn primary" type="button" id="estimateCrowdBtn">预估</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-section-hd">画像描述</div>
+          <div class="form-section-bd">
+            <div class="field"><textarea style="width:100%;min-height:86px;padding:10px;border:1px solid #cfd9e5;border-radius:5px;font:inherit;color:var(--ink);">用于识别高价值、高活跃、愿意参与权益活动的客户，为权益推荐、客户分群和第三方系统调用提供画像结果。</textarea></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="resultModal">
+    <div class="modal wide-modal">
+      <div class="panel-hd"><h3>高价值客户画像 - 画像结果</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="chart-grid">
+          <div class="mini-chart"><h4>画像评分分布</h4><div class="radar"><span>82分</span></div></div>
+          <div class="mini-chart"><h4>核心特征</h4><div class="tag-cloud"><span>黑金会员</span><span>签到频率高</span><span>积分使用频繁</span><span>权益领取活跃</span><span>社区活动参与</span></div></div>
+          <div class="mini-chart"><h4>推荐业务动作</h4><div class="tag-cloud"><span>权益推荐</span><span>专属服务</span><span>活动邀约</span><span>客户分群</span><span>第三方系统调用</span></div></div>
+        </div>
+        <div class="form-section" style="margin-top:14px;">
+          <div class="form-section-hd">画像客户明细</div>
+          <div class="form-section-bd">
+            <table>
+              <thead><tr><th>微信昵称</th><th>用户名</th><th>会员ID</th><th>联系方式</th><th>画像评分</th><th>命中标签</th><th>所属项目</th><th>更新时间</th></tr></thead>
+              <tbody>
+                <tr><td>这一刻</td><td>李明</td><td>AJ202605180018</td><td>136****5520</td><td>92</td><td>积分高 / 使用频繁、签到频率</td><td>南山项目</td><td>2026-06-08 02:35</td></tr>
+                <tr><td>周女士</td><td>周女士</td><td>AJ202604220091</td><td>139****6812</td><td>88</td><td>服务需求偏好、优惠券使用偏好</td><td>福田项目</td><td>2026-06-08 02:35</td></tr>
+                <tr><td>骏丰大健测试</td><td>王先生</td><td>AJ202605300031</td><td>183****1328</td><td>84</td><td>活动参与类型热力点</td><td>集团总部</td><td>2026-06-08 02:35</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn">导出结果</button><button class="btn primary" data-close-modal>关闭</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="runModal">
+    <div class="modal">
+      <div class="panel-hd"><h3>执行画像构建</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="detail-list">
+          <span>画像模型</span><strong>高价值客户画像</strong>
+          <span>执行范围</span><strong>全部启用客户</strong>
+          <span>数据来源</span><strong>客户标签、积分行为、权益行为、第三方调用记录</strong>
+          <span>预计覆盖</span><strong>86,420 人</strong>
+          <span>执行方式</span><strong>立即执行一次</strong>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认执行</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="tagModal">
+    <div class="modal compact-detail">
+      <div class="panel-hd"><h3 id="tagTitle">关联标签详情</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <table>
+          <thead><tr><th>标签名称</th><th>标签分类</th><th>覆盖客户数</th><th>使用频次</th><th>更新时间</th></tr></thead>
+          <tbody>
+            <tr><td>积分高 / 使用频繁</td><td>高价值客户标签</td><td>3,618</td><td>2,240</td><td>2026-06-08 02:18</td></tr>
+            <tr><td>签到频率</td><td>行为标签</td><td>8,936</td><td>6,380</td><td>2026-06-08 03:10</td></tr>
+            <tr><td>服务需求偏好</td><td>偏好标签</td><td>5,182</td><td>1,126</td><td>2026-06-07 18:32</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="customerModal">
+    <div class="modal compact-detail">
+      <div class="panel-hd"><h3 id="customerTitle">覆盖客户详情</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="filter compact-filter">
+          <div class="field"><label>微信昵称/用户名</label><input placeholder="请输入微信昵称或用户名"></div>
+          <div class="field"><label>会员ID</label><input placeholder="请输入会员ID"></div>
+          <div class="field"><label>所属项目</label><select><option>全部项目</option><option>南山项目</option><option>福田项目</option></select></div>
+          <button class="btn primary">查询</button>
+        </div>
+        <table>
+          <thead><tr><th>微信昵称</th><th>用户名</th><th>会员ID</th><th>联系方式</th><th>画像评分</th><th>命中标签</th><th>更新时间</th></tr></thead>
+          <tbody>
+            <tr><td>这一刻</td><td>李明</td><td>AJ202605180018</td><td>136****5520</td><td>92</td><td>积分高 / 使用频繁</td><td>2026-06-08 02:35</td></tr>
+            <tr><td>周女士</td><td>周女士</td><td>AJ202604220091</td><td>139****6812</td><td>88</td><td>服务需求偏好</td><td>2026-06-08 02:35</td></tr>
+            <tr><td>陈先生</td><td>陈先生</td><td>AJ202605010027</td><td>137****2098</td><td>76</td><td>活动参与类型热力点</td><td>2026-06-07 18:32</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateProfileScheduleVisibility() {
+      const frequency = document.getElementById("profileFrequency");
+      const scheduleType = document.getElementById("profileScheduleType");
+      const scheduleConfig = document.getElementById("profileScheduleConfig");
+      const minuteField = document.getElementById("profileMinuteField");
+      const hourField = document.getElementById("profileHourField");
+      const weeklyField = document.getElementById("profileWeeklyField");
+      const monthlyField = document.getElementById("profileMonthlyField");
+      const timeField = document.getElementById("profileTimeField");
+      const isCycle = frequency.value === "周期更新";
+      const type = scheduleType.value;
+      scheduleConfig.classList.toggle("show", isCycle);
+      minuteField.classList.toggle("show", isCycle && type === "分钟");
+      hourField.classList.toggle("show", isCycle && type === "每小时");
+      weeklyField.classList.toggle("show", isCycle && type === "每周");
+      monthlyField.classList.toggle("show", isCycle && type === "每月");
+      timeField.classList.toggle("show", isCycle && (type === "每日" || type === "每周" || type === "每月"));
+    }
+
+    function createRuleConditionRow() {
+      const row = document.createElement("div");
+      row.className = "rule-condition-row";
+      row.innerHTML = `
+        <select><option>高价值客户标签</option><option>基本标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option></select>
+        <select><option>积分高 / 使用频繁</option><option>服务需求偏好</option><option>签到频率</option><option>优惠券使用偏好</option><option>活动参与类型热力点</option></select>
+        <select><option>命中</option><option>大于</option><option>大于等于</option><option>等于</option></select>
+        <input value="命中">
+        <select><option>且</option><option>或</option><option>起始条件</option></select>
+        <span class="link" data-delete-rule-condition>删除</span>
+      `;
+      return row;
+    }
+
+    function refreshRuleBlockNames() {
+      document.querySelectorAll(".profile-rule-block").forEach((block, index) => {
+        block.querySelector(".profile-rule-block-hd strong").textContent = `规则块 ${index + 1}`;
+      });
+    }
+
+    function createRuleBlock() {
+      const block = document.createElement("div");
+      block.className = "profile-rule-block";
+      block.innerHTML = `
+        <div class="profile-rule-block-hd">
+          <strong>规则块</strong>
+          <div class="block-tools">
+            <button class="btn" type="button" data-add-rule-condition>新增标签分类</button>
+            <button class="btn" type="button" data-delete-rule-block>删除规则</button>
+          </div>
+        </div>
+        <div class="profile-rule-block-bd">
+          <div class="rule-condition-head"><span>标签分类</span><span>标签名称</span><span>判断关系</span><span>阈值</span><span>与上一行关系</span><span>操作</span></div>
+        </div>
+      `;
+      block.querySelector(".profile-rule-block-bd").appendChild(createRuleConditionRow());
+      return block;
+    }
+
+    document.querySelectorAll("[data-open]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById(el.dataset.open).classList.add("open");
+        updateProfileScheduleVisibility();
+      });
+    });
+    document.querySelectorAll("[data-tags]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("tagTitle").textContent = `${el.dataset.tags} - 关联标签详情`;
+        document.getElementById("tagModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-customers]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("customerTitle").textContent = `${el.dataset.customers} - 覆盖客户详情`;
+        document.getElementById("customerModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+    document.getElementById("profileFrequency").addEventListener("change", updateProfileScheduleVisibility);
+    document.getElementById("profileScheduleType").addEventListener("change", updateProfileScheduleVisibility);
+    document.getElementById("estimateCrowdBtn").addEventListener("click", () => {
+      document.getElementById("crowdEstimateCount").textContent = "预计 5,428 人";
+    });
+    document.getElementById("addRuleBlock").addEventListener("click", () => {
+      document.getElementById("profileRuleBlocks").appendChild(createRuleBlock());
+      refreshRuleBlockNames();
+    });
+    document.getElementById("profileRuleBlocks").addEventListener("click", event => {
+      const addCondition = event.target.closest("[data-add-rule-condition]");
+      if (addCondition) {
+        addCondition.closest(".profile-rule-block").querySelector(".profile-rule-block-bd").appendChild(createRuleConditionRow());
+        return;
+      }
+      const deleteCondition = event.target.closest("[data-delete-rule-condition]");
+      if (deleteCondition) {
+        const block = deleteCondition.closest(".profile-rule-block");
+        if (block.querySelectorAll(".rule-condition-row").length > 1) {
+          deleteCondition.closest(".rule-condition-row").remove();
+        }
+        return;
+      }
+      const deleteBlock = event.target.closest("[data-delete-rule-block]");
+      if (deleteBlock) {
+        const blocks = document.querySelectorAll(".profile-rule-block");
+        if (blocks.length > 1) {
+          deleteBlock.closest(".profile-rule-block").remove();
+          refreshRuleBlockNames();
+        }
+      }
+    });
+    updateProfileScheduleVisibility();
+    refreshRuleBlockNames();
+  </script>
+</body>
+</html>

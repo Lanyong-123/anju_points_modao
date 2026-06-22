@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>优惠券效果分析报表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+    .chart-wrap { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; }
+    .chart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .chart-head h3 { margin: 0; color: var(--navy); font-size: 15px; }
+    .chart-note { color: var(--muted); font-size: 12px; font-weight: 800; }
+    .bar-list { display: grid; gap: 16px; }
+    .bar-row { display: grid; grid-template-columns: 108px 1fr 116px; gap: 12px; align-items: center; }
+    .bar-name { color: #123152; font-weight: 800; }
+    .bar-track { height: 22px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2f6fbd, #2f9b6b); }
+    .bar-fill.gold { background: linear-gradient(90deg, #2f6fbd, #d8892c); }
+    .bar-value { color: #123152; font-weight: 800; text-align: right; }
+    .rate-cell { display: inline-grid; gap: 5px; min-width: 96px; }
+    .rate-track { height: 6px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
+    .rate-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2f6fbd, #2f9b6b); }
+    .money { color: var(--navy); font-weight: 800; }
+    @media (max-width: 1180px) {
+      .report-grid { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 96px 1fr; }
+      .bar-value { grid-column: 2; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>开始时间</label><input type="date" id="startDate" value="2026-06-01"></div>
+      <div class="field"><label>结束时间</label><input type="date" id="endDate" value="2026-06-30"></div>
+      <div class="field"><label>优惠券类型</label><select id="typeFilter"><option>全部类型</option><option>电子礼券</option><option>实物礼券</option><option>第三方礼卷</option></select></div>
+      <div class="field"><label>发分主体</label><select id="issuerFilter"><option>全部主体</option><option>集团运营中心</option><option>安居集团</option><option>南山项目</option></select></div>
+      <button class="btn primary" id="queryBtn">查询</button>
+      <button class="btn" id="resetBtn">重置</button>
+      <button class="btn" id="exportBtn">导出</button>
+    </div>
+
+    <div class="report-grid">
+      <div class="chart-wrap">
+        <div class="chart-head"><h3>不同类型优惠券领取率</h3><span class="chart-note">按领取率降序</span></div>
+        <div class="bar-list" id="claimBars"></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-head"><h3>不同类型优惠券核销率</h3><span class="chart-note">按核销率降序</span></div>
+        <div class="bar-list" id="writeoffBars"></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-hd">
+        <h3>优惠券效果分析明细</h3>
+        <div class="toolbar"><button class="btn" id="panelExportBtn">导出Excel</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr><th>统计周期</th><th>优惠券类型</th><th>发放数量</th><th>领取数量</th><th>领取率</th><th>核销数量</th><th>核销率</th><th>核销金额</th></tr>
+          </thead>
+          <tbody id="effectRows"></tbody>
+        </table>
+        <div class="pagination"><span id="rowCount">共 0 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const effectData = [
+      { period: "2026-06-01 至 2026-06-30", start: "2026-06-01", end: "2026-06-30", type: "电子礼券", issuer: "集团运营中心", issued: 36000, claimed: 28600, used: 16820, writeoffAmount: 336400, salesAmount: 2268000 },
+      { period: "2026-06-01 至 2026-06-30", start: "2026-06-01", end: "2026-06-30", type: "实物礼券", issuer: "安居集团", issued: 18000, claimed: 12360, used: 6320, writeoffAmount: 442400, salesAmount: 1386000 },
+      { period: "2026-06-01 至 2026-06-30", start: "2026-06-01", end: "2026-06-30", type: "第三方礼卷", issuer: "南山项目", issued: 14200, claimed: 10340, used: 5840, writeoffAmount: 292000, salesAmount: 1712000 },
+      { period: "2026-05-01 至 2026-05-31", start: "2026-05-01", end: "2026-05-31", type: "电子礼券", issuer: "集团运营中心", issued: 32000, claimed: 25120, used: 14600, writeoffAmount: 292000, salesAmount: 1980000 },
+      { period: "2026-05-01 至 2026-05-31", start: "2026-05-01", end: "2026-05-31", type: "实物礼券", issuer: "安居集团", issued: 12600, claimed: 8260, used: 4180, writeoffAmount: 292600, salesAmount: 926000 },
+      { period: "2026-05-01 至 2026-05-31", start: "2026-05-01", end: "2026-05-31", type: "第三方礼卷", issuer: "南山项目", issued: 9800, claimed: 6920, used: 3860, writeoffAmount: 193000, salesAmount: 1086000 }
+    ];
+
+    let currentRows = [];
+
+    function format(num) {
+      return num.toLocaleString("zh-CN");
+    }
+
+    function money(num) {
+      return `${format(num)}元`;
+    }
+
+    function percent(part, total) {
+      return total ? part / total * 100 : 0;
+    }
+
+    function getRows() {
+      const startDate = document.getElementById("startDate").value;
+      const endDate = document.getElementById("endDate").value;
+      const type = document.getElementById("typeFilter").value;
+      const issuer = document.getElementById("issuerFilter").value;
+      return effectData.filter(item => {
+        const inRange = item.start <= endDate && item.end >= startDate;
+        const matchType = type === "全部类型" || item.type === type;
+        const matchIssuer = issuer === "全部主体" || item.issuer === issuer;
+        return inRange && matchType && matchIssuer;
+      });
+    }
+
+    function getTypeRows(rows) {
+      const grouped = new Map();
+      rows.forEach(item => {
+        if (!grouped.has(item.type)) grouped.set(item.type, { type: item.type, issued: 0, claimed: 0, used: 0, writeoffAmount: 0, salesAmount: 0 });
+        const row = grouped.get(item.type);
+        row.issued += item.issued;
+        row.claimed += item.claimed;
+        row.used += item.used;
+        row.writeoffAmount += item.writeoffAmount;
+        row.salesAmount += item.salesAmount;
+      });
+      return Array.from(grouped.values()).map(item => ({
+        ...item,
+        claimRate: percent(item.claimed, item.issued),
+        writeoffRate: percent(item.used, item.claimed)
+      }));
+    }
+
+    function renderBars(targetId, rows, valueKey, labelFormatter, mode) {
+      const max = Math.max(...rows.map(item => item[valueKey]), 1);
+      document.getElementById(targetId).innerHTML = rows.map(item => `
+        <div class="bar-row">
+          <div class="bar-name">${item.type}</div>
+          <div class="bar-track"><div class="bar-fill ${mode === "gold" ? "gold" : ""}" style="width:${item[valueKey] / max * 100}%"></div></div>
+          <div class="bar-value">${labelFormatter(item[valueKey])}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderAll() {
+      currentRows = getRows();
+      const typeRows = getTypeRows(currentRows);
+      renderBars("claimBars", [...typeRows].sort((a, b) => b.claimRate - a.claimRate), "claimRate", value => `${value.toFixed(1)}%`);
+      renderBars("writeoffBars", [...typeRows].sort((a, b) => b.writeoffRate - a.writeoffRate), "writeoffRate", value => `${value.toFixed(1)}%`, "gold");
+
+      document.getElementById("effectRows").innerHTML = currentRows.map(item => {
+        const claimRate = percent(item.claimed, item.issued);
+        const writeoffRate = percent(item.used, item.claimed);
+        return `
+            <tr>
+              <td>${item.period}</td>
+              <td>${item.type}</td>
+              <td>${format(item.issued)}</td>
+            <td>${format(item.claimed)}</td>
+            <td><span class="rate-cell"><span>${claimRate.toFixed(1)}%</span><i class="rate-track"><i class="rate-fill" style="width:${Math.min(claimRate, 100)}%"></i></i></span></td>
+            <td>${format(item.used)}</td>
+            <td><span class="rate-cell"><span>${writeoffRate.toFixed(1)}%</span><i class="rate-track"><i class="rate-fill" style="width:${Math.min(writeoffRate, 100)}%"></i></i></span></td>
+            <td class="money">${money(item.writeoffAmount)}</td>
+          </tr>
+        `;
+      }).join("");
+      document.getElementById("rowCount").textContent = `共 ${currentRows.length} 条`;
+    }
+
+    function exportRows() {
+      const headers = ["统计周期", "优惠券类型", "发放数量", "领取数量", "领取率", "核销数量", "核销率", "核销金额"];
+      const lines = currentRows.map(item => [
+        item.period,
+        item.type,
+        item.issued,
+        item.claimed,
+        `${percent(item.claimed, item.issued).toFixed(1)}%`,
+        item.used,
+        `${percent(item.used, item.claimed).toFixed(1)}%`,
+        item.writeoffAmount
+      ]);
+      const csv = [headers, ...lines].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob(["\ufeff", csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "优惠券效果分析报表.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("queryBtn").addEventListener("click", renderAll);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("startDate").value = "2026-06-01";
+      document.getElementById("endDate").value = "2026-06-30";
+      document.getElementById("typeFilter").value = "全部类型";
+      document.getElementById("issuerFilter").value = "全部主体";
+      renderAll();
+    });
+    document.getElementById("exportBtn").addEventListener("click", exportRows);
+    document.getElementById("panelExportBtn").addEventListener("click", exportRows);
+    renderAll();
+  </script>
+</body>
+</html>

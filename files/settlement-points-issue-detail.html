@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>积分发分日清明细表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>清算日期</label><input value="2026-05-26"></div>
+      <div class="field"><label>流水号</label><input placeholder="发分流水号"></div>
+      <div class="field"><label>会员名称/ID</label><input placeholder="会员名称、会员ID"></div>
+      <div class="field"><label>积分类型</label><select><option>全部类型</option><option>消费积分</option><option>碳积分</option></select></div>
+      <div class="field"><label>发分主体</label><select><option>全部主体</option><option>物业缴费系统</option><option>低碳联盟平台</option><option>营销活动系统</option></select></div>
+      <div class="field"><label>发分场景</label><select><option>全部场景</option><option>签到</option><option>物业缴费</option><option>低碳任务</option><option>营销补发</option></select></div>
+      <div class="field"><label>清算状态</label><select><option>全部状态</option><option>已清算</option><option>差异待处理</option></select></div>
+      <button class="btn primary">查询</button>
+    </div>
+    <div class="panel">
+      <div class="panel-hd"><h3>积分发分日清明细</h3><div class="toolbar"><button class="btn">导出Excel</button></div></div>
+      <div class="panel-bd">
+        <table>
+          <thead><tr><th><input type="checkbox"></th><th>发分流水号</th><th>会员名称</th><th>会员ID</th><th>积分账户</th><th>积分类型</th><th>发分主体</th><th>发分场景</th><th>发分积分</th><th>业务单号</th><th>发分时间</th><th>清算批次</th><th>清算状态</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td>PI202605260001</td><td>李明</td><td>AJ202605180018</td><td>PA202605180018</td><td><span class="badge">消费积分</span></td><td>物业缴费系统</td><td>物业缴费</td><td>+1,200</td><td>PAY202605260088</td><td>2026-05-26 09:18</td><td>CLR202605260001</td><td><span class="badge green">已清算</span></td><td><span class="link" data-detail="PI202605260001">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>PI202605260002</td><td>周女士</td><td>AJ202604220091</td><td>PA202604220091</td><td><span class="badge green">碳积分</span></td><td>低碳联盟平台</td><td>低碳任务</td><td>+300</td><td>LC202605260031</td><td>2026-05-26 10:26</td><td>CLR202605260002</td><td><span class="badge gold">差异待处理</span></td><td><span class="link" data-detail="PI202605260002">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>PI202605260003</td><td>陈先生</td><td>AJ202605010027</td><td>PA202605010027</td><td><span class="badge">消费积分</span></td><td>营销活动系统</td><td>营销补发</td><td>+500</td><td>MKT202605260019</td><td>2026-05-26 14:20</td><td>CLR202605260001</td><td><span class="badge green">已清算</span></td><td><span class="link" data-detail="PI202605260003">详情</span></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 12,680 条</span><span>每页</span><select><option>10 条</option><option selected>20 条</option><option>50 条</option></select><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><span>跳至</span><input value="1"><span>页</span></div>
+      </div>
+    </div>
+  </div>
+  <aside class="drawer" id="detailDrawer"><div class="panel-hd"><h3>发分明细详情</h3><button class="btn" data-close-drawer>关闭</button></div><div class="panel-bd"><div class="detail-list"><span>发分流水号</span><strong id="dFlow">PI202605260001</strong><span>清算日期</span><strong>2026-05-26</strong><span>数据来源</span><strong>业务系统同步</strong><span>对账结果</span><strong id="dResult">已清算</strong></div></div></aside>
+  <script>
+    const drawer = document.getElementById("detailDrawer");
+    document.querySelectorAll("[data-detail]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("dFlow").textContent = el.dataset.detail;
+        document.getElementById("dResult").textContent = el.dataset.detail === "PI202605260002" ? "差异待处理：业务系统发分300，积分账户入账180" : "已清算";
+        drawer.classList.add("open");
+      });
+    });
+    document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
+  </script>
+</body>
+</html>

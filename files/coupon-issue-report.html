@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>优惠券发放报表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+    .chart-wrap { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; }
+    .chart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .chart-head h3 { margin: 0; color: var(--navy); font-size: 15px; }
+    .chart-note { color: var(--muted); font-size: 12px; font-weight: 800; }
+    .bar-list { display: grid; gap: 16px; }
+    .bar-row { display: grid; grid-template-columns: 118px 1fr 112px; gap: 12px; align-items: center; }
+    .bar-name { color: #123152; font-weight: 800; }
+    .bar-track { height: 22px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2f6fbd, #2f9b6b); }
+    .bar-fill.rate { background: linear-gradient(90deg, #2f6fbd, #d8892c); }
+    .bar-value { color: #123152; font-weight: 800; text-align: right; }
+    .rate-cell { display: inline-grid; gap: 5px; min-width: 106px; }
+    .rate-track { height: 6px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
+    .rate-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2f6fbd, #2f9b6b); }
+    .money { color: var(--navy); font-weight: 800; }
+    .detail-filter { margin-bottom: 12px; }
+    @media (max-width: 1180px) {
+      .report-grid { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 96px 1fr; }
+      .bar-value { grid-column: 2; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>统计周期</label><select id="periodType"><option selected>月</option><option>季</option><option>年</option></select></div>
+      <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
+      <div class="field"><label>发放渠道</label><select id="channelFilter"><option>全部渠道</option><option>商品发放</option><option>营销活动</option><option>会员权益</option><option>人工补发</option></select></div>
+      <div class="field"><label>结算主体</label><select id="settleFilter"><option>全部主体</option><option>集团运营中心</option><option>安居集团</option><option>南山项目</option><option>合作商户</option></select></div>
+      <button class="btn primary" id="queryBtn">查询</button>
+      <button class="btn" id="resetBtn">重置</button>
+      <button class="btn" id="exportBtn">导出</button>
+    </div>
+
+    <div class="report-grid">
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3>发放数量结算主体排名</h3>
+          <span class="chart-note">按发放数量降序</span>
+        </div>
+        <div class="bar-list" id="issuedEntityBars"></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3>核销率结算主体排名</h3>
+          <span class="chart-note">按核销率降序</span>
+        </div>
+        <div class="bar-list" id="rateEntityBars"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>优惠券发放报表</h3>
+        <div class="toolbar"><button class="btn" id="panelExportBtn">导出Excel</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr>
+              <th>统计周期</th>
+              <th>发放渠道</th>
+              <th>结算主体</th>
+              <th>发放数量</th>
+              <th>核销数量</th>
+              <th>核销率</th>
+              <th>核销金额</th>
+              <th>结算金额</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="reportRows"></tbody>
+        </table>
+        <div class="pagination"><span id="rowCount">共 0 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="detailModal">
+    <div class="modal" style="width:1080px">
+      <div class="panel-hd"><h3 id="detailTitle">优惠券发放详情</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="filter detail-filter">
+          <div class="field"><label>优惠券批次</label><input id="detailBatchKeyword" placeholder="请输入批次号"></div>
+          <div class="field"><label>优惠券名称</label><input id="detailNameKeyword" placeholder="请输入优惠券名称"></div>
+          <button class="btn primary" id="detailQueryBtn">查询</button>
+          <button class="btn" id="detailResetBtn">重置</button>
+        </div>
+        <table>
+          <thead><tr><th>优惠券批次</th><th>优惠券名称</th><th>发放渠道</th><th>发放时间</th><th>发放数量</th><th>核销数量</th><th>核销率</th><th>核销金额</th><th>结算金额</th></tr></thead>
+          <tbody id="detailRows"></tbody>
+        </table>
+        <div class="pagination">
+          <span id="detailCount">共 0 条</span>
+          <span>每页</span>
+          <select id="detailPageSize"><option selected>5 条</option><option>10 条</option></select>
+          <button class="page-btn" id="detailPrevBtn">上一页</button>
+          <button class="page-btn active" id="detailPageNo">1</button>
+          <button class="page-btn" id="detailNextBtn">下一页</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const periodOptions = {
+      "月": ["2026-06", "2026-05", "2026-04", "2026-03"],
+      "季": ["2026年第2季度", "2026年第1季度", "2025年第4季度"],
+      "年": ["2026年", "2025年", "2024年"]
+    };
+
+    const reportData = [
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260601001", name: "2000积分兑家政服务", channel: "营销活动", entity: "集团运营中心", issueTime: "2026-06-01 09:30", issued: 18000, used: 7380, writeoffAmount: 147600, settleAmount: 140220 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260603002", name: "5000积分兑礼物", channel: "营销活动", entity: "集团运营中心", issueTime: "2026-06-03 10:00", issued: 9600, used: 4280, writeoffAmount: 85600, settleAmount: 81320 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260604003", name: "500积分兑场地预约优先", channel: "商品发放", entity: "集团运营中心", issueTime: "2026-06-04 11:20", issued: 6800, used: 2360, writeoffAmount: 47200, settleAmount: 44840 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260607004", name: "1000积分兑停车抵扣", channel: "会员权益", entity: "集团运营中心", issueTime: "2026-06-07 10:30", issued: 7600, used: 3100, writeoffAmount: 62000, settleAmount: 58900 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260611005", name: "300积分兑社区活动补偿", channel: "人工补发", entity: "集团运营中心", issueTime: "2026-06-11 16:40", issued: 3200, used: 980, writeoffAmount: 19600, settleAmount: 18620 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260615006", name: "800积分兑商城礼物", channel: "营销活动", entity: "集团运营中心", issueTime: "2026-06-15 09:50", issued: 5200, used: 2250, writeoffAmount: 45000, settleAmount: 42750 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260605002", name: "2000积分兑家政服务", channel: "商品发放", entity: "安居集团", issueTime: "2026-06-05 09:15", issued: 12000, used: 5326, writeoffAmount: 53260, settleAmount: 50597 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260606006", name: "1500积分兑深度保洁", channel: "商品发放", entity: "安居集团", issueTime: "2026-06-06 14:20", issued: 5200, used: 2106, writeoffAmount: 42120, settleAmount: 40014 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260608003", name: "1000积分兑停车抵扣", channel: "会员权益", entity: "南山项目", issueTime: "2026-06-08 11:00", issued: 6200, used: 1908, writeoffAmount: 38160, settleAmount: 36252 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260609007", name: "3000积分兑生日礼物", channel: "会员权益", entity: "南山项目", issueTime: "2026-06-09 15:36", issued: 4300, used: 1530, writeoffAmount: 30600, settleAmount: 29070 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260612004", name: "500积分兑场地预约优先", channel: "人工补发", entity: "合作商户", issueTime: "2026-06-12 16:10", issued: 8400, used: 2126, writeoffAmount: 63660, settleAmount: 60477 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260613008", name: "300积分兑社群活动券", channel: "人工补发", entity: "合作商户", issueTime: "2026-06-13 17:25", issued: 2600, used: 860, writeoffAmount: 17200, settleAmount: 16340 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260616005", name: "2000积分兑贴身管家", channel: "商品发放", entity: "合作商户", issueTime: "2026-06-16 10:45", issued: 3600, used: 1166, writeoffAmount: 46640, settleAmount: 44308 },
+      { month: "2026-05", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260503001", name: "800积分兑商城礼物", channel: "营销活动", entity: "集团运营中心", issueTime: "2026-05-03 10:00", issued: 15000, used: 8120, writeoffAmount: 81200, settleAmount: 77140 },
+      { month: "2026-04", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260412002", name: "600积分兑社区食堂抵扣", channel: "会员权益", entity: "安居集团", issueTime: "2026-04-12 09:00", issued: 9800, used: 4620, writeoffAmount: 92400, settleAmount: 87780 },
+      { month: "2026-03", quarter: "2026年第1季度", year: "2026年", batch: "CPB20260308001", name: "1200积分兑春季服务体验", channel: "商品发放", entity: "南山项目", issueTime: "2026-03-08 09:10", issued: 7600, used: 2380, writeoffAmount: 47600, settleAmount: 45220 }
+    ];
+
+    let currentRows = [];
+    let currentDetails = new Map();
+    let activeDetailRows = [];
+    let detailPage = 1;
+
+    function format(num) {
+      return num.toLocaleString("zh-CN");
+    }
+
+    function money(num) {
+      return `${format(num)}元`;
+    }
+
+    function rate(used, issued) {
+      return issued ? used / issued * 100 : 0;
+    }
+
+    function periodKey() {
+      const type = document.getElementById("periodType").value;
+      return type === "月" ? "month" : type === "季" ? "quarter" : "year";
+    }
+
+    function syncPeriodOptions() {
+      const type = document.getElementById("periodType").value;
+      document.getElementById("periodValue").innerHTML = periodOptions[type].map((item, index) =>
+        `<option ${index === 0 ? "selected" : ""}>${item}</option>`
+      ).join("");
+    }
+
+    function getBaseRows() {
+      const key = periodKey();
+      const periodValue = document.getElementById("periodValue").value;
+      const channel = document.getElementById("channelFilter").value;
+      const entity = document.getElementById("settleFilter").value;
+      return reportData.filter(item => {
+        const matchPeriod = item[key] === periodValue;
+        const matchChannel = channel === "全部渠道" || item.channel === channel;
+        const matchEntity = entity === "全部主体" || item.entity === entity;
+        return matchPeriod && matchChannel && matchEntity;
+      });
+    }
+
+    function getRows() {
+      const key = periodKey();
+      const selectedChannel = document.getElementById("channelFilter").value;
+      const grouped = new Map();
+      currentDetails = new Map();
+      getBaseRows().forEach(item => {
+        const channelLabel = selectedChannel === "全部渠道" ? "全部渠道" : item.channel;
+        const groupKey = `${item[key]}|${channelLabel}|${item.entity}`;
+        if (!grouped.has(groupKey)) {
+          grouped.set(groupKey, { period: item[key], channel: channelLabel, entity: item.entity, issued: 0, used: 0, writeoffAmount: 0, settleAmount: 0, groupKey });
+          currentDetails.set(groupKey, []);
+        }
+        const row = grouped.get(groupKey);
+        row.issued += item.issued;
+        row.used += item.used;
+        row.writeoffAmount += item.writeoffAmount;
+        row.settleAmount += item.settleAmount;
+        currentDetails.get(groupKey).push(item);
+      });
+      return Array.from(grouped.values());
+    }
+
+    function getEntityRanking() {
+      const grouped = new Map();
+      getBaseRows().forEach(item => {
+        if (!grouped.has(item.entity)) {
+          grouped.set(item.entity, { name: item.entity, issued: 0, used: 0 });
+        }
+        const row = grouped.get(item.entity);
+        row.issued += item.issued;
+        row.used += item.used;
+      });
+      return Array.from(grouped.values()).map(item => ({
+        ...item,
+        usedRate: rate(item.used, item.issued)
+      }));
+    }
+
+    function renderRankingBars() {
+      const ranking = getEntityRanking();
+      const issuedRows = [...ranking].sort((a, b) => b.issued - a.issued);
+      const rateRows = [...ranking].sort((a, b) => b.usedRate - a.usedRate);
+      const maxIssued = Math.max(...issuedRows.map(item => item.issued), 1);
+      document.getElementById("issuedEntityBars").innerHTML = issuedRows.map(item => `
+        <div class="bar-row">
+          <div class="bar-name">${item.name}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${item.issued / maxIssued * 100}%"></div></div>
+          <div class="bar-value">${format(item.issued)}</div>
+        </div>
+      `).join("");
+      document.getElementById("rateEntityBars").innerHTML = rateRows.map(item => `
+        <div class="bar-row">
+          <div class="bar-name">${item.name}</div>
+          <div class="bar-track"><div class="bar-fill rate" style="width:${Math.min(item.usedRate, 100)}%"></div></div>
+          <div class="bar-value">${item.usedRate.toFixed(1)}%</div>
+        </div>
+      `).join("");
+    }
+
+    function renderRows() {
+      currentRows = getRows();
+      renderRankingBars();
+      document.getElementById("reportRows").innerHTML = currentRows.map(item => {
+        const usedRate = rate(item.used, item.issued);
+        return `
+          <tr>
+            <td>${item.period}</td>
+            <td>${item.channel}</td>
+            <td>${item.entity}</td>
+            <td>${format(item.issued)}</td>
+            <td>${format(item.used)}</td>
+            <td><span class="rate-cell"><span>${usedRate.toFixed(1)}%</span><i class="rate-track"><i class="rate-fill" style="width:${Math.min(usedRate, 100)}%"></i></i></span></td>
+            <td class="money">${money(item.writeoffAmount)}</td>
+            <td class="money">${money(item.settleAmount)}</td>
+            <td><span class="link" data-detail="${item.groupKey}">详情</span></td>
+          </tr>
+        `;
+      }).join("");
+      document.getElementById("rowCount").textContent = `共 ${currentRows.length} 条`;
+      bindDetailLinks();
+    }
+
+    function openCouponManage() {
+      const target = { title: "优惠券管理", url: "files/coupon-manage.html" };
+      try {
+        if (window.parent && window.parent !== window && typeof window.parent.openTab === "function") {
+          window.parent.openTab(target);
+          return;
+        }
+      } catch (error) {
+        // 直接预览单页时退回到当前页面跳转。
+      }
+      window.location.href = "coupon-manage.html";
+    }
+
+    function getFilteredDetailRows() {
+      const batchKeyword = document.getElementById("detailBatchKeyword").value.trim();
+      const nameKeyword = document.getElementById("detailNameKeyword").value.trim();
+      return activeDetailRows.filter(item => {
+        const matchBatch = !batchKeyword || item.batch.includes(batchKeyword);
+        const matchName = !nameKeyword || item.name.includes(nameKeyword);
+        return matchBatch && matchName;
+      });
+    }
+
+    function renderDetailRows() {
+      const rows = getFilteredDetailRows();
+      const pageSize = parseInt(document.getElementById("detailPageSize").value, 10);
+      const pageTotal = Math.max(1, Math.ceil(rows.length / pageSize));
+      detailPage = Math.min(detailPage, pageTotal);
+      const pageRows = rows.slice((detailPage - 1) * pageSize, detailPage * pageSize);
+      document.getElementById("detailRows").innerHTML = pageRows.map(item => {
+        const usedRate = rate(item.used, item.issued);
+        return `
+          <tr>
+            <td>${item.batch}</td>
+            <td><a class="link" href="coupon-manage.html" data-coupon-name>${item.name}</a></td>
+            <td>${item.channel}</td>
+            <td>${item.issueTime}</td>
+            <td>${format(item.issued)}</td>
+            <td>${format(item.used)}</td>
+            <td>${usedRate.toFixed(1)}%</td>
+            <td>${money(item.writeoffAmount)}</td>
+            <td>${money(item.settleAmount)}</td>
+          </tr>
+        `;
+      }).join("");
+      document.getElementById("detailCount").textContent = `共 ${rows.length} 条`;
+      document.getElementById("detailPageNo").textContent = String(detailPage);
+      document.getElementById("detailPrevBtn").disabled = detailPage <= 1;
+      document.getElementById("detailNextBtn").disabled = detailPage >= pageTotal;
+    }
+
+    function bindDetailLinks() {
+      document.querySelectorAll("[data-detail]").forEach(el => el.addEventListener("click", () => {
+        activeDetailRows = currentDetails.get(el.dataset.detail) || [];
+        const row = currentRows.find(item => item.groupKey === el.dataset.detail);
+        detailPage = 1;
+        document.getElementById("detailBatchKeyword").value = "";
+        document.getElementById("detailNameKeyword").value = "";
+        document.getElementById("detailTitle").textContent = `${row.period} ${row.channel} - 优惠券发放详情`;
+        renderDetailRows();
+        document.getElementById("detailModal").classList.add("open");
+      }));
+    }
+
+    function exportRows() {
+      const headers = ["统计周期", "发放渠道", "结算主体", "发放数量", "核销数量", "核销率", "核销金额", "结算金额"];
+      const lines = currentRows.map(item => [
+        item.period,
+        item.channel,
+        item.entity,
+        item.issued,
+        item.used,
+        `${rate(item.used, item.issued).toFixed(1)}%`,
+        item.writeoffAmount,
+        item.settleAmount
+      ]);
+      const csv = [headers, ...lines].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob(["\ufeff", csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "优惠券发放报表.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById("periodType").addEventListener("change", () => {
+      syncPeriodOptions();
+      renderRows();
+    });
+    document.getElementById("queryBtn").addEventListener("click", renderRows);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("periodType").value = "月";
+      syncPeriodOptions();
+      document.getElementById("channelFilter").value = "全部渠道";
+      document.getElementById("settleFilter").value = "全部主体";
+      renderRows();
+    });
+    document.getElementById("exportBtn").addEventListener("click", exportRows);
+    document.getElementById("panelExportBtn").addEventListener("click", exportRows);
+    document.getElementById("detailQueryBtn").addEventListener("click", () => {
+      detailPage = 1;
+      renderDetailRows();
+    });
+    document.getElementById("detailResetBtn").addEventListener("click", () => {
+      document.getElementById("detailBatchKeyword").value = "";
+      document.getElementById("detailNameKeyword").value = "";
+      detailPage = 1;
+      renderDetailRows();
+    });
+    document.getElementById("detailPageSize").addEventListener("change", () => {
+      detailPage = 1;
+      renderDetailRows();
+    });
+    document.getElementById("detailPrevBtn").addEventListener("click", () => {
+      detailPage -= 1;
+      renderDetailRows();
+    });
+    document.getElementById("detailNextBtn").addEventListener("click", () => {
+      detailPage += 1;
+      renderDetailRows();
+    });
+    document.getElementById("detailRows").addEventListener("click", event => {
+      const link = event.target.closest("[data-coupon-name]");
+      if (!link) return;
+      event.preventDefault();
+      openCouponManage();
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open")));
+    syncPeriodOptions();
+    renderRows();
+  </script>
+</body>
+</html>

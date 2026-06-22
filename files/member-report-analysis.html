@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>会员增长分析报表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+    .chart-wrap { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; }
+    .chart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .chart-head h3 { margin: 0; color: var(--navy); font-size: 15px; }
+    .chart-note { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; color: #526477; font-size: 12px; }
+    .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+    .blue-dot { background: #2f6fbd; }
+    .green-dot { background: #2f9b6b; }
+    .red-dot { background: #c61f32; }
+    .orange-dot { background: #d8892c; }
+    .line-chart { height: 280px; display: grid; grid-template-columns: 58px 1fr; gap: 10px; }
+    .axis-y { display: grid; grid-template-rows: repeat(5, 1fr); color: var(--muted); font-size: 11px; text-align: right; padding-right: 8px; }
+    .line-area { position: relative; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); background: linear-gradient(to top, rgba(224,233,242,.75) 1px, transparent 1px) 0 10px / 100% 20%; overflow: hidden; }
+    .trend-line { position: absolute; inset: 10px 18px 30px 18px; }
+    .trend-svg { width: 100%; height: 100%; overflow: visible; }
+    .x-label { position: absolute; bottom: 8px; transform: translateX(-50%); color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .level-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 64px; height: 24px; border-radius: 999px; background: #eef4fb; color: #123152; font-weight: 800; font-size: 12px; }
+    @media (max-width: 1180px) {
+      .report-grid { grid-template-columns: 1fr; }
+      .line-chart { grid-template-columns: 1fr; }
+      .axis-y { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>统计时间</label><input value="2026-01-01 至 2026-06-30"></div>
+      <div class="field"><label>统计粒度</label><select id="grainSelect"><option>日</option><option selected>月</option></select></div>
+      <button class="btn primary" id="queryBtn">查询</button>
+      <button class="btn" id="resetBtn">重置</button>
+    </div>
+
+    <div class="report-grid">
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3>会员总数变化趋势</h3>
+          <div class="legend"><span><i class="blue-dot"></i>会员总数</span></div>
+        </div>
+        <div class="line-chart">
+          <div class="axis-y"><span>130,000</span><span>122,500</span><span>115,000</span><span>107,500</span><span>100,000</span></div>
+          <div class="line-area" id="totalTrend"></div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3>各等级会员占比变化</h3>
+          <div class="legend"><span><i class="blue-dot"></i>普通</span><span><i class="green-dot"></i>银卡</span><span><i class="orange-dot"></i>金卡</span><span><i style="background:#123152"></i>黑金</span></div>
+        </div>
+        <div class="line-chart">
+          <div class="axis-y"><span>50%</span><span>40%</span><span>30%</span><span>20%</span><span>0%</span></div>
+          <div class="line-area" id="levelTrend"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>会员增长分析明细</h3>
+        <div class="toolbar"><button class="btn">导出</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr><th>统计周期</th><th>会员总数</th><th>普通会员占比</th><th>银卡会员占比</th><th>金卡会员占比</th><th>黑金会员占比</th><th>认证会员占比</th></tr>
+          </thead>
+          <tbody id="analysisRows"></tbody>
+        </table>
+        <div class="pagination"><span>共 6 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const periods = [
+      { period: "2026-01", total: 108440, normal: 44, silver: 28, gold: 22, black: 6, auth: 66.2 },
+      { period: "2026-02", total: 111860, normal: 42, silver: 29, gold: 23, black: 6, auth: 67.8 },
+      { period: "2026-03", total: 115420, normal: 40, silver: 30, gold: 23, black: 7, auth: 69.1 },
+      { period: "2026-04", total: 119280, normal: 38, silver: 30, gold: 24, black: 8, auth: 70.5 },
+      { period: "2026-05", total: 123050, normal: 36, silver: 31, gold: 25, black: 8, auth: 71.6 },
+      { period: "2026-06", total: 126860, normal: 34, silver: 31, gold: 26, black: 9, auth: 72.4 }
+    ];
+
+    function format(num) {
+      return num.toLocaleString("zh-CN");
+    }
+
+    function renderTotalTrend() {
+      const host = document.getElementById("totalTrend");
+      const min = 100000;
+      const max = 130000;
+      const points = periods.map((item, index) => {
+        const x = periods.length === 1 ? 50 : 5 + index / (periods.length - 1) * 90;
+        const y = 100 - ((item.total - min) / (max - min) * 100);
+        return { ...item, x, y };
+      });
+      const polyline = points.map(point => `${point.x},${point.y}`).join(" ");
+      host.innerHTML = `
+        <div class="trend-line">
+          <svg class="trend-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <polyline points="${polyline}" fill="none" stroke="#2f6fbd" stroke-width="2.8" vector-effect="non-scaling-stroke" />
+            ${points.map(point => `<circle cx="${point.x}" cy="${point.y}" r="2.6" fill="#2f6fbd" stroke="#fff" stroke-width="1.4" vector-effect="non-scaling-stroke"><title>${point.period} ${format(point.total)}</title></circle>`).join("")}
+          </svg>
+        </div>
+        ${points.map(point => `<span class="x-label" style="left:${point.x}%">${point.period.slice(5)}</span>`).join("")}
+      `;
+    }
+
+    function renderLevelTrend() {
+      const host = document.getElementById("levelTrend");
+      const series = [
+        { key: "normal", name: "普通", color: "#2f6fbd" },
+        { key: "silver", name: "银卡", color: "#2f9b6b" },
+        { key: "gold", name: "金卡", color: "#d8892c" },
+        { key: "black", name: "黑金", color: "#123152" }
+      ];
+      const max = 50;
+      const paths = series.map(item => {
+        const points = periods.map((period, index) => {
+          const x = periods.length === 1 ? 50 : 5 + index / (periods.length - 1) * 90;
+          const y = 100 - period[item.key] / max * 100;
+          return { x, y, value: period[item.key], period: period.period };
+        });
+        return `
+          <polyline points="${points.map(point => `${point.x},${point.y}`).join(" ")}" fill="none" stroke="${item.color}" stroke-width="2.5" vector-effect="non-scaling-stroke" />
+          ${points.map(point => `<circle cx="${point.x}" cy="${point.y}" r="2.3" fill="${item.color}" stroke="#fff" stroke-width="1.2" vector-effect="non-scaling-stroke"><title>${point.period} ${item.name} ${point.value}%</title></circle>`).join("")}
+        `;
+      }).join("");
+      host.innerHTML = `
+        <div class="trend-line">
+          <svg class="trend-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            ${paths}
+          </svg>
+        </div>
+        ${periods.map((item, index) => `<span class="x-label" style="left:${periods.length === 1 ? 50 : 5 + index / (periods.length - 1) * 90}%">${item.period.slice(5)}</span>`).join("")}
+      `;
+    }
+
+    function openMemberInfo() {
+      try {
+        if (window.parent && window.parent !== window && typeof window.parent.openTab === "function") {
+          window.parent.openTab({ title: "会员信息管理", url: "files/member-info.html" });
+          return;
+        }
+      } catch (error) {
+        // 本地 file 方式预览时可能无法访问父页面方法，退回到当前 iframe 跳转。
+      }
+      window.location.href = "member-info.html";
+    }
+
+    function renderRows() {
+      document.getElementById("analysisRows").innerHTML = periods.map(item => `
+        <tr>
+          <td>${item.period}</td>
+          <td><a class="link" href="member-info.html" data-member-info>${format(item.total)}</a></td>
+          <td><span class="level-pill">${item.normal}%</span></td>
+          <td><span class="level-pill">${item.silver}%</span></td>
+          <td><span class="level-pill">${item.gold}%</span></td>
+          <td><span class="level-pill">${item.black}%</span></td>
+          <td>${item.auth}%</td>
+        </tr>
+      `).join("");
+    }
+
+    document.getElementById("queryBtn").addEventListener("click", () => {
+      renderTotalTrend();
+      renderLevelTrend();
+      renderRows();
+    });
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("grainSelect").value = "月";
+      renderTotalTrend();
+      renderLevelTrend();
+      renderRows();
+    });
+    document.getElementById("analysisRows").addEventListener("click", event => {
+      const link = event.target.closest("[data-member-info]");
+      if (!link) return;
+      event.preventDefault();
+      openMemberInfo();
+    });
+    renderTotalTrend();
+    renderLevelTrend();
+    renderRows();
+  </script>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>执行计划</title>
+  <link rel="stylesheet" href="../resources/style.css">
+</head>
+<body>
+  <div class="page">
+    <section class="panel plan-section">
+      <div class="panel-hd"><h3>后台端-会员中心执行计划</h3><span class="badge red">按需求模块拆解</span></div>
+      <div class="panel-bd">
+        <div class="plan-flow">
+          <div class="plan-node">会员信息管理</div>
+          <div class="plan-node">会员实名审核</div>
+          <div class="plan-node">会员等级管理</div>
+          <div class="plan-node">会员注销管理</div>
+          <div class="plan-node">会员变更日志管理</div>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card">
+            <h4>1. 会员信息管理 P0</h4>
+            <p>计划页面：会员列表、会员详情、批量操作弹窗。功能点包括会员信息查询、黑名单/白名单设置管理、冻结/解冻管理、详情查看与导出。</p>
+            <div class="chips"><span class="chip">会员信息查询</span><span class="chip">黑白名单</span><span class="chip">冻结解冻</span><span class="chip">详情</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>2. 会员实名审核 P0</h4>
+            <p>计划页面：审核列表、项目住户审核详情、非员工非住户复核详情。支持审核状态筛选、导出、通过/不通过、复核意见和通知触达。</p>
+            <div class="chips"><span class="chip">审核查询</span><span class="chip">项目住户审核</span><span class="chip">非住户复核</span><span class="chip">通知</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>3. 会员等级管理 P1</h4>
+            <p>计划页面：等级列表、等级配置、成长值明细、最低等级设置。支持等级新增修改删除、成长值阈值、定时计算和批量设置最低等级。</p>
+            <div class="chips"><span class="chip">等级展示</span><span class="chip">等级配置</span><span class="chip">成长值明细</span><span class="chip">最低等级</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>4. 会员注销管理 P1</h4>
+            <p>计划页面：注销记录列表、注销详情。记录注销时间、注销原因、操作人，账号状态标记已注销，历史交互数据按合规要求留存。</p>
+            <div class="chips"><span class="chip">注销记录</span><span class="chip">注销原因</span><span class="chip">合规留存</span><span class="chip">不可恢复</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>5. 会员变更日志管理 P1</h4>
+            <p>计划页面：变更日志列表、日志详情、导出任务。按姓名、性别、生日、邮箱、紧急联系人、变更时间、变更内容筛选并导出。</p>
+            <div class="chips"><span class="chip">日志查询</span><span class="chip">变更内容</span><span class="chip">审计追溯</span><span class="chip">导出</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel plan-section">
+      <div class="panel-hd"><h3>后台端-积分中心执行计划</h3><span class="badge red">按需求模块拆解</span></div>
+      <div class="panel-bd">
+        <div class="plan-flow">
+          <div class="plan-node">积分账户管理</div>
+          <div class="plan-node">积分调整</div>
+          <div class="plan-node">积分冻结解冻</div>
+          <div class="plan-node">积分明细查询</div>
+          <div class="plan-node">积分互换与提醒</div>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card">
+            <h4>1. 积分账户管理 P0</h4>
+            <p>计划页面：积分账户列表、积分账户详情。支持按积分账户、账户状态查询，展示账户状态、可用积分、冻结积分、本月新增、本月消耗，并与会员唯一标识绑定。</p>
+            <div class="chips"><span class="chip">账户查询</span><span class="chip">账户详情</span><span class="chip">状态展示</span><span class="chip">多端同步</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>2. 积分调整 P0</h4>
+            <p>计划页面：积分调整弹窗、调整记录。支持管理员手动增加或减少会员积分，填写调整原因，记录操作人、操作时间和调整前后积分。</p>
+            <div class="chips"><span class="chip">增加积分</span><span class="chip">减少积分</span><span class="chip">调整原因</span><span class="chip">操作留痕</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>3. 积分冻结/解冻 P0</h4>
+            <p>计划页面：冻结/解冻弹窗、批量冻结、批量解冻。支持冻结部分或全部积分，冻结后不可使用；解冻需记录解冻原因并恢复可用状态。</p>
+            <div class="chips"><span class="chip">积分冻结</span><span class="chip">积分解冻</span><span class="chip">批量操作</span><span class="chip">原因记录</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>4. 积分明细查询 P0</h4>
+            <p>计划页面：积分明细列表、明细详情、导出。支持按会员ID、交易类型、时间范围筛选，展示积分新增、消耗、冻结、解冻、过期清零等流水。</p>
+            <div class="chips"><span class="chip">会员ID</span><span class="chip">交易类型</span><span class="chip">积分流水</span><span class="chip">导出Excel</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>5. 积分互换 P1</h4>
+            <p>计划页面：兑换规则、兑入接口、兑出接口、互换记录。支持积分兑换代金券、异业平台积分兑入兑出、兑换比例配置和互换记录对账。</p>
+            <div class="chips"><span class="chip">优惠券对接</span><span class="chip">兑入接口</span><span class="chip">兑出接口</span><span class="chip">互换记录</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>6. 积分提醒 P1</h4>
+            <p>计划页面：提醒规则配置、发送记录。系统识别即将过期积分，按到期前30天、15天等规则触发邮件提醒，记录提醒时间、内容和发送结果。</p>
+            <div class="chips"><span class="chip">过期识别</span><span class="chip">提醒配置</span><span class="chip">邮件触达</span><span class="chip">发送记录</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel plan-section">
+      <div class="panel-hd"><h3>权益中心执行计划</h3><span class="badge red">按需求模块拆解</span></div>
+      <div class="panel-bd">
+        <div class="plan-flow">
+          <div class="plan-node">权益管理</div>
+          <div class="plan-node">权益履约跟踪</div>
+          <div class="plan-node">未履约干预</div>
+          <div class="plan-node">C端权益展示</div>
+          <div class="plan-node">C端权益领取</div>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card">
+            <h4>1. 权益管理 P0</h4>
+            <p>计划页面：权益列表、权益新增/编辑、权益详情。支持按组织、名称、有效期查询，配置权益名称、描述、图标、有效期、归属组织、关联条件、权益类型和身份/等级差异化规则。</p>
+            <div class="chips"><span class="chip">权益查询</span><span class="chip">权益配置</span><span class="chip">差异化规则</span><span class="chip">启用禁用</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>2. 权益履约跟踪 P0</h4>
+            <p>计划页面：履约看板、领取使用明细、履约报表。记录权益领取、使用、核销人员、过期时间，统计发放量、已使用量、过期量和使用率。</p>
+            <div class="chips"><span class="chip">领取记录</span><span class="chip">核销同步</span><span class="chip">履约报表</span><span class="chip">使用率</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>3. 未履约干预 P1</h4>
+            <p>计划页面：未履约明细、人工干预弹窗、催办记录。对服务权益未兑现等场景支持管理员查看明细并触发催办邮件。</p>
+            <div class="chips"><span class="chip">未履约明细</span><span class="chip">人工干预</span><span class="chip">邮件催办</span><span class="chip">处理记录</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>4. C端权益展示 P0</h4>
+            <p>计划页面：权益中心首页、权益分类列表、权益卡片。按会员等级权益、员工权益、身份权益分类展示权益名称、内容、领取条件、有效期和剩余名额。</p>
+            <div class="chips"><span class="chip">权益分类</span><span class="chip">权益卡片</span><span class="chip">领取条件</span><span class="chip">剩余名额</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>5. C端权益领取 P0</h4>
+            <p>计划页面：权益详情、领取确认、使用指引。满足条件时可领取权益，领取后关联会员权益账户，展示线下门店、核销方式或线上使用入口，并支持邮件通知。</p>
+            <div class="chips"><span class="chip">立即领取</span><span class="chip">权益账户</span><span class="chip">使用指引</span><span class="chip">邮件通知</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel plan-section">
+      <div class="panel-hd"><h3>优惠券管理执行计划</h3><span class="badge red">按需求模块拆解</span></div>
+      <div class="panel-bd">
+        <div class="plan-flow">
+          <div class="plan-node">优惠券新增修改</div>
+          <div class="plan-node">优惠券发放</div>
+          <div class="plan-node">优惠券核销管理</div>
+          <div class="plan-node">优惠券查询</div>
+          <div class="plan-node">C端用券</div>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card">
+            <h4>1. 优惠券新增/修改 P0</h4>
+            <p>计划页面：优惠券列表、优惠券新增/编辑、优惠券套票配置。支持电商券、线下券、跨场券、现金抵扣券，配置门槛、有效期、场景、总量、限领、叠加限制和草稿暂存。</p>
+            <div class="chips"><span class="chip">多类型券</span><span class="chip">套票配置</span><span class="chip">草稿暂存</span><span class="chip">发放后锁定</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>2. 优惠券发放 P0</h4>
+            <p>计划页面：发放配置、批量发放、发放明细。支持按会员等级定向发放、上传名单发放、C端主动领取，发放时校验限领数量和会员等级条件。</p>
+            <div class="chips"><span class="chip">定向发放</span><span class="chip">名单发放</span><span class="chip">主动领取</span><span class="chip">站内信通知</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>3. 优惠券核销管理 P0</h4>
+            <p>计划页面：核销记录、核销交易单、核销撤销申请。核销交易单包含核销时间、商户、关联订单号和优惠券信息，并同步至清结算系统。</p>
+            <div class="chips"><span class="chip">核销记录</span><span class="chip">交易单</span><span class="chip">撤销审核</span><span class="chip">清结算同步</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>4. 优惠券查询与冻结 P1</h4>
+            <p>计划页面：优惠券查询、冻结/解冻弹窗、批量操作。支持按组织、名称、创建时间、类型、状态查询，展示发放总量、核销总量、核销率、创建时间和状态。</p>
+            <div class="chips"><span class="chip">条件查询</span><span class="chip">核销率</span><span class="chip">冻结解冻</span><span class="chip">批量操作</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>5. C端优惠券查看与核销 P0</h4>
+            <p>计划页面：券中心、优惠券详情、线上核销、线下核销。按待使用、已使用、已过期、不可用分类展示，支持主动领取、线上自动抵扣和线下券码/二维码核销。</p>
+            <div class="chips"><span class="chip">券状态分类</span><span class="chip">优惠券详情</span><span class="chip">线上抵扣</span><span class="chip">线下核销</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel plan-section">
+      <div class="panel-hd"><h3>清结算管理执行计划</h3><span class="badge red">按需求模块拆解</span></div>
+      <div class="panel-bd">
+        <div class="plan-flow">
+          <div class="plan-node">清算规则配置</div>
+          <div class="plan-node">积分日清</div>
+          <div class="plan-node">积分月结</div>
+          <div class="plan-node">优惠券结算</div>
+          <div class="plan-node">异常预警</div>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card">
+            <h4>1. 积分清算规则配置 P0</h4>
+            <p>计划页面：规则配置、定时任务配置。支持积分日清、积分月结、优惠券结算批处理周期设置，配置执行时间和结算周期。</p>
+            <div class="chips"><span class="chip">日清规则</span><span class="chip">月结规则</span><span class="chip">批处理任务</span><span class="chip">执行时间</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>2. 积分日清报表 P0</h4>
+            <p>计划页面：积分日清报表、发分日清明细、兑分日清明细。统计当日积分发放、消耗、结余，按发分主体、来源和兑分场景拆分。</p>
+            <div class="chips"><span class="chip">发放总量</span><span class="chip">消耗总量</span><span class="chip">发分主体</span><span class="chip">兑分流水</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>3. 积分有效期与月结 P0</h4>
+            <p>计划页面：有效期规则、过期积分统计、积分月结报表、月结审核。支持固定周期或指定日期清零，到期提醒，月结数据审核锁定和归档查询导出。</p>
+            <div class="chips"><span class="chip">有效期规则</span><span class="chip">过期清零</span><span class="chip">月结审核</span><span class="chip">归档导出</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>4. 优惠券结算 P1</h4>
+            <p>计划页面：优惠券结算报表、优惠券核销交易单。统计核销总量、核销金额、商户/业务线、优惠券批次、关联订单号和结算主体。</p>
+            <div class="chips"><span class="chip">结算报表</span><span class="chip">核销金额</span><span class="chip">结算主体</span><span class="chip">交易凭证</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>5. 异常预警 P1</h4>
+            <p>计划页面：异常预警列表、预警详情、处理记录。日清过程中发现积分发放与业务系统不一致等异常时，自动预警并通知管理员处理。</p>
+            <div class="chips"><span class="chip">数据校验</span><span class="chip">异常预警</span><span class="chip">通知处理</span><span class="chip">处理留痕</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel plan-section">
+      <div class="panel-hd"><h3>风控管理执行计划</h3><span class="badge red">按需求模块拆解</span></div>
+      <div class="panel-bd">
+        <div class="plan-flow">
+          <div class="plan-node">会员风险限制</div>
+          <div class="plan-node">发分主体风控</div>
+          <div class="plan-node">风控规则管理</div>
+          <div class="plan-node">风控预警中心</div>
+          <div class="plan-node">预警处理报表</div>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card">
+            <h4>1. 会员风险限制 P0</h4>
+            <p>计划页面：风险会员列表、风险详情、风控解除审核。对高风险会员标记风险标签，限制高价值活动参与，会员状态变为冻结，解除需审核通过。</p>
+            <div class="chips"><span class="chip">风险会员</span><span class="chip">活动限制</span><span class="chip">会员冻结</span><span class="chip">解除审核</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>2. 发分主体风控 P0</h4>
+            <p>计划页面：发分主体规则、发分权限、积分监控。配置单主体单日/月对单会员发分上限、总量上限，超额或虚假发分时暂停发分权限。</p>
+            <div class="chips"><span class="chip">发分上限</span><span class="chip">总量上限</span><span class="chip">权限暂停</span><span class="chip">数据监控</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>3. 风控规则管理 P0</h4>
+            <p>计划页面：规则查询、规则新增/编辑、规则日志。支持会员风控和发分主体风控，配置触发条件、执行动作、生效时间、预警方式和规则优先级。</p>
+            <div class="chips"><span class="chip">规则查询</span><span class="chip">触发条件</span><span class="chip">拦截交易</span><span class="chip">优先级</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>4. 风控预警中心 P1</h4>
+            <p>计划页面：预警列表、预警详情、通知记录。实时监控规则触发情况，按紧急、重要、一般展示预警，推送站内信和邮件给指定管理员。</p>
+            <div class="chips"><span class="chip">预警等级</span><span class="chip">触发规则</span><span class="chip">涉及对象</span><span class="chip">消息推送</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>5. 预警处理与报表 P1</h4>
+            <p>计划页面：预警处理、处理结果、风控预警报表。支持已查看、处理中、已解决状态流转，统计预警总量、处理率、未处理数量和高频风险类型。</p>
+            <div class="chips"><span class="chip">处理流转</span><span class="chip">处理结果</span><span class="chip">处理率</span><span class="chip">高频风险</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel plan-section">
+      <div class="panel-hd"><h3>会员报表管理执行计划</h3><span class="badge red">按需求模块拆解</span></div>
+      <div class="panel-bd">
+        <div class="plan-flow">
+          <div class="plan-node">会员报表</div>
+          <div class="plan-node">积分报表</div>
+          <div class="plan-node">优惠券报表</div>
+          <div class="plan-node">查询筛选</div>
+          <div class="plan-node">导出分发</div>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card">
+            <h4>1. 会员新增/注销报表 P0</h4>
+            <p>计划页面：会员新增/注销报表。按日、周、月、渠道统计会员新增数量、注销数量、净增数量，支持自定义时间范围查询与导出。</p>
+            <div class="chips"><span class="chip">新增数量</span><span class="chip">注销数量</span><span class="chip">净增数量</span><span class="chip">渠道统计</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>2. 会员渠道与增长分析 P0</h4>
+            <p>计划页面：会员渠道分析报表、会员增长分析报表。分析注册完成率、注册后7日活跃占比、会员总数趋势、等级占比和认证占比变化。</p>
+            <div class="chips"><span class="chip">渠道转化</span><span class="chip">活跃占比</span><span class="chip">增长趋势</span><span class="chip">等级占比</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>3. 会员销售分析 P1</h4>
+            <p>计划页面：会员销售分析报表。关联业务系统数据，统计消费频次、客单价、消费偏好，支持按租赁、物业服务、商业消费等维度分析。</p>
+            <div class="chips"><span class="chip">消费频次</span><span class="chip">客单价</span><span class="chip">消费偏好</span><span class="chip">业务关联</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>4. 积分报表 P0</h4>
+            <p>计划页面：积分兑存、积分发分统计、本场积他场兑、本场积本场兑、他场积本场兑报表。支持按发分主体、来源、场景拆分并导出。</p>
+            <div class="chips"><span class="chip">积兑存</span><span class="chip">发分统计</span><span class="chip">跨场兑</span><span class="chip">Excel/PDF</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>5. 优惠券报表 P1</h4>
+            <p>计划页面：优惠券结算报表、核销交易单、效果分析报表。统计发放数量、核销数量、核销率、核销金额、结算金额和带动消费金额。</p>
+            <div class="chips"><span class="chip">结算报表</span><span class="chip">核销交易单</span><span class="chip">效果分析</span><span class="chip">带动消费</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel plan-section">
+      <div class="panel-hd"><h3>营销管理执行计划</h3><span class="badge red">按需求模块拆解</span></div>
+      <div class="panel-bd">
+        <div class="plan-flow">
+          <div class="plan-node">营销查询</div>
+          <div class="plan-node">营销画布</div>
+          <div class="plan-node">人群圈选</div>
+          <div class="plan-node">权益配置</div>
+          <div class="plan-node">营销发布</div>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card">
+            <h4>1. 营销管理查询 P0</h4>
+            <p>计划页面：营销活动列表、营销活动详情。支持按营销名称、状态查询营销记录，展示活动状态、目标人群、触发事件、权益配置和发布时间。</p>
+            <div class="chips"><span class="chip">营销名称</span><span class="chip">活动状态</span><span class="chip">目标人群</span><span class="chip">活动详情</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>2. 可视化营销画布 P0</h4>
+            <p>计划页面：营销画布、新增/编辑营销。支持拖拽式画布，将目标人群、触发事件、时间节点、积分、优惠券、专属权益配置串联。</p>
+            <div class="chips"><span class="chip">拖拽画布</span><span class="chip">触发事件</span><span class="chip">时间节点</span><span class="chip">新增修改</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>3. 人群圈选与条件判断 P0</h4>
+            <p>计划页面：人群圈选、条件配置。对接CDP圈选目标人群，支持营销事件设置且/或逻辑条件，如优惠券领取后7天未核销等触发场景。</p>
+            <div class="chips"><span class="chip">CDP人群</span><span class="chip">且或条件</span><span class="chip">事件触发</span><span class="chip">条件判断</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>4. 营销权益配置 P1</h4>
+            <p>计划页面：积分发放配置、优惠券发放配置、专属权益配置。支持对目标人群批量配置积分、优惠券、专属权益，并校验发放条件。</p>
+            <div class="chips"><span class="chip">批量积分</span><span class="chip">批量优惠券</span><span class="chip">专属权益</span><span class="chip">条件校验</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>5. 营销发布 P1</h4>
+            <p>计划页面：发布确认、发布结果、执行记录。营销创建后按目标人群发放积分、优惠券、专属权益，记录发放结果和异常信息。</p>
+            <div class="chips"><span class="chip">发布确认</span><span class="chip">权益发放</span><span class="chip">执行记录</span><span class="chip">异常结果</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel plan-section">
+      <div class="panel-hd"><h3>C端-小程序端执行计划</h3><span class="badge red">按需求模块拆解</span></div>
+      <div class="panel-bd">
+        <div class="plan-flow">
+          <div class="plan-node">会员中心</div>
+          <div class="plan-node">积分账户展示</div>
+          <div class="plan-node">积分明细查询</div>
+          <div class="plan-node">积分兑换与过期提醒</div>
+          <div class="plan-node">权益展示领取</div>
+          <div class="plan-node">优惠券查看核销</div>
+          <div class="plan-node">通知中心</div>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card">
+            <h4>1. 会员注册与登录 P0</h4>
+            <p>计划页面：注册登录页、授权登录页。支持会员注册、小程序登录，登录后调用用户信息接口自动关联会员等级、积分、权益、工单记录和用户标签。</p>
+            <div class="chips"><span class="chip">会员注册</span><span class="chip">小程序登录</span><span class="chip">用户接口</span><span class="chip">数据关联</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>2. 会员资料与变更同步 P0</h4>
+            <p>计划页面：会员资料页、资料编辑页、变更记录同步。C端编辑姓名、性别、生日、邮箱、紧急联系人等基础信息，记录变更时间和变更内容并同步至会员中心。</p>
+            <div class="chips"><span class="chip">资料编辑</span><span class="chip">变更日志</span><span class="chip">会员中心同步</span><span class="chip">标签更新</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>3. 身份认证 P0</h4>
+            <p>计划页面：实名认证入口、项目住户认证、非员工/非住户认证。支持上传身份证、租赁合同、人脸核验等材料；项目住户通过OCR与租赁/物业系统校验，认证通过后获得项目住户或实名认证会员标识并同步会员标签。</p>
+            <div class="chips"><span class="chip">实名认证</span><span class="chip">项目住户</span><span class="chip">OCR校验</span><span class="chip">标签同步</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>4. 会员等级与注销 P1</h4>
+            <p>计划页面：会员等级展示、成长值明细、会员注销页。展示当前等级图标、名称、成长值进度和距下一等级差值；注销前校验身份、未完成工单和未使用权益，确认后清除权益并同步后台。</p>
+            <div class="chips"><span class="chip">等级进度</span><span class="chip">成长值明细</span><span class="chip">注销校验</span><span class="chip">权益清理</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>5. 积分账户展示 P0</h4>
+            <p>计划页面：积分首页、积分账户卡片。展示积分账户总余额、可用积分、冻结积分（如兑换未完成积分），与后台积分账户保持实时同步。</p>
+            <div class="chips"><span class="chip">总余额</span><span class="chip">可用积分</span><span class="chip">冻结积分</span><span class="chip">实时同步</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>6. 积分明细查询 P0</h4>
+            <p>计划页面：积分明细列表、积分筛选页。支持近7天、近30天、自定义时间筛选，展示交易时间、交易类型（获取/消耗）、交易金额、积分数量和交易备注。</p>
+            <div class="chips"><span class="chip">近7天</span><span class="chip">近30天</span><span class="chip">获取消耗</span><span class="chip">交易备注</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>7. 积分兑换与过期提醒 P0</h4>
+            <p>计划页面：积分兑换页、兑换确认、即将过期积分专区。支持积分兑换代金券，兑换后积分实时扣除并发放至券账户；接收积分过期站内提醒，展示过期积分数量、截止日期并支持快速兑换。</p>
+            <div class="chips"><span class="chip">兑换代金券</span><span class="chip">实时扣减</span><span class="chip">过期提醒</span><span class="chip">快速兑换</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>8. 权益展示与领取 P0</h4>
+            <p>计划页面：权益中心首页、权益分类列表、权益详情、领取确认。按会员等级权益、员工权益、身份权益分类展示权益名称、内容、领取条件、有效期和剩余名额；满足条件时显示立即领取，领取后关联会员权益账户。</p>
+            <div class="chips"><span class="chip">权益分类</span><span class="chip">立即领取</span><span class="chip">权益账户</span><span class="chip">剩余名额</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>9. 权益使用与通知 P1</h4>
+            <p>计划页面：权益使用指引、线上入口、线下核销指引、权益通知。线下权益展示门店地址和核销方式，线上权益展示使用入口；C端或线下核销后同步权益中心，领取后通过站内信发送规则和有效期提醒。</p>
+            <div class="chips"><span class="chip">使用指引</span><span class="chip">线上入口</span><span class="chip">线下核销</span><span class="chip">站内通知</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>10. 优惠券查看与领取 P0</h4>
+            <p>计划页面：券中心、优惠券列表、优惠券详情、主动领取。按待使用、已使用、已过期、不可用分类展示；待使用券突出有效期，不可用券标注原因，详情展示使用规则、适用范围和核销记录。</p>
+            <div class="chips"><span class="chip">券状态分类</span><span class="chip">主动领取</span><span class="chip">使用规则</span><span class="chip">适用范围</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>11. 优惠券线上/线下核销 P0</h4>
+            <p>计划页面：线上抵扣、券码/二维码核销、核销结果。线上商城或自住安居APP使用优惠券时自动校验使用条件并扣减；线下出示券码或二维码，商户扫码核销后实时同步券状态。</p>
+            <div class="chips"><span class="chip">线上抵扣</span><span class="chip">券码核销</span><span class="chip">二维码</span><span class="chip">状态同步</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>12. 通知中心 P0</h4>
+            <p>计划页面：通知列表、通知详情、未读消息入口。集中展示权益领取/到期提醒、积分过期提醒、会员注销校验与注销结果、优惠券到账/核销等通知，支持按通知类型、已读未读筛选并跳转对应业务详情。</p>
+            <div class="chips"><span class="chip">权益通知</span><span class="chip">积分过期</span><span class="chip">会员注销</span><span class="chip">已读未读</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel plan-section">
+      <div class="panel-hd"><h3>后台端-客户数据管理执行计划</h3><span class="badge red">按需求模块拆解</span></div>
+      <div class="panel-bd">
+        <div class="plan-flow">
+          <div class="plan-node">信息采集整合</div>
+          <div class="plan-node">标签与画像</div>
+          <div class="plan-node">行为与人群</div>
+          <div class="plan-node">查询导出</div>
+          <div class="plan-node">安全权限与分发</div>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card">
+            <h4>1. 客户信息采集与整合 P0</h4>
+            <p>计划页面：数据源管理、清洗规则、同步任务。包括基础清洗、业务规则清洗、会员指标体系、数据同步机制。</p>
+            <div class="chips"><span class="chip">基础清洗</span><span class="chip">规则清洗</span><span class="chip">数据同步</span><span class="chip">指标体系</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>2. 客户标签管理 P0</h4>
+            <p>计划页面：标签分类、标签规则、打标任务、标签详情。包括标签创建分类、自动打标签、手动打标签、批量打标签、标签日志、查询维护。</p>
+            <div class="chips"><span class="chip">标签创建</span><span class="chip">自动打标</span><span class="chip">批量打标</span><span class="chip">标签维护</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>3. 客户画像构建 P1</h4>
+            <p>计划页面：画像规则、画像执行、画像结果。基于基础、行为、交易标签构建画像，支持画像分析、可视化展示、导出和标签接口。</p>
+            <div class="chips"><span class="chip">画像规则</span><span class="chip">画像分析</span><span class="chip">结果导出</span><span class="chip">标签接口</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>4. 客户行为分析 P1</h4>
+            <p>计划页面：行为指标、分析任务、行为报表。按活动参与、场地预约、积分获取/使用/通兑、社群活跃等维度定时分析。</p>
+            <div class="chips"><span class="chip">行为采集</span><span class="chip">定时分析</span><span class="chip">行为报表</span><span class="chip">数据导出</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>5. 客户数据查询与导出 P1</h4>
+            <p>计划页面：客户查询、字段配置、导出任务。支持会员查询、自定义导出字段、脱敏导出、批量导出和定时导出。</p>
+            <div class="chips"><span class="chip">客户查询</span><span class="chip">字段配置</span><span class="chip">脱敏导出</span><span class="chip">定时导出</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>6. 数据安全与权限管理 P1</h4>
+            <p>计划页面：脱敏配置、用户管理、角色管理、操作日志、备份记录。覆盖加密存储、HTTPS 传输、数据范围权限和日志备份。</p>
+            <div class="chips"><span class="chip">加密存储</span><span class="chip">脱敏配置</span><span class="chip">角色权限</span><span class="chip">操作日志</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>7. 客户OneID识别与数据分发 P1</h4>
+            <p>计划页面：OneID 规则、疑似重复、分发配置、分发日志。包括 OneID 生成、实时同步更新、精准分发和接收状态监控。</p>
+            <div class="chips"><span class="chip">OneID</span><span class="chip">数据同步</span><span class="chip">精准分发</span><span class="chip">分发日志</span></div>
+          </div>
+          <div class="plan-card">
+            <h4>8. 人群管理 P1</h4>
+            <p>计划页面：人群列表、人群创建、名单导入、人群画像分析。支持标签且/或圈选、有效期、自动/手动更新和任务执行。</p>
+            <div class="chips"><span class="chip">人群查询</span><span class="chip">人群创建</span><span class="chip">名单导入</span><span class="chip">画像分析</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

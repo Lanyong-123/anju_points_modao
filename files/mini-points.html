@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>小程序-积分详情</title><link rel="stylesheet" href="../resources/style.css"><link rel="stylesheet" href="../resources/mini.css"></head>
+<body>
+  <div class="mini-stage"><div class="phone">
+    <div class="phone-top"><div class="status"><span>9:41</span><span>微信</span><span>•••</span></div><div class="title-row"><h1>积分详情</h1><span class="tag gold">即将过期 1,200</span></div></div>
+    <div class="mini-body">
+      <div class="points-strip detail-points">
+        <div><span>积分总余额</span><strong>49,800</strong></div>
+        <div><span>可用积分</span><strong>41,600</strong></div>
+        <div><span>冻结积分</span><strong>1,200</strong></div>
+      </div>
+      <div class="mini-card summary-card">
+        <div class="tabs point-tabs">
+          <span class="tab active" onclick="filterPointRange('7', this)">近7天</span>
+          <span class="tab" onclick="filterPointRange('30', this)">近30天</span>
+          <span class="tab" onclick="filterPointRange('custom', this)">自定义</span>
+        </div>
+        <div class="tabs type-tabs">
+          <span class="tab active" onclick="filterPointType('all', this)">全部</span>
+          <span class="tab" onclick="filterPointType('gain', this)">获取</span>
+          <span class="tab" onclick="filterPointType('cost', this)">消耗</span>
+        </div>
+        <div class="custom-range" id="customRange">
+          <input value="2026-05-01">
+          <input value="2026-05-26">
+        </div>
+      </div>
+      <div class="mini-card summary-card">
+        <div class="section-title"><h3>积分明细</h3></div>
+        <div class="point-detail-list">
+          <div class="point-detail-item" data-range="7 30 custom" data-type="gain"><div><b>签到获取</b><span>2026-05-26 09:18 · 获取 · 交易金额 -</span></div><strong class="plus">+20</strong></div>
+          <div class="point-detail-item" data-range="7 30 custom" data-type="cost"><div><b>兑换优惠券消耗</b><span>2026-05-25 14:20 · 消耗 · 交易金额 10元券</span></div><strong class="minus">-500</strong></div>
+          <div class="point-detail-item" data-range="7 30 custom" data-type="gain"><div><b>营销活动奖励</b><span>2026-05-24 10:02 · 获取 · 交易金额 -</span></div><strong class="plus">+100</strong></div>
+          <div class="point-detail-item" data-range="30 custom" data-type="gain"><div><b>物业缴费返积分</b><span>2026-05-18 16:45 · 获取 · 交易金额 860元</span></div><strong class="plus">+860</strong></div>
+          <div class="point-detail-item" data-range="30 custom" data-type="cost"><div><b>兑换优惠券消耗</b><span>2026-05-12 11:30 · 消耗 · 交易金额 20元券</span></div><strong class="minus">-1,000</strong></div>
+          <div class="point-detail-item" data-range="custom" data-type="gain"><div><b>生日权益奖励</b><span>2026-04-30 10:00 · 获取 · 交易金额 -</span></div><strong class="plus">+300</strong></div>
+          <div class="point-detail-item" data-range="7 30 custom" data-type="cost"><div><b>兑换待核销冻结</b><span>2026-05-26 10:30 · 消耗 · 交易金额 20元券</span></div><strong class="minus">-1,000</strong></div>
+          <div class="point-detail-item" data-range="30 custom" data-type="gain"><div><b>冻结积分解冻</b><span>2026-05-16 15:20 · 获取 · 交易金额 -</span></div><strong class="plus">+500</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav"><div class="nav-item" onclick="location.href='mini-member.html'"><i></i>会员</div><div class="nav-item" onclick="location.href='mini-notifications.html'"><i></i>通知</div></div>
+  </div></div>
+  <script>
+    let currentRange = '7';
+    let currentType = 'all';
+    function filterPointRange(range, tab) {
+      currentRange = range;
+      document.querySelectorAll('.point-tabs .tab').forEach(item => item.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('customRange').classList.toggle('show', range === 'custom');
+      applyPointFilters();
+    }
+    function filterPointType(type, tab) {
+      currentType = type;
+      document.querySelectorAll('.type-tabs .tab').forEach(item => item.classList.remove('active'));
+      tab.classList.add('active');
+      applyPointFilters();
+    }
+    function applyPointFilters() {
+      document.querySelectorAll('.point-detail-item').forEach(item => {
+        const rangeMatch = item.dataset.range.split(' ').includes(currentRange);
+        const typeMatch = currentType === 'all' || item.dataset.type === currentType;
+        item.style.display = rangeMatch && typeMatch ? 'flex' : 'none';
+      });
+    }
+    filterPointRange('7', document.querySelector('.point-tabs .tab.active'));
+  </script>
+</body>
+</html>

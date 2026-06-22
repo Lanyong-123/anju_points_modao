@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>参数配置</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .param-filter {
+      grid-template-columns: 1.1fr 1.1fr 1fr auto auto;
+    }
+    .param-key {
+      color: #526477;
+      font-family: Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+    .param-value {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 3px 9px;
+      border-radius: 5px;
+      background: #f4f7fb;
+      color: var(--navy);
+      font-weight: 800;
+    }
+    .param-desc {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .config-modal {
+      width: min(720px, calc(100vw - 48px));
+    }
+    .config-help {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 20;
+      display: none;
+      min-width: 220px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      background: #123152;
+      color: #fff;
+      box-shadow: 0 14px 32px rgba(18,49,82,.22);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .toast.open {
+      display: block;
+    }
+    @media (max-width: 1180px) {
+      .param-filter { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter param-filter">
+      <div class="field"><label>参数名称</label><input id="nameFilter" placeholder="请输入参数名称"></div>
+      <div class="field"><label>key值</label><input id="keyFilter" placeholder="请输入key值"></div>
+      <div class="field"><label>所属模块</label><select id="moduleFilter"><option>全部模块</option><option>会员管理</option><option>清算管理</option></select></div>
+      <button class="btn primary" id="queryBtn">查询</button>
+      <button class="btn" id="resetBtn">重置</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>参数配置列表</h3>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr>
+              <th>所属模块</th>
+              <th>参数名称</th>
+              <th>key值</th>
+              <th>value值</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="paramRows"></tbody>
+        </table>
+        <div class="pagination"><span id="rowCount">共 0 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="configModal">
+    <div class="modal config-modal">
+      <div class="panel-hd"><h3>配置value值</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="grid cols-2">
+          <div class="field"><label>所属模块</label><input id="modalModule" readonly></div>
+          <div class="field"><label>参数名称</label><input id="modalName" readonly></div>
+          <div class="field" style="grid-column:1 / -1"><label>key值</label><input id="modalKey" readonly></div>
+          <div class="field" style="grid-column:1 / -1"><label>value值</label><input id="modalValue"></div>
+        </div>
+        <p class="config-help" id="modalHelp"></p>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="saveBtn">保存</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">参数配置已保存</div>
+
+  <script>
+    const defaultParams = [
+      {
+        module: "会员管理",
+        name: "碳积分兑换消费积分比例",
+        key: "member.carbon_to_consume_points_ratio",
+        value: "1:1",
+        desc: "用于设置会员碳积分兑换消费积分的换算比例。"
+      },
+      {
+        module: "清算管理",
+        name: "积分日清规则",
+        key: "settlement.points_daily_clear_time",
+        value: "每日凌晨2点",
+        desc: "设置积分日清执行时间，例如每日凌晨2点。"
+      },
+      {
+        module: "清算管理",
+        name: "积分月清规则",
+        key: "settlement.points_monthly_clear_time",
+        value: "每月最后一天凌晨",
+        desc: "设置积分月结执行时间，例如每月最后一天凌晨。"
+      },
+      {
+        module: "清算管理",
+        name: "优惠券结算批处理定时任务",
+        key: "settlement.coupon_batch_job_cycle",
+        value: "每日结算前一日数据",
+        desc: "设置优惠券结算批处理周期，例如每日结算前一日数据。"
+      }
+    ];
+
+    let params = defaultParams.map(item => ({ ...item }));
+    let currentRows = [];
+    let editingKey = "";
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("open");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("open"), 1600);
+    }
+
+    function getRows() {
+      const nameKeyword = document.getElementById("nameFilter").value.trim().toLowerCase();
+      const keyKeyword = document.getElementById("keyFilter").value.trim().toLowerCase();
+      const module = document.getElementById("moduleFilter").value;
+      return params.filter(item => {
+        const matchName = !nameKeyword || item.name.toLowerCase().includes(nameKeyword);
+        const matchKey = !keyKeyword || item.key.toLowerCase().includes(keyKeyword);
+        const matchModule = module === "全部模块" || item.module === module;
+        return matchName && matchKey && matchModule;
+      });
+    }
+
+    function renderRows() {
+      currentRows = getRows();
+      document.getElementById("paramRows").innerHTML = currentRows.map(item => `
+        <tr>
+          <td>${item.module}</td>
+          <td><strong>${item.name}</strong><div class="param-desc">${item.desc}</div></td>
+          <td><span class="param-key">${item.key}</span></td>
+          <td><span class="param-value">${item.value}</span></td>
+          <td><span class="link" data-config="${item.key}">配置</span></td>
+        </tr>
+      `).join("");
+      document.getElementById("rowCount").textContent = `共 ${currentRows.length} 条`;
+      bindConfigActions();
+    }
+
+    function bindConfigActions() {
+      document.querySelectorAll("[data-config]").forEach(el => {
+        el.addEventListener("click", () => {
+          const item = params.find(row => row.key === el.dataset.config);
+          if (!item) return;
+          editingKey = item.key;
+          document.getElementById("modalModule").value = item.module;
+          document.getElementById("modalName").value = item.name;
+          document.getElementById("modalKey").value = item.key;
+          document.getElementById("modalValue").value = item.value;
+          document.getElementById("modalHelp").textContent = item.desc;
+          document.getElementById("configModal").classList.add("open");
+        });
+      });
+    }
+
+    document.getElementById("queryBtn").addEventListener("click", renderRows);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("nameFilter").value = "";
+      document.getElementById("keyFilter").value = "";
+      document.getElementById("moduleFilter").value = "全部模块";
+      renderRows();
+    });
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      const item = params.find(row => row.key === editingKey);
+      if (item) item.value = document.getElementById("modalValue").value.trim() || item.value;
+      document.getElementById("configModal").classList.remove("open");
+      renderRows();
+      showToast("参数配置已保存");
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+    renderRows();
+  </script>
+</body>
+</html>

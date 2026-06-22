@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>积分日清报表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>清算日期</label><input value="2026-05-26"></div>
+      <div class="field"><label>积分类型</label><select><option>全部类型</option><option>消费积分</option><option>碳积分</option></select></div>
+      <div class="field"><label>发分主体</label><select><option>全部主体</option><option>安居积分系统</option><option>物业缴费系统</option><option>停车权益平台</option><option>低碳联盟平台</option></select></div>
+      <button class="btn primary">查询</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>积分日清汇总列表</h3>
+        <div class="toolbar"><button class="btn">导出</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead><tr><th>清算日期</th><th>积分类型</th><th>当日发分总量</th><th>当日兑分总量</th><th>今日冻结积分</th><th>今日解冻积分</th><th>今日过期积分</th><th>结余总量</th></tr></thead>
+          <tbody>
+            <tr><td>2026-05-26</td><td><span class="badge">消费积分</span></td><td><a class="link" href="points-detail.html">986,430</a></td><td><a class="link" href="points-detail.html">426,180</a></td><td><a class="link" href="points-detail.html">18,200</a></td><td><a class="link" href="points-detail.html">9,600</a></td><td><a class="link" href="points-detail.html">12,800</a></td><td>8,620,000</td></tr>
+            <tr><td>2026-05-26</td><td><span class="badge green">碳积分</span></td><td><a class="link" href="points-detail.html">300,000</a></td><td><a class="link" href="points-detail.html">100,000</a></td><td><a class="link" href="points-detail.html">3,500</a></td><td><a class="link" href="points-detail.html">1,200</a></td><td><a class="link" href="points-detail.html">4,600</a></td><td>2,180,000</td></tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 2 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

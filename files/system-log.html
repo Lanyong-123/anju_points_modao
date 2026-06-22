@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>操作日志</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .log-filter {
+      grid-template-columns: 1fr 1fr 1.2fr 1fr auto auto;
+    }
+    .log-table th,
+    .log-table td {
+      padding: 10px 8px;
+      vertical-align: middle;
+    }
+    .device-info {
+      color: #34465c;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .json-modal {
+      width: min(920px, calc(100vw - 48px));
+    }
+    .json-modal .panel-bd {
+      max-height: calc(100vh - 180px);
+      overflow: auto;
+    }
+    .json-code {
+      margin: 0;
+      border-radius: 6px;
+      background: #123654;
+      color: #eef7ff;
+      font-family: Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      padding: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter log-filter">
+      <div class="field"><label>操作人</label><input placeholder="请输入操作人姓名/账号"></div>
+      <div class="field"><label>操作类型</label><select><option>全部类型</option><option>查询日志</option><option>编辑日志</option><option>导出日志</option><option>标签操作日志</option><option>营销操作日志</option></select></div>
+      <div class="field"><label>操作时间</label><input value="2026-06-01 至 2026-06-10"></div>
+      <div class="field"><label>客户数据模块</label><select><option>全部模块</option><option>客户标签管理</option><option>客户画像</option><option>人群管理</option><option>数据API管理</option><option>客户行为分析</option></select></div>
+      <button class="btn primary">查询</button>
+      <button class="btn">重置</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>客户数据操作日志</h3>
+        <div class="toolbar"><button class="btn">导出日志</button></div>
+      </div>
+      <div class="panel-bd">
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th>操作时间</th>
+              <th>操作人</th>
+              <th>真实姓名</th>
+              <th>操作类型</th>
+              <th>操作模块</th>
+              <th>操作设备信息</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2026-06-10 09:42:18</td>
+              <td>swtest35</td>
+              <td>孙伟</td>
+              <td><span class="badge blue">查询日志</span></td>
+              <td>客户画像</td>
+              <td><div class="device-info">IP：10.26.18.42</div></td>
+              <td><span class="link" data-log-detail="query">详情</span></td>
+            </tr>
+            <tr>
+              <td>2026-06-10 09:31:06</td>
+              <td>运营管理员</td>
+              <td>王敏</td>
+              <td><span class="badge orange">编辑日志</span></td>
+              <td>人群管理</td>
+              <td><div class="device-info">IP：10.26.21.87</div></td>
+              <td><span class="link" data-log-detail="edit">详情</span></td>
+            </tr>
+            <tr>
+              <td>2026-06-10 09:18:22</td>
+              <td>数据专员</td>
+              <td>李娜</td>
+              <td><span class="badge red">导出日志</span></td>
+              <td>客户行为分析</td>
+              <td><div class="device-info">IP：10.26.32.16</div></td>
+              <td><span class="link" data-log-detail="export">详情</span></td>
+            </tr>
+            <tr>
+              <td>2026-06-09 18:42:35</td>
+              <td>标签运营</td>
+              <td>赵欣</td>
+              <td><span class="badge blue">标签操作日志</span></td>
+              <td>客户标签管理</td>
+              <td><div class="device-info">IP：10.26.42.93</div></td>
+              <td><span class="link" data-log-detail="tag">详情</span></td>
+            </tr>
+            <tr>
+              <td>2026-06-09 16:08:10</td>
+              <td>营销运营</td>
+              <td>周晨</td>
+              <td><span class="badge orange">营销操作日志</span></td>
+              <td>营销管理</td>
+              <td><div class="device-info">IP：10.26.19.56</div></td>
+              <td><span class="link" data-log-detail="marketing">详情</span></td>
+            </tr>
+            <tr>
+              <td>2026-06-09 15:26:44</td>
+              <td>swtest35</td>
+              <td>孙伟</td>
+              <td><span class="badge red">导出日志</span></td>
+              <td>客户标签管理</td>
+              <td><div class="device-info">IP：10.26.18.42</div></td>
+              <td><span class="link" data-log-detail="blocked">详情</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 12,486 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="logJsonModal">
+    <div class="modal json-modal">
+      <div class="panel-hd"><h3 id="logJsonTitle">操作日志详情</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <pre class="json-code" id="logJsonCode"></pre>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>关闭</button><button class="btn primary">复制JSON</button></div>
+    </div>
+  </div>
+  <script>
+    const logJsonMap = {
+      query: {
+        logId: "LOG20260610094218",
+        moduleName: "客户画像",
+        loginUserName: "swtest35",
+        realName: "孙伟",
+        loginUserIp: "10.26.18.42",
+        operationType: "查询日志",
+        operationTime: "2026-06-10 09:42:18",
+        operationDesc: "查看客户基础画像与标签详情",
+        target: { customerId: "AJ202605180018", objectName: "客户基础画像" },
+        requestParams: { keyword: "AJ202605180018", view: "基础画像", includeTags: true },
+        result: "成功"
+      },
+      edit: {
+        logId: "LOG20260610093106",
+        moduleName: "人群管理",
+        loginUserName: "运营管理员",
+        realName: "王敏",
+        loginUserIp: "10.26.21.87",
+        operationType: "编辑日志",
+        operationTime: "2026-06-10 09:31:06",
+        operationDesc: "调整积分高 / 使用频繁筛选条件",
+        target: { crowdName: "高价值客户人群", objectName: "修改规则条件" },
+        beforeData: { condition: "积分高于3000", relation: "且" },
+        afterData: { condition: "积分高于5000", relation: "且" },
+        result: "成功"
+      },
+      export: {
+        logId: "LOG20260610091822",
+        moduleName: "客户行为分析",
+        loginUserName: "数据专员",
+        realName: "李娜",
+        loginUserIp: "10.26.32.16",
+        operationType: "导出日志",
+        operationTime: "2026-06-10 09:18:22",
+        operationDesc: "导出活动参与、积分兑换等行为统计数据",
+        target: { reportName: "行为分析结果", exportType: "Excel" },
+        requestParams: { dateRange: "2026-06-01 至 2026-06-10", project: "全部项目" },
+        result: "成功"
+      },
+      tag: {
+        logId: "LOG20260609184235",
+        moduleName: "客户标签管理",
+        loginUserName: "标签运营",
+        realName: "赵欣",
+        loginUserIp: "10.26.42.93",
+        operationType: "标签操作日志",
+        operationTime: "2026-06-09 18:42:35",
+        operationDesc: "执行手动更新并同步覆盖客户数",
+        target: { tagName: "服务需求偏好", action: "手动更新标签" },
+        resultData: { coveredCustomers: 5182, updateMode: "手动更新" },
+        result: "成功"
+      },
+      marketing: {
+        logId: "LOG20260609160810",
+        moduleName: "营销管理",
+        loginUserName: "营销运营",
+        realName: "周晨",
+        loginUserIp: "10.26.19.56",
+        operationType: "营销操作日志",
+        operationTime: "2026-06-09 16:08:10",
+        operationDesc: "调用标签人群用于活动圈选与触达",
+        target: { campaignName: "端午活动人群", objectName: "创建精准投放任务" },
+        requestParams: { crowdSource: "标签人群", channel: "短信、站内信" },
+        result: "成功"
+      },
+      blocked: {
+        logId: "LOG20260609152644",
+        moduleName: "客户标签管理",
+        loginUserName: "swtest35",
+        realName: "孙伟",
+        loginUserIp: "10.26.18.42",
+        operationType: "导出日志",
+        operationTime: "2026-06-09 15:26:44",
+        operationDesc: "导出量超过当前角色权限，系统已记录审计",
+        target: { tagName: "高价值客户标签", objectName: "导出关联客户" },
+        riskControl: { decision: "拦截", reason: "导出量超过当前角色权限" },
+        result: "拦截"
+      }
+    };
+
+    document.querySelectorAll("[data-log-detail]").forEach(el => {
+      el.addEventListener("click", () => {
+        const data = logJsonMap[el.dataset.logDetail];
+        document.getElementById("logJsonTitle").textContent = `${data.moduleName} - ${data.operationType}详情`;
+        document.getElementById("logJsonCode").textContent = JSON.stringify(data, null, 2);
+        document.getElementById("logJsonModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+  </script>
+</body>
+</html>

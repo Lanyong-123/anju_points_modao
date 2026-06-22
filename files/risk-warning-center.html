@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>风控预警中心</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .field label.required::before {
+      content: "*";
+      color: var(--red);
+      margin-right: 2px;
+    }
+    .field textarea {
+      min-height: 96px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      resize: vertical;
+      font: inherit;
+    }
+    .object-main {
+      display: grid;
+      gap: 2px;
+    }
+    .object-main small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .warning-timeline .timeline-item {
+      grid-template-columns: 92px 1fr auto;
+      align-items: start;
+    }
+    .warning-result {
+      display: grid;
+      gap: 4px;
+      line-height: 1.6;
+    }
+    .warning-result small {
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>预警编号/对象</label><input placeholder="预警编号、会员ID、会员名称、发分主体"></div>
+      <div class="field"><label>预警场景</label><select><option>全部场景</option><option>发分主体风控</option><option>会员风控</option></select></div>
+      <div class="field"><label>风险等级</label><select><option>全部等级</option><option>高风险</option><option>中风险</option><option>低风险</option></select></div>
+      <div class="field"><label>处理状态</label><select><option>全部状态</option><option>待处理</option><option>已处理</option><option>已落实密切关注</option><option>已阅知</option><option>即时跟进</option><option>误报</option></select></div>
+      <div class="field"><label>预警时间</label><input value="2026-05-01 至 2026-05-26"></div>
+      <button class="btn primary">查询</button>
+    </div>
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>风控预警列表</h3>
+        <div class="toolbar"><button class="btn primary" data-handle="batch">批量处理</button><button class="btn">导出</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead><tr><th><input type="checkbox"></th><th>预警编号</th><th>预警场景</th><th>预警对象</th><th>命中规则</th><th>风险等级</th><th>预警内容</th><th>处理状态</th><th>预警时间</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td>AL202605260001</td><td>发分主体风控</td><td><div class="object-main"><strong>南山项目营销中心</strong><small>主体编号 IS202605001</small></div></td><td>单主体日发分超额</td><td><span class="badge red">高风险</span></td><td>今日发分超过年度额度预警线 26%</td><td><span class="badge gold">待处理</span></td><td>2026-05-26 09:18</td><td><span class="link" data-detail="AL202605260001">详情</span>　<span class="link" data-handle="AL202605260001">处理</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>AL202605260002</td><td>会员风控</td><td><div class="object-main"><strong>会员名称：李明</strong><small>会员ID：AJ202605180018</small></div></td><td>单会员高频核销识别</td><td><span class="badge gold">中风险</span></td><td>10分钟内连续核销 23 次</td><td><span class="badge">即时跟进</span></td><td>2026-05-26 10:05</td><td><span class="link" data-detail="AL202605260002">详情</span>　<span class="link" data-handle="AL202605260002">处理</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>AL202605250018</td><td>会员风控</td><td><div class="object-main"><strong>会员名称：周女士</strong><small>会员ID：AJ202604220091</small></div></td><td>单会员积分调整异常</td><td><span class="badge gold">中风险</span></td><td>单笔调整 6,800 积分</td><td><span class="badge green">已处理</span></td><td>2026-05-25 16:20</td><td><span class="link" data-detail="AL202605250018">详情</span>　<span class="link" data-handle="AL202605250018">处理</span></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 386 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button></div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="drawer" id="detailDrawer">
+    <div class="panel-hd"><h3>预警详情</h3><button class="btn" data-close-drawer>关闭</button></div>
+    <div class="panel-bd">
+      <div class="detail-list">
+        <span>预警编号</span><strong id="dCode">AL202605260001</strong>
+        <span>预警场景</span><strong id="dScene">发分主体风控</strong>
+        <span>预警对象</span><strong id="dObject">南山项目营销中心</strong>
+        <span>对象信息</span><strong id="dObjectInfo">主体编号 IS202605001</strong>
+        <span>命中规则</span><strong id="dRule">单主体日发分超额</strong>
+        <span>风险等级</span><strong id="dLevel">高风险</strong>
+        <span>预警内容</span><strong id="dContent">今日发分超过年度额度预警线 26%</strong>
+        <span>处理状态</span><strong id="dStatus">待处理</strong>
+        <span>建议处置</span><strong id="dSuggest">核对发分依据，必要时限制发分主体。</strong>
+      </div>
+      <div class="panel" style="margin-top:14px; box-shadow:none">
+        <div class="panel-hd"><h3>处理记录</h3></div>
+        <div class="panel-bd">
+          <div class="timeline warning-timeline" id="recordList"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="modal-mask" id="handleModal">
+    <div class="modal">
+      <div class="panel-hd"><h3 id="handleTitle">预警处理</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice" id="handleNotice"><strong>处理要求</strong>请选择处理状态并录入处理意见，确认后处理结果将记录在预警详情的处理记录中。</div>
+        <div class="field" style="margin-top:12px"><label class="required">处理状态</label><select id="handleStatus" required><option>已处理</option><option>已落实密切关注</option><option>已阅知</option><option>即时跟进</option><option>误报</option></select></div>
+        <div class="field" style="margin-top:12px"><label class="required">处理意见</label><textarea id="handleOpinion" required>已核对预警对象及业务流水，按当前风险等级持续跟踪处理。</textarea></div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="confirmHandle">确认处理</button></div>
+    </div>
+  </div>
+
+  <script>
+    const warningData = {
+      AL202605260001: {
+        code: "AL202605260001",
+        scene: "发分主体风控",
+        object: "南山项目营销中心",
+        objectInfo: "主体编号 IS202605001",
+        rule: "单主体日发分超额",
+        level: "高风险",
+        content: "今日发分超过年度额度预警线 26%",
+        status: "待处理",
+        suggest: "核对发分依据，必要时限制发分主体。",
+        records: [
+          ["09:18", "系统触发预警", "今日发分超过额度预警线，触发高风险预警。", "高风险"],
+          ["09:25", "风控管理员已阅知", "已通知发分主体负责人补充发分依据。", "已阅知"]
+        ]
+      },
+      AL202605260002: {
+        code: "AL202605260002",
+        scene: "会员风控",
+        object: "会员名称：李明",
+        objectInfo: "会员ID：AJ202605180018",
+        rule: "单会员高频核销识别",
+        level: "中风险",
+        content: "10分钟内连续核销 23 次",
+        status: "即时跟进",
+        suggest: "核对会员核销行为与订单来源，必要时转人工复核。",
+        records: [
+          ["10:05", "系统触发预警", "会员短时高频核销达到风控阈值。", "中风险"],
+          ["10:12", "即时跟进", "已联系项目运营核查核销订单，暂未发现资金损失。", "即时跟进"],
+          ["10:30", "已落实密切关注", "纳入当日重点观察名单，持续跟踪后续核销行为。", "已落实密切关注"]
+        ]
+      },
+      AL202605250018: {
+        code: "AL202605250018",
+        scene: "会员风控",
+        object: "会员名称：周女士",
+        objectInfo: "会员ID：AJ202604220091",
+        rule: "单会员积分调整异常",
+        level: "中风险",
+        content: "单笔调整 6,800 积分",
+        status: "已处理",
+        suggest: "复核积分调整审批单，确认调整依据和附件。",
+        records: [
+          ["16:20", "系统触发预警", "单笔积分调整超过会员风控阈值。", "中风险"],
+          ["16:42", "已处理", "已核对审批单及附件，调整依据真实有效。", "已处理"],
+          ["17:05", "已阅知", "处理结论已同步积分运营主管留痕。", "已阅知"]
+        ]
+      }
+    };
+    const drawer = document.getElementById("detailDrawer");
+    const recordList = document.getElementById("recordList");
+    let currentCode = "AL202605260001";
+    const badgeClass = status => status === "高风险" ? "red" : (status === "已处理" || status === "已阅知" ? "green" : "gold");
+    const renderRecords = records => {
+      recordList.innerHTML = records.map(item => `<div class="timeline-item"><strong>${item[0]}</strong><div class="warning-result"><b>${item[1]}</b><span>${item[2]}</span><small>处理结果：${item[3]}</small></div><span class="badge ${badgeClass(item[3])}">${item[3]}</span></div>`).join("");
+    };
+    const renderDetail = code => {
+      const data = warningData[code] || warningData.AL202605260001;
+      currentCode = data.code;
+      document.getElementById("dCode").textContent = data.code;
+      document.getElementById("dScene").textContent = data.scene;
+      document.getElementById("dObject").textContent = data.object;
+      document.getElementById("dObjectInfo").textContent = data.objectInfo;
+      document.getElementById("dRule").textContent = data.rule;
+      document.getElementById("dLevel").textContent = data.level;
+      document.getElementById("dContent").textContent = data.content;
+      document.getElementById("dStatus").textContent = data.status;
+      document.getElementById("dSuggest").textContent = data.suggest;
+      renderRecords(data.records);
+    };
+    document.querySelectorAll("[data-detail]").forEach(el => el.addEventListener("click", () => { renderDetail(el.dataset.detail); drawer.classList.add("open"); }));
+    document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
+    document.querySelectorAll("[data-handle]").forEach(el => el.addEventListener("click", () => {
+      currentCode = el.dataset.handle === "batch" ? "AL202605260001" : el.dataset.handle;
+      document.getElementById("handleTitle").textContent = el.dataset.handle === "batch" ? "批量预警处理" : "预警处理";
+      document.getElementById("handleNotice").innerHTML = el.dataset.handle === "batch" ? "<strong>批量处理要求</strong>请选择处理状态并录入统一处理意见，确认后处理结果将同步记录至所选预警详情。" : "<strong>处理要求</strong>请选择处理状态并录入处理意见，确认后处理结果将记录在预警详情的处理记录中。";
+      document.getElementById("handleModal").classList.add("open");
+    }));
+    document.getElementById("confirmHandle").addEventListener("click", () => {
+      const status = document.getElementById("handleStatus").value;
+      const opinion = document.getElementById("handleOpinion").value || "已完成预警处理。";
+      const data = warningData[currentCode] || warningData.AL202605260001;
+      data.status = status;
+      data.records.push(["当前", status, opinion, status]);
+      renderDetail(data.code);
+      document.getElementById("handleModal").classList.remove("open");
+      drawer.classList.add("open");
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open")));
+  </script>
+</body>
+</html>

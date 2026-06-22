@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>积分发分统计表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+    .chart-wrap { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; }
+    .chart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .chart-head h3 { margin: 0; color: var(--navy); font-size: 15px; }
+    .chart-note { color: var(--muted); font-size: 12px; font-weight: 800; }
+    .bar-list { display: grid; gap: 16px; }
+    .bar-row { display: grid; grid-template-columns: 118px 1fr 112px; gap: 12px; align-items: center; }
+    .bar-name { color: #123152; font-weight: 800; }
+    .bar-track { height: 22px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2f6fbd, #2f9b6b); }
+    .bar-value { color: #123152; font-weight: 800; text-align: right; }
+    .donut-layout { display: grid; grid-template-columns: 210px 1fr; gap: 18px; align-items: center; min-height: 250px; }
+    .donut { width: 190px; height: 190px; border-radius: 50%; background: conic-gradient(#2f6fbd 0 48%, #2f9b6b 48% 79%, #d8892c 79% 100%); position: relative; margin: 0 auto; }
+    .donut::after { content: ""; position: absolute; inset: 42px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+    .donut-total { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; z-index: 1; color: #123152; font-weight: 800; }
+    .donut-total strong { font-size: 24px; line-height: 1.2; }
+    .donut-total span { color: var(--muted); font-size: 12px; }
+    .source-list { display: grid; gap: 14px; }
+    .source-row { display: grid; grid-template-columns: 14px 72px 1fr 72px; gap: 10px; align-items: center; color: #123152; font-weight: 800; }
+    .source-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .source-track { height: 16px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
+    .source-fill { height: 100%; border-radius: 999px; }
+    .tag { display: inline-flex; align-items: center; justify-content: center; min-width: 58px; height: 24px; border-radius: 999px; background: #eef4fb; color: #123152; font-weight: 800; font-size: 12px; }
+    @media (max-width: 1180px) {
+      .report-grid { grid-template-columns: 1fr; }
+      .donut-layout { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 92px 1fr; }
+      .bar-value { grid-column: 2; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>统计时间</label><input value="2026-06-01 至 2026-06-30"></div>
+      <button class="btn primary" id="queryBtn">查询</button>
+      <button class="btn" id="resetBtn">重置</button>
+      <button class="btn">导出</button>
+    </div>
+
+    <div class="report-grid">
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3>各发分主体发分总量与占比</h3>
+          <span class="chart-note">按发分总量降序</span>
+        </div>
+        <div class="bar-list" id="issuerBars"></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3>各发分来源发分总量与占比</h3>
+          <span class="chart-note">消费 / 活动 / 补偿</span>
+        </div>
+        <div class="donut-layout">
+          <div class="donut"><div class="donut-total"><strong>862万</strong><span>发分总量</span></div></div>
+          <div class="source-list" id="sourceBars"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>积分发分统计明细</h3>
+        <div class="toolbar"><button class="btn">导出</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr><th>统计周期</th><th>发分主体</th><th>消费发分</th><th>活动发分</th><th>补偿发分</th><th>发分总量</th><th>占比</th></tr>
+          </thead>
+          <tbody id="statRows"></tbody>
+        </table>
+        <div class="pagination"><span>共 6 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const issuerData = [
+      { period: "2026-06", name: "集团运营中心", consume: 1486000, activity: 1042000, compensate: 540000 },
+      { period: "2026-06", name: "南山项目", consume: 856000, activity: 618000, compensate: 312000 },
+      { period: "2026-06", name: "福田项目", consume: 724000, activity: 462000, compensate: 242000 },
+      { period: "2026-06", name: "商业运营公司", consume: 518000, activity: 326000, compensate: 202000 },
+      { period: "2026-06", name: "物业服务公司", consume: 366000, activity: 284000, compensate: 192000 },
+      { period: "2026-06", name: "租赁服务公司", consume: 188000, activity: 132000, compensate: 130000 }
+    ];
+    const sourceMeta = [
+      { key: "consume", name: "消费", color: "#2f6fbd" },
+      { key: "activity", name: "活动", color: "#2f9b6b" },
+      { key: "compensate", name: "补偿", color: "#d8892c" }
+    ];
+
+    function format(num) {
+      return num.toLocaleString("zh-CN");
+    }
+
+    function issuerTotal(item) {
+      return item.consume + item.activity + item.compensate;
+    }
+
+    function totalOf(list) {
+      return list.reduce((sum, item) => sum + item.total, 0);
+    }
+
+    function getSourceData() {
+      return sourceMeta.map(item => ({
+        ...item,
+        total: issuerData.reduce((sum, issuer) => sum + issuer[item.key], 0)
+      }));
+    }
+
+    function renderIssuerBars() {
+      const total = issuerData.reduce((sum, item) => sum + issuerTotal(item), 0);
+      const max = Math.max(...issuerData.map(issuerTotal));
+      document.getElementById("issuerBars").innerHTML = issuerData.map(item => {
+        const itemTotal = issuerTotal(item);
+        const rate = (itemTotal / total * 100).toFixed(1);
+        return `
+          <div class="bar-row">
+            <div class="bar-name">${item.name}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${itemTotal / max * 100}%"></div></div>
+            <div class="bar-value">${format(itemTotal)} / ${rate}%</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderSourceBars() {
+      const sourceData = getSourceData();
+      const total = totalOf(sourceData);
+      document.getElementById("sourceBars").innerHTML = sourceData.map(item => {
+        const rate = (item.total / total * 100).toFixed(1);
+        return `
+          <div class="source-row">
+            <i class="source-dot" style="background:${item.color}"></i>
+            <span>${item.name}</span>
+            <div class="source-track"><div class="source-fill" style="width:${rate}%;background:${item.color}"></div></div>
+            <span>${rate}%</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderRows() {
+      const allTotal = issuerData.reduce((sum, item) => sum + issuerTotal(item), 0);
+      document.getElementById("statRows").innerHTML = issuerData.map(item => {
+        const itemTotal = issuerTotal(item);
+        const rate = (itemTotal / allTotal * 100).toFixed(1);
+        return `
+          <tr>
+            <td>${item.period}</td>
+            <td>${item.name}</td>
+            <td>${format(item.consume)}</td>
+            <td>${format(item.activity)}</td>
+            <td>${format(item.compensate)}</td>
+            <td>${format(itemTotal)}</td>
+            <td>${rate}%</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    document.getElementById("queryBtn").addEventListener("click", () => {
+      renderIssuerBars();
+      renderSourceBars();
+      renderRows();
+    });
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      renderIssuerBars();
+      renderSourceBars();
+      renderRows();
+    });
+    renderIssuerBars();
+    renderSourceBars();
+    renderRows();
+  </script>
+</body>
+</html>

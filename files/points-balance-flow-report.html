@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>积分兑存报表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+    .chart-wrap { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; }
+    .chart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .chart-head h3 { margin: 0; color: var(--navy); font-size: 15px; }
+    .chart-note { color: var(--muted); font-size: 12px; font-weight: 800; }
+    .bar-list { display: grid; gap: 16px; }
+    .bar-row { display: grid; grid-template-columns: 118px 1fr 116px; gap: 12px; align-items: center; }
+    .bar-name { color: #123152; font-weight: 800; }
+    .bar-track { height: 22px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2f6fbd, #2f9b6b); }
+    .bar-value { color: #123152; font-weight: 800; text-align: right; }
+    .flow-list { display: grid; gap: 14px; }
+    .flow-row { display: grid; grid-template-columns: 86px 1fr 92px; gap: 10px; align-items: center; color: #123152; font-weight: 800; }
+    .flow-track { height: 18px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
+    .flow-fill { height: 100%; border-radius: 999px; }
+    .tag { display: inline-flex; align-items: center; justify-content: center; min-width: 58px; height: 24px; border-radius: 999px; background: #eef4fb; color: #123152; font-weight: 800; font-size: 12px; }
+    .num-link { color: #0b5da8; font-weight: 800; text-decoration: underline; text-underline-offset: 2px; }
+    @media (max-width: 1180px) {
+      .report-grid { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 96px 1fr; }
+      .bar-value { grid-column: 2; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>统计周期</label><select id="periodType"><option selected>月</option><option>季</option><option>年</option></select></div>
+      <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
+      <div class="field"><label>积分类型</label><select id="pointsType"><option selected>消费积分</option><option>碳积分</option></select></div>
+      <button class="btn primary" id="queryBtn">查询</button>
+      <button class="btn" id="resetBtn">重置</button>
+      <button class="btn">导出</button>
+    </div>
+
+    <div class="report-grid">
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3>各发分主体期末余额</h3>
+          <span class="chart-note">按期末余额降序</span>
+        </div>
+        <div class="bar-list" id="balanceBars"></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3>周期内积分变动汇总</h3>
+          <span class="chart-note">新增 / 消耗 / 过期</span>
+        </div>
+        <div class="flow-list" id="flowBars"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>积分兑存统计明细</h3>
+        <div class="toolbar"><button class="btn">导出</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr><th>统计周期</th><th>发分主体</th><th>期初余额</th><th>本期新增</th><th>本期消耗</th><th>本期过期</th><th>期末余额</th></tr>
+          </thead>
+          <tbody id="flowRows"></tbody>
+        </table>
+        <div class="pagination"><span>共 6 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const balanceData = [
+      { period: "2026-06", issuer: "集团运营中心", opening: 12860000, added: 3068000, consumed: 1860000, expired: 326000 },
+      { period: "2026-06", issuer: "南山项目", opening: 7820000, added: 1786000, consumed: 1124000, expired: 186000 },
+      { period: "2026-06", issuer: "福田项目", opening: 6420000, added: 1428000, consumed: 886000, expired: 142000 },
+      { period: "2026-06", issuer: "商业运营公司", opening: 4860000, added: 1046000, consumed: 624000, expired: 98000 },
+      { period: "2026-06", issuer: "物业服务公司", opening: 4120000, added: 842000, consumed: 512000, expired: 76000 },
+      { period: "2026-06", issuer: "租赁服务公司", opening: 2380000, added: 450000, consumed: 284000, expired: 52000 }
+    ];
+    const flowMeta = [
+      { key: "added", name: "本期新增", color: "#2f6fbd" },
+      { key: "consumed", name: "本期消耗", color: "#2f9b6b" },
+      { key: "expired", name: "本期过期", color: "#d8892c" }
+    ];
+
+    function format(num) {
+      return num.toLocaleString("zh-CN");
+    }
+
+    function closing(item) {
+      return item.opening + item.added - item.consumed - item.expired;
+    }
+
+    function renderBalanceBars() {
+      const max = Math.max(...balanceData.map(closing));
+      document.getElementById("balanceBars").innerHTML = balanceData.map(item => {
+        const end = closing(item);
+        return `
+          <div class="bar-row">
+            <div class="bar-name">${item.issuer}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${end / max * 100}%"></div></div>
+            <div class="bar-value">${format(end)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderFlowBars() {
+      const totals = flowMeta.map(item => ({
+        ...item,
+        total: balanceData.reduce((sum, row) => sum + row[item.key], 0)
+      }));
+      const max = Math.max(...totals.map(item => item.total));
+      document.getElementById("flowBars").innerHTML = totals.map(item => `
+        <div class="flow-row">
+          <span>${item.name}</span>
+          <div class="flow-track"><div class="flow-fill" style="width:${item.total / max * 100}%;background:${item.color}"></div></div>
+          <span>${format(item.total)}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderRows() {
+      document.getElementById("flowRows").innerHTML = balanceData.map(item => `
+        <tr>
+          <td>${item.period}</td>
+          <td>${item.issuer}</td>
+          <td>${format(item.opening)}</td>
+          <td>${format(item.added)}</td>
+          <td>${format(item.consumed)}</td>
+          <td>${format(item.expired)}</td>
+          <td><span class="tag">${format(closing(item))}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function syncPeriodOptions() {
+      const type = document.getElementById("periodType").value;
+      const options = {
+        "月": ["2026-06", "2026-05", "2026-04", "2026-03", "2026-02", "2026-01"],
+        "季": ["2026年第2季度", "2026年第1季度", "2025年第4季度", "2025年第3季度"],
+        "年": ["2026年", "2025年", "2024年"]
+      };
+      document.getElementById("periodValue").innerHTML = options[type].map((item, index) =>
+        `<option ${index === 0 ? "selected" : ""}>${item}</option>`
+      ).join("");
+    }
+
+    document.getElementById("queryBtn").addEventListener("click", () => {
+      renderBalanceBars();
+      renderFlowBars();
+      renderRows();
+    });
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("periodType").value = "月";
+      document.getElementById("pointsType").value = "消费积分";
+      syncPeriodOptions();
+      renderBalanceBars();
+      renderFlowBars();
+      renderRows();
+    });
+    document.getElementById("periodType").addEventListener("change", syncPeriodOptions);
+    syncPeriodOptions();
+    renderBalanceBars();
+    renderFlowBars();
+    renderRows();
+  </script>
+</body>
+</html>

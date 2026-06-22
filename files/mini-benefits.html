@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>小程序-权益中心</title><link rel="stylesheet" href="../resources/style.css"><link rel="stylesheet" href="../resources/mini.css">
+  <style>.ticket-card.no-action { grid-template-columns: 64px 1fr; padding-right: 12px; }</style>
+</head>
+<body>
+  <div class="mini-stage"><div class="phone">
+    <div class="phone-top"><div class="status"><span>9:41</span><span>微信</span><span>•••</span></div><div class="title-row"><h1>权益中心</h1><span class="tag green">可领取 8</span></div></div>
+    <div class="mini-body">
+      <div class="tabs benefit-tabs">
+        <span class="tab active" onclick="filterBenefits('all', this)">全部</span>
+        <span class="tab" onclick="filterBenefits('level', this)">会员等级权益</span>
+        <span class="tab" onclick="filterBenefits('staff', this)">员工权益</span>
+        <span class="tab" onclick="filterBenefits('identity', this)">身份权益</span>
+      </div>
+      <div class="mini-card summary-card">
+        <div class="ticket-list">
+          <div class="ticket-card no-action benefit-item" data-type="level"><div class="ticket-left"><strong>礼</strong></div><div class="ticket-main"><b>生日礼券权益</b><span>会员等级权益 · 生日月自动发放至券包</span></div></div>
+          <div class="ticket-card no-action benefit-item" data-type="level"><div class="ticket-left"><strong>1.2x</strong></div><div class="ticket-main"><b>积分倍享权益</b><span>会员等级权益 · 金卡会员消费积分加速</span></div></div>
+          <div class="ticket-card no-action benefit-item" data-type="level"><div class="ticket-left"><strong>房</strong></div><div class="ticket-main"><b>优先选房权益</b><span>会员等级权益 · 2026.08.31前可预约</span></div></div>
+          <div class="ticket-card no-action benefit-item" data-type="level"><div class="ticket-left"><strong>服</strong></div><div class="ticket-main"><b>专属客服权益</b><span>会员等级权益 · 1v1贴身管家服务</span></div></div>
+          <div class="ticket-card no-action benefit-item" data-type="level"><div class="ticket-left"><strong>搬</strong></div><div class="ticket-main"><b>免费搬家权益</b><span>会员等级权益 · 剩余1次可使用</span></div></div>
+          <div class="ticket-card no-action benefit-item" data-type="staff"><div class="ticket-left"><strong>员</strong></div><div class="ticket-main"><b>员工食堂折扣权益</b><span>员工权益 · 工作日午餐可用</span></div></div>
+          <div class="ticket-card no-action benefit-item" data-type="staff"><div class="ticket-left"><strong>停</strong></div><div class="ticket-main"><b>员工停车优惠权益</b><span>员工权益 · 总部园区停车可用</span></div></div>
+          <div class="ticket-card no-action benefit-item" data-type="identity"><div class="ticket-left"><strong>住</strong></div><div class="ticket-main"><b>项目住户维修优先权益</b><span>身份权益 · 项目住户认证后可享</span></div></div>
+          <div class="ticket-card no-action benefit-item" data-type="identity"><div class="ticket-left"><strong>非</strong></div><div class="ticket-main"><b>非住户基础会员权益</b><span>身份权益 · 实名通过后可享</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-nav"><div class="nav-item" onclick="location.href='mini-member.html'"><i></i>会员</div><div class="nav-item" onclick="location.href='mini-notifications.html'"><i></i>通知</div></div>
+  </div></div>
+  <script>
+    function filterBenefits(type, tab) {
+      document.querySelectorAll('.benefit-tabs .tab').forEach(item => item.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.benefit-item').forEach(item => {
+        item.style.display = type === 'all' || item.dataset.type === type ? 'grid' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>安居集团会员积分运营管理平台 - 登录</title>
+  <link rel="stylesheet" href="resources/style.css">
+  <style>
+    body {
+      min-width: 1180px;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: var(--bg);
+    }
+    .login-shell {
+      width: 920px;
+      min-height: 520px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 18px 45px rgba(18, 49, 82, .16);
+    }
+    .login-brand {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 42px;
+      background: #102d4a;
+      color: #fff;
+    }
+    .login-brand-main {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .login-brand-main .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 7px;
+    }
+    .login-brand-main strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+    .login-brand-main span {
+      display: block;
+      margin-top: 4px;
+      color: #c8d5e5;
+      font-size: 13px;
+    }
+    .login-brand-copy h1 {
+      margin: 0 0 14px;
+      font-size: 28px;
+      line-height: 1.35;
+      color: #fff;
+    }
+    .login-brand-copy p {
+      margin: 0;
+      color: #c8d5e5;
+      line-height: 1.8;
+      font-size: 14px;
+    }
+    .login-panel {
+      padding: 46px 42px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .login-panel h2 {
+      margin: 0 0 8px;
+      color: var(--navy);
+      font-size: 22px;
+    }
+    .login-panel .sub {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .login-form {
+      display: grid;
+      gap: 16px;
+    }
+    .login-form .field input {
+      height: 42px;
+      font-size: 15px;
+    }
+    .login-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .login-options label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .login-button {
+      height: 44px;
+      margin-top: 4px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+    .login-foot {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="login-shell">
+    <section class="login-brand">
+      <div class="login-brand-main">
+        <div class="brand-mark">安</div>
+        <div>
+          <strong>安居集团</strong>
+          <span>会员积分运营管理平台</span>
+        </div>
+      </div>
+      <div class="login-brand-copy">
+        <h1>统一运营后台</h1>
+        <p>会员、积分、权益、客户数据与风控业务统一管理。</p>
+      </div>
+    </section>
+    <section class="login-panel">
+      <h2>账号登录</h2>
+      <p class="sub">请输入帐号和密码进入系统</p>
+      <form class="login-form" id="loginForm">
+        <div class="field"><label>帐号</label><input id="account" autocomplete="username" value="admin" placeholder="请输入帐号"></div>
+        <div class="field"><label>密码</label><input id="password" type="password" autocomplete="current-password" value="123456" placeholder="请输入密码"></div>
+        <div class="login-options">
+          <label><input type="checkbox" checked> 记住帐号</label>
+          <span>集团运营中心</span>
+        </div>
+        <button class="btn primary login-button" type="submit">登录</button>
+      </form>
+      <div class="login-foot">© 2026 安居集团</div>
+    </section>
+  </main>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", event => {
+      event.preventDefault();
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>

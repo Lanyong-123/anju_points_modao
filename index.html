@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>安居集团积分系统模块化原型</title>
+  <link rel="stylesheet" href="resources/style.css">
+</head>
+<body class="shell-body">
+  <div class="shell">
+    <header class="brand">
+      <div class="brand-mark">安</div>
+      <div>
+        <strong>安居集团</strong>
+        <span>会员积分运营管理平台</span>
+      </div>
+    </header>
+    <section class="topbar">
+      <h1 id="pageTitle">会员实名审核</h1>
+      <div class="top-actions">
+        <span>集团运营中心</span>
+        <span class="badge red">模块化原型</span>
+        <span>2026-05-26</span>
+        <button class="btn" id="logoutBtn" type="button">退出</button>
+      </div>
+    </section>
+    <aside class="sidebar">
+      <div class="nav-title">业务菜单</div>
+      <div id="menuTree"></div>
+    </aside>
+    <section class="work-tabs" id="workTabs"></section>
+    <main class="workbench">
+      <iframe id="pageFrame" title="prototype page" src="files/member-audit.html"></iframe>
+    </main>
+  </div>
+  <script src="plugins/app.js?v=expiry-menu"></script>
+  <script>
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html>

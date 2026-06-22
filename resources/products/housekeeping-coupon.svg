@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="760" viewBox="0 0 1080 760">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101b6e"/>
+      <stop offset=".48" stop-color="#1d2f98"/>
+      <stop offset="1" stop-color="#8f5cff"/>
+    </linearGradient>
+    <linearGradient id="ticket" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".7" stop-color="#f6f5ff"/>
+      <stop offset="1" stop-color="#eef1ff"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffef9e"/>
+      <stop offset=".45" stop-color="#e8b93b"/>
+      <stop offset="1" stop-color="#fff3b5"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#061044" flood-opacity=".38"/>
+    </filter>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1080" height="760" fill="url(#bg)"/>
+  <g opacity=".14" fill="#fff">
+    <circle cx="112" cy="86" r="2"/>
+    <circle cx="330" cy="132" r="2"/>
+    <circle cx="786" cy="94" r="2"/>
+    <circle cx="1005" cy="198" r="2"/>
+    <circle cx="218" cy="640" r="2"/>
+    <circle cx="912" cy="600" r="2"/>
+  </g>
+  <path d="M0 640 C180 565 255 705 430 612 C590 528 698 618 840 555 C970 495 1018 590 1080 548 L1080 760 L0 760 Z" fill="#7c54ff" opacity=".45"/>
+  <path d="M0 690 C165 632 330 720 470 665 C650 595 780 678 915 640 C1000 616 1042 638 1080 652 L1080 760 L0 760 Z" fill="#36a4ff" opacity=".36"/>
+
+  <g filter="url(#shadow)">
+    <path d="M94 282
+      C94 254 116 232 144 232
+      L724 232
+      C724 254 742 272 764 272
+      C786 272 804 254 804 232
+      L936 232
+      C964 232 986 254 986 282
+      L986 386
+      C958 386 936 408 936 436
+      C936 464 958 486 986 486
+      L986 550
+      C986 578 964 600 936 600
+      L804 600
+      C804 578 786 560 764 560
+      C742 560 724 578 724 600
+      L144 600
+      C116 600 94 578 94 550
+      L94 486
+      C122 486 144 464 144 436
+      C144 408 122 386 94 386
+      Z" fill="url(#ticket)"/>
+    <line x1="764" y1="258" x2="764" y2="574" stroke="#c9cbd8" stroke-width="4" stroke-dasharray="10 10"/>
+  </g>
+
+  <ellipse cx="373" cy="363" rx="272" ry="58" fill="none" stroke="url(#gold)" stroke-width="8" opacity=".75" transform="rotate(-8 373 363)"/>
+  <ellipse cx="373" cy="363" rx="255" ry="48" fill="none" stroke="#fff3b5" stroke-width="3" opacity=".9" transform="rotate(-8 373 363)"/>
+  <circle cx="622" cy="310" r="16" fill="#fff" opacity=".9" filter="url(#softGlow)"/>
+  <circle cx="260" cy="450" r="12" fill="#fff" opacity=".9" filter="url(#softGlow)"/>
+
+  <text x="148" y="374" font-family="Microsoft YaHei, PingFang SC, Arial, sans-serif" font-size="88" font-weight="900" fill="#e83a2d" stroke="#ffd27b" stroke-width="4" paint-order="stroke">家政服务券</text>
+  <text x="156" y="456" font-family="Microsoft YaHei, PingFang SC, Arial, sans-serif" font-size="38" font-weight="800" fill="#d82720">2000积分兑换</text>
+  <text x="156" y="535" font-family="Microsoft YaHei, PingFang SC, Arial, sans-serif" font-size="36" font-weight="800" fill="#111">有效期至2027年01月01日</text>
+
+  <g transform="translate(716 340)">
+    <ellipse cx="112" cy="182" rx="130" ry="24" fill="#cbd0e8" opacity=".45"/>
+    <rect x="34" y="76" width="150" height="130" rx="24" fill="#ffc72f"/>
+    <path d="M52 78 C70 36 149 34 169 78 Z" fill="#ffd85c"/>
+    <rect x="66" y="104" width="44" height="40" rx="8" fill="#1f2430"/>
+    <rect x="128" y="104" width="44" height="40" rx="8" fill="#1f2430"/>
+    <path d="M184 136 C218 142 230 170 220 196 L184 196 Z" fill="#ef4b3d"/>
+    <circle cx="70" cy="204" r="30" fill="#161b24"/>
+    <circle cx="184" cy="204" r="30" fill="#161b24"/>
+    <circle cx="70" cy="204" r="13" fill="#2e3440"/>
+    <circle cx="184" cy="204" r="13" fill="#2e3440"/>
+    <path d="M34 176 L10 176 C7 143 16 115 34 96 Z" fill="#ffc72f"/>
+    <text x="76" y="178" font-family="Microsoft YaHei, PingFang SC, Arial, sans-serif" font-size="40" font-weight="900" fill="#fff">2小时</text>
+    <g transform="translate(-42 -42)">
+      <circle cx="42" cy="42" r="36" fill="#fff" opacity=".96"/>
+      <path d="M24 54 C34 39 52 39 62 54" fill="none" stroke="#1f5f99" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="32" cy="34" r="8" fill="#1f5f99"/>
+      <circle cx="52" cy="34" r="8" fill="#1f5f99"/>
+      <path d="M42 16 L42 66" stroke="#e83a2d" stroke-width="7" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

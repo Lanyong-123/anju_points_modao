@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>角色管理</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .role-filter {
+      grid-template-columns: 1fr auto auto;
+    }
+    .role-modal {
+      width: min(980px, calc(100vw - 48px));
+    }
+    .role-modal .panel-bd {
+      max-height: calc(100vh - 170px);
+      overflow: auto;
+    }
+    .role-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .field label.required::before,
+    .required-title::before {
+      content: "*";
+      margin-right: 3px;
+      color: var(--red);
+      font-weight: 700;
+    }
+    .permission-tree {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .permission-tree-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--soft);
+      color: var(--navy);
+      font-weight: 800;
+    }
+    .permission-tree-bd {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 12px;
+    }
+    .permission-group {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px;
+      background: #fff;
+    }
+    .permission-group strong,
+    .permission-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 28px;
+      color: var(--ink);
+    }
+    .permission-children {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 10px;
+      margin-top: 6px;
+      padding-left: 24px;
+    }
+    .permission-item {
+      color: #34465c;
+      font-size: 13px;
+    }
+    .action-list {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter role-filter">
+      <div class="field"><label>角色关键词</label><input placeholder="请输入角色名称/分类关键词"></div>
+      <button class="btn primary">查询</button>
+      <button class="btn">重置</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>角色列表</h3>
+        <div class="toolbar"><button class="btn primary" data-open-role="create">新增角色</button><button class="btn" data-open-delete>批量删除</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>角色名称</th>
+              <th>角色分类</th>
+              <th>修改时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>系统超级管理员</td>
+              <td><span class="badge red">系统管理</span></td>
+              <td>2026-06-10 09:42:18</td>
+              <td><div class="action-list"><span class="link" data-open-role="edit">编辑</span><span class="link danger" data-open-delete>删除</span></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>积分运营管理员</td>
+              <td><span class="badge blue">运营管理员</span></td>
+              <td>2026-06-09 18:20:36</td>
+              <td><div class="action-list"><span class="link" data-open-role="edit">编辑</span><span class="link danger" data-open-delete>删除</span></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>平台运维管理员</td>
+              <td><span class="badge green">运维管理员</span></td>
+              <td>2026-06-08 14:05:22</td>
+              <td><div class="action-list"><span class="link" data-open-role="edit">编辑</span><span class="link danger" data-open-delete>删除</span></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>数据审计管理员</td>
+              <td><span class="badge gold">审计管理员</span></td>
+              <td>2026-06-07 10:16:48</td>
+              <td><div class="action-list"><span class="link" data-open-role="edit">编辑</span><span class="link danger" data-open-delete>删除</span></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 28 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="roleModal">
+    <div class="modal role-modal">
+      <div class="panel-hd"><h3 id="roleModalTitle">新增角色</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="role-form">
+          <div class="field"><label class="required">角色名称</label><input value="积分运营管理员"></div>
+          <div class="field"><label class="required">角色分类</label><select><option>系统管理</option><option selected>运营管理员</option><option>运维管理员</option><option>审计管理员</option></select></div>
+        </div>
+        <div class="permission-tree">
+          <div class="permission-tree-hd">
+            <span class="required-title">角色权限</span>
+            <label><input type="checkbox" checked> 全选菜单</label>
+          </div>
+          <div class="permission-tree-bd">
+            <div class="permission-group">
+              <strong><input type="checkbox" checked> 后台端-会员中心</strong>
+              <div class="permission-children">
+                <label class="permission-item"><input type="checkbox" checked> 会员信息管理</label>
+                <label class="permission-item"><input type="checkbox" checked> 会员实名审核</label>
+                <label class="permission-item"><input type="checkbox"> 会员等级管理</label>
+                <label class="permission-item"><input type="checkbox"> 会员注销管理</label>
+                <label class="permission-item"><input type="checkbox"> 会员变更日志管理</label>
+              </div>
+            </div>
+            <div class="permission-group">
+              <strong><input type="checkbox" checked> 后台端-积分中心</strong>
+              <div class="permission-children">
+                <label class="permission-item"><input type="checkbox" checked> 积分账户管理</label>
+                <label class="permission-item"><input type="checkbox" checked> 积分账户审核管理</label>
+                <label class="permission-item"><input type="checkbox" checked> 积分明细查询</label>
+                <label class="permission-item"><input type="checkbox"> 积分互换查询</label>
+              </div>
+            </div>
+            <div class="permission-group">
+              <strong><input type="checkbox" checked> 后台端-权益中心</strong>
+              <div class="permission-children">
+                <label class="permission-item"><input type="checkbox" checked> 权益管理</label>
+                <label class="permission-item"><input type="checkbox" checked> 商品管理</label>
+                <label class="permission-item"><input type="checkbox" checked> 优惠券管理</label>
+                <label class="permission-item"><input type="checkbox"> 优惠券核销管理</label>
+              </div>
+            </div>
+            <div class="permission-group">
+              <strong><input type="checkbox"> 后台端-清结算管理</strong>
+              <div class="permission-children">
+                <label class="permission-item"><input type="checkbox"> 积分清算规则配置</label>
+                <label class="permission-item"><input type="checkbox"> 积分日清报表</label>
+                <label class="permission-item"><input type="checkbox"> 积分发分日清明细表</label>
+                <label class="permission-item"><input type="checkbox"> 积分兑分日清明细表</label>
+                <label class="permission-item"><input type="checkbox"> 过期积分统计表</label>
+                <label class="permission-item"><input type="checkbox"> 积分月结报表</label>
+              </div>
+            </div>
+            <div class="permission-group">
+              <strong><input type="checkbox"> 后台端-风控管理</strong>
+              <div class="permission-children">
+                <label class="permission-item"><input type="checkbox"> 风控规则管理</label>
+                <label class="permission-item"><input type="checkbox"> 发分主体风控</label>
+                <label class="permission-item"><input type="checkbox"> 风控预警中心</label>
+                <label class="permission-item"><input type="checkbox"> 风控预警报表</label>
+              </div>
+            </div>
+            <div class="permission-group">
+              <strong><input type="checkbox"> 会员报表</strong>
+              <div class="permission-children">
+                <label class="permission-item"><input type="checkbox"> 会员新增/注销报表</label>
+                <label class="permission-item"><input type="checkbox"> 会员增长分析报表</label>
+                <label class="permission-item"><input type="checkbox"> 积分发分统计表</label>
+                <label class="permission-item"><input type="checkbox"> 积分兑存报表</label>
+                <label class="permission-item"><input type="checkbox"> 积分本场兑分报表</label>
+                <label class="permission-item"><input type="checkbox"> 优惠券发放报表</label>
+                <label class="permission-item"><input type="checkbox"> 优惠券效果分析报表</label>
+              </div>
+            </div>
+            <div class="permission-group">
+              <strong><input type="checkbox" checked> 后台端-客户数据管理</strong>
+              <div class="permission-children">
+                <label class="permission-item"><input type="checkbox" checked> 客户标签管理</label>
+                <label class="permission-item"><input type="checkbox" checked> 标签使用报表</label>
+                <label class="permission-item"><input type="checkbox" checked> 人群管理</label>
+                <label class="permission-item"><input type="checkbox" checked> 客户画像</label>
+                <label class="permission-item"><input type="checkbox"> 数据API管理</label>
+                <label class="permission-item"><input type="checkbox" checked> 客户行为分析</label>
+              </div>
+            </div>
+            <div class="permission-group">
+              <strong><input type="checkbox" checked> 后台端-系统管理</strong>
+              <div class="permission-children">
+                <label class="permission-item"><input type="checkbox" checked> 用户管理</label>
+                <label class="permission-item"><input type="checkbox" checked> 角色管理</label>
+                <label class="permission-item"><input type="checkbox" checked> 操作日志</label>
+                <label class="permission-item"><input type="checkbox" checked> 参数配置</label>
+                <label class="permission-item"><input type="checkbox"> 脱敏管理</label>
+              </div>
+            </div>
+            <div class="permission-group">
+              <strong><input type="checkbox"> C端-小程序端</strong>
+              <div class="permission-children">
+                <label class="permission-item"><input type="checkbox"> 手机授权登录</label>
+                <label class="permission-item"><input type="checkbox"> 会员中心</label>
+                <label class="permission-item"><input type="checkbox"> 积分中心</label>
+                <label class="permission-item"><input type="checkbox"> 权益中心</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="deleteModal">
+    <div class="modal" style="width:min(520px, calc(100vw - 48px))">
+      <div class="panel-hd"><h3>删除角色</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice"><strong>删除确认</strong>删除后该角色不再可分配给用户，已关联用户需重新配置角色。</div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认删除</button></div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll("[data-open-role]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("roleModalTitle").textContent = el.dataset.openRole === "create" ? "新增角色" : "编辑角色";
+        document.getElementById("roleModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-open-delete]").forEach(el => {
+      el.addEventListener("click", () => document.getElementById("deleteModal").classList.add("open"));
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+  </script>
+</body>
+</html>

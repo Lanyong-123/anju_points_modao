@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>用户管理</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .user-filter {
+      grid-template-columns: minmax(260px, 1.2fr) minmax(160px, .7fr) minmax(220px, 1fr) auto auto;
+    }
+    .user-layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .org-tree {
+      display: grid;
+      gap: 8px;
+      padding: 4px;
+    }
+    .tree-node {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: #fff;
+      color: var(--navy);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .tree-node.active {
+      border-color: #f0c2c7;
+      background: #fff3f4;
+      color: var(--red);
+    }
+    .tree-node span:first-child {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+    }
+    .tree-node em {
+      color: #8a99a8;
+      font-size: 12px;
+      font-style: normal;
+    }
+    .tree-children {
+      display: grid;
+      gap: 8px;
+      padding-left: 18px;
+    }
+    .status-actions,
+    .action-list {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .field label.required::before {
+      content: "*";
+      margin-right: 3px;
+      color: var(--red);
+      font-weight: 700;
+    }
+    .user-modal {
+      width: min(920px, calc(100vw - 48px));
+    }
+    .user-modal .panel-bd {
+      max-height: calc(100vh - 170px);
+      overflow: auto;
+    }
+    .user-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .multi-box {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+    }
+    .multi-box label,
+    .data-permission label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 24px;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .multi-box input[type="checkbox"],
+    .data-permission input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      margin: 0;
+    }
+    .data-permission {
+      position: relative;
+    }
+    .permission-select {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .permission-panel {
+      display: none;
+      margin-top: 6px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--soft);
+    }
+    .data-permission.open .permission-panel {
+      display: grid;
+      gap: 7px;
+    }
+    @media (max-width: 1180px) {
+      .user-filter { grid-template-columns: 1fr 1fr; }
+      .user-layout { grid-template-columns: 220px minmax(0, 1fr); }
+      .user-form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter user-filter">
+      <div class="field"><label>用户关键词</label><input placeholder="请输入姓名/手机/邮箱关键词"></div>
+      <div class="field"><label>状态</label><select><option>全部状态</option><option>启用</option><option>停用</option></select></div>
+      <div class="field"><label>修改时间</label><input value="2026-06-01 至 2026-06-10"></div>
+      <button class="btn primary">查询</button>
+      <button class="btn">重置</button>
+    </div>
+
+    <div class="user-layout">
+      <div class="panel">
+        <div class="panel-hd"><h3>组织树</h3></div>
+        <div class="panel-bd">
+          <div class="org-tree">
+            <div class="tree-node active"><span>▾ 集团总部</span><em>86</em></div>
+            <div class="tree-children">
+              <div class="tree-node"><span>▸ 运营中心</span><em>28</em></div>
+              <div class="tree-node"><span>▸ 客服中心</span><em>16</em></div>
+              <div class="tree-node"><span>▾ 项目管理部</span><em>34</em></div>
+              <div class="tree-children">
+                <div class="tree-node"><span>南山项目</span><em>12</em></div>
+                <div class="tree-node"><span>福田项目</span><em>10</em></div>
+                <div class="tree-node"><span>宝安项目</span><em>12</em></div>
+              </div>
+              <div class="tree-node"><span>▸ 数据治理组</span><em>8</em></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd">
+          <h3>用户列表</h3>
+          <div class="toolbar">
+            <button class="btn primary" data-open-user="create">新增用户</button>
+            <button class="btn" data-open-delete>批量删除</button>
+          </div>
+        </div>
+        <div class="panel-bd">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox"></th>
+                <th>姓名</th>
+                <th>所属组织</th>
+                <th>角色名称</th>
+                <th>手机</th>
+                <th>邮箱</th>
+                <th>状态</th>
+                <th>修改时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>王超</td>
+                <td>集团总部</td>
+                <td>系统超级管理员</td>
+                <td>138****6021</td>
+                <td>wangchao@anju.com</td>
+                <td><span class="badge green">启用</span></td>
+                <td>2026-06-10 10:40:23</td>
+                <td><div class="action-list"><span class="link" data-open-user="edit">编辑</span><span class="link" data-open-reset>密码重置</span><span class="link danger" data-open-delete>删除</span><span class="link">禁用</span></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>程敏婷</td>
+                <td>运营中心</td>
+                <td>积分运营管理员</td>
+                <td>136****8519</td>
+                <td>chengmt@anju.com</td>
+                <td><span class="badge green">启用</span></td>
+                <td>2026-06-10 09:31:06</td>
+                <td><div class="action-list"><span class="link" data-open-user="edit">编辑</span><span class="link" data-open-reset>密码重置</span><span class="link danger" data-open-delete>删除</span><span class="link">禁用</span></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>万源</td>
+                <td>数据治理组</td>
+                <td>数据审计管理员</td>
+                <td>139****5208</td>
+                <td>wanyuan@anju.com</td>
+                <td><span class="badge gray">停用</span></td>
+                <td>2026-06-09 18:42:35</td>
+                <td><div class="action-list"><span class="link" data-open-user="edit">编辑</span><span class="link" data-open-reset>密码重置</span><span class="link danger" data-open-delete>删除</span><span class="link">启用</span></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>于业政</td>
+                <td>福田项目</td>
+                <td>项目运营专员</td>
+                <td>137****1866</td>
+                <td>yuyz@anju.com</td>
+                <td><span class="badge green">启用</span></td>
+                <td>2026-06-08 14:20:16</td>
+                <td><div class="action-list"><span class="link" data-open-user="edit">编辑</span><span class="link" data-open-reset>密码重置</span><span class="link danger" data-open-delete>删除</span><span class="link">禁用</span></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>刘琳</td>
+                <td>客服中心</td>
+                <td>客服运营管理员</td>
+                <td>135****7092</td>
+                <td>liulin@anju.com</td>
+                <td><span class="badge gray">停用</span></td>
+                <td>2026-06-07 16:08:10</td>
+                <td><div class="action-list"><span class="link" data-open-user="edit">编辑</span><span class="link" data-open-reset>密码重置</span><span class="link danger" data-open-delete>删除</span><span class="link">启用</span></div></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="pagination"><span>共 86 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="userModal">
+    <div class="modal user-modal">
+      <div class="panel-hd"><h3 id="userModalTitle">新增用户</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="user-form">
+          <div class="field"><label class="required">姓名</label><input value="程敏婷"></div>
+          <div class="field"><label class="required">所属组织</label><select><option>集团总部</option><option selected>运营中心</option><option>客服中心</option><option>南山项目</option><option>福田项目</option><option>数据治理组</option></select></div>
+          <div class="field">
+            <label class="required">角色名称（下拉，支持多选）</label>
+            <div class="data-permission" id="rolePermission">
+              <div class="permission-select" data-toggle-dropdown="rolePermission"><span>系统超级管理员、积分运营管理员</span><span>⌄</span></div>
+              <div class="permission-panel">
+                <label><input type="checkbox" checked> 系统超级管理员</label>
+                <label><input type="checkbox" checked> 积分运营管理员</label>
+                <label><input type="checkbox"> 客服运营管理员</label>
+                <label><input type="checkbox"> 数据审计管理员</label>
+                <label><input type="checkbox"> 项目运营专员</label>
+              </div>
+            </div>
+          </div>
+          <div class="field"><label class="required">手机</label><input value="13698518519"></div>
+          <div class="field"><label>邮箱</label><input value="chengmt@anju.com"></div>
+          <div class="field"><label class="required">状态</label><select><option selected>启用</option><option>停用</option></select></div>
+          <div class="field">
+            <label class="required">数据权限（下拉，支持复选）</label>
+            <div class="data-permission" id="dataPermission">
+              <div class="permission-select" data-toggle-dropdown="dataPermission"><span>集团总部、运营中心、福田项目</span><span>⌄</span></div>
+              <div class="permission-panel">
+                <label><input type="checkbox" checked> 全部数据</label>
+                <label><input type="checkbox" checked> 集团总部</label>
+                <label><input type="checkbox" checked> 运营中心</label>
+                <label><input type="checkbox"> 客服中心</label>
+                <label><input type="checkbox"> 南山项目</label>
+                <label><input type="checkbox" checked> 福田项目</label>
+                <label><input type="checkbox"> 数据治理组</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="deleteModal">
+    <div class="modal" style="width:min(520px, calc(100vw - 48px))">
+      <div class="panel-hd"><h3>删除用户</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice"><strong>删除确认</strong>删除后该账号无法登录后台，相关操作日志仍会保留用于审计追溯。</div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认删除</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="resetModal">
+    <div class="modal" style="width:min(520px, calc(100vw - 48px))">
+      <div class="panel-hd"><h3>密码重置</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice"><strong>重置确认</strong>确认后系统将重置该用户登录密码，并通过预留手机号或邮箱通知用户。</div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认重置</button></div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll("[data-open-user]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("userModalTitle").textContent = el.dataset.openUser === "create" ? "新增用户" : "编辑用户";
+        document.getElementById("userModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-open-delete]").forEach(el => {
+      el.addEventListener("click", () => document.getElementById("deleteModal").classList.add("open"));
+    });
+    document.querySelectorAll("[data-open-reset]").forEach(el => {
+      el.addEventListener("click", () => document.getElementById("resetModal").classList.add("open"));
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+    document.querySelectorAll("[data-toggle-dropdown]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById(el.dataset.toggleDropdown).classList.toggle("open");
+      });
+    });
+    document.querySelectorAll(".tree-node").forEach(node => {
+      node.addEventListener("click", () => {
+        document.querySelectorAll(".tree-node").forEach(item => item.classList.remove("active"));
+        node.classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>

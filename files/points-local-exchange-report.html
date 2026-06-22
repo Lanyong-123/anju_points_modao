@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>积分本场兑分报表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+    .chart-wrap { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; }
+    .chart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .chart-head h3 { margin: 0; color: var(--navy); font-size: 15px; }
+    .chart-note { color: var(--muted); font-size: 12px; font-weight: 800; }
+    .bar-list { display: grid; gap: 16px; }
+    .bar-row { display: grid; grid-template-columns: 118px 1fr 112px; gap: 12px; align-items: center; }
+    .bar-name { color: #123152; font-weight: 800; }
+    .bar-track { height: 22px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2f6fbd, #2f9b6b); }
+    .bar-fill.alt { background: linear-gradient(90deg, #2f6fbd, #d8892c); }
+    .bar-value { color: #123152; font-weight: 800; text-align: right; }
+    .tag { display: inline-flex; align-items: center; justify-content: center; min-width: 68px; height: 24px; border-radius: 999px; background: #eef4fb; color: #123152; font-weight: 800; font-size: 12px; }
+    @media (max-width: 1180px) {
+      .report-grid { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 96px 1fr; }
+      .bar-value { grid-column: 2; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>统计周期</label><select id="periodType"><option selected>月</option><option>季</option><option>年</option></select></div>
+      <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
+      <div class="field"><label>发分主体</label><select id="issuerSelect"><option selected>集团运营中心</option><option>南山项目</option><option>福田项目</option><option>商业运营公司</option></select></div>
+      <div class="field"><label>消费主体</label><select id="consumeScope"><option selected>在其他发分主体</option><option>在本主体内</option></select></div>
+      <button class="btn primary" id="queryBtn">查询</button>
+      <button class="btn" id="resetBtn">重置</button>
+      <button class="btn">导出</button>
+    </div>
+
+    <div class="report-grid">
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3 id="subjectChartTitle">其他发分主体消耗分布</h3>
+          <span class="chart-note" id="subjectChartNote">本场积他场兑</span>
+        </div>
+        <div class="bar-list" id="subjectBars"></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-head">
+          <h3 id="sceneChartTitle">消耗场景分布</h3>
+          <span class="chart-note" id="sceneChartNote">按场景汇总</span>
+        </div>
+        <div class="bar-list" id="sceneBars"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>积分本场兑分统计明细</h3>
+        <div class="toolbar"><button class="btn">导出</button></div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr><th>统计周期</th><th>发分主体</th><th>消耗主体</th><th>兑换类型</th><th>消耗场景</th><th>消耗总量</th><th>占比</th></tr>
+          </thead>
+          <tbody id="exchangeRows"></tbody>
+        </table>
+        <div class="pagination"><span id="rowCount">共 4 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const exchangeData = {
+      "在其他发分主体": [
+        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "南山项目", type: "在其他发分主体", scene: "租赁服务抵扣", total: 386000 },
+        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "福田项目", type: "在其他发分主体", scene: "物业缴费抵扣", total: 302000 },
+        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "商业运营公司", type: "在其他发分主体", scene: "商业券核销", total: 248000 },
+        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "物业服务公司", type: "在其他发分主体", scene: "维修服务兑换", total: 186000 }
+      ],
+      "在本主体内": [
+        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "集团运营中心", type: "在本主体内", scene: "商品兑换", total: 426000 },
+        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "集团运营中心", type: "在本主体内", scene: "优惠券核销", total: 338000 },
+        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "集团运营中心", type: "在本主体内", scene: "权益兑换", total: 276000 },
+        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "集团运营中心", type: "在本主体内", scene: "服务抵扣", total: 194000 }
+      ]
+    };
+
+    function format(num) {
+      return num.toLocaleString("zh-CN");
+    }
+
+    function sum(list) {
+      return list.reduce((total, item) => total + item.total, 0);
+    }
+
+    function groupBy(data, key) {
+      const grouped = new Map();
+      data.forEach(item => grouped.set(item[key], (grouped.get(item[key]) || 0) + item.total));
+      return Array.from(grouped, ([name, total]) => ({ name, total }));
+    }
+
+    function renderBars(targetId, data, mode) {
+      const max = Math.max(...data.map(item => item.total));
+      const total = sum(data);
+      document.getElementById(targetId).innerHTML = data.map(item => {
+        const rate = (item.total / total * 100).toFixed(1);
+        return `
+          <div class="bar-row">
+            <div class="bar-name">${item.name}</div>
+            <div class="bar-track"><div class="bar-fill ${mode === "cross" ? "alt" : ""}" style="width:${item.total / max * 100}%"></div></div>
+            <div class="bar-value">${format(item.total)} / ${rate}%</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderRows() {
+      const rows = exchangeData[document.getElementById("consumeScope").value];
+      const total = sum(rows);
+      document.getElementById("exchangeRows").innerHTML = rows.map(item => `
+        <tr>
+          <td>${item.period}</td>
+          <td>${item.issuer}</td>
+          <td>${item.consumeIssuer}</td>
+          <td><span class="tag">${item.type}</span></td>
+          <td>${item.scene}</td>
+          <td>${format(item.total)}</td>
+          <td>${(item.total / total * 100).toFixed(1)}%</td>
+        </tr>
+      `).join("");
+      document.getElementById("rowCount").textContent = `共 ${rows.length} 条`;
+    }
+
+    function renderAll() {
+      const scope = document.getElementById("consumeScope").value;
+      if (scope === "在本主体内") {
+        document.getElementById("issuerSelect").value = "集团运营中心";
+      }
+      const rows = exchangeData[scope];
+      const subjectKey = scope === "在其他发分主体" ? "consumeIssuer" : "issuer";
+      document.getElementById("subjectChartTitle").textContent = scope === "在其他发分主体" ? "其他发分主体消耗分布" : "来源发分主体消耗分布";
+      document.getElementById("subjectChartNote").textContent = scope === "在其他发分主体" ? "本场积他场兑" : "他场积本场兑";
+      renderBars("subjectBars", groupBy(rows, subjectKey), scope === "在其他发分主体" ? "cross" : "local");
+      renderBars("sceneBars", groupBy(rows, "scene"), "local");
+      renderRows();
+    }
+
+    function syncPeriodOptions() {
+      const type = document.getElementById("periodType").value;
+      const options = {
+        "月": ["2026-06", "2026-05", "2026-04", "2026-03", "2026-02", "2026-01"],
+        "季": ["2026年第2季度", "2026年第1季度", "2025年第4季度", "2025年第3季度"],
+        "年": ["2026年", "2025年", "2024年"]
+      };
+      document.getElementById("periodValue").innerHTML = options[type].map((item, index) =>
+        `<option ${index === 0 ? "selected" : ""}>${item}</option>`
+      ).join("");
+    }
+
+    document.getElementById("queryBtn").addEventListener("click", renderAll);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("periodType").value = "月";
+      document.getElementById("issuerSelect").value = "集团运营中心";
+      document.getElementById("consumeScope").value = "在其他发分主体";
+      syncPeriodOptions();
+      renderAll();
+    });
+    document.getElementById("periodType").addEventListener("change", syncPeriodOptions);
+    document.getElementById("consumeScope").addEventListener("change", renderAll);
+    syncPeriodOptions();
+    renderAll();
+  </script>
+</body>
+</html>

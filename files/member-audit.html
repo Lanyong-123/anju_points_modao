@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>会员实名审核</title>
+  <link rel="stylesheet" href="../resources/style.css">
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>审核单号/会员</label><input placeholder="审核单号、会员名称、会员ID"></div>
+      <div class="field"><label>手机号</label><input placeholder="支持模糊查询"></div>
+      <div class="field"><label>审核状态</label><select><option>全部状态</option><option>审核通过</option><option>审核不通过</option></select></div>
+      <div class="field"><label>会员类型</label><select><option>全部类型</option><option>项目住户会员</option><option>非员工非住户会员</option></select></div>
+      <div class="field"><label>所属项目</label><select><option>全部项目</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option></select></div>
+      <div class="field"><label>审核时间</label><input value="2026-05-01 至 2026-05-26"></div>
+      <div class="field"><label>通知状态</label><select><option>全部</option><option>已通知</option><option>未通知</option></select></div>
+      <button class="btn primary">查询</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>实名审核列表</h3>
+        <div class="toolbar">
+          <button class="btn">导出</button>
+        </div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>审核单号</th>
+              <th>会员名称</th>
+              <th>会员ID</th>
+              <th>手机号</th>
+              <th>会员类型</th>
+              <th>所属项目</th>
+              <th>审核状态</th>
+              <th>自动校验结果</th>
+              <th>审核时间</th>
+              <th>通知状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><input type="checkbox"></td><td>RA202605260018</td><td><span class="link" data-detail="RA202605260018">李明</span></td><td>AJ202605180018</td><td>136****5520</td><td>项目住户会员</td><td>南山项目</td><td><span class="badge green">审核通过</span></td><td>三要素一致、住户合同有效</td><td>2026-05-26 09:12</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605260018">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605260019</td><td><span class="link" data-detail="RA202605260019">周女士</span></td><td>AJ202604220091</td><td>139****6812</td><td>非员工非住户会员</td><td>-</td><td><span class="badge red">审核不通过</span></td><td>证件 OCR 置信度低于阈值</td><td>2026-05-26 08:45</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605260019">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605250027</td><td><span class="link" data-detail="RA202605250027">陈先生</span></td><td>AJ202605010027</td><td>137****2098</td><td>项目住户会员</td><td>福田项目</td><td><span class="badge red">审核不通过</span></td><td>租赁合同已过期</td><td>2026-05-25 17:20</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605250027">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605250031</td><td><span class="link" data-detail="RA202605250031">王强</span></td><td>AJ202603090112</td><td>188****4019</td><td>非员工非住户会员</td><td>-</td><td><span class="badge red">审核不通过</span></td><td>命中黑名单、手机号异常</td><td>2026-05-25 16:02</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605250031">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605240066</td><td><span class="link" data-detail="RA202605240066">赵女士</span></td><td>AJ202605240066</td><td>135****9087</td><td>项目住户会员</td><td>南山项目</td><td><span class="badge green">审核通过</span></td><td>身份三要素一致、合同姓名匹配成功</td><td>2026-05-24 14:35</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605240066">详情</span></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>共 236 条</span>
+          <span>每页</span>
+          <select><option>10 条</option><option selected>20 条</option><option>50 条</option></select>
+          <button class="page-btn">上一页</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">下一页</button>
+          <span>跳至</span><input value="1"><span>页</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <aside class="drawer" id="auditDrawer" style="width:720px">
+    <div class="panel-hd"><h3>后台系统自动校验详情</h3><button class="btn" data-close-drawer>关闭</button></div>
+    <div class="panel-bd">
+      <div class="detail-list">
+        <span>审核单号</span><strong id="detailNo">RA202605260018</strong>
+        <span>会员名称</span><strong id="detailName">李明</strong>
+        <span>会员ID</span><strong id="detailMemberId">AJ202605180018</strong>
+        <span>手机号</span><strong id="detailPhone">136****5520</strong>
+        <span>会员类型</span><strong id="detailType">项目住户会员</strong>
+        <span>所属项目</span><strong id="detailProject">南山项目</strong>
+        <span>审核状态</span><strong id="detailStatus">审核通过</strong>
+        <span>审核时间</span><strong id="detailTime">2026-05-26 09:12</strong>
+      </div>
+
+      <div class="panel" style="margin-top:16px; box-shadow:none">
+        <div class="panel-hd"><h3>自动校验项</h3></div>
+        <div class="panel-bd">
+          <table>
+            <thead><tr><th>校验项</th><th>校验结果</th><th>说明</th></tr></thead>
+            <tbody id="checkRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:16px; box-shadow:none">
+        <div class="panel-hd"><h3>认证材料</h3></div>
+        <div class="panel-bd">
+          <table>
+            <thead><tr><th>材料类型</th><th>识别内容</th><th>系统校验</th><th>操作</th></tr></thead>
+            <tbody id="materialRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="modal-mask" id="previewModal">
+    <div class="modal">
+      <div class="panel-hd"><h3 id="previewTitle">附件查看</h3><button class="btn" data-close-preview>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice" id="previewNotice"><strong>身份证附件</strong>用于后台系统自动校验会员实名信息。</div>
+        <div class="detail-list" id="previewContent" style="margin-top:12px"></div>
+      </div>
+      <div class="modal-ft"><button class="btn primary" data-close-preview>关闭</button></div>
+    </div>
+  </div>
+
+  <script>
+    const auditData = {
+      RA202605260018: {
+        name: "李明", id: "AJ202605180018", phone: "136****5520", type: "项目住户会员", project: "南山项目",
+        status: "审核通过", time: "2026-05-26 09:12",
+        checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["住户合同", "通过", "南山项目 3 栋 1201 合同有效"], ["名单风控", "通过", "未命中黑名单或异常手机号"]],
+        materials: [["身份证附件", "姓名李明，证件号 4403**********18", "通过", "idcard"], ["租赁合同", "合同号 HT2026051809，合同期至 2027-04-30", "通过", "contract"]]
+      },
+      RA202605260019: {
+        name: "周女士", id: "AJ202604220091", phone: "139****6812", type: "非员工非住户会员", project: "-",
+        status: "审核不通过", time: "2026-05-26 08:45",
+        checks: [["身份三要素", "不通过", "证件 OCR 置信度低于系统阈值"], ["名单风控", "通过", "未命中风险名单"], ["材料完整性", "通过", "身份证正反面已上传"]],
+        materials: [["身份证附件", "姓名周女士，证件号局部识别置信度偏低", "不通过", "idcard"]]
+      },
+      RA202605250027: {
+        name: "陈先生", id: "AJ202605010027", phone: "137****2098", type: "项目住户会员", project: "福田项目",
+        status: "审核不通过", time: "2026-05-25 17:20",
+        checks: [["住户合同", "不通过", "系统合同状态显示已过期"], ["身份三要素", "通过", "姓名、手机号、证件号一致"], ["名单风控", "通过", "未命中风险名单"]],
+        materials: [["租赁合同", "合同号 HT2025052507，合同期已结束", "不通过", "contract"]]
+      },
+      RA202605250031: {
+        name: "王强", id: "AJ202603090112", phone: "188****4019", type: "非员工非住户会员", project: "-",
+        status: "审核不通过", time: "2026-05-25 16:02",
+        checks: [["名单风控", "不通过", "命中黑名单"], ["手机号校验", "不通过", "近期多账号绑定异常"], ["材料完整性", "通过", "身份证材料已上传"]],
+        materials: [["身份证附件", "姓名王强，证件号 4403**********09", "通过", "idcard"]]
+      },
+      RA202605240066: {
+        name: "赵女士", id: "AJ202605240066", phone: "135****9087", type: "项目住户会员", project: "南山项目",
+        status: "审核通过", time: "2026-05-24 14:35",
+        checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["住户合同", "通过", "合同姓名与提交姓名匹配成功"], ["名单风控", "通过", "未命中风险名单"]],
+        materials: [["身份证附件", "姓名赵女士，证件号 4403**********66", "通过", "idcard"], ["租赁合同", "南山项目 5 栋 801，合同期有效", "通过", "contract"]]
+      }
+    };
+
+    const drawer = document.getElementById("auditDrawer");
+    const detailIds = ["No", "Name", "MemberId", "Phone", "Type", "Project", "Status", "Time"];
+    function badgeClass(result) {
+      if (result.includes("不通过")) return "red";
+      if (result.includes("通过")) return "green";
+      return "gray";
+    }
+    function renderDetail(no) {
+      const data = auditData[no] || auditData.RA202605260018;
+      const values = [no, data.name, data.id, data.phone, data.type, data.project, data.status, data.time];
+      detailIds.forEach((key, index) => {
+        const target = document.getElementById(`detail${key}`);
+        target.innerHTML = key === "Status" ? `<span class="badge ${badgeClass(values[index])}">${values[index]}</span>` : values[index];
+      });
+      document.getElementById("checkRows").innerHTML = data.checks.map(row => `<tr><td>${row[0]}</td><td><span class="badge ${badgeClass(row[1])}">${row[1]}</span></td><td>${row[2]}</td></tr>`).join("");
+      document.getElementById("materialRows").innerHTML = data.materials.map(row => `<tr><td>${row[0]}</td><td>${row[1]}</td><td><span class="badge ${badgeClass(row[2])}">${row[2]}</span></td><td><span class="link" data-preview="${row[3]}">查看附件</span></td></tr>`).join("");
+      bindPreview();
+      drawer.classList.add("open");
+    }
+    document.querySelectorAll("[data-detail]").forEach(el => {
+      el.addEventListener("click", () => renderDetail(el.dataset.detail));
+    });
+    document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
+
+    const previewModal = document.getElementById("previewModal");
+    const previewTitle = document.getElementById("previewTitle");
+    const previewNotice = document.getElementById("previewNotice");
+    const previewContent = document.getElementById("previewContent");
+    const attachmentMap = {
+      idcard: {
+        title: "身份证附件",
+        notice: "用于后台系统自动核对会员姓名、证件号和有效期。",
+        rows: [["附件名称", "身份证正反面.jpg"], ["识别姓名", "与提交实名信息比对"], ["证件号", "4403**********18"], ["有效期", "2026-05-18 至 2036-05-18"]]
+      },
+      contract: {
+        title: "租赁合同附件",
+        notice: "用于后台系统自动核对住户身份、项目房源和合同期限。",
+        rows: [["附件名称", "租赁合同.pdf"], ["合同号", "HT2026051809"], ["房屋地址", "南山项目 3 栋 1201"], ["合同期限", "2026-05-01 至 2027-04-30"]]
+      }
+    };
+    function bindPreview() {
+      document.querySelectorAll("[data-preview]").forEach(el => {
+        el.onclick = () => {
+          const data = attachmentMap[el.dataset.preview] || attachmentMap.idcard;
+          previewTitle.textContent = data.title;
+          previewNotice.innerHTML = `<strong>${data.title}</strong>${data.notice}`;
+          previewContent.innerHTML = data.rows.map(row => `<span>${row[0]}</span><strong>${row[1]}</strong>`).join("");
+          previewModal.classList.add("open");
+        };
+      });
+    }
+    bindPreview();
+    document.querySelectorAll("[data-close-preview]").forEach(el => {
+      el.addEventListener("click", () => previewModal.classList.remove("open"));
+    });
+  </script>
+</body>
+</html>

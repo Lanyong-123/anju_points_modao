@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>数据API管理</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .api-filter {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto auto;
+    }
+    .api-table th,
+    .api-table td {
+      padding: 10px 8px;
+      vertical-align: middle;
+    }
+    .api-name {
+      display: grid;
+      gap: 4px;
+      white-space: normal;
+    }
+    .api-name strong {
+      color: var(--navy);
+    }
+    .api-name span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .field-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .sub-panel {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .sub-panel .panel-hd {
+      box-shadow: none;
+    }
+    .sub-panel .compact-filter {
+      grid-template-columns: minmax(170px, 1fr) minmax(170px, 1fr) minmax(170px, 1fr) minmax(280px, 1.2fr) auto;
+    }
+    .action-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      min-width: 132px;
+    }
+    .link.danger {
+      color: #bd1f2d;
+    }
+    .detail-modal {
+      width: min(1080px, calc(100vw - 48px));
+      max-height: calc(100vh - 40px);
+      display: flex;
+      flex-direction: column;
+    }
+    .detail-modal .panel-bd {
+      max-height: calc(100vh - 150px);
+      overflow: auto;
+    }
+    .detail-modal.call-only .panel-bd {
+      max-height: calc(100vh - 100px);
+    }
+    .detail-modal.call-only .modal-ft {
+      display: none;
+    }
+    .code-box {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #102d4a;
+      color: #e8f1fa;
+      font-family: Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter api-filter">
+      <div class="field"><label>API名称</label><input placeholder="请输入API名称/路径"></div>
+      <div class="field"><label>接入系统</label><select><option>全部系统</option><option>智能客服系统</option><option>营销管理系统</option><option>权益中心</option><option>第三方业务系统</option></select></div>
+      <div class="field"><label>API状态</label><select><option>全部状态</option><option>启用</option><option>停用</option><option>调试中</option></select></div>
+      <div class="field"><label>调用时间</label><input value="2026-06-01 至 2026-06-09"></div>
+      <button class="btn primary">查询</button>
+      <button class="btn">重置</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>画像标签API列表</h3>
+        <div class="toolbar"><button class="btn primary" data-open-modal="apiModal" data-mode="create">新增API</button><button class="btn">批量停用</button></div>
+      </div>
+      <div class="panel-bd">
+        <table class="api-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>API名称</th>
+              <th>开放字段</th>
+              <th>调用系统</th>
+              <th>今日调用</th>
+              <th>累计调用</th>
+              <th>成功率</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="api-name"><strong>客户基础画像查询</strong><span>/api/v1/profile/basic</span></div></td>
+              <td><div class="field-list"><span class="tag-chip">OneID</span><span class="tag-chip">身份信息</span><span class="tag-chip">核心标签</span></div></td>
+              <td>智能客服系统、管理端</td>
+              <td><span class="link">8,920</span></td>
+              <td>286,420</td>
+              <td><span class="badge green">99.6%</span></td>
+              <td><span class="badge green">启用</span></td>
+              <td><div class="action-list"><span class="link" data-open-modal="apiModal" data-mode="detail">详情</span><span class="link" data-open-modal="apiModal" data-mode="edit">编辑</span><span class="link danger" data-open-modal="deleteModal">删除</span><span class="link">停用</span></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="api-name"><strong>画像标签批量查询</strong><span>/api/v1/profile/tags/batch</span></div></td>
+              <td><div class="field-list"><span class="tag-chip">行为标签</span><span class="tag-chip">偏好标签</span><span class="tag-chip">营销响应</span></div></td>
+              <td>营销管理系统</td>
+              <td><span class="link">12,680</span></td>
+              <td>528,306</td>
+              <td><span class="badge green">99.1%</span></td>
+              <td><span class="badge green">启用</span></td>
+              <td><div class="action-list"><span class="link" data-open-modal="apiModal" data-mode="detail">详情</span><span class="link" data-open-modal="apiModal" data-mode="edit">编辑</span><span class="link danger" data-open-modal="deleteModal">删除</span><span class="link">停用</span></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="api-name"><strong>高价值客户标签查询</strong><span>/api/v1/profile/high-value</span></div></td>
+              <td><div class="field-list"><span class="tag-chip manual">社群主理人</span><span class="tag-chip manual">积分高 / 使用频繁</span></div></td>
+              <td>权益中心、第三方业务系统</td>
+              <td><span class="link">2,486</span></td>
+              <td>96,812</td>
+              <td><span class="badge green">98.8%</span></td>
+              <td><span class="badge green">启用</span></td>
+              <td><div class="action-list"><span class="link" data-open-modal="apiModal" data-mode="detail">详情</span><span class="link" data-open-modal="apiModal" data-mode="edit">编辑</span><span class="link danger" data-open-modal="deleteModal">删除</span><span class="link">停用</span></div></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox"></td>
+              <td><div class="api-name"><strong>精准营销人群同步</strong><span>/api/v1/profile/segment/sync</span></div></td>
+              <td><div class="field-list"><span class="tag-chip">人群ID</span><span class="tag-chip">标签集合</span><span class="tag-chip">更新时间</span></div></td>
+              <td>营销管理系统</td>
+              <td><span class="link">594</span></td>
+              <td>24,180</td>
+              <td><span class="badge">调试中</span></td>
+              <td><span class="badge gold">调试中</span></td>
+              <td><div class="action-list"><span class="link" data-open-modal="apiModal" data-mode="detail">详情</span><span class="link" data-open-modal="apiModal" data-mode="edit">编辑</span><span class="link danger" data-open-modal="deleteModal">删除</span><span class="link">发布</span></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 18 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="apiModal">
+    <div class="modal detail-modal">
+      <div class="panel-hd"><h3 id="apiModalTitle">画像标签API详情</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div data-api-form>
+          <div class="grid cols-2">
+          <div class="field"><label>API名称</label><input value="客户基础画像查询"></div>
+          <div class="field"><label>API路径</label><input value="/api/v1/profile/basic"></div>
+          <div class="field"><label>调用系统</label><input value="智能客服系统、营销管理系统"></div>
+          <div class="field"><label>调用限额</label><input value="50,000 次/日"></div>
+          </div>
+          <div class="panel" style="margin-top:14px;box-shadow:none">
+          <div class="panel-hd"><h3>开放字段</h3></div>
+          <div class="panel-bd">
+            <div class="field-list">
+              <span class="tag-chip">OneID</span><span class="tag-chip">姓名</span><span class="tag-chip">手机号</span><span class="tag-chip">基本属性标签</span><span class="tag-chip">行为标签</span><span class="tag-chip">偏好标签</span><span class="tag-chip">营销响应标签</span><span class="tag-chip manual">高价值客户标签</span>
+            </div>
+          </div>
+          </div>
+          <div class="panel" style="margin-top:14px;box-shadow:none">
+          <div class="panel-hd"><h3>请求示例</h3></div>
+          <div class="panel-bd"><div class="code-box">GET /api/v1/profile/basic?oneId=ONE202606080018
+{
+  "oneId": "ONE202606080018",
+  "fields": ["basic", "tags", "channel", "highValue"]
+}</div></div>
+          </div>
+        </div>
+        <div class="sub-panel" data-call-detail>
+          <div class="panel-bd">
+            <div class="filter compact-filter">
+              <div class="field"><label>API名称</label><input value="客户基础画像查询"></div>
+              <div class="field"><label>调用系统</label><select><option>全部系统</option><option>智能客服系统</option><option>营销管理系统</option><option>权益中心</option><option>第三方业务系统</option></select></div>
+              <div class="field"><label>调用结果</label><select><option>全部结果</option><option>成功</option><option>失败</option></select></div>
+              <div class="field"><label>调用时间</label><input value="2026-06-01 至 2026-06-09"></div>
+              <button class="btn primary">查询</button>
+            </div>
+            <table>
+              <thead><tr><th>调用时间</th><th>API名称</th><th>调用系统</th><th>调用次数</th><th>成功次数</th><th>失败次数</th><th>平均耗时</th><th>调用用途</th></tr></thead>
+              <tbody>
+                <tr><td>2026-06-09 10:30</td><td>客户基础画像查询</td><td>智能客服系统</td><td>1,260</td><td>1,258</td><td>2</td><td>86ms</td><td>个性化服务推荐</td></tr>
+                <tr><td>2026-06-09 10:00</td><td>客户基础画像查询</td><td>营销管理系统</td><td>3,860</td><td>3,842</td><td>18</td><td>124ms</td><td>精准营销人群圈选</td></tr>
+                <tr><td>2026-06-09 09:30</td><td>客户基础画像查询</td><td>权益中心</td><td>680</td><td>678</td><td>2</td><td>92ms</td><td>权益推荐</td></tr>
+                <tr><td>2026-06-09 09:00</td><td>客户基础画像查询</td><td>第三方业务系统</td><td>426</td><td>421</td><td>5</td><td>138ms</td><td>外部服务匹配</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="deleteModal">
+    <div class="modal" style="width:min(520px, calc(100vw - 48px))">
+      <div class="panel-hd"><h3>删除API</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <p style="margin:0;color:var(--text)">确认删除该画像标签API？删除后将不再对外提供调用。</p>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认删除</button></div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll("[data-open-modal]").forEach(el => {
+      el.addEventListener("click", () => {
+        const modal = document.getElementById(el.dataset.openModal);
+        if (modal.id === "apiModal") {
+          const mode = el.dataset.mode || "detail";
+          const title = document.getElementById("apiModalTitle");
+          const callDetail = modal.querySelector("[data-call-detail]");
+          const apiForm = modal.querySelector("[data-api-form]");
+          const detailModal = modal.querySelector(".detail-modal");
+          title.textContent = mode === "create" ? "新增画像标签API" : mode === "edit" ? "编辑画像标签API" : "API调用详情";
+          apiForm.style.display = mode === "detail" ? "none" : "";
+          callDetail.style.display = mode === "detail" ? "" : "none";
+          detailModal.classList.toggle("call-only", mode === "detail");
+        }
+        modal.classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>脱敏管理</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .field-groups {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .field-group {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .field-group-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+    }
+    .field-group-hd h4 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 14px;
+    }
+    .field-group-hd label,
+    .field-option label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .field-option-list {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+    .field-option {
+      min-height: 72px;
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid #d7e2ee;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .field-option:has(input:checked) {
+      border-color: #efc2c7;
+      background: #fff7f7;
+    }
+    .field-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-left: 22px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .field-meta code {
+      color: #526477;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+    }
+    .mask-preview {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #eef3f8;
+      color: #34506b;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 20;
+      display: none;
+      min-width: 240px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      background: #123152;
+      color: #fff;
+      box-shadow: 0 14px 32px rgba(18,49,82,.22);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .toast.open {
+      display: block;
+    }
+    @media (max-width: 1180px) {
+      .field-groups { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>字段脱敏设置</h3>
+        <div class="toolbar">
+          <button class="btn" data-reset-fields>恢复默认</button>
+          <button class="btn primary" data-save-fields>保存配置</button>
+        </div>
+      </div>
+      <div class="panel-bd">
+        <div class="field-groups">
+          <section class="field-group" data-field-group>
+            <div class="field-group-hd">
+              <h4>会员信息</h4>
+              <label><input type="checkbox" data-check-group checked> 全选本组</label>
+            </div>
+            <div class="field-option-list">
+              <div class="field-option"><label><input type="checkbox" data-sensitive-field data-name="会员ID" checked> 会员ID</label><div class="field-meta"><code>member_id</code><span class="mask-preview">MBR****0128</span></div></div>
+              <div class="field-option"><label><input type="checkbox" data-sensitive-field data-name="会员名称" checked> 会员名称</label><div class="field-meta"><code>member_name</code><span class="mask-preview">张*</span></div></div>
+              <div class="field-option"><label><input type="checkbox" data-sensitive-field data-name="手机号" checked> 手机号</label><div class="field-meta"><code>mobile</code><span class="mask-preview">138****6021</span></div></div>
+              <div class="field-option"><label><input type="checkbox" data-sensitive-field data-name="身份证号" checked> 身份证号</label><div class="field-meta"><code>id_card_no</code><span class="mask-preview">4403**********1028</span></div></div>
+              <div class="field-option"><label><input type="checkbox" data-sensitive-field data-name="积分账户" checked> 积分账户</label><div class="field-meta"><code>points_account</code><span class="mask-preview">PA****8906</span></div></div>
+              <div class="field-option"><label><input type="checkbox" data-sensitive-field data-name="OneID" checked> OneID</label><div class="field-meta"><code>one_id</code><span class="mask-preview">OID****73A9</span></div></div>
+            </div>
+          </section>
+
+          <section class="field-group" data-field-group>
+            <div class="field-group-hd">
+              <h4>系统用户信息</h4>
+              <label><input type="checkbox" data-check-group> 全选本组</label>
+            </div>
+            <div class="field-option-list">
+              <div class="field-option"><label><input type="checkbox" data-sensitive-field data-name="姓名" checked> 姓名</label><div class="field-meta"><code>user_name</code><span class="mask-preview">程*</span></div></div>
+              <div class="field-option"><label><input type="checkbox" data-sensitive-field data-name="手机号" checked> 手机号</label><div class="field-meta"><code>user_mobile</code><span class="mask-preview">136****8519</span></div></div>
+              <div class="field-option"><label><input type="checkbox" data-sensitive-field data-name="邮箱"> 邮箱</label><div class="field-meta"><code>email</code><span class="mask-preview">ch****@anju.com</span></div></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="saveToast">脱敏字段配置已保存</div>
+
+  <script>
+    const fieldChecks = [...document.querySelectorAll("[data-sensitive-field]")];
+    const groupChecks = [...document.querySelectorAll("[data-check-group]")];
+    const toast = document.getElementById("saveToast");
+
+    function refreshSelectedFields() {
+      groupChecks.forEach(groupCheck => {
+        const group = groupCheck.closest("[data-field-group]");
+        const checks = [...group.querySelectorAll("[data-sensitive-field]")];
+        groupCheck.checked = checks.every(item => item.checked);
+        groupCheck.indeterminate = checks.some(item => item.checked) && !groupCheck.checked;
+      });
+    }
+
+    function showToast() {
+      toast.classList.add("open");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("open"), 1800);
+    }
+
+    groupChecks.forEach(groupCheck => {
+      groupCheck.addEventListener("change", () => {
+        const checks = groupCheck.closest("[data-field-group]").querySelectorAll("[data-sensitive-field]");
+        checks.forEach(item => item.checked = groupCheck.checked);
+        refreshSelectedFields();
+      });
+    });
+    fieldChecks.forEach(item => item.addEventListener("change", refreshSelectedFields));
+    document.querySelector("[data-reset-fields]").addEventListener("click", () => {
+      fieldChecks.forEach(item => item.checked = true);
+      refreshSelectedFields();
+      showToast();
+    });
+    document.querySelectorAll("[data-save-fields]").forEach(el => {
+      el.addEventListener("click", () => {
+        refreshSelectedFields();
+        showToast();
+      });
+    });
+    refreshSelectedFields();
+  </script>
+</body>
+</html>

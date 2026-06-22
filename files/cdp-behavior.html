@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>客户行为分析</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .behavior-filter {
+      grid-template-columns: 1.2fr 1fr 1fr auto auto;
+    }
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+      margin-bottom: 14px;
+    }
+    .line-chart {
+      position: relative;
+      min-height: 318px;
+      padding: 12px 6px 0;
+    }
+    .line-svg {
+      width: 100%;
+      height: 238px;
+      display: block;
+    }
+    .axis-labels {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+      color: #5c6c7d;
+      font-size: 12px;
+      text-align: center;
+    }
+    .behavior-table th,
+    .behavior-table td {
+      padding: 10px 8px;
+      vertical-align: middle;
+    }
+    .chart-legend {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px 12px;
+      margin-top: 10px;
+      color: #34465c;
+      font-size: 12px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+    .legend-item i {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+    .pie-wrap {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 20px;
+      align-items: center;
+      min-height: 318px;
+    }
+    .pie-chart {
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: conic-gradient(#1f5f99 0 52%, #2f80c1 52% 76%, #77a9d4 76% 93%, #d7a84d 93% 100%);
+      box-shadow: inset 0 0 0 34px #fff;
+      justify-self: center;
+      position: relative;
+    }
+    .pie-chart::after {
+      content: "会员等级";
+      position: absolute;
+      inset: 62px;
+      display: grid;
+      place-items: center;
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .pie-list {
+      display: grid;
+      gap: 12px;
+      color: #26384d;
+      font-size: 13px;
+    }
+    .pie-list .legend-item {
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .pie-list b {
+      color: var(--navy);
+    }
+    .detail-modal {
+      width: min(980px, calc(100vw - 48px));
+    }
+    .detail-modal .panel-bd {
+      max-height: calc(100vh - 220px);
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter behavior-filter">
+      <div class="field"><label>统计时间</label><input value="2026-06-01 至 2026-06-09"></div>
+      <div class="field"><label>行为类型</label><select><option>全部行为</option><option>活动参与次数</option><option>场地预约频次数</option><option>场地核销次数</option><option>积分获取次数</option><option>积分兑换次数</option><option>社群活跃发帖数</option><option>邻里互助任务数</option></select></div>
+      <div class="field"><label>所属项目</label><select><option>全部项目</option><option>南山项目</option><option>福田项目</option><option>集团总部</option></select></div>
+      <button class="btn primary">查询</button>
+      <button class="btn">重置</button>
+    </div>
+
+    <div class="chart-grid">
+      <div class="panel">
+        <div class="panel-hd"><h3>行为趋势图</h3><button class="btn">导出图表数据</button></div>
+        <div class="panel-bd">
+          <div class="line-chart">
+            <svg class="line-svg" viewBox="0 0 760 238" preserveAspectRatio="none" aria-label="按天展示各行为类型趋势">
+              <defs>
+                <pattern id="grid" width="1" height="47" patternUnits="userSpaceOnUse">
+                  <path d="M 0 47 H 760" fill="none" stroke="#e5edf4" stroke-width="1"/>
+                </pattern>
+              </defs>
+              <rect x="0" y="0" width="760" height="238" fill="url(#grid)"/>
+              <polyline points="16,172 136,142 256,118 376,128 496,92 616,72 744,54" fill="none" stroke="#1f5f99" stroke-width="3"/>
+              <polyline points="16,188 136,168 256,152 376,136 496,124 616,108 744,96" fill="none" stroke="#2f80c1" stroke-width="3"/>
+              <polyline points="16,198 136,180 256,166 376,150 496,132 616,118 744,104" fill="none" stroke="#77a9d4" stroke-width="3"/>
+              <polyline points="16,146 136,118 256,132 376,96 496,84 616,58 744,42" fill="none" stroke="#d7a84d" stroke-width="3"/>
+              <polyline points="16,166 136,154 256,126 376,116 496,102 616,94 744,76" fill="none" stroke="#46a874" stroke-width="3"/>
+              <polyline points="16,206 136,192 256,184 376,168 496,156 616,146 744,132" fill="none" stroke="#b75b7b" stroke-width="3"/>
+              <polyline points="16,214 136,202 256,190 376,176 496,160 616,150 744,140" fill="none" stroke="#7c6bb0" stroke-width="3"/>
+            </svg>
+            <div class="axis-labels"><span>06-03</span><span>06-04</span><span>06-05</span><span>06-06</span><span>06-07</span><span>06-08</span><span>06-09</span></div>
+            <div class="chart-legend">
+              <span class="legend-item"><i style="background:#1f5f99"></i>活动参与次数</span>
+              <span class="legend-item"><i style="background:#2f80c1"></i>场地预约频次数</span>
+              <span class="legend-item"><i style="background:#77a9d4"></i>场地核销次数</span>
+              <span class="legend-item"><i style="background:#d7a84d"></i>积分获取次数</span>
+              <span class="legend-item"><i style="background:#46a874"></i>积分兑换次数</span>
+              <span class="legend-item"><i style="background:#b75b7b"></i>社群活跃发帖数</span>
+              <span class="legend-item"><i style="background:#7c6bb0"></i>邻里互助任务数</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><h3>会员等级分布图</h3><button class="btn">导出分布数据</button></div>
+        <div class="panel-bd">
+          <div class="pie-wrap">
+            <div class="pie-chart"></div>
+            <div class="pie-list">
+              <span class="legend-item"><span><i style="background:#1f5f99"></i>普通会员</span><b>52%</b></span>
+              <span class="legend-item"><span><i style="background:#2f80c1"></i>银卡会员</span><b>24%</b></span>
+              <span class="legend-item"><span><i style="background:#77a9d4"></i>金卡会员</span><b>17%</b></span>
+              <span class="legend-item"><span><i style="background:#d7a84d"></i>黑金会员</span><b>7%</b></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>行为分析结果</h3>
+        <div class="toolbar"><button class="btn">导出Excel</button><button class="btn primary">导出数据</button></div>
+      </div>
+      <div class="panel-bd">
+        <table class="behavior-table">
+          <thead>
+            <tr>
+              <th>行为类型</th>
+              <th>参与会员数</th>
+              <th>行为次数</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>活动参与次数</td><td><span class="link" data-detail="活动参与次数" data-type="参与会员数">3,286</span></td><td><span class="link" data-detail="活动参与次数" data-type="行为次数">4,920</span></td></tr>
+            <tr><td>场地预约频次数</td><td><span class="link" data-detail="场地预约频次数" data-type="参与会员数">1,526</span></td><td><span class="link" data-detail="场地预约频次数" data-type="行为次数">2,184</span></td></tr>
+            <tr><td>场地核销次数</td><td><span class="link" data-detail="场地核销次数" data-type="参与会员数">1,306</span></td><td><span class="link" data-detail="场地核销次数" data-type="行为次数">1,906</span></td></tr>
+            <tr><td>积分获取次数</td><td><span class="link" data-detail="积分获取次数" data-type="参与会员数">8,642</span></td><td><span class="link" data-detail="积分获取次数" data-type="行为次数">48,620</span></td></tr>
+            <tr><td>积分兑换次数</td><td><span class="link" data-detail="积分兑换次数" data-type="参与会员数">5,826</span></td><td><span class="link" data-detail="积分兑换次数" data-type="行为次数">31,280</span></td></tr>
+            <tr><td>社群活跃发帖数</td><td><span class="link" data-detail="社群活跃发帖数" data-type="参与会员数">2,406</span></td><td><span class="link" data-detail="社群活跃发帖数" data-type="行为次数">1,208</span></td></tr>
+            <tr><td>邻里互助任务数</td><td><span class="link" data-detail="邻里互助任务数" data-type="参与会员数">618</span></td><td><span class="link" data-detail="邻里互助任务数" data-type="行为次数">486</span></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 128 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="behaviorDetailModal">
+    <div class="modal detail-modal">
+      <div class="panel-hd"><h3 id="behaviorDetailTitle">行为详情</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="filter" style="grid-template-columns: 1fr 1fr 1fr auto;">
+          <div class="field"><label>会员ID</label><input placeholder="请输入会员ID"></div>
+          <div class="field"><label>会员等级</label><select><option>全部等级</option><option>普通会员</option><option>银卡会员</option><option>金卡会员</option><option>黑金会员</option></select></div>
+          <div class="field"><label>行为时间</label><input value="2026-06-01 至 2026-06-09"></div>
+          <button class="btn primary">查询</button>
+        </div>
+        <table class="behavior-table">
+          <thead>
+            <tr>
+              <th>微信昵称</th>
+              <th>用户名</th>
+              <th>会员ID</th>
+              <th>会员等级</th>
+              <th>联系方式</th>
+              <th>行为时间</th>
+              <th>行为来源</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>这一刻</td><td>李明</td><td>AJ202605180018</td><td>金卡会员</td><td>183****1328</td><td>2026-06-09 10:30</td><td>活动中心</td></tr>
+            <tr><td>周女士</td><td>周女士</td><td>AJ202604220091</td><td>银卡会员</td><td>139****6812</td><td>2026-06-09 09:20</td><td>权益中心</td></tr>
+            <tr><td>陈先生</td><td>陈先生</td><td>AJ202605010027</td><td>普通会员</td><td>137****2098</td><td>2026-06-08 18:42</td><td>积分任务</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>关闭</button><button class="btn primary">导出明细</button></div>
+    </div>
+  </div>
+  <script>
+    document.querySelectorAll("[data-detail]").forEach(el => {
+      el.addEventListener("click", () => {
+        document.getElementById("behaviorDetailTitle").textContent = `${el.dataset.detail} - ${el.dataset.type}详情`;
+        document.getElementById("behaviorDetailModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+  </script>
+</body>
+</html>
