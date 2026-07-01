@@ -81,11 +81,7 @@ button, input, select { font: inherit; }
   grid-row: 2 / 4;
   overflow: auto;
   padding: 16px 12px;
-  background:
-    linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px),
-    linear-gradient(180deg, #0a8ccb 0%, #0876b9 44%, #09649f 100%);
-  background-size: 48px 48px, 48px 48px, auto;
+  background: linear-gradient(180deg, #0a8ccb 0%, #0876b9 44%, #09649f 100%);
   color: #d9f0ff;
 }
 .nav-title { display: none; }
