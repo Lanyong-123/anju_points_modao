@@ -388,10 +388,10 @@
 <body>
   <div class="page">
     <div class="filter" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
-      <div class="field"><label>礼卷标题/备注</label><input placeholder="礼卷标题、内部备注名"></div>
-      <div class="field"><label>礼卷类型</label><select><option>全部类型</option><option>电子礼券</option><option>实物礼券</option><option>第三方礼卷</option></select></div>
+      <div class="field"><label>礼券标题/备注</label><input placeholder="礼券标题、内部备注名"></div>
+      <div class="field"><label>礼券类型</label><select><option>全部类型</option><option>电子礼券</option><option>实物礼券</option><option>第三方礼券</option></select></div>
       <div class="field"><label>有效方式</label><select><option>全部方式</option><option>统一生效时间</option><option>领取后有效</option></select></div>
-      <div class="field"><label>礼卷状态</label><select><option>全部状态</option><option>待生效</option><option>已生效</option><option>已失效</option><option>冻结</option></select></div>
+      <div class="field"><label>礼券状态</label><select><option>全部状态</option><option>待生效</option><option>已生效</option><option>已失效</option><option>冻结</option></select></div>
       <div class="field"><label>状态</label><select><option>全部</option><option>正常</option><option>删除</option></select></div>
       <div class="field"><label>有效期</label><input value="2026-05-01 至 2026-12-31"></div>
       <div class="field"><label>创建时间</label><input value="2026-04-01 至 2026-05-26"></div>
@@ -400,9 +400,9 @@
 
     <div class="panel">
       <div class="panel-hd">
-        <h3>礼卷列表</h3>
+        <h3>礼券列表</h3>
         <div class="toolbar">
-          <button class="btn primary" data-edit="new">新增礼卷</button>
+          <button class="btn primary" data-edit="new">新增礼券</button>
           <button class="btn" data-status="batch-freeze">批量冻结</button>
           <button class="btn" data-status="batch-unfreeze">批量解冻</button>
           <button class="btn">导出</button>
@@ -413,10 +413,10 @@
           <thead>
             <tr>
               <th><input type="checkbox"></th>
-              <th>礼卷标题</th>
-              <th>礼卷类型</th>
+              <th>礼券标题</th>
+              <th>礼券类型</th>
               <th>发放总量</th>
-              <th>礼卷成本</th>
+              <th>礼券成本</th>
               <th>已领取数</th>
               <th>已核销数</th>
               <th>过期数</th>
@@ -430,7 +430,7 @@
           <tbody>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="2000积分兑家政服务">2000积分兑家政服务</span></td><td><span class="badge green">电子礼券</span></td><td>20,000</td><td>200,000元</td><td><span class="link" data-receive-detail="2000积分兑家政服务" data-receive-status="领取详情" data-receive-total="12,420">12,420</span></td><td><span class="link" data-writeoff-detail="2000积分兑家政服务">5,326</span></td><td><span class="link" data-receive-detail="2000积分兑家政服务" data-receive-status="过期详情" data-receive-total="318" data-receive-filter="已过期">318</span></td><td><span class="link" data-receive-detail="2000积分兑家政服务" data-receive-status="冻结详情" data-receive-total="86" data-receive-filter="已冻结">86</span></td><td>2026-05-01 09:30</td><td>2026-05-01 至 2026-08-31</td><td><span class="badge green">已生效</span></td><td><span class="link" data-detail="2000积分兑家政服务">详情</span>　<span class="link" data-edit-active="2000积分兑家政服务">编辑</span>　<span class="link" data-status="freeze">冻结</span>　<span class="link" data-delete="2000积分兑家政服务">删除</span></td></tr>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="5000积分兑礼物">5000积分兑礼物</span></td><td><span class="badge">实物礼券</span></td><td>8,000</td><td>-</td><td><span class="link" data-receive-detail="5000积分兑礼物" data-receive-status="领取详情" data-receive-total="4,012">4,012</span></td><td><span class="link" data-writeoff-detail="5000积分兑礼物">1,908</span></td><td><span class="link" data-receive-detail="5000积分兑礼物" data-receive-status="过期详情" data-receive-total="92" data-receive-filter="已过期">92</span></td><td><span class="link" data-receive-detail="5000积分兑礼物" data-receive-status="冻结详情" data-receive-total="15" data-receive-filter="已冻结">15</span></td><td>2026-05-06 15:42</td><td>领取后30天</td><td><span class="badge green">待生效</span></td><td><span class="link" data-detail="5000积分兑礼物">详情</span>　<span class="link" data-edit="5000积分兑礼物">编辑</span>　<span class="link" data-delete="5000积分兑礼物">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="第三方礼卷">第三方礼卷</span></td><td><span class="badge gold">第三方礼卷</span></td><td>10,000</td><td>300,000元</td><td><span class="link" data-receive-detail="第三方礼卷" data-receive-status="领取详情" data-receive-total="6,312">6,312</span></td><td><span class="link" data-writeoff-detail="第三方礼卷">2,126</span></td><td><span class="link" data-receive-detail="第三方礼卷" data-receive-status="过期详情" data-receive-total="0" data-receive-filter="已过期">0</span></td><td><span class="link" data-receive-detail="第三方礼卷" data-receive-status="冻结详情" data-receive-total="0" data-receive-filter="已冻结">0</span></td><td>2026-05-12 10:16</td><td>2026-05-15 至 2026-11-30</td><td><span class="badge red">已失效</span></td><td><span class="link" data-detail="第三方礼卷">详情</span>　<span class="link" data-delete="第三方礼卷">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="第三方礼券">第三方礼券</span></td><td><span class="badge gold">第三方礼券</span></td><td>10,000</td><td>300,000元</td><td><span class="link" data-receive-detail="第三方礼券" data-receive-status="领取详情" data-receive-total="6,312">6,312</span></td><td><span class="link" data-writeoff-detail="第三方礼券">2,126</span></td><td><span class="link" data-receive-detail="第三方礼券" data-receive-status="过期详情" data-receive-total="0" data-receive-filter="已过期">0</span></td><td><span class="link" data-receive-detail="第三方礼券" data-receive-status="冻结详情" data-receive-total="0" data-receive-filter="已冻结">0</span></td><td>2026-05-12 10:16</td><td>2026-05-15 至 2026-11-30</td><td><span class="badge red">已失效</span></td><td><span class="link" data-detail="第三方礼券">详情</span>　<span class="link" data-delete="第三方礼券">删除</span></td></tr>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="500积分兑礼物">500积分兑礼物</span></td><td><span class="badge">实物礼券</span></td><td>1,000</td><td>-</td><td><span class="link" data-receive-detail="500积分兑礼物" data-receive-status="领取详情" data-receive-total="0">0</span></td><td><span class="link" data-writeoff-detail="500积分兑礼物">0</span></td><td><span class="link" data-receive-detail="500积分兑礼物" data-receive-status="过期详情" data-receive-total="0" data-receive-filter="已过期">0</span></td><td><span class="link" data-receive-detail="500积分兑礼物" data-receive-status="冻结详情" data-receive-total="0" data-receive-filter="已冻结">0</span></td><td>2026-04-20 11:08</td><td>领取后15天</td><td><span class="badge gray">冻结</span></td><td><span class="link" data-detail="500积分兑礼物">详情</span>　<span class="link" data-status="unfreeze">解冻</span>　<span class="link" data-delete="500积分兑礼物">删除</span></td></tr>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="500积分兑场地预约优先">500积分兑场地预约优先</span></td><td><span class="badge green">电子礼券</span></td><td>5,000</td><td>25,000元</td><td><span class="link" data-receive-detail="500积分兑场地预约优先" data-receive-status="领取详情" data-receive-total="0">0</span></td><td><span class="link" data-writeoff-detail="500积分兑场地预约优先">0</span></td><td><span class="link" data-receive-detail="500积分兑场地预约优先" data-receive-status="过期详情" data-receive-total="0" data-receive-filter="已过期">0</span></td><td><span class="link" data-receive-detail="500积分兑场地预约优先" data-receive-status="冻结详情" data-receive-total="0" data-receive-filter="已冻结">0</span></td><td>2026-06-05 16:20</td><td>2026-06-10 至 2026-09-30</td><td><span class="badge green">待生效</span></td><td><span class="link" data-detail="500积分兑场地预约优先">详情</span>　<span class="link" data-edit="500积分兑场地预约优先">编辑</span>　<span class="link" data-delete="500积分兑场地预约优先">删除</span></td></tr>
           </tbody>
@@ -451,14 +451,14 @@
   </div>
 
   <aside class="drawer" id="detailDrawer">
-    <div class="panel-hd"><h3>礼卷详情</h3><button class="btn" data-close-drawer>关闭</button></div>
+    <div class="panel-hd"><h3>礼券详情</h3><button class="btn" data-close-drawer>关闭</button></div>
     <div class="panel-bd">
       <div class="detail-list">
-        <span>礼卷标题</span><strong id="drawerName">2000积分兑家政服务</strong>
-        <span>礼卷类型</span><strong id="drawerType">电子礼券</strong>
+        <span>礼券标题</span><strong id="drawerName">2000积分兑家政服务</strong>
+        <span>礼券类型</span><strong id="drawerType">电子礼券</strong>
         <span>有效方式</span><strong id="drawerValidType">统一生效时间</strong>
         <span>发放总量</span><strong id="drawerTotal">20,000</strong>
-        <span>礼卷成本</span><strong id="drawerCost">200,000元</strong>
+        <span>礼券成本</span><strong id="drawerCost">200,000元</strong>
         <span>有效期</span><strong id="drawerValid">2026-05-01 至 2026-08-31</strong>
         <span>状态</span><strong id="drawerStatus">已生效</strong>
         <span>创建时间</span><strong id="drawerCreate">2026-05-01 09:30</strong>
@@ -482,27 +482,27 @@
 
   <div class="modal-mask" id="editModal">
     <div class="modal level-edit-modal">
-      <div class="panel-hd"><h3 id="editTitle">新增礼卷</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-hd"><h3 id="editTitle">新增礼券</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd level-edit-body">
         <div class="gift-form">
           <div class="gift-row">
-            <div class="gift-label required">礼卷类型</div>
+            <div class="gift-label required">礼券类型</div>
             <div class="gift-control">
               <div class="radio-line" id="giftTypeRadios">
                 <label><input type="radio" name="giftType" value="electronic" checked> 电子礼券 <span class="help-tip" data-tip="线上虚拟电子礼券，可用于获奖用户线下到访案场并核销使用，适用于案场购房券发放、物业费抵扣、车位购买费抵扣等场景">?</span></label>
                 <label><input type="radio" name="giftType" value="physical"> 实物礼券 <span class="help-tip" data-tip="实物奖品，需要线下到访案场并核销才能领取">?</span></label>
-                <label><input type="radio" name="giftType" value="third"> 第三方礼卷 <span class="help-tip" data-tip="导入第三方电子卡券ID及使用密钥，用户获取礼券后可直接在第三方平台使用，无须其他流程">?</span></label>
+                <label><input type="radio" name="giftType" value="third"> 第三方礼券 <span class="help-tip" data-tip="导入第三方电子卡券ID及使用密钥，用户获取礼券后可直接在第三方平台使用，无须其他流程">?</span></label>
               </div>
             </div>
           </div>
 
           <div class="gift-row">
-            <div class="gift-label required">礼卷标题</div>
+            <div class="gift-label required">礼券标题</div>
             <div class="gift-control"><input id="editName" placeholder="请输入卡券名称" value="2000积分兑家政服务"><div class="gift-hint">不超过16个字符</div></div>
           </div>
           <div class="gift-row">
             <div class="gift-label required">内部备注名</div>
-            <div class="gift-control"><input id="editRemark" placeholder="请输入内部备注名" value="物业费抵扣礼卷"><div class="gift-hint">不超过50个字符，用于内部搜索，不可重名，保存后不可修改，请谨慎设置</div></div>
+            <div class="gift-control"><input id="editRemark" placeholder="请输入内部备注名" value="积分兑家政服务"><div class="gift-hint">不超过50个字符，用于内部搜索，不可重名，保存后不可修改，请谨慎设置</div></div>
           </div>
           <div class="gift-row third-import-panel" data-third-import>
             <div class="gift-label">券码导入</div>
@@ -514,12 +514,12 @@
             </div>
           </div>
           <div class="gift-row">
-            <div class="gift-label required">礼卷数量</div>
-            <div class="gift-control"><input id="editTotal" placeholder="请输入礼卷数量" value="20000"><div class="gift-hint">1~99999，保存后数量只可追加，不能减少，请谨慎设置</div></div>
+            <div class="gift-label required">礼券数量</div>
+            <div class="gift-control"><input id="editTotal" placeholder="请输入礼券数量" value="20000"><div class="gift-hint">1~99999，保存后数量只可追加，不能减少，请谨慎设置</div></div>
           </div>
           <div class="gift-row">
-            <div class="gift-label required">礼卷成本</div>
-            <div class="gift-control"><div class="money-input"><input id="editValue" placeholder="请输入礼卷成本" value="10"><span>元</span></div><div class="gift-hint">单张兑换券的价值</div></div>
+            <div class="gift-label required">礼券成本</div>
+            <div class="gift-control"><div class="money-input"><input id="editValue" placeholder="请输入礼券成本" value="10"><span>元</span></div><div class="gift-hint">单张兑换券的价值</div></div>
           </div>
           <div class="gift-row">
             <div class="gift-label required">有效方式 <span class="help-tip" data-tip="统一生效时间适用于固定活动周期；领取后有效适用于按用户领取时间分别计算有效期">?</span></div>
@@ -548,7 +548,7 @@
             <div class="gift-control"><textarea id="editDesc" placeholder="请输入使用说明">适用于指定场景下单抵扣，领取后进入会员券包，核销后同步至清结算系统。</textarea><div class="gift-hint">不超过800个字符，支持换行</div></div>
           </div>
           <div class="gift-row">
-            <div class="gift-label required">礼卷图片</div>
+            <div class="gift-label required">礼券图片</div>
             <div class="gift-control"><label class="upload-box"><input type="file" style="display:none"><span><strong>+</strong>上传图片</span></label><div class="gift-hint">只可上传单张图片，图片尺寸为 200*200px，格式为 jpg/jpeg/png/gif/bmp，大小不超过 2MB</div></div>
           </div>
 
@@ -612,10 +612,10 @@
 
   <div class="modal-mask" id="deleteModal">
     <div class="modal">
-      <div class="panel-hd"><h3 id="deleteTitle">删除礼卷</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-hd"><h3 id="deleteTitle">删除礼券</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd">
-        <div class="notice" id="deleteNotice"><strong>删除礼卷</strong>删除后列表不再展示，请确认无进行中的领取或核销记录。</div>
-        <div class="field" style="margin-top:12px"><label>删除原因</label><input value="礼卷配置下线"></div>
+        <div class="notice" id="deleteNotice"><strong>删除礼券</strong>删除后列表不再展示，请确认无进行中的领取或核销记录。</div>
+        <div class="field" style="margin-top:12px"><label>删除原因</label><input value="礼券配置下线"></div>
       </div>
       <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认删除</button></div>
     </div>
@@ -764,7 +764,7 @@
     const couponData = {
       "2000积分兑家政服务": ["2000积分兑家政服务", "电子礼券", "统一生效时间", "20,000", "200,000元", "2026-05-01 至 2026-08-31", "已生效", "2026-05-01 09:30", "12,680", "5,326", "318", "86"],
       "5000积分兑礼物": ["5000积分兑礼物", "实物礼券", "领取后有效", "8,000", "-", "领取后30天", "待生效", "2026-05-06 15:42", "4,210", "1,908", "92", "15"],
-      "第三方礼卷": ["第三方礼卷", "第三方礼卷", "统一生效时间", "10,000", "300,000元", "2026-05-15 至 2026-11-30", "已失效", "2026-05-12 10:16", "6,580", "2,126", "0", "0"],
+      "第三方礼券": ["第三方礼券", "第三方礼券", "统一生效时间", "10,000", "300,000元", "2026-05-15 至 2026-11-30", "已失效", "2026-05-12 10:16", "6,580", "2,126", "0", "0"],
       "500积分兑礼物": ["500积分兑礼物", "实物礼券", "领取后有效", "1,000", "-", "领取后15天", "冻结", "2026-04-20 11:08", "0", "0", "0", "0"],
       "500积分兑场地预约优先": ["500积分兑场地预约优先", "电子礼券", "统一生效时间", "5,000", "25,000元", "2026-06-10 至 2026-09-30", "待生效", "2026-06-05 16:20", "0", "0", "0", "0"]
     };
@@ -789,7 +789,7 @@
       });
       document.querySelector("[data-third-import]").classList.toggle("active", type === "third");
       document.getElementById("editTotal").disabled = type === "third";
-      document.getElementById("editTotal").placeholder = type === "third" ? "导入券码后自动计算礼卷数量" : "请输入礼卷数量";
+      document.getElementById("editTotal").placeholder = type === "third" ? "导入券码后自动计算礼券数量" : "请输入礼券数量";
     }
 
     function setRestrictedEditMode(restricted) {
@@ -807,7 +807,7 @@
 
     function openCouponEdit(name, restricted = false) {
       const data = couponData[name];
-      document.getElementById("editTitle").textContent = data ? (restricted ? "编辑礼卷" : "编辑礼卷") : "新增礼卷";
+      document.getElementById("editTitle").textContent = data ? (restricted ? "编辑礼券" : "编辑礼券") : "新增礼券";
       setRestrictedEditMode(false);
       if (data) {
         document.getElementById("editName").value = data[0];
@@ -820,6 +820,7 @@
       }
       if (!data) {
         document.getElementById("editName").value = "2000积分兑家政服务";
+        document.getElementById("editRemark").value = "积分兑家政服务";
         document.getElementById("editValue").value = "10";
         document.getElementById("editTotal").value = "20000";
         document.getElementById("editStart").value = "2026-05-01";
@@ -901,8 +902,8 @@
 
     document.querySelectorAll("[data-delete]").forEach(el => {
       el.addEventListener("click", () => {
-        document.getElementById("deleteTitle").textContent = "删除礼卷";
-        document.getElementById("deleteNotice").innerHTML = `<strong>删除礼卷</strong>请确认删除 ${el.dataset.delete}，删除后列表不再展示。`;
+        document.getElementById("deleteTitle").textContent = "删除礼券";
+        document.getElementById("deleteNotice").innerHTML = `<strong>删除礼券</strong>请确认删除 ${el.dataset.delete}，删除后列表不再展示。`;
         document.getElementById("deleteModal").classList.add("open");
       });
     });

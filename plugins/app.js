@@ -10,8 +10,7 @@ const pageTitle = document.getElementById("pageTitle");
 
 const DEFAULT_MENU = [
   {
-    title: "后台端-会员中心",
-    icon: "▤",
+    title: "会员中心",
     children: [
       { title: "会员信息管理", url: "files/member-info.html" },
       { title: "会员实名审核", url: "files/member-audit.html" },
@@ -21,8 +20,7 @@ const DEFAULT_MENU = [
     ]
   },
   {
-    title: "后台端-积分中心",
-    icon: "▧",
+    title: "积分中心",
     children: [
       { title: "积分账户管理", url: "files/points-account.html" },
       { title: "积分账户审核管理", url: "files/points-account-audit.html" },
@@ -31,8 +29,7 @@ const DEFAULT_MENU = [
     ]
   },
   {
-    title: "后台端-权益中心",
-    icon: "▨",
+    title: "权益中心",
     children: [
       { title: "权益管理", url: "files/benefits-manage.html" },
       { title: "商品管理", url: "files/product-manage.html" },
@@ -41,8 +38,7 @@ const DEFAULT_MENU = [
     ]
   },
   {
-    title: "后台端-清结算管理",
-    icon: "▩",
+    title: "清结算管理",
     children: [
       { title: "积分日清报表", url: "files/settlement-points-daily-report.html" },
       { title: "过期积分统计报表", url: "files/settlement-points-expire-report.html" },
@@ -51,8 +47,7 @@ const DEFAULT_MENU = [
     ]
   },
   {
-    title: "后台端-风控管理",
-    icon: "▣",
+    title: "风控管理",
     children: [
       { title: "风控规则管理", url: "files/risk-rule.html" },
       { title: "发分主体风控", url: "files/risk-issuer.html" },
@@ -61,15 +56,13 @@ const DEFAULT_MENU = [
     ]
   },
   {
-    title: "后台端-营销管理",
-    icon: "▤",
+    title: "营销管理",
     children: [
       { title: "营销管理", url: "files/marketing-manage.html" }
     ]
   },
   {
     title: "会员报表",
-    icon: "▥",
     children: [
       { title: "会员新增/注销报表", url: "files/member-report-growth.html" },
       { title: "会员增长分析报表", url: "files/member-report-analysis.html" },
@@ -81,20 +74,7 @@ const DEFAULT_MENU = [
     ]
   },
   {
-    title: "C端-小程序端",
-    icon: "▦",
-    children: [
-      { title: "手机授权登录", url: "files/mini-login.html" },
-      { title: "会员中心", url: "files/mini-member.html" },
-      { title: "积分中心", url: "files/mini-points.html" },
-      { title: "权益中心", url: "files/mini-benefits.html" },
-      { title: "优惠券管理", url: "files/mini-coupons.html" },
-      { title: "通知中心", url: "files/mini-notifications.html" }
-    ]
-  },
-  {
-    title: "后台端-客户数据管理",
-    icon: "▥",
+    title: "客户数据管理",
     children: [
       { title: "客户标签管理", url: "files/cdp-tags.html" },
       { title: "标签使用报表", url: "files/cdp-tag-usage-report.html" },
@@ -106,14 +86,24 @@ const DEFAULT_MENU = [
     ]
   },
   {
-    title: "后台端-系统管理",
-    icon: "▫",
+    title: "系统管理",
     children: [
       { title: "用户管理", url: "files/system-user.html" },
       { title: "角色管理", url: "files/system-role.html" },
       { title: "操作日志", url: "files/system-log.html" },
       { title: "参数配置", url: "files/system-parameter.html" },
       { title: "脱敏管理", url: "files/system-desensitize.html" }
+    ]
+  },
+  {
+    title: "C端-小程序端",
+    children: [
+      { title: "手机授权登录", url: "files/mini-login.html" },
+      { title: "会员中心", url: "files/mini-member.html" },
+      { title: "积分中心", url: "files/mini-points.html" },
+      { title: "权益中心", url: "files/mini-benefits.html" },
+      { title: "优惠券管理", url: "files/mini-coupons.html" },
+      { title: "通知中心", url: "files/mini-notifications.html" }
     ]
   }
 ];
@@ -167,11 +157,26 @@ function closeTab(url) {
   renderTabs();
 }
 
+function normalizeMenu(data) {
+  return [...data]
+    .map(section => ({
+      ...section,
+      title: section.title.replace(/^后台端-/, "")
+    }))
+    .sort((left, right) => {
+      const leftMini = left.title.startsWith("C端-");
+      const rightMini = right.title.startsWith("C端-");
+      if (leftMini === rightMini) return 0;
+      return leftMini ? 1 : -1;
+    });
+}
+
 function renderMenu(data) {
-  menuTree.innerHTML = data.map(section => `
+  const normalizedData = normalizeMenu(data);
+  menuTree.innerHTML = normalizedData.map(section => `
     <div class="menu-section">
       <button class="menu-parent" type="button">
-        <span class="left">${section.icon} ${section.title}</span>
+        <span class="left"><span class="menu-parent-icon" aria-hidden="true"><span></span></span><span>${section.title}</span></span>
         <span class="arrow">⌃</span>
       </button>
       <div class="submenu">
@@ -211,8 +216,9 @@ workTabs.addEventListener("click", event => {
 });
 
 function boot(data) {
-  renderMenu(data);
-  const first = data.flatMap(section => section.children).find(child => child.url === "files/member-audit.html") || data[0].children[0];
+  const normalizedData = normalizeMenu(data);
+  renderMenu(normalizedData);
+  const first = normalizedData.flatMap(section => section.children).find(child => child.url === "files/member-audit.html") || normalizedData[0].children[0];
   state.tabs = [{ title: first.title, url: first.url, locked: true }];
   openTab(first);
 }

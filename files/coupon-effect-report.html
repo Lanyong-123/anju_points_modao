@@ -34,7 +34,7 @@
     <div class="filter">
       <div class="field"><label>开始时间</label><input type="date" id="startDate" value="2026-06-01"></div>
       <div class="field"><label>结束时间</label><input type="date" id="endDate" value="2026-06-30"></div>
-      <div class="field"><label>优惠券类型</label><select id="typeFilter"><option>全部类型</option><option>电子礼券</option><option>实物礼券</option><option>第三方礼卷</option></select></div>
+      <div class="field"><label>优惠券类型</label><select id="typeFilter"><option>全部类型</option><option>电子礼券</option><option>实物礼券</option><option>第三方礼券</option></select></div>
       <div class="field"><label>发分主体</label><select id="issuerFilter"><option>全部主体</option><option>集团运营中心</option><option>安居集团</option><option>南山项目</option></select></div>
       <button class="btn primary" id="queryBtn">查询</button>
       <button class="btn" id="resetBtn">重置</button>
@@ -73,10 +73,10 @@
     const effectData = [
       { period: "2026-06-01 至 2026-06-30", start: "2026-06-01", end: "2026-06-30", type: "电子礼券", issuer: "集团运营中心", issued: 36000, claimed: 28600, used: 16820, writeoffAmount: 336400, salesAmount: 2268000 },
       { period: "2026-06-01 至 2026-06-30", start: "2026-06-01", end: "2026-06-30", type: "实物礼券", issuer: "安居集团", issued: 18000, claimed: 12360, used: 6320, writeoffAmount: 442400, salesAmount: 1386000 },
-      { period: "2026-06-01 至 2026-06-30", start: "2026-06-01", end: "2026-06-30", type: "第三方礼卷", issuer: "南山项目", issued: 14200, claimed: 10340, used: 5840, writeoffAmount: 292000, salesAmount: 1712000 },
+      { period: "2026-06-01 至 2026-06-30", start: "2026-06-01", end: "2026-06-30", type: "第三方礼券", issuer: "南山项目", issued: 14200, claimed: 10340, used: 5840, writeoffAmount: 292000, salesAmount: 1712000 },
       { period: "2026-05-01 至 2026-05-31", start: "2026-05-01", end: "2026-05-31", type: "电子礼券", issuer: "集团运营中心", issued: 32000, claimed: 25120, used: 14600, writeoffAmount: 292000, salesAmount: 1980000 },
       { period: "2026-05-01 至 2026-05-31", start: "2026-05-01", end: "2026-05-31", type: "实物礼券", issuer: "安居集团", issued: 12600, claimed: 8260, used: 4180, writeoffAmount: 292600, salesAmount: 926000 },
-      { period: "2026-05-01 至 2026-05-31", start: "2026-05-01", end: "2026-05-31", type: "第三方礼卷", issuer: "南山项目", issued: 9800, claimed: 6920, used: 3860, writeoffAmount: 193000, salesAmount: 1086000 }
+      { period: "2026-05-01 至 2026-05-31", start: "2026-05-01", end: "2026-05-31", type: "第三方礼券", issuer: "南山项目", issued: 9800, claimed: 6920, used: 3860, writeoffAmount: 193000, salesAmount: 1086000 }
     ];
 
     let currentRows = [];

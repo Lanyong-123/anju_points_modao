@@ -205,7 +205,7 @@
           </thead>
           <tbody>
             <tr><td><input type="checkbox"></td><td>MK202605001</td><td><span class="link" data-detail="MK202605001">优惠券领取后7天未核销</span></td><td>安居集团</td><td>2026-06-01 至 2026-06-30</td><td>多次触达</td><td>优惠券领取后7天未核销</td><td>发放积分</td><td><span class="link" data-participants="MK202605001">12,860</span></td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="MK202605001">详情</span>　<span class="link" data-edit="MK202605001">修改</span>　<span class="link" data-status="pause">暂停</span>　<span class="link" data-delete="MK202605001">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>MK202605002</td><td><span class="link" data-detail="MK202605002">新会员注册</span></td><td>南山项目</td><td>2026-06-01 至 2026-06-30</td><td>单次触达</td><td>新会员注册</td><td>发放礼卷</td><td><span class="link" data-participants="MK202605002">8,326</span></td><td><span class="badge">待发布</span></td><td><span class="link" data-detail="MK202605002">详情</span>　<span class="link" data-edit="MK202605002">修改</span>　<span class="link" data-status="publish">发布</span>　<span class="link" data-delete="MK202605002">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>MK202605002</td><td><span class="link" data-detail="MK202605002">新会员注册</span></td><td>南山项目</td><td>2026-06-01 至 2026-06-30</td><td>单次触达</td><td>新会员注册</td><td>发放礼券</td><td><span class="link" data-participants="MK202605002">8,326</span></td><td><span class="badge">待发布</span></td><td><span class="link" data-detail="MK202605002">详情</span>　<span class="link" data-edit="MK202605002">修改</span>　<span class="link" data-status="publish">发布</span>　<span class="link" data-delete="MK202605002">删除</span></td></tr>
             <tr><td><input type="checkbox"></td><td>MK202605003</td><td><span class="link" data-detail="MK202605003">会员实名认证成功</span></td><td>福田项目</td><td>2026-06-10 至 2026-07-10</td><td>单次触达</td><td>会员实名认证成功</td><td>发放积分</td><td><span class="link" data-participants="MK202605003">1,208</span></td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="MK202605003">详情</span>　<span class="link" data-edit="MK202605003">修改</span>　<span class="link" data-delete="MK202605003">删除</span></td></tr>
           </tbody>
         </table>
@@ -277,7 +277,7 @@
                 <label class="required">营销方式</label>
                 <select id="marketingMethod">
                   <option>发放积分</option>
-                  <option>发放礼卷</option>
+                  <option>发放礼券</option>
                 </select>
               </div>
               <div class="field points-reward-field" id="pointsReward">
@@ -290,7 +290,7 @@
                 </div>
               </div>
               <div class="field" id="couponReward" style="display:none">
-                <label class="required">礼卷发放配置</label>
+                <label class="required">礼券发放配置</label>
                 <select>
                   <option>2000积分兑家政服务</option>
                   <option>500积分兑礼物</option>
@@ -395,7 +395,7 @@
   <script>
     const marketingData = {
       MK202605001: ["MK202605001", "优惠券领取后7天未核销", "安居集团", "2026-06-01 至 2026-06-30", "多次触达", "优惠券领取后7天未核销", "发放积分", "会员等级=金卡会员，且身份标签=项目住户", "12,860", "进行中"],
-      MK202605002: ["MK202605002", "新会员注册", "南山项目", "2026-06-01 至 2026-06-30", "单次触达", "新会员注册", "发放礼卷", "身份标签=新入会客户，且特定项目=南山项目", "8,326", "待发布"],
+      MK202605002: ["MK202605002", "新会员注册", "南山项目", "2026-06-01 至 2026-06-30", "单次触达", "新会员注册", "发放礼券", "身份标签=新入会客户，且特定项目=南山项目", "8,326", "待发布"],
       MK202605003: ["MK202605003", "会员实名认证成功", "福田项目", "2026-06-10 至 2026-07-10", "单次触达", "会员实名认证成功", "发放积分", "会员等级=普通会员，或身份标签=项目住户", "1,208", "已结束"]
     };
     const drawer = document.getElementById("detailDrawer");
@@ -443,7 +443,7 @@
     function refreshMarketingMethod() {
       const method = document.getElementById("marketingMethod").value;
       document.getElementById("pointsReward").style.display = method === "发放积分" ? "block" : "none";
-      document.getElementById("couponReward").style.display = method === "发放礼卷" ? "block" : "none";
+      document.getElementById("couponReward").style.display = method === "发放礼券" ? "block" : "none";
     }
     function showActionToast(message) {
       const toast = document.getElementById("actionToast");

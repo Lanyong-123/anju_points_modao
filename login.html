@@ -9,72 +9,102 @@
     body {
       min-width: 1180px;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: var(--bg);
-    }
-    .login-shell {
-      width: 920px;
-      min-height: 520px;
-      display: grid;
-      grid-template-columns: 1fr 420px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      overflow: hidden;
-      background: #fff;
-      box-shadow: 0 18px 45px rgba(18, 49, 82, .16);
-    }
-    .login-brand {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 42px;
-      background: #102d4a;
-      color: #fff;
+      align-items: center;
+      justify-content: center;
+      gap: 22px;
+      padding: 24px 0 28px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(38, 169, 221, .13) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(38, 169, 221, .13) 1px, transparent 1px),
+        radial-gradient(circle at 50% 18%, rgba(255,255,255,.92) 0 12%, rgba(220,244,255,.84) 44%, rgba(233,248,255,.78) 100%),
+        linear-gradient(180deg, #cdeefa 0%, #edf9ff 48%, #dff2fb 100%);
+      background-size: 56px 56px, 56px 56px, auto, auto;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      left: -3vw;
+      right: -3vw;
+      bottom: 0;
+      height: 46vh;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.66) 30%, rgba(255,255,255,.28) 100%),
+        linear-gradient(90deg, rgba(9,112,174,.14), rgba(0,179,207,.10)),
+        repeating-linear-gradient(90deg, rgba(7,95,158,.16) 0 18px, transparent 18px 56px);
+      filter: blur(8px);
+      opacity: .72;
+      clip-path: polygon(0 52%, 6% 50%, 6% 35%, 9% 35%, 9% 50%, 14% 49%, 14% 38%, 17% 38%, 17% 48%, 22% 47%, 22% 32%, 24% 32%, 24% 47%, 29% 46%, 29% 22%, 32% 22%, 32% 46%, 37% 45%, 37% 35%, 40% 35%, 40% 45%, 48% 44%, 48% 12%, 51% 12%, 51% 44%, 58% 45%, 58% 37%, 61% 37%, 61% 46%, 68% 47%, 68% 39%, 72% 39%, 72% 48%, 80% 50%, 80% 43%, 85% 43%, 85% 51%, 100% 54%, 100% 100%, 0 100%);
+      pointer-events: none;
+    }
+    .login-shell {
+      position: relative;
+      z-index: 1;
+      display: contents;
+    }
+    .login-brand {
+      position: relative;
+      z-index: 1;
+      width: 560px;
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+      padding: 0;
+      background: transparent;
+      color: var(--navy);
     }
     .login-brand-main {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      display: grid;
+      justify-items: center;
+      gap: 12px;
     }
     .login-brand-main .brand-mark {
-      width: 46px;
-      height: 46px;
-      border-radius: 7px;
+      width: 86px;
+      height: 86px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.92);
+      border: 0;
+      color: var(--brand);
+      box-shadow: 0 10px 26px rgba(0, 104, 168, .18);
+      font-size: 36px;
     }
     .login-brand-main strong {
       display: block;
-      font-size: 22px;
+      text-align: center;
+      font-size: 18px;
       line-height: 1.2;
+      color: #17415f;
     }
     .login-brand-main span {
       display: block;
-      margin-top: 4px;
-      color: #c8d5e5;
-      font-size: 13px;
+      margin-top: 8px;
+      color: #0b2f4f;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.18;
     }
-    .login-brand-copy h1 {
-      margin: 0 0 14px;
-      font-size: 28px;
-      line-height: 1.35;
-      color: #fff;
-    }
-    .login-brand-copy p {
-      margin: 0;
-      color: #c8d5e5;
-      line-height: 1.8;
-      font-size: 14px;
-    }
+    .login-brand-copy { display: none; }
     .login-panel {
-      padding: 46px 42px;
+      position: relative;
+      z-index: 1;
+      width: 480px;
+      padding: 34px 36px 36px;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      border: 1px solid rgba(170, 211, 235, .9);
+      border-top: 4px solid var(--brand-2);
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255,255,255,.94);
+      box-shadow: 0 22px 50px rgba(36, 102, 136, .20);
     }
     .login-panel h2 {
       margin: 0 0 8px;
       color: var(--navy);
-      font-size: 22px;
+      font-size: 24px;
     }
     .login-panel .sub {
       margin: 0 0 28px;
@@ -89,6 +119,24 @@
       height: 42px;
       font-size: 15px;
     }
+    .captcha-row {
+      display: grid;
+      grid-template-columns: 1fr 112px;
+      gap: 10px;
+      align-items: center;
+    }
+    .captcha-code {
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #c9e1ee;
+      border-radius: 5px;
+      background: linear-gradient(135deg, #eefaff, #cdeefa);
+      color: #173a56;
+      font-weight: 800;
+      letter-spacing: 4px;
+    }
     .login-options {
       display: flex;
       align-items: center;
@@ -102,13 +150,15 @@
       gap: 6px;
     }
     .login-button {
-      height: 44px;
+      height: 46px;
       margin-top: 4px;
       font-size: 16px;
       font-weight: 800;
+      border-radius: 6px;
     }
     .login-foot {
-      margin-top: 18px;
+      position: relative;
+      z-index: 1;
       color: var(--muted);
       font-size: 12px;
       text-align: center;
@@ -122,7 +172,7 @@
         <div class="brand-mark">安</div>
         <div>
           <strong>安居集团</strong>
-          <span>会员积分运营管理平台</span>
+      <span>会员积分运营管理平台</span>
         </div>
       </div>
       <div class="login-brand-copy">
@@ -132,19 +182,26 @@
     </section>
     <section class="login-panel">
       <h2>账号登录</h2>
-      <p class="sub">请输入帐号和密码进入系统</p>
+      <p class="sub">请使用集团统一账号登录，操作记录将进入后台审计。</p>
       <form class="login-form" id="loginForm">
-        <div class="field"><label>帐号</label><input id="account" autocomplete="username" value="admin" placeholder="请输入帐号"></div>
-        <div class="field"><label>密码</label><input id="password" type="password" autocomplete="current-password" value="123456" placeholder="请输入密码"></div>
+        <div class="field"><label>账号</label><input id="account" autocomplete="username" value="" placeholder="请输入账号或手机号"></div>
+        <div class="field"><label>密码</label><input id="password" type="password" autocomplete="current-password" value="" placeholder="请输入 6 位以上密码"></div>
+        <div class="field">
+          <label>验证码</label>
+          <div class="captcha-row">
+            <input id="captcha" placeholder="请输入验证码">
+            <span class="captcha-code">A7K3</span>
+          </div>
+        </div>
         <div class="login-options">
           <label><input type="checkbox" checked> 记住帐号</label>
-          <span>集团运营中心</span>
+          <span>忘记密码</span>
         </div>
         <button class="btn primary login-button" type="submit">登录</button>
       </form>
-      <div class="login-foot">© 2026 安居集团</div>
     </section>
   </main>
+  <div class="login-foot">深圳市属国有独资保障性住房专营机构</div>
   <script>
     document.getElementById("loginForm").addEventListener("submit", event => {
       event.preventDefault();

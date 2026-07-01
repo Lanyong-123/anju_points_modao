@@ -1,7 +1,6 @@
 [
   {
-    "title": "后台端-会员中心",
-    "icon": "▤",
+    "title": "会员中心",
     "children": [
       { "title": "会员信息管理", "url": "files/member-info.html" },
       { "title": "会员实名审核", "url": "files/member-audit.html" },
@@ -11,8 +10,7 @@
     ]
   },
   {
-    "title": "后台端-积分中心",
-    "icon": "▧",
+    "title": "积分中心",
     "children": [
       { "title": "积分账户管理", "url": "files/points-account.html" },
       { "title": "积分账户审核管理", "url": "files/points-account-audit.html" },
@@ -21,8 +19,7 @@
     ]
   },
   {
-    "title": "后台端-权益中心",
-    "icon": "▨",
+    "title": "权益中心",
     "children": [
       { "title": "权益管理", "url": "files/benefits-manage.html" },
       { "title": "商品管理", "url": "files/product-manage.html" },
@@ -31,8 +28,7 @@
     ]
   },
   {
-    "title": "后台端-清结算管理",
-    "icon": "▩",
+    "title": "清结算管理",
     "children": [
       { "title": "积分日清报表", "url": "files/settlement-points-daily-report.html" },
       { "title": "过期积分统计报表", "url": "files/settlement-points-expire-report.html" },
@@ -41,8 +37,7 @@
     ]
   },
   {
-    "title": "后台端-风控管理",
-    "icon": "▣",
+    "title": "风控管理",
     "children": [
       { "title": "风控规则管理", "url": "files/risk-rule.html" },
       { "title": "发分主体风控", "url": "files/risk-issuer.html" },
@@ -51,15 +46,13 @@
     ]
   },
   {
-    "title": "后台端-营销管理",
-    "icon": "▤",
+    "title": "营销管理",
     "children": [
       { "title": "营销管理", "url": "files/marketing-manage.html" }
     ]
   },
   {
     "title": "会员报表",
-    "icon": "▥",
     "children": [
       { "title": "会员新增/注销报表", "url": "files/member-report-growth.html" },
       { "title": "会员增长分析报表", "url": "files/member-report-analysis.html" },
@@ -71,20 +64,7 @@
     ]
   },
   {
-    "title": "C端-小程序端",
-    "icon": "▦",
-    "children": [
-      { "title": "手机授权登录", "url": "files/mini-login.html" },
-      { "title": "会员中心", "url": "files/mini-member.html" },
-      { "title": "积分中心", "url": "files/mini-points.html" },
-      { "title": "权益中心", "url": "files/mini-benefits.html" },
-      { "title": "优惠券管理", "url": "files/mini-coupons.html" },
-      { "title": "通知中心", "url": "files/mini-notifications.html" }
-    ]
-  },
-  {
-    "title": "后台端-客户数据管理",
-    "icon": "▥",
+    "title": "客户数据管理",
     "children": [
       { "title": "客户标签管理", "url": "files/cdp-tags.html" },
       { "title": "标签使用报表", "url": "files/cdp-tag-usage-report.html" },
@@ -96,14 +76,24 @@
     ]
   },
   {
-    "title": "后台端-系统管理",
-    "icon": "▫",
+    "title": "系统管理",
     "children": [
       { "title": "用户管理", "url": "files/system-user.html" },
       { "title": "角色管理", "url": "files/system-role.html" },
       { "title": "操作日志", "url": "files/system-log.html" },
       { "title": "参数配置", "url": "files/system-parameter.html" },
       { "title": "脱敏管理", "url": "files/system-desensitize.html" }
+    ]
+  },
+  {
+    "title": "C端-小程序端",
+    "children": [
+      { "title": "手机授权登录", "url": "files/mini-login.html" },
+      { "title": "会员中心", "url": "files/mini-member.html" },
+      { "title": "积分中心", "url": "files/mini-points.html" },
+      { "title": "权益中心", "url": "files/mini-benefits.html" },
+      { "title": "优惠券管理", "url": "files/mini-coupons.html" },
+      { "title": "通知中心", "url": "files/mini-notifications.html" }
     ]
   }
 ]
