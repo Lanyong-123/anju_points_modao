@@ -386,6 +386,111 @@
       align-items: center;
       gap: 8px;
     }
+    .special-target-panel {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      max-width: 680px;
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid #d7e7f7;
+      border-radius: 8px;
+      background: #f7fbff;
+    }
+    .special-target-field > label {
+      display: block;
+      margin-bottom: 6px;
+      color: #36485c;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .multi-select {
+      position: relative;
+      width: 100%;
+    }
+    .multi-select-trigger {
+      width: 100%;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .multi-select-trigger::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-right: 1.5px solid #607287;
+      border-bottom: 1.5px solid #607287;
+      transform: rotate(45deg) translateY(-2px);
+      flex: 0 0 auto;
+    }
+    .multi-select.open .multi-select-trigger::after {
+      transform: rotate(225deg) translateY(-1px);
+    }
+    .multi-select-menu {
+      position: static;
+      display: none;
+      max-height: 190px;
+      overflow: auto;
+      margin-top: 4px;
+      padding: 6px;
+      border: 1px solid #cfd9e5;
+      border-radius: 6px;
+      background: #fff;
+      box-shadow: 0 10px 22px rgba(18, 49, 82, .16);
+    }
+    .multi-select.open .multi-select-menu {
+      display: grid;
+      gap: 2px;
+    }
+    .multi-select-search {
+      width: 100%;
+      height: 32px;
+      min-height: 32px;
+      margin-bottom: 4px;
+      padding: 0 9px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fbfdff;
+      color: var(--ink);
+      font: inherit;
+    }
+    .multi-select-menu label {
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      color: #36485c;
+      cursor: pointer;
+    }
+    .multi-select-menu label:hover {
+      background: #edf7ff;
+    }
+    .multi-select-menu input {
+      width: 15px;
+      height: 15px;
+      min-height: 0;
+      margin: 0;
+      accent-color: #1769d8;
+    }
+    .multi-select-empty {
+      display: none;
+      padding: 8px;
+      color: #8a99a8;
+      font-size: 12px;
+      text-align: center;
+    }
     .coupon-select-modal {
       width: min(1180px, calc(100vw - 48px));
       max-height: calc(100vh - 24px);
@@ -529,6 +634,9 @@
         <span>商品焦点图</span><strong id="drawerFocusImages">housekeeping-banner-1.png、housekeeping-banner-2.png</strong>
         <span>使用说明</span><strong id="drawerDesc">兑换后进入会员券包，可用于停车缴费抵扣。</strong>
         <span>礼券归属</span><strong id="drawerOrg">安居集团</strong>
+        <span>是否特定人群发放</span><strong id="drawerSpecialTarget">否</strong>
+        <span>发放项目</span><strong id="drawerSpecialProjects">-</strong>
+        <span>发放人员</span><strong id="drawerSpecialMembers">-</strong>
 
         <div class="drawer-section-title">关联礼券</div>
         <span>优惠券名称</span><strong id="drawerCoupon">2000积分兑家政服务券</strong>
@@ -599,6 +707,48 @@
           <div class="product-row">
             <div class="product-label required">礼券归属</div>
             <div class="product-control"><select id="editOrg"><option>安居集团</option><option>集团总部</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option><option>合作商户</option></select><div class="product-hint">用于区分商品可使用的礼券归属范围，新增或修改商品时维护。</div></div>
+          </div>
+          <div class="product-row">
+            <div class="product-label">是否特定人群发放</div>
+            <div class="product-control">
+              <div class="radio-line">
+                <label><input type="radio" name="specialTarget" value="否" checked> 否</label>
+                <label><input type="radio" name="specialTarget" value="是"> 是</label>
+              </div>
+              <div class="special-target-panel" id="specialTargetPanel" style="display:none">
+                <div class="special-target-field">
+                  <label>发放项目</label>
+                  <div class="multi-select" id="specialProjects" data-placeholder="请选择发放项目">
+                    <button class="multi-select-trigger" type="button" data-multi-trigger><span data-multi-text>请选择发放项目</span></button>
+                    <div class="multi-select-menu">
+                      <input class="multi-select-search" type="text" placeholder="输入项目关键字" data-multi-search>
+                      <label><input type="checkbox" value="南山项目">南山项目</label>
+                      <label><input type="checkbox" value="福田项目">福田项目</label>
+                      <label><input type="checkbox" value="宝安项目">宝安项目</label>
+                      <label><input type="checkbox" value="龙华项目">龙华项目</label>
+                      <label><input type="checkbox" value="集团总部">集团总部</label>
+                      <div class="multi-select-empty">无匹配结果</div>
+                    </div>
+                  </div>
+                  <div class="product-hint">下拉支持多选，可选择多个发放项目</div>
+                </div>
+                <div class="special-target-field">
+                  <label>发放人员</label>
+                  <div class="multi-select" id="specialMembers" data-placeholder="请选择发放人员">
+                    <button class="multi-select-trigger" type="button" data-multi-trigger><span data-multi-text>请选择发放人员</span></button>
+                    <div class="multi-select-menu">
+                      <input class="multi-select-search" type="text" placeholder="输入人员姓名或会员ID" data-multi-search>
+                      <label><input type="checkbox" value="李明（AJ202605180018）">李明（AJ202605180018）</label>
+                      <label><input type="checkbox" value="周女士（AJ202604220091）">周女士（AJ202604220091）</label>
+                      <label><input type="checkbox" value="王强（AJ202603090112）">王强（AJ202603090112）</label>
+                      <label><input type="checkbox" value="陈先生（AJ202605010027）">陈先生（AJ202605010027）</label>
+                      <div class="multi-select-empty">无匹配结果</div>
+                    </div>
+                  </div>
+                  <div class="product-hint">下拉支持多选，可选择多个发放人员</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="form-section-title">兑换方案</div>
@@ -869,7 +1019,10 @@
         couponTotal: "838",
         exchangeTime: "2026-06-05 00:00 至 2027-01-01 23:59",
         totalLimit: "开启，838 次",
-        dailyLimit: "开启，20 次"
+        dailyLimit: "开启，20 次",
+        specialTarget: "是",
+        specialProjects: "南山项目、福田项目",
+        specialMembers: "李明（AJ202605180018）、王强（AJ202603090112）"
       },
       "生日礼券": {
         focusImages: "birthday-banner.png",
@@ -878,7 +1031,10 @@
         couponTotal: "94",
         exchangeTime: "2026-01-14 00:00 至 2026-01-31 23:59",
         totalLimit: "开启，94 次",
-        dailyLimit: "关闭"
+        dailyLimit: "关闭",
+        specialTarget: "否",
+        specialProjects: "-",
+        specialMembers: "-"
       },
       "停车抵扣券": {
         focusImages: "parking-banner.png",
@@ -887,7 +1043,10 @@
         couponTotal: "38",
         exchangeTime: "2026-04-28 00:00 至 2026-05-31 23:59",
         totalLimit: "开启，38 次",
-        dailyLimit: "开启，5 次"
+        dailyLimit: "开启，5 次",
+        specialTarget: "是",
+        specialProjects: "宝安项目",
+        specialMembers: "周女士（AJ202604220091）"
       },
       "深度保洁服务": {
         focusImages: "cleaning-banner-1.png、cleaning-banner-2.png",
@@ -896,7 +1055,10 @@
         couponTotal: "100",
         exchangeTime: "2026-04-18 00:00 至 2026-05-18 23:59",
         totalLimit: "开启，100 次",
-        dailyLimit: "开启，10 次"
+        dailyLimit: "开启，10 次",
+        specialTarget: "否",
+        specialProjects: "-",
+        specialMembers: "-"
       },
       "免费搬家服务": {
         focusImages: "moving-banner.png",
@@ -905,7 +1067,10 @@
         couponTotal: "800",
         exchangeTime: "用户输入",
         totalLimit: "开启，800 次",
-        dailyLimit: "开启，8 次"
+        dailyLimit: "开启，8 次",
+        specialTarget: "否",
+        specialProjects: "-",
+        specialMembers: "-"
       },
       "家政服务包": {
         focusImages: "cleaning-pack-banner.png",
@@ -914,7 +1079,10 @@
         couponTotal: "1,000",
         exchangeTime: "用户输入",
         totalLimit: "开启，1,000 次",
-        dailyLimit: "开启，12 次"
+        dailyLimit: "开启，12 次",
+        specialTarget: "是",
+        specialProjects: "福田项目、龙华项目",
+        specialMembers: "陈先生（AJ202605010027）"
       }
     };
 
@@ -933,6 +1101,9 @@
         document.getElementById("drawerExchangeTime").textContent = detail.exchangeTime;
         document.getElementById("drawerTotalLimit").textContent = detail.totalLimit;
         document.getElementById("drawerDailyLimit").textContent = detail.dailyLimit;
+        document.getElementById("drawerSpecialTarget").textContent = detail.specialTarget || "否";
+        document.getElementById("drawerSpecialProjects").textContent = detail.specialProjects || "-";
+        document.getElementById("drawerSpecialMembers").textContent = detail.specialMembers || "-";
         drawer.classList.add("open");
       });
     });
@@ -951,13 +1122,73 @@
       document.querySelector("[data-daily-limit]").style.display = document.getElementById("limitDailySwitch").checked ? "grid" : "none";
     }
 
+    function updateMultiSelectText(container) {
+      const selected = [...container.querySelectorAll("input[type='checkbox']:checked")].map(input => input.value);
+      container.querySelector("[data-multi-text]").textContent = selected.length ? selected.join("、") : container.dataset.placeholder;
+    }
+
+    function filterMultiSelectOptions(container) {
+      const keyword = (container.querySelector("[data-multi-search]")?.value || "").trim().toLowerCase();
+      let visibleCount = 0;
+      container.querySelectorAll(".multi-select-menu label").forEach(label => {
+        const matched = !keyword || label.textContent.trim().toLowerCase().includes(keyword);
+        label.style.display = matched ? "flex" : "none";
+        if (matched) visibleCount += 1;
+      });
+      const empty = container.querySelector(".multi-select-empty");
+      if (empty) empty.style.display = visibleCount ? "none" : "block";
+    }
+
+    function setMultiSelectValues(selectId, valueText) {
+      const values = (valueText || "").split("、").map(item => item.trim()).filter(item => item && item !== "-");
+      const container = document.getElementById(selectId);
+      container.querySelectorAll("input[type='checkbox']").forEach(input => {
+        input.checked = values.some(value => input.value === value);
+      });
+      updateMultiSelectText(container);
+    }
+
+    function syncSpecialTarget() {
+      const isSpecial = document.querySelector("input[name='specialTarget'][value='是']").checked;
+      document.getElementById("specialTargetPanel").style.display = isSpecial ? "grid" : "none";
+    }
+
     document.querySelectorAll("input[name='exchangeType']").forEach(el => {
       el.addEventListener("change", syncExchangeType);
+    });
+    document.querySelectorAll("input[name='specialTarget']").forEach(el => {
+      el.addEventListener("change", syncSpecialTarget);
+    });
+    document.querySelectorAll(".multi-select").forEach(select => {
+      select.querySelector("[data-multi-trigger]").addEventListener("click", event => {
+        event.stopPropagation();
+        document.querySelectorAll(".multi-select.open").forEach(openSelect => {
+          if (openSelect !== select) openSelect.classList.remove("open");
+        });
+        select.classList.toggle("open");
+        if (select.classList.contains("open")) {
+          filterMultiSelectOptions(select);
+          select.querySelector("[data-multi-search]")?.focus();
+        }
+      });
+      select.querySelector("[data-multi-search]").addEventListener("click", event => event.stopPropagation());
+      select.querySelector("[data-multi-search]").addEventListener("input", () => filterMultiSelectOptions(select));
+      select.querySelectorAll("input[type='checkbox']").forEach(input => {
+        input.addEventListener("change", () => updateMultiSelectText(select));
+      });
+      filterMultiSelectOptions(select);
+      updateMultiSelectText(select);
+    });
+    document.addEventListener("click", event => {
+      if (!event.target.closest(".multi-select")) {
+        document.querySelectorAll(".multi-select.open").forEach(select => select.classList.remove("open"));
+      }
     });
 
     document.querySelectorAll("[data-edit]").forEach(el => {
       el.addEventListener("click", () => {
         const data = productData[el.dataset.edit];
+        const detail = productDetailData[el.dataset.edit] || {};
         document.getElementById("editTitle").textContent = data ? "修改商品" : "新增商品";
         if (data) {
           document.getElementById("editName").value = data[1];
@@ -969,14 +1200,23 @@
           document.getElementById("dailyLimitInput").value = "";
           document.getElementById("editPoints").value = data[11] || "";
           document.querySelector(`input[name='exchangeType'][value='${data[2] === "免费" ? "free" : "points"}']`).checked = true;
+          document.querySelector(`input[name='specialTarget'][value='${detail.specialTarget === "是" ? "是" : "否"}']`).checked = true;
+          setMultiSelectValues("specialProjects", detail.specialProjects);
+          setMultiSelectValues("specialMembers", detail.specialMembers);
           syncExchangeType();
+        } else {
+          document.querySelector("input[name='specialTarget'][value='否']").checked = true;
+          setMultiSelectValues("specialProjects", "");
+          setMultiSelectValues("specialMembers", "");
         }
+        syncSpecialTarget();
         document.getElementById("editModal").classList.add("open");
       });
     });
 
     document.getElementById("limitTotalSwitch").addEventListener("change", syncLimitInputs);
     document.getElementById("limitDailySwitch").addEventListener("change", syncLimitInputs);
+    syncSpecialTarget();
     document.querySelector("[data-open-coupon-modal]").addEventListener("click", () => document.getElementById("couponModal").classList.add("open"));
     document.querySelector("[data-coupon-manage]").addEventListener("click", () => {
       const target = { title: "优惠券管理", url: "files/coupon-manage.html" };

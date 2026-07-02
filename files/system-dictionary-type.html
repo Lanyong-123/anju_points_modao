@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>数据字典类型</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .dict-type-filter {
+      grid-template-columns: 1.4fr auto auto;
+    }
+    .dict-type-code {
+      color: #526477;
+      font-family: Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+    .dict-type-action-list {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+    .dict-type-modal {
+      width: min(720px, calc(100vw - 48px));
+    }
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 20;
+      display: none;
+      min-width: 220px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      background: #123152;
+      color: #fff;
+      box-shadow: 0 14px 32px rgba(18,49,82,.22);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .toast.open {
+      display: block;
+    }
+    @media (max-width: 1180px) {
+      .dict-type-filter { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter dict-type-filter">
+      <div class="field"><label>关键字</label><input id="keywordFilter" placeholder="请输入编码/名称关键字"></div>
+      <button class="btn primary" id="queryBtn">查询</button>
+      <button class="btn" id="resetBtn">重置</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>数据字典类型列表</h3>
+        <div class="toolbar">
+          <button class="btn primary" data-open-type="create">新增字典类型</button>
+          <button class="btn" data-batch-delete>批量删除</button>
+        </div>
+      </div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="checkAll"></th>
+              <th>序号</th>
+              <th>编码</th>
+              <th>名称</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="typeRows"></tbody>
+        </table>
+        <div class="pagination"><span id="rowCount">共 0 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="typeModal">
+    <div class="modal dict-type-modal">
+      <div class="panel-hd"><h3 id="typeModalTitle">新增字典类型</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="grid cols-2">
+          <div class="field"><label class="required">编码</label><input id="typeCode" placeholder="请输入编码"></div>
+          <div class="field"><label class="required">名称</label><input id="typeName" placeholder="请输入名称"></div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="saveTypeBtn">确认保存</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="deleteModal">
+    <div class="modal">
+      <div class="panel-hd"><h3 id="deleteTitle">删除字典类型</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd"><p id="deleteText" style="color:#526477; line-height:1.7">确认删除所选字典类型？删除后仅用于原型展示，不会影响真实数据。</p></div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="confirmDeleteBtn">确认删除</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">操作成功</div>
+
+  <script>
+    const defaultTypes = [
+      { code: "member_status", name: "会员状态" },
+      { code: "member_level", name: "会员等级" },
+      { code: "points_biz_type", name: "积分业务类型" },
+      { code: "coupon_status", name: "优惠券状态" },
+      { code: "coupon_type", name: "优惠券类型" },
+      { code: "benefit_type", name: "权益类型" }
+    ];
+
+    let dictTypes = defaultTypes.map(item => ({ ...item }));
+    let currentRows = [];
+    let editingCode = "";
+    let deleteMode = "single";
+    let deleteCode = "";
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("open");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("open"), 1600);
+    }
+
+    function getRows() {
+      const keyword = document.getElementById("keywordFilter").value.trim().toLowerCase();
+      return dictTypes.filter(item => !keyword || [item.code, item.name].some(value => value.toLowerCase().includes(keyword)));
+    }
+
+    function refreshCheckAll() {
+      const checks = [...document.querySelectorAll("[data-row-check]")];
+      const checkAll = document.getElementById("checkAll");
+      checkAll.checked = checks.length > 0 && checks.every(item => item.checked);
+      checkAll.indeterminate = checks.some(item => item.checked) && !checkAll.checked;
+    }
+
+    function renderRows() {
+      currentRows = getRows();
+      document.getElementById("typeRows").innerHTML = currentRows.map((item, index) => `
+        <tr>
+          <td><input type="checkbox" data-row-check="${item.code}"></td>
+          <td>${index + 1}</td>
+          <td><span class="dict-type-code">${item.code}</span></td>
+          <td><strong>${item.name}</strong></td>
+          <td><div class="dict-type-action-list"><span class="link" data-open-type="edit" data-code="${item.code}">修改</span><span class="link danger" data-delete="${item.code}">删除</span></div></td>
+        </tr>
+      `).join("");
+      document.getElementById("rowCount").textContent = `共 ${currentRows.length} 条`;
+      document.getElementById("checkAll").checked = false;
+      document.getElementById("checkAll").indeterminate = false;
+      bindRowActions();
+    }
+
+    function bindRowActions() {
+      document.querySelectorAll("[data-row-check]").forEach(el => el.addEventListener("change", refreshCheckAll));
+      document.querySelectorAll("[data-open-type='edit']").forEach(el => {
+        el.addEventListener("click", () => openTypeModal("edit", el.dataset.code));
+      });
+      document.querySelectorAll("[data-delete]").forEach(el => {
+        el.addEventListener("click", () => openDeleteModal("single", el.dataset.delete));
+      });
+    }
+
+    function openTypeModal(mode, code = "") {
+      const item = dictTypes.find(row => row.code === code) || { code: "", name: "" };
+      editingCode = mode === "edit" ? code : "";
+      document.getElementById("typeModalTitle").textContent = mode === "edit" ? "修改字典类型" : "新增字典类型";
+      document.getElementById("typeCode").value = item.code;
+      document.getElementById("typeName").value = item.name;
+      document.getElementById("typeModal").classList.add("open");
+    }
+
+    function openDeleteModal(mode, code = "") {
+      deleteMode = mode;
+      deleteCode = code;
+      const checkedCount = document.querySelectorAll("[data-row-check]:checked").length;
+      document.getElementById("deleteTitle").textContent = mode === "batch" ? "批量删除字典类型" : "删除字典类型";
+      document.getElementById("deleteText").textContent = mode === "batch" ? `确认删除已选 ${checkedCount} 条字典类型？` : "确认删除该字典类型？";
+      document.getElementById("deleteModal").classList.add("open");
+    }
+
+    document.getElementById("queryBtn").addEventListener("click", renderRows);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("keywordFilter").value = "";
+      renderRows();
+    });
+    document.querySelector("[data-open-type='create']").addEventListener("click", () => openTypeModal("create"));
+    document.getElementById("checkAll").addEventListener("change", event => {
+      document.querySelectorAll("[data-row-check]").forEach(item => item.checked = event.target.checked);
+      refreshCheckAll();
+    });
+    document.querySelector("[data-batch-delete]").addEventListener("click", () => {
+      const checkedCount = document.querySelectorAll("[data-row-check]:checked").length;
+      if (!checkedCount) {
+        showToast("请先选择需要删除的字典类型");
+        return;
+      }
+      openDeleteModal("batch");
+    });
+    document.getElementById("saveTypeBtn").addEventListener("click", () => {
+      const item = {
+        code: document.getElementById("typeCode").value.trim() || "dict_type_new",
+        name: document.getElementById("typeName").value.trim() || "新字典类型"
+      };
+      if (editingCode) {
+        const index = dictTypes.findIndex(row => row.code === editingCode);
+        if (index >= 0) dictTypes[index] = item;
+        showToast("字典类型已修改");
+      } else {
+        dictTypes.unshift(item);
+        showToast("字典类型已新增");
+      }
+      document.getElementById("typeModal").classList.remove("open");
+      renderRows();
+    });
+    document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
+      if (deleteMode === "batch") {
+        const codes = [...document.querySelectorAll("[data-row-check]:checked")].map(item => item.dataset.rowCheck);
+        dictTypes = dictTypes.filter(item => !codes.includes(item.code));
+        showToast("已批量删除所选字典类型");
+      } else {
+        dictTypes = dictTypes.filter(item => item.code !== deleteCode);
+        showToast("字典类型已删除");
+      }
+      document.getElementById("deleteModal").classList.remove("open");
+      renderRows();
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    });
+    renderRows();
+  </script>
+</body>
+</html>

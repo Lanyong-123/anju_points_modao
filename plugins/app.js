@@ -92,6 +92,8 @@ const DEFAULT_MENU = [
       { title: "角色管理", url: "files/system-role.html" },
       { title: "操作日志", url: "files/system-log.html" },
       { title: "参数配置", url: "files/system-parameter.html" },
+      { title: "数据字典类型", url: "files/system-dictionary-type.html" },
+      { title: "数据字典", url: "files/system-dictionary.html" },
       { title: "脱敏管理", url: "files/system-desensitize.html" }
     ]
   },

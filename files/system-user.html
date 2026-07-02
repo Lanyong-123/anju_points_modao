@@ -105,6 +105,25 @@
       flex: 0 0 16px;
       margin: 0;
     }
+    .desensitize-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .desensitize-check input {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      margin: 0;
+    }
     .data-permission {
       position: relative;
     }
@@ -281,6 +300,7 @@
           <div class="field"><label class="required">手机</label><input value="13698518519"></div>
           <div class="field"><label>邮箱</label><input value="chengmt@anju.com"></div>
           <div class="field"><label class="required">状态</label><select><option selected>启用</option><option>停用</option></select></div>
+          <div class="field"><label>是否脱敏</label><label class="desensitize-check"><input type="checkbox" id="desensitizeCheck" checked> 是，保存后按脱敏规则展示敏感字段</label></div>
           <div class="field">
             <label class="required">数据权限（下拉，支持复选）</label>
             <div class="data-permission" id="dataPermission">
@@ -326,6 +346,7 @@
     document.querySelectorAll("[data-open-user]").forEach(el => {
       el.addEventListener("click", () => {
         document.getElementById("userModalTitle").textContent = el.dataset.openUser === "create" ? "新增用户" : "编辑用户";
+        document.getElementById("desensitizeCheck").checked = true;
         document.getElementById("userModal").classList.add("open");
       });
     });

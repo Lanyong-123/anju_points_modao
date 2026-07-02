@@ -298,18 +298,56 @@ body { background: #eef3f8; }
 }
 .check-mark::before { content: "✓"; font-weight: 900; }
 .auth-form { padding: 18px; }
+.auth-field {
+  display: grid;
+  gap: 8px;
+  padding: 12px 0;
+  border-top: 1px solid #edf2f7;
+}
+.auth-field label {
+  color: #123152;
+  font-size: 14px;
+  font-weight: 900;
+}
+.auth-field select {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid #c7dbf0;
+  border-radius: 10px;
+  background: #f8fbff;
+  color: #123152;
+  font-size: 14px;
+  font-weight: 800;
+  outline: none;
+}
+.upload-list {
+  display: grid;
+}
 .upload-row { padding: 12px 0; border-top: 1px solid #edf2f7; }
 .upload-row:first-of-type { border-top: 0; }
 .upload-row label { display: block; color: #123152; font-size: 14px; font-weight: 900; margin-bottom: 8px; }
+.upload-row label.required-upload::before {
+  content: "*";
+  margin-right: 3px;
+  color: #e5484d;
+  font-weight: 900;
+}
 .upload-box {
   width: 100%;
   height: 76px;
-  border: 1px dashed #b9c8d9;
-  border-radius: 9px;
-  background: #f8fbfe;
-  color: #607286;
+  border: 1px dashed #9fcbf7;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f7fbff 0%, #edf7ff 100%);
+  color: #1779f2;
   font-size: 14px;
   font-weight: 900;
+}
+.upload-box.uploaded {
+  border-style: solid;
+  border-color: #66b5ff;
+  background: linear-gradient(180deg, #e9f7ff 0%, #d9f1ff 100%);
+  color: #0a72df;
 }
 .submit-auth { width: 100%; margin-top: 14px; min-height: 42px; font-size: 15px; }
 .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid #edf2f7; }
@@ -1064,6 +1102,30 @@ body { background: #eef3f8; }
 .mini-sky-page .verify-dialog .btn-mini {
   border-radius: 999px;
 }
+.mini-auth-page .phone-top {
+  min-height: 220px;
+}
+.mini-auth-page .mini-body {
+  margin-top: -44px;
+}
+.mini-auth-page .auth-form {
+  border-radius: 18px;
+}
+.mini-auth-page .auth-form h3 {
+  color: #082a5c;
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+.mini-auth-page .btn-mini.primary {
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0f8bff, #1768f2);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(21, 117, 244, .20);
+}
+.mini-auth-page .btn-mini.primary:hover {
+  background: linear-gradient(90deg, #087df0, #115fdc);
+}
 
 /* Shared blue-white skin for the C-end mini-program pages. */
 .mini-sky-page {
@@ -1418,12 +1480,56 @@ body { background: #eef3f8; }
 .mini-login-page .login-card .row {
   border-top-color: #e0ebf6;
 }
+.mini-login-page .agreement-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 16px;
+  color: #61738c;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.mini-login-page .agreement-line input {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  accent-color: #0f8bff;
+}
+.mini-login-page .agreement-line a {
+  color: #0b7dff;
+  font-weight: 900;
+  text-decoration: none;
+}
 .mini-login-page .btn-mini.primary {
   width: 100%;
   border: 0;
   border-radius: 999px;
   background: linear-gradient(90deg, #0f8bff, #1768f2);
   box-shadow: 0 10px 20px rgba(21, 117, 244, .20);
+}
+.mini-login-page .btn-mini.primary:disabled {
+  background: #c9d6e6;
+  color: rgba(255,255,255,.82);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.mini-login-page .policy-dialog {
+  width: 318px;
+  max-height: 72vh;
+  padding: 20px;
+}
+.mini-login-page .policy-content {
+  max-height: 320px;
+  margin-bottom: 16px;
+  padding: 2px 2px 0;
+  overflow-y: auto;
+}
+.mini-login-page .policy-content p {
+  margin: 0 0 10px;
+  color: #5f7188;
+  font-size: 13px;
+  line-height: 1.7;
 }
 .mini-points-page .phone-top {
   min-height: 294px;

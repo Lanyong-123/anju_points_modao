@@ -1,28 +1,64 @@
 <!doctype html>
 <html lang="zh-CN">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>小程序-身份认证</title><link rel="stylesheet" href="../resources/style.css"><link rel="stylesheet" href="../resources/mini.css"></head>
-<body>
+<body class="mini-sky-page mini-auth-page">
   <div class="mini-stage"><div class="phone">
     <div class="phone-top"><div class="status"><span>9:41</span><span>微信</span><span>•••</span></div><div class="title-row"><h1>身份认证</h1><span class="mini-dot"></span></div></div>
     <div class="mini-body">
       <div class="mini-card auth-form">
         <h3>提交认证材料</h3>
-        <div class="upload-row">
-          <label>身份证正面照片</label>
-          <button class="upload-box">+ 上传</button>
+        <div class="auth-field">
+          <label>证件类型</label>
+          <select id="docTypeSelect">
+            <option value="idCard">居民身份证</option>
+            <option value="passport">护照</option>
+            <option value="officer">军官证</option>
+            <option value="household">户口本</option>
+            <option value="business">工商营业执照</option>
+            <option value="armedPolice">武警证</option>
+            <option value="taiwan">台胞证</option>
+            <option value="hkMacao">港澳居民来往内地通行证</option>
+            <option value="foreigner">外国人永居证</option>
+          </select>
         </div>
-        <div class="upload-row">
-          <label>身份证反面照片</label>
-          <button class="upload-box">+ 上传</button>
-        </div>
-        <div class="upload-row">
-          <label>租赁合同照片</label>
-          <button class="upload-box">+ 上传</button>
-        </div>
+        <div class="upload-list" id="uploadList"></div>
         <button class="btn-mini primary submit-auth" onclick="alert('认证材料已提交，请等待审核')">提交认证</button>
       </div>
     </div>
     <div class="bottom-nav"><div class="nav-item active" onclick="location.href='mini-member.html'"><i></i>会员</div><div class="nav-item" onclick="location.href='mini-notifications.html'"><i></i>通知</div></div>
   </div></div>
+  <script>
+    const authUploadMap = {
+      idCard: ["身份证人像面照片", "身份证国徽面照片", "租赁合同照片"],
+      passport: ["护照信息页照片", "护照签证/居留页照片", "租赁合同照片"],
+      officer: ["军官证正面照片", "军官证反面照片", "租赁合同照片"],
+      household: ["户口本首页照片", "户口本本人页照片", "租赁合同照片"],
+      business: ["工商营业执照照片", "法人/经办人证件照片", "租赁合同照片"],
+      armedPolice: ["武警证正面照片", "武警证反面照片", "租赁合同照片"],
+      taiwan: ["台胞证正面照片", "台胞证反面照片", "租赁合同照片"],
+      hkMacao: ["港澳居民来往内地通行证正面照片", "港澳居民来往内地通行证反面照片", "租赁合同照片"],
+      foreigner: ["外国人永居证正面照片", "外国人永居证反面照片", "租赁合同照片"]
+    };
+
+    function renderUploadRows(type) {
+      const uploads = authUploadMap[type] || authUploadMap.idCard;
+      document.getElementById("uploadList").innerHTML = uploads.map(name => `
+        <div class="upload-row">
+          <label class="${name === "租赁合同照片" ? "" : "required-upload"}">${name}</label>
+          <button class="upload-box" type="button" onclick="mockUpload(this)">+ 上传图片</button>
+        </div>
+      `).join("");
+    }
+
+    function mockUpload(button) {
+      button.classList.add("uploaded");
+      button.textContent = "已上传";
+    }
+
+    document.getElementById("docTypeSelect").addEventListener("change", event => {
+      renderUploadRows(event.target.value);
+    });
+    renderUploadRows("idCard");
+  </script>
 </body>
 </html>

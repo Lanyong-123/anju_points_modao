@@ -9,9 +9,70 @@
         <h3 style="font-size:20px">手机授权登录</h3>
         <p style="font-size:15px; margin-top:12px">首次进入会员中心时，调用微信手机号授权，授权后完成登录并自动关联会员数据。</p>
         <div class="row" style="margin-top:20px"><b style="font-size:16px">微信手机号</b><span style="font-size:15px">136****5520</span></div>
-        <button class="btn-mini primary" style="margin-top:16px; min-height:44px; font-size:16px" onclick="location.href='mini-member.html'">授权手机号并登录</button>
+        <label class="agreement-line">
+          <input type="checkbox" id="agreementCheck">
+          <span>我已阅读并同意<a href="#" data-policy="service">用户服务协议</a>、<a href="#" data-policy="privacy">隐私政策</a></span>
+        </label>
+        <button class="btn-mini primary" id="loginBtn" style="margin-top:16px; min-height:44px; font-size:16px" disabled>授权手机号并登录</button>
       </div>
     </div>
   </div></div>
+
+  <div class="use-modal" id="policyModal">
+    <div class="use-dialog policy-dialog">
+      <h3 id="policyTitle">用户服务协议</h3>
+      <div class="policy-content" id="policyContent"></div>
+      <button class="btn-mini primary" data-close-policy>知道了</button>
+    </div>
+  </div>
+
+  <script>
+    const policyTexts = {
+      service: {
+        title: "用户服务协议",
+        content: [
+          "欢迎使用安居集团会员积分服务。您授权登录后，可在会员中心查看积分、权益、优惠券及通知信息。",
+          "平台将根据业务规则为您提供积分累计、积分兑换、权益领取和服务核销等功能。请确保授权手机号为本人可正常使用号码。",
+          "如您停止使用会员服务，可通过会员中心注销入口提交申请，平台将按业务规则处理相关会员数据。"
+        ]
+      },
+      privacy: {
+        title: "隐私政策",
+        content: [
+          "为完成会员登录和服务关联，平台会处理您的微信授权手机号、会员ID、积分、权益、优惠券和服务使用记录。",
+          "相关信息仅用于会员身份识别、积分权益管理、客户服务和必要的运营审计，不会超出业务目的使用。",
+          "您可以通过会员中心查看、更新或申请注销个人信息；如有疑问，可联系项目服务中心处理。"
+        ]
+      }
+    };
+
+    const agreementCheck = document.getElementById("agreementCheck");
+    const loginBtn = document.getElementById("loginBtn");
+    const policyModal = document.getElementById("policyModal");
+    const policyTitle = document.getElementById("policyTitle");
+    const policyContent = document.getElementById("policyContent");
+
+    agreementCheck.addEventListener("change", () => {
+      loginBtn.disabled = !agreementCheck.checked;
+    });
+
+    loginBtn.addEventListener("click", () => {
+      if (agreementCheck.checked) location.href = "mini-member.html";
+    });
+
+    document.querySelectorAll("[data-policy]").forEach(link => {
+      link.addEventListener("click", event => {
+        event.preventDefault();
+        const policy = policyTexts[link.dataset.policy];
+        policyTitle.textContent = policy.title;
+        policyContent.innerHTML = policy.content.map(text => `<p>${text}</p>`).join("");
+        policyModal.classList.add("show");
+      });
+    });
+
+    document.querySelector("[data-close-policy]").addEventListener("click", () => {
+      policyModal.classList.remove("show");
+    });
+  </script>
 </body>
 </html>
