@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>发分主体风控</title><link rel="stylesheet" href="../resources/style.css"><style>.field label.required::before{content:"*";color:var(--red);margin-right:2px}</style></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>发分主体风控</title><link rel="stylesheet" href="../resources/style.css"><style>.field label.required::before{content:"*";color:var(--red);margin-right:2px}.adjust-modal{width:min(820px,calc(100vw - 48px))}.adjust-modal .panel-bd{max-height:calc(100vh - 170px);overflow:auto}.adjust-record-table{margin-top:14px}.adjust-record-table th,.adjust-record-table td{white-space:nowrap}</style></head>
 <body>
   <div class="page">
     <div class="filter">
@@ -11,17 +11,59 @@
     </div>
     <div class="panel"><div class="panel-hd"><h3>发分主体风控列表</h3><div class="toolbar"><button class="btn primary" data-quota="batch">年度额度设置</button><button class="btn" data-control="batch-limit">批量限制</button><button class="btn">导出</button></div></div><div class="panel-bd">
       <table><thead><tr><th><input type="checkbox"></th><th>主体编号</th><th>发分主体</th><th>所属组织</th><th>额度年度</th><th>年度发分额度</th><th>年度已发</th><th>额度预警比例</th><th>风控状态</th><th>操作</th></tr></thead><tbody>
-        <tr><td><input type="checkbox"></td><td>IS202605001</td><td>南山项目营销中心</td><td>南山项目</td><td>2026年</td><td>50,000,000</td><td>18,620,000</td><td>80%</td><td><span class="badge green">正常</span></td><td><span class="link" data-quota="IS202605001">额度</span>　<span class="link" data-control="limit">限制</span></td></tr>
-        <tr><td><input type="checkbox"></td><td>IS202605002</td><td>停车权益平台</td><td>安居集团</td><td>2026年</td><td>30,000,000</td><td>24,980,000</td><td>80%</td><td><span class="badge gold">限制发分</span></td><td><span class="link" data-quota="IS202605002">额度</span>　<span class="link" data-control="unlimit">解除限制</span></td></tr>
-        <tr><td><input type="checkbox"></td><td>IS202605003</td><td>异常活动批量发分</td><td>福田项目</td><td>2026年</td><td>8,000,000</td><td>8,260,000</td><td>90%</td><td><span class="badge gold">限制发分</span></td><td><span class="link" data-control="unlimit">解除限制</span></td></tr>
+        <tr><td><input type="checkbox"></td><td>IS202605001</td><td>南山项目营销中心</td><td>南山项目</td><td>2026年</td><td>50,000,000</td><td>18,620,000</td><td>80%</td><td><span class="badge green">正常</span></td><td><span class="link" data-adjust-quota="IS202605001" data-issuer="南山项目营销中心" data-current-quota="50,000,000">额度调整</span>　<span class="link" data-control="limit">限制</span></td></tr>
+        <tr><td><input type="checkbox"></td><td>IS202605002</td><td>停车权益平台</td><td>安居集团</td><td>2026年</td><td>30,000,000</td><td>24,980,000</td><td>80%</td><td><span class="badge gold">限制发分</span></td><td><span class="link" data-adjust-quota="IS202605002" data-issuer="停车权益平台" data-current-quota="30,000,000">额度调整</span>　<span class="link" data-control="unlimit">解除限制</span></td></tr>
+        <tr><td><input type="checkbox"></td><td>IS202605003</td><td>异常活动批量发分</td><td>福田项目</td><td>2026年</td><td>8,000,000</td><td>8,260,000</td><td>90%</td><td><span class="badge gold">限制发分</span></td><td><span class="link" data-adjust-quota="IS202605003" data-issuer="异常活动批量发分" data-current-quota="8,000,000">额度调整</span>　<span class="link" data-control="unlimit">解除限制</span></td></tr>
       </tbody></table>
       <div class="pagination"><span>共 126 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button></div>
     </div></div>
   </div>
   <div class="modal-mask" id="quotaModal"><div class="modal"><div class="panel-hd"><h3>年度额度设置</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="grid cols-2"><div class="field"><label class="required">发分主体</label><select required><option>南山项目营销中心</option><option>停车权益平台</option><option>异常活动批量发分</option><option>福田项目物业公司</option></select></div><div class="field"><label class="required">组织架构</label><select required><option>安居集团 / 南山项目 / 营销中心</option><option>安居集团 / 停车事业部 / 权益平台</option><option>安居集团 / 福田项目 / 物业公司</option></select></div><div class="field"><label class="required">额度年度</label><select required><option>2026年</option><option>2027年</option><option>2028年</option></select></div><div class="field"><label class="required">发分额度</label><input required value="50000000"></div></div></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认设置</button></div></div></div>
+  <div class="modal-mask" id="adjustQuotaModal"><div class="modal adjust-modal"><div class="panel-hd"><h3>额度调整</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="detail-list"><span>发分主体</span><strong id="adjustIssuerName">南山项目营销中心</strong><span>当前年度额度</span><strong id="adjustCurrentQuota">50,000,000</strong></div><div class="grid cols-2" style="margin-top:14px"><div class="field"><label class="required">发分额度</label><input id="adjustQuotaInput" required value="55000000"></div><div class="field"><label class="required">附件（额度调整凭证，大小不超过 10MB）</label><input id="adjustAttachmentInput" type="file" required accept="image/*,.jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx"></div></div><div class="notice" style="margin-top:12px"><strong>额度调整</strong>用于调整当前记录的年度发分额度，可多次调整；每次确认后生成调整记录。</div><table class="adjust-record-table"><thead><tr><th>发分额度</th><th>附件</th><th>调整时间</th></tr></thead><tbody id="adjustRecordRows"></tbody></table></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="saveAdjustQuota" type="button">确认调整</button></div></div></div>
   <div class="modal-mask" id="controlModal"><div class="modal"><div class="panel-hd"><h3 id="controlTitle">主体风控操作</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="notice" id="controlNotice"><strong>限制发分</strong>限制后该主体仅允许人工审核后发分。</div><div class="field" style="margin-top:12px"><label>操作原因</label><input value="额度异常或触发风控规则"></div></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div></div></div>
   <script>
     document.querySelectorAll("[data-quota]").forEach(el => el.addEventListener("click", () => document.getElementById("quotaModal").classList.add("open")));
+    const adjustRecords = {
+      IS202605001: [["50,000,000", "年度额度审批单.pdf", "2026-05-01 09:30"]],
+      IS202605002: [["30,000,000", "停车权益平台额度说明.xlsx", "2026-05-03 11:20"]],
+      IS202605003: [["8,000,000", "异常活动批量发分审批.pdf", "2026-05-05 14:08"]]
+    };
+    let activeAdjustNo = "IS202605001";
+    function nowText() {
+      const d = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+    function renderAdjustRecords(no) {
+      const rows = adjustRecords[no] || [];
+      document.getElementById("adjustRecordRows").innerHTML = rows.map(row => `<tr><td>${row[0]}</td><td><span class="link">${row[1]}</span></td><td>${row[2]}</td></tr>`).join("");
+    }
+    document.querySelectorAll("[data-adjust-quota]").forEach(el => el.addEventListener("click", () => {
+      activeAdjustNo = el.dataset.adjustQuota;
+      document.getElementById("adjustIssuerName").textContent = el.dataset.issuer;
+      document.getElementById("adjustCurrentQuota").textContent = el.dataset.currentQuota;
+      document.getElementById("adjustQuotaInput").value = el.dataset.currentQuota.replace(/,/g, "");
+      document.getElementById("adjustAttachmentInput").value = "";
+      renderAdjustRecords(activeAdjustNo);
+      document.getElementById("adjustQuotaModal").classList.add("open");
+    }));
+    document.getElementById("saveAdjustQuota").addEventListener("click", () => {
+      const quotaInput = document.getElementById("adjustQuotaInput");
+      const attachmentInput = document.getElementById("adjustAttachmentInput");
+      const quota = quotaInput.value.trim();
+      if (!quota) {
+        quotaInput.focus();
+        return;
+      }
+      if (!attachmentInput.files || !attachmentInput.files[0]) {
+        attachmentInput.focus();
+        return;
+      }
+      const attachment = attachmentInput.files[0].name;
+      adjustRecords[activeAdjustNo] = adjustRecords[activeAdjustNo] || [];
+      adjustRecords[activeAdjustNo].unshift([quota.replace(/\B(?=(\d{3})+(?!\d))/g, ","), attachment, nowText()]);
+      renderAdjustRecords(activeAdjustNo);
+    });
     const copy = { limit: ["限制发分", "限制后该主体仅允许人工审核后发分。"], unlimit: ["解除限制", "解除后恢复正常发分能力。"], "batch-limit": ["批量限制发分", "对已勾选主体批量限制发分。"] };
     document.querySelectorAll("[data-control]").forEach(el => el.addEventListener("click", () => { const c = copy[el.dataset.control] || copy.limit; document.getElementById("controlTitle").textContent = c[0]; document.getElementById("controlNotice").innerHTML = `<strong>${c[0]}</strong>${c[1]}`; document.getElementById("controlModal").classList.add("open"); }));
     document.querySelectorAll("[data-close-modal]").forEach(el => el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open")));

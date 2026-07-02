@@ -99,24 +99,6 @@
     .identity-grid strong {
       color: var(--ink);
     }
-    .score-card {
-      width: 220px;
-      min-height: 130px;
-      display: grid;
-      place-items: center;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-    }
-    .score-card strong {
-      color: var(--navy);
-      font-size: 36px;
-      line-height: 1;
-    }
-    .score-card span {
-      color: var(--muted);
-      font-size: 12px;
-    }
     .feature-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -360,9 +342,6 @@
               <div><span>来源渠道</span><strong id="profileSource">小程序注册、智能客服</strong></div>
             </div>
           </div>
-          <div class="score-card">
-            <div><strong id="profileScore">92</strong><br><span>画像完整度</span></div>
-          </div>
         </div>
 
         <div class="feature-grid">
@@ -481,7 +460,7 @@
             <span>可查看系统</span><strong>管理端、智能客服系统、权益中心、第三方业务系统</strong>
             <span>核心特征</span><strong id="reportFeature">项目住户、黑金会员、高价值客户、近1个月咨询2次、近3个月权益兑换1次</strong>
             <span>数据来源</span><strong>会员中心、OneID识别、标签管理、智能客服、行为记录、权益记录、来源渠道记录</strong>
-            <span>分析结果</span><strong id="reportResult">该客户画像完整度高，近期行为活跃，适合纳入高价值客户运营人群。</strong>
+            <span>分析结果</span><strong id="reportResult">该客户近期行为活跃，适合纳入高价值客户运营人群。</strong>
           </div>
           <table>
             <thead><tr><th>标签类型</th><th>命中标签</th><th>说明</th></tr></thead>
@@ -526,7 +505,7 @@
           ["行为特征", "智能客服咨询记录、浏览点击记录、活动参与记录、权益领取记录", "近1个月咨询2次，近3个月权益兑换1次，近30天权益领取3次，且多次参与社区活动 / 公益。"],
           ["来源渠道", "小程序注册、智能客服、权益中心、第三方业务系统", "小程序为首次来源，智能客服为近期主要触达渠道。"]
         ],
-        reportResult: "该客户画像完整度高，近期行为活跃，适合纳入高价值客户运营人群。"
+        reportResult: "该客户近期行为活跃，适合纳入高价值客户运营人群。"
       },
       zhou: {
         name: "周女士",
@@ -600,7 +579,6 @@
       document.getElementById("profileAccount").textContent = data.account;
       document.getElementById("profileMemberId").textContent = data.memberId;
       document.getElementById("profileSource").textContent = data.source;
-      document.getElementById("profileScore").textContent = data.score;
       document.getElementById("featureIdentity").textContent = data.identity;
       document.getElementById("featureAuthSource").textContent = data.authSource;
       document.getElementById("featureProject").textContent = data.project;

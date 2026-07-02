@@ -50,6 +50,9 @@
             <tr><td><input type="checkbox"></td><td>RA202605250027</td><td><span class="link" data-detail="RA202605250027">陈先生</span></td><td>AJ202605010027</td><td>137****2098</td><td>项目住户会员</td><td>福田项目</td><td><span class="badge red">审核不通过</span></td><td>租赁合同已过期</td><td>2026-05-25 17:20</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605250027">详情</span></td></tr>
             <tr><td><input type="checkbox"></td><td>RA202605250031</td><td><span class="link" data-detail="RA202605250031">王强</span></td><td>AJ202603090112</td><td>188****4019</td><td>非员工非住户会员</td><td>-</td><td><span class="badge red">审核不通过</span></td><td>命中黑名单、手机号异常</td><td>2026-05-25 16:02</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605250031">详情</span></td></tr>
             <tr><td><input type="checkbox"></td><td>RA202605240066</td><td><span class="link" data-detail="RA202605240066">赵女士</span></td><td>AJ202605240066</td><td>135****9087</td><td>项目住户会员</td><td>南山项目</td><td><span class="badge green">审核通过</span></td><td>身份三要素一致、合同姓名匹配成功</td><td>2026-05-24 14:35</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605240066">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605240071</td><td><span class="link" data-detail="RA202605240071">林先生</span></td><td>AJ202605240071</td><td>136****7021</td><td>非员工非住户会员</td><td>-</td><td><span class="badge green">审核通过</span></td><td>台胞证姓名与手机号匹配</td><td>2026-05-24 11:26</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605240071">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605230083</td><td><span class="link" data-detail="RA202605230083">许女士</span></td><td>AJ202605230083</td><td>138****8016</td><td>项目住户会员</td><td>宝安项目</td><td><span class="badge green">审核通过</span></td><td>通行证信息一致、合同有效</td><td>2026-05-23 16:42</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605230083">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605230096</td><td><span class="link" data-detail="RA202605230096">安德鲁</span></td><td>AJ202605230096</td><td>137****6628</td><td>非员工非住户会员</td><td>-</td><td><span class="badge green">审核通过</span></td><td>外国人永居证信息一致</td><td>2026-05-23 10:18</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605230096">详情</span></td></tr>
           </tbody>
         </table>
         <div class="pagination">
@@ -75,6 +78,7 @@
         <span>会员名称</span><strong id="detailName">李明</strong>
         <span>会员ID</span><strong id="detailMemberId">AJ202605180018</strong>
         <span>手机号</span><strong id="detailPhone">136****5520</strong>
+        <span>证件类型</span><strong id="detailCertType">护照</strong>
         <span>会员类型</span><strong id="detailType">项目住户会员</strong>
         <span>所属项目</span><strong id="detailProject">南山项目</strong>
         <span>审核状态</span><strong id="detailStatus">审核通过</strong>
@@ -118,38 +122,56 @@
     const auditData = {
       RA202605260018: {
         name: "李明", id: "AJ202605180018", phone: "136****5520", type: "项目住户会员", project: "南山项目",
-        status: "审核通过", time: "2026-05-26 09:12",
+        certType: "护照", status: "审核通过", time: "2026-05-26 09:12",
         checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["住户合同", "通过", "南山项目 3 栋 1201 合同有效"]],
-        materials: [["身份证附件", "姓名李明，证件号 4403**********18", "通过", "idcard"], ["租赁合同", "合同号 HT2026051809，合同期至 2027-04-30", "通过", "contract"]]
+        materials: [["护照附件", "姓名李明，护照号 E123****8", "通过", "passport"], ["租赁合同", "合同号 HT2026051809，合同期至 2027-04-30", "通过", "contract"]]
       },
       RA202605260019: {
         name: "周女士", id: "AJ202604220091", phone: "139****6812", type: "非员工非住户会员", project: "-",
-        status: "审核不通过", time: "2026-05-26 08:45",
-        checks: [["身份三要素", "不通过", "证件 OCR 置信度低于系统阈值"], ["材料完整性", "通过", "身份证正反面已上传"]],
-        materials: [["身份证附件", "姓名周女士，证件号局部识别置信度偏低", "不通过", "idcard"]]
+        certType: "军官证", status: "审核不通过", time: "2026-05-26 08:45",
+        checks: [["身份三要素", "不通过", "证件 OCR 置信度低于系统阈值"], ["材料完整性", "通过", "军官证照片已上传"]],
+        materials: [["军官证附件", "姓名周女士，军官证号局部识别置信度偏低", "不通过", "officer"]]
       },
       RA202605250027: {
         name: "陈先生", id: "AJ202605010027", phone: "137****2098", type: "项目住户会员", project: "福田项目",
-        status: "审核不通过", time: "2026-05-25 17:20",
+        certType: "户口本", status: "审核不通过", time: "2026-05-25 17:20",
         checks: [["住户合同", "不通过", "系统合同状态显示已过期"], ["身份三要素", "通过", "姓名、手机号、证件号一致"]],
-        materials: [["租赁合同", "合同号 HT2025052507，合同期已结束", "不通过", "contract"]]
+        materials: [["户口本附件", "户主页及本人页信息与提交姓名一致", "通过", "household"], ["租赁合同", "合同号 HT2025052507，合同期已结束", "不通过", "contract"]]
       },
       RA202605250031: {
         name: "王强", id: "AJ202603090112", phone: "188****4019", type: "非员工非住户会员", project: "-",
-        status: "审核不通过", time: "2026-05-25 16:02",
-        checks: [["手机号校验", "不通过", "近期多账号绑定异常"], ["材料完整性", "通过", "身份证材料已上传"]],
-        materials: [["身份证附件", "姓名王强，证件号 4403**********09", "通过", "idcard"]]
+        certType: "工商营业执照", status: "审核不通过", time: "2026-05-25 16:02",
+        checks: [["手机号校验", "不通过", "近期多账号绑定异常"], ["材料完整性", "通过", "工商营业执照材料已上传"]],
+        materials: [["工商营业执照附件", "企业名称安居服务商，统一社会信用代码 9144**********09", "通过", "business"]]
       },
       RA202605240066: {
         name: "赵女士", id: "AJ202605240066", phone: "135****9087", type: "项目住户会员", project: "南山项目",
-        status: "审核通过", time: "2026-05-24 14:35",
+        certType: "武警证", status: "审核通过", time: "2026-05-24 14:35",
         checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["住户合同", "通过", "合同姓名与提交姓名匹配成功"]],
-        materials: [["身份证附件", "姓名赵女士，证件号 4403**********66", "通过", "idcard"], ["租赁合同", "南山项目 5 栋 801，合同期有效", "通过", "contract"]]
+        materials: [["武警证附件", "姓名赵女士，证件号 WJ2026****66", "通过", "armedPolice"], ["租赁合同", "南山项目 5 栋 801，合同期有效", "通过", "contract"]]
+      },
+      RA202605240071: {
+        name: "林先生", id: "AJ202605240071", phone: "136****7021", type: "非员工非住户会员", project: "-",
+        certType: "台胞证", status: "审核通过", time: "2026-05-24 11:26",
+        checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["材料完整性", "通过", "台胞证正反面已上传"]],
+        materials: [["台胞证附件", "姓名林先生，台胞证号 8300****21", "通过", "taiwan"]]
+      },
+      RA202605230083: {
+        name: "许女士", id: "AJ202605230083", phone: "138****8016", type: "项目住户会员", project: "宝安项目",
+        certType: "港澳居民来往内地通行证", status: "审核通过", time: "2026-05-23 16:42",
+        checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["住户合同", "通过", "宝安项目合同有效"]],
+        materials: [["港澳居民来往内地通行证附件", "姓名许女士，通行证号 H/M 123****16", "通过", "hkMacao"], ["租赁合同", "宝安项目 2 栋 603，合同期有效", "通过", "contract"]]
+      },
+      RA202605230096: {
+        name: "安德鲁", id: "AJ202605230096", phone: "137****6628", type: "非员工非住户会员", project: "-",
+        certType: "外国人永居证", status: "审核通过", time: "2026-05-23 10:18",
+        checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["材料完整性", "通过", "外国人永居证已上传"]],
+        materials: [["外国人永居证附件", "姓名 ANDREW，永居证号 9********628", "通过", "foreigner"]]
       }
     };
 
     const drawer = document.getElementById("auditDrawer");
-    const detailIds = ["No", "Name", "MemberId", "Phone", "Type", "Project", "Status", "Time"];
+    const detailIds = ["No", "Name", "MemberId", "Phone", "CertType", "Type", "Project", "Status", "Time"];
     function badgeClass(result) {
       if (result.includes("不通过")) return "red";
       if (result.includes("通过")) return "green";
@@ -157,7 +179,7 @@
     }
     function renderDetail(no) {
       const data = auditData[no] || auditData.RA202605260018;
-      const values = [no, data.name, data.id, data.phone, data.type, data.project, data.status, data.time];
+      const values = [no, data.name, data.id, data.phone, data.certType || "居民身份证", data.type, data.project, data.status, data.time];
       detailIds.forEach((key, index) => {
         const target = document.getElementById(`detail${key}`);
         target.innerHTML = key === "Status" ? `<span class="badge ${badgeClass(values[index])}">${values[index]}</span>` : values[index];
@@ -181,6 +203,46 @@
         title: "身份证附件",
         notice: "用于后台系统自动核对会员姓名、证件号和有效期。",
         rows: [["附件名称", "身份证正反面.jpg"], ["识别姓名", "与提交实名信息比对"], ["证件号", "4403**********18"], ["有效期", "2026-05-18 至 2036-05-18"]]
+      },
+      passport: {
+        title: "护照附件",
+        notice: "用于后台系统自动核对会员姓名、护照号和有效期。",
+        rows: [["附件名称", "护照信息页.jpg"], ["识别姓名", "李明"], ["护照号", "E123****8"], ["有效期", "2025-05-18 至 2035-05-18"]]
+      },
+      officer: {
+        title: "军官证附件",
+        notice: "用于后台系统自动核对会员姓名、军官证号和证件有效性。",
+        rows: [["附件名称", "军官证正反面.jpg"], ["识别姓名", "周女士"], ["军官证号", "JG2026****91"], ["识别状态", "局部识别置信度偏低"]]
+      },
+      household: {
+        title: "户口本附件",
+        notice: "用于后台系统自动核对户主页、本人页和提交实名信息。",
+        rows: [["附件名称", "户口本首页及本人页.jpg"], ["户主信息", "已识别"], ["本人姓名", "陈先生"], ["户籍地址", "广东省深圳市"]]
+      },
+      business: {
+        title: "工商营业执照附件",
+        notice: "用于后台系统自动核对企业名称、统一社会信用代码和登记状态。",
+        rows: [["附件名称", "工商营业执照.jpg"], ["企业名称", "安居服务商"], ["统一社会信用代码", "9144**********09"], ["登记状态", "存续"]]
+      },
+      armedPolice: {
+        title: "武警证附件",
+        notice: "用于后台系统自动核对会员姓名、武警证号和证件有效性。",
+        rows: [["附件名称", "武警证正反面.jpg"], ["识别姓名", "赵女士"], ["武警证号", "WJ2026****66"], ["识别状态", "通过"]]
+      },
+      taiwan: {
+        title: "台胞证附件",
+        notice: "用于后台系统自动核对会员姓名、台胞证号和证件有效期。",
+        rows: [["附件名称", "台胞证正反面.jpg"], ["识别姓名", "林先生"], ["台胞证号", "8300****21"], ["有效期", "2024-08-01 至 2029-08-01"]]
+      },
+      hkMacao: {
+        title: "港澳居民来往内地通行证附件",
+        notice: "用于后台系统自动核对会员姓名、通行证号和证件有效期。",
+        rows: [["附件名称", "港澳通行证正反面.jpg"], ["识别姓名", "许女士"], ["通行证号", "H/M 123****16"], ["有效期", "2023-12-01 至 2033-12-01"]]
+      },
+      foreigner: {
+        title: "外国人永居证附件",
+        notice: "用于后台系统自动核对会员姓名、永居证号和证件有效期。",
+        rows: [["附件名称", "外国人永居证正反面.jpg"], ["识别姓名", "ANDREW"], ["永居证号", "9********628"], ["有效期", "2026-01-01 至 2036-01-01"]]
       },
       contract: {
         title: "租赁合同附件",
