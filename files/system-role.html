@@ -76,6 +76,25 @@
       color: #34465c;
       font-size: 13px;
     }
+    .desensitize-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .desensitize-check input {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      margin: 0;
+    }
     .action-list {
       display: flex;
       gap: 12px;
@@ -151,6 +170,7 @@
         <div class="role-form">
           <div class="field"><label class="required">角色名称</label><input value="积分运营管理员"></div>
           <div class="field"><label class="required">角色分类</label><select><option>系统管理</option><option selected>运营管理员</option><option>运维管理员</option><option>审计管理员</option></select></div>
+          <div class="field"><label>是否脱敏</label><label class="desensitize-check"><input type="checkbox" id="roleDesensitizeCheck" checked> 是，保存后该角色按脱敏规则展示敏感字段</label></div>
         </div>
         <div class="permission-tree">
           <div class="permission-tree-hd">
@@ -269,6 +289,7 @@
     document.querySelectorAll("[data-open-role]").forEach(el => {
       el.addEventListener("click", () => {
         document.getElementById("roleModalTitle").textContent = el.dataset.openRole === "create" ? "新增角色" : "编辑角色";
+        document.getElementById("roleDesensitizeCheck").checked = true;
         document.getElementById("roleModal").classList.add("open");
       });
     });
