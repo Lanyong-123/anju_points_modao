@@ -44,48 +44,16 @@
       z-index: 1;
       display: contents;
     }
-    .login-brand {
+    .login-title {
       position: relative;
       z-index: 1;
-      width: 560px;
-      display: grid;
-      justify-items: center;
-      gap: 10px;
-      padding: 0;
-      background: transparent;
-      color: var(--navy);
-    }
-    .login-brand-main {
-      display: grid;
-      justify-items: center;
-      gap: 12px;
-    }
-    .login-brand-main .brand-mark {
-      width: 86px;
-      height: 86px;
-      border-radius: 14px;
-      background: rgba(255,255,255,.92);
-      border: 0;
-      color: var(--brand);
-      box-shadow: 0 10px 26px rgba(0, 104, 168, .18);
-      font-size: 36px;
-    }
-    .login-brand-main strong {
       display: block;
       text-align: center;
-      font-size: 18px;
-      line-height: 1.2;
-      color: #17415f;
-    }
-    .login-brand-main span {
-      display: block;
-      margin-top: 8px;
       color: #0b2f4f;
       font-size: 30px;
       font-weight: 800;
       line-height: 1.18;
     }
-    .login-brand-copy { display: none; }
     .login-panel {
       position: relative;
       z-index: 1;
@@ -167,19 +135,7 @@
 </head>
 <body>
   <main class="login-shell">
-    <section class="login-brand">
-      <div class="login-brand-main">
-        <div class="brand-mark">安</div>
-        <div>
-          <strong>安居集团</strong>
-      <span>会员积分运营管理平台</span>
-        </div>
-      </div>
-      <div class="login-brand-copy">
-        <h1>统一运营后台</h1>
-        <p>会员、积分、权益、客户数据与风控业务统一管理。</p>
-      </div>
-    </section>
+    <div class="login-title">会员积分运营管理平台</div>
     <section class="login-panel">
       <h2>账号登录</h2>
       <p class="sub">请使用集团统一账号登录，操作记录将进入后台审计。</p>
