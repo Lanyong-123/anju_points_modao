@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../resources/style.css">
   <style>
     .satisfaction-filter {
-      grid-template-columns: 1.2fr 1fr auto auto;
+      grid-template-columns: 1.2fr 1fr 1fr auto auto;
     }
     .content-grid {
       display: grid;
@@ -62,7 +62,7 @@
       height: 190px;
       justify-self: center;
       border-radius: 50%;
-      background: conic-gradient(#16845b 0 68%, #d7a84d 68% 88%, #b81f2d 88% 100%);
+      background: conic-gradient(#0f8a5f 0 45%, #4aa66f 45% 72%, #d7a84d 72% 88%, #d66b3d 88% 96%, #b81f2d 96% 100%);
       box-shadow: inset 0 0 0 34px #fff, 0 0 0 1px #dfe6ee;
       position: relative;
     }
@@ -131,6 +131,7 @@
     <div class="filter satisfaction-filter">
       <div class="field"><label>统计时间</label><input value="2026-06-01 至 2026-06-10"></div>
       <div class="field"><label>所属组织</label><select><option>全部组织</option><option>安居集团</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option></select></div>
+      <div class="field"><label>评价方式</label><select><option selected>主动评价</option><option>用户默认评价</option></select></div>
       <button class="btn primary">查询</button>
       <button class="btn">重置</button>
     </div>
@@ -142,22 +143,26 @@
         </div>
         <div class="panel-bd">
           <div class="trend-chart">
-            <svg class="trend-svg" viewBox="0 0 980 220" preserveAspectRatio="none" aria-label="满意数、一般数、不满意数趋势">
+            <svg class="trend-svg" viewBox="0 0 980 220" preserveAspectRatio="none" aria-label="非常满意数、满意数、一般数、不满意数、非常不满意数趋势">
               <defs>
                 <pattern id="sGrid" width="1" height="44" patternUnits="userSpaceOnUse">
                   <path d="M 0 44 H 980" fill="none" stroke="#e5edf4" stroke-width="1"/>
                 </pattern>
               </defs>
               <rect x="0" y="0" width="980" height="220" fill="url(#sGrid)"/>
-              <polyline points="18,112 176,104 334,96 492,84 650,72 808,62 962,54" fill="none" stroke="#16845b" stroke-width="4"/>
+              <polyline points="18,94 176,88 334,82 492,72 650,64 808,56 962,50" fill="none" stroke="#0f8a5f" stroke-width="4"/>
+              <polyline points="18,116 176,110 334,104 492,96 650,88 808,82 962,76" fill="none" stroke="#4aa66f" stroke-width="4"/>
               <polyline points="18,148 176,142 334,134 492,130 650,124 808,118 962,110" fill="none" stroke="#d7a84d" stroke-width="4"/>
-              <polyline points="18,174 176,166 334,158 492,164 650,154 808,146 962,138" fill="none" stroke="#b81f2d" stroke-width="4"/>
+              <polyline points="18,172 176,166 334,160 492,164 650,156 808,150 962,144" fill="none" stroke="#d66b3d" stroke-width="4"/>
+              <polyline points="18,190 176,184 334,178 492,182 650,174 808,168 962,162" fill="none" stroke="#b81f2d" stroke-width="4"/>
             </svg>
             <div class="axis-labels"><span>2025-12</span><span>2026-01</span><span>2026-02</span><span>2026-03</span><span>2026-04</span><span>2026-05</span><span>2026-06</span></div>
             <div class="legend-row">
-              <span><i style="background:#16845b"></i>满意数</span>
+              <span><i style="background:#0f8a5f"></i>非常满意数</span>
+              <span><i style="background:#4aa66f"></i>满意数</span>
               <span><i style="background:#d7a84d"></i>一般数</span>
-              <span><i style="background:#b81f2d"></i>不满意数</span>
+              <span><i style="background:#d66b3d"></i>不满意数</span>
+              <span><i style="background:#b81f2d"></i>非常不满意数</span>
             </div>
           </div>
         </div>
@@ -169,9 +174,11 @@
           <div class="pie-layout">
             <div class="pie-chart"></div>
             <div class="pie-list">
-              <div class="pie-item"><span><i style="background:#16845b"></i>满意数</span><strong>42,860</strong></div>
+              <div class="pie-item"><span><i style="background:#0f8a5f"></i>非常满意数</span><strong>28,640</strong></div>
+              <div class="pie-item"><span><i style="background:#4aa66f"></i>满意数</span><strong>17,182</strong></div>
               <div class="pie-item"><span><i style="background:#d7a84d"></i>一般数</span><strong>8,316</strong></div>
-              <div class="pie-item"><span><i style="background:#b81f2d"></i>不满意数</span><strong>3,204</strong></div>
+              <div class="pie-item"><span><i style="background:#d66b3d"></i>不满意数</span><strong>2,346</strong></div>
+              <div class="pie-item"><span><i style="background:#b81f2d"></i>非常不满意数</span><strong>858</strong></div>
             </div>
           </div>
         </div>
@@ -188,18 +195,20 @@
           <thead>
             <tr>
               <th>组织名称</th>
+              <th>非常满意数</th>
               <th>满意数</th>
               <th>一般数</th>
               <th>不满意数</th>
+              <th>非常不满意数</th>
               <th>满意率</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td><span class="link" data-drill="安居集团">安居集团</span></td><td>42,860</td><td>8,316</td><td>3,204</td><td><span class="badge green">88.6%</span></td></tr>
-            <tr><td><span class="link" data-drill="南山项目">南山项目</span></td><td>12,640</td><td>2,086</td><td>716</td><td><span class="badge green">90.4%</span></td></tr>
-            <tr><td><span class="link" data-drill="福田项目">福田项目</span></td><td>10,928</td><td>2,314</td><td>982</td><td><span class="badge green">86.7%</span></td></tr>
-            <tr><td><span class="link" data-drill="宝安项目">宝安项目</span></td><td>8,532</td><td>1,902</td><td>1,016</td><td><span class="badge gold">84.1%</span></td></tr>
-            <tr><td><span class="link" data-drill="商业运营部">商业运营部</span></td><td>6,318</td><td>1,126</td><td>490</td><td><span class="badge green">89.8%</span></td></tr>
+            <tr><td><span class="link" data-drill="安居集团">安居集团</span></td><td>28,640</td><td>17,182</td><td>8,316</td><td>2,346</td><td>858</td><td><span class="badge green">88.6%</span></td></tr>
+            <tr><td><span class="link" data-drill="南山项目">南山项目</span></td><td>8,426</td><td>5,118</td><td>2,086</td><td>526</td><td>190</td><td><span class="badge green">90.4%</span></td></tr>
+            <tr><td><span class="link" data-drill="福田项目">福田项目</span></td><td>6,804</td><td>4,312</td><td>2,314</td><td>724</td><td>258</td><td><span class="badge green">86.7%</span></td></tr>
+            <tr><td><span class="link" data-drill="宝安项目">宝安项目</span></td><td>5,146</td><td>3,418</td><td>1,902</td><td>746</td><td>270</td><td><span class="badge gold">84.1%</span></td></tr>
+            <tr><td><span class="link" data-drill="商业运营部">商业运营部</span></td><td>4,226</td><td>2,268</td><td>1,126</td><td>356</td><td>134</td><td><span class="badge green">89.8%</span></td></tr>
           </tbody>
         </table>
         <div class="pagination"><span>共 32 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
@@ -212,11 +221,11 @@
       <div class="panel-hd"><h3 id="drillTitle">组织下钻</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd">
         <table>
-          <thead><tr><th>组织名称</th><th>满意数</th><th>一般数</th><th>不满意数</th><th>满意率</th></tr></thead>
+          <thead><tr><th>组织名称</th><th>非常满意数</th><th>满意数</th><th>一般数</th><th>不满意数</th><th>非常不满意数</th><th>满意率</th></tr></thead>
           <tbody>
-            <tr><td>一区服务中心</td><td>3,286</td><td>612</td><td>184</td><td><span class="badge green">91.4%</span></td></tr>
-            <tr><td>二区服务中心</td><td>2,946</td><td>584</td><td>236</td><td><span class="badge green">89.0%</span></td></tr>
-            <tr><td>商业配套组</td><td>1,826</td><td>426</td><td>214</td><td><span class="badge gold">85.5%</span></td></tr>
+            <tr><td>一区服务中心</td><td>2,186</td><td>1,204</td><td>612</td><td>126</td><td>58</td><td><span class="badge green">91.4%</span></td></tr>
+            <tr><td>二区服务中心</td><td>1,926</td><td>1,142</td><td>584</td><td>176</td><td>60</td><td><span class="badge green">89.0%</span></td></tr>
+            <tr><td>商业配套组</td><td>1,126</td><td>788</td><td>426</td><td>154</td><td>60</td><td><span class="badge gold">85.5%</span></td></tr>
           </tbody>
         </table>
       </div>

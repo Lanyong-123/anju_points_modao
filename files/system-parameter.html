@@ -67,7 +67,7 @@
     <div class="filter param-filter">
       <div class="field"><label>参数名称</label><input id="nameFilter" placeholder="请输入参数名称"></div>
       <div class="field"><label>key值</label><input id="keyFilter" placeholder="请输入key值"></div>
-      <div class="field"><label>所属模块</label><select id="moduleFilter"><option>全部模块</option><option>会员管理</option><option>清算管理</option></select></div>
+      <div class="field"><label>所属模块</label><select id="moduleFilter"><option>全部模块</option><option>会员管理</option><option>清算管理</option><option>积分帐户审核管理</option></select></div>
       <button class="btn primary" id="queryBtn">查询</button>
       <button class="btn" id="resetBtn">重置</button>
     </div>
@@ -102,7 +102,7 @@
           <div class="field"><label>所属模块</label><input id="modalModule" readonly></div>
           <div class="field"><label>参数名称</label><input id="modalName" readonly></div>
           <div class="field" style="grid-column:1 / -1"><label>key值</label><input id="modalKey" readonly></div>
-          <div class="field" style="grid-column:1 / -1"><label>value值</label><input id="modalValue"></div>
+          <div class="field" style="grid-column:1 / -1"><label>value值</label><input id="modalValue"><select id="modalRoleValue" style="display:none"></select></div>
         </div>
         <p class="config-help" id="modalHelp"></p>
       </div>
@@ -141,9 +141,18 @@
         key: "settlement.coupon_batch_job_cycle",
         value: "每日结算前一日数据",
         desc: "设置优惠券结算批处理周期，例如每日结算前一日数据。"
+      },
+      {
+        module: "积分帐户审核管理",
+        name: "审核角色配置",
+        key: "points.account_audit.role_config",
+        value: "积分运营管理员",
+        valueType: "role",
+        desc: "用于配置积分帐户审核管理流程中可执行审核操作的角色。"
       }
     ];
 
+    const roleOptions = ["系统超级管理员", "积分运营管理员", "平台运维管理员", "数据审计管理员"];
     let params = defaultParams.map(item => ({ ...item }));
     let currentRows = [];
     let editingKey = "";
@@ -192,7 +201,17 @@
           document.getElementById("modalModule").value = item.module;
           document.getElementById("modalName").value = item.name;
           document.getElementById("modalKey").value = item.key;
-          document.getElementById("modalValue").value = item.value;
+          const modalValue = document.getElementById("modalValue");
+          const modalRoleValue = document.getElementById("modalRoleValue");
+          if (item.valueType === "role") {
+            modalValue.style.display = "none";
+            modalRoleValue.style.display = "";
+            modalRoleValue.innerHTML = roleOptions.map(role => `<option${role === item.value ? " selected" : ""}>${role}</option>`).join("");
+          } else {
+            modalValue.style.display = "";
+            modalRoleValue.style.display = "none";
+            modalValue.value = item.value;
+          }
           document.getElementById("modalHelp").textContent = item.desc;
           document.getElementById("configModal").classList.add("open");
         });
@@ -208,7 +227,11 @@
     });
     document.getElementById("saveBtn").addEventListener("click", () => {
       const item = params.find(row => row.key === editingKey);
-      if (item) item.value = document.getElementById("modalValue").value.trim() || item.value;
+      if (item) {
+        item.value = item.valueType === "role"
+          ? document.getElementById("modalRoleValue").value
+          : (document.getElementById("modalValue").value.trim() || item.value);
+      }
       document.getElementById("configModal").classList.remove("open");
       renderRows();
       showToast("参数配置已保存");
