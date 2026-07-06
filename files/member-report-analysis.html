@@ -34,8 +34,8 @@
 <body>
   <div class="page">
     <div class="filter">
-      <div class="field"><label>统计时间</label><input value="2026-01-01 至 2026-06-30"></div>
-      <div class="field"><label>统计粒度</label><select id="grainSelect"><option>日</option><option selected>月</option></select></div>
+      <div class="field"><label>统计周期</label><select id="dimensionSelect"><option>日</option><option selected>月</option><option>年</option></select></div>
+      <div class="field"><label>统计时间</label><input id="periodInput" value="2026-01 至 2026-06"></div>
       <button class="btn primary" id="queryBtn">查询</button>
       <button class="btn" id="resetBtn">重置</button>
     </div>
@@ -92,6 +92,17 @@
 
     function format(num) {
       return num.toLocaleString("zh-CN");
+    }
+
+    const periodByDimension = {
+      "日": "2026-06-01 至 2026-06-30",
+      "月": "2026-01 至 2026-06",
+      "年": "2026年"
+    };
+
+    function syncPeriodInput() {
+      const dimension = document.getElementById("dimensionSelect").value;
+      document.getElementById("periodInput").value = periodByDimension[dimension] || periodByDimension["月"];
     }
 
     function renderTotalTrend() {
@@ -177,17 +188,20 @@
       renderRows();
     });
     document.getElementById("resetBtn").addEventListener("click", () => {
-      document.getElementById("grainSelect").value = "月";
+      document.getElementById("dimensionSelect").value = "月";
+      syncPeriodInput();
       renderTotalTrend();
       renderLevelTrend();
       renderRows();
     });
+    document.getElementById("dimensionSelect").addEventListener("change", syncPeriodInput);
     document.getElementById("analysisRows").addEventListener("click", event => {
       const link = event.target.closest("[data-member-info]");
       if (!link) return;
       event.preventDefault();
       openMemberInfo();
     });
+    syncPeriodInput();
     renderTotalTrend();
     renderLevelTrend();
     renderRows();

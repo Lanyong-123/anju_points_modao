@@ -38,7 +38,6 @@
       <div class="field"><label>发分主体</label><select id="issuerFilter"><option>全部主体</option><option>集团运营中心</option><option>安居集团</option><option>南山项目</option></select></div>
       <button class="btn primary" id="queryBtn">查询</button>
       <button class="btn" id="resetBtn">重置</button>
-      <button class="btn" id="exportBtn">导出</button>
     </div>
 
     <div class="report-grid">
@@ -55,7 +54,7 @@
     <div class="panel" style="margin-top:14px">
       <div class="panel-hd">
         <h3>优惠券效果分析明细</h3>
-        <div class="toolbar"><button class="btn" id="panelExportBtn">导出Excel</button></div>
+        <div class="toolbar"><button class="btn" id="panelExportBtn">导出</button></div>
       </div>
       <div class="panel-bd">
         <table>
@@ -190,7 +189,6 @@
       document.getElementById("issuerFilter").value = "全部主体";
       renderAll();
     });
-    document.getElementById("exportBtn").addEventListener("click", exportRows);
     document.getElementById("panelExportBtn").addEventListener("click", exportRows);
     renderAll();
   </script>
