@@ -306,7 +306,7 @@
             </div>
           </div>
           <div class="field"><label class="required">权益类型</label><select id="editType" data-benefit-type><option>优惠券权益</option><option>其它权益</option></select></div>
-          <div class="field" id="couponGiftField"><label class="required">选择礼券</label><select id="editGift"><option>免费搬家服务</option><option>优先选房权益</option><option>贴身管家服务</option><option>免费搬家服务</option><option>腾讯会员权益</option></select></div>
+          <div class="field" id="couponGiftField"><label class="required">选择礼券</label><select id="editGift"><option>免费搬家服务</option><option>贴身管家服务</option><option>免费搬家服务</option><option>腾讯会员权益</option></select></div>
           <div class="field" id="benefitTotalField"><label class="required">权益总数</label><input id="editTotal" value="1000"></div>
           <div class="field"><label>权益图标</label><input id="editIcon" type="file"></div>
           <div class="field"><label>当前图标附件</label><input value="benefit-charge.png" readonly></div>
@@ -630,6 +630,11 @@
     function syncRichDesc() {
       document.getElementById("editDesc").value = document.getElementById("editDescEditor").innerHTML.trim();
     }
+    function setEditGift(value) {
+      const giftSelect = document.getElementById("editGift");
+      const hasOption = Array.from(giftSelect.options).some(option => option.value === value);
+      giftSelect.value = hasOption ? value : giftSelect.options[0].value;
+    }
 
     const drawer = document.getElementById("detailDrawer");
     document.querySelectorAll("[data-detail]").forEach(el => {
@@ -708,13 +713,13 @@
           setRichDesc(data[12]);
           setOrgTreeValue(document.getElementById("editOrgTree"), data[3]);
           document.getElementById("editType").value = data[1];
-          document.getElementById("editGift").value = data[2];
+          setEditGift(data[2]);
         }
         if (!data) {
           document.getElementById("editName").value = "优先选房权益";
           document.getElementById("editTotal").value = "1000";
           document.getElementById("editType").value = "优惠券权益";
-          document.getElementById("editGift").value = "优先选房权益";
+          setEditGift("免费搬家服务");
           setOrgTreeValue(document.getElementById("editOrgTree"), "商业板块 / 南山片区 / 高新安荟邻");
           setRichDesc("会员在指定业务场景可享受对应权益，领取后进入会员权益账户。");
         }
