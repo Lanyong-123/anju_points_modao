@@ -5,6 +5,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>积分明细查询</title>
   <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .org-tree-select {
+      position: relative;
+    }
+    .org-tree-trigger {
+      width: 100%;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .org-tree-trigger::after {
+      content: "⌄";
+      color: #667789;
+      font-size: 13px;
+    }
+    .org-tree-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 15;
+      display: none;
+      width: 360px;
+      max-height: 320px;
+      padding: 8px;
+      border: 1px solid #c9d8e8;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 14px 34px rgba(18, 49, 82, .18);
+      overflow: auto;
+    }
+    .org-tree-select.open .org-tree-panel {
+      display: block;
+    }
+    .org-tree-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 30px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .org-tree-row:hover {
+      background: #eef6ff;
+      color: var(--brand);
+    }
+    .org-tree-toggle {
+      width: 16px;
+      color: #667789;
+      text-align: center;
+      flex: 0 0 16px;
+    }
+    .org-tree-level-2 { padding-left: 28px; }
+    .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-leaf .org-tree-toggle { color: transparent; }
+  </style>
 </head>
 <body>
   <div class="page">
@@ -15,7 +84,13 @@
       <div class="field"><label>积分类型</label><select><option>全部类型</option><option>消费积分</option><option>碳积分</option></select></div>
       <div class="field"><label>交易类型</label><select><option>全部类型</option><option>新增</option><option>消耗</option><option>冻结</option><option>解冻</option><option>过期清零</option><option>调整</option></select></div>
       <div class="field"><label>业务来源</label><select><option>全部来源</option><option>签到</option><option>低碳任务</option><option>优惠券兑换</option><option>人工调整</option><option>风控处理</option></select></div>
-      <div class="field"><label>积分发放组织</label><select><option>全部组织</option><option>集团总部</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option></select></div>
+      <div class="field"><label>积分发放组织</label>
+        <div class="org-tree-select" id="orgTreeSelect">
+          <button class="org-tree-trigger" type="button" id="orgTreeTrigger">全部组织</button>
+          <input type="hidden" id="orgTreeValue" value="全部组织">
+          <div class="org-tree-panel" id="orgTreePanel"></div>
+        </div>
+      </div>
       <div class="field"><label>时间范围</label><input value="2026-05-01 至 2026-05-26"></div>
       <button class="btn primary">查询</button>
     </div>
@@ -104,6 +179,93 @@
   </div>
 
   <script>
+    const orgTreeData = [
+      {
+        name: "商业板块",
+        children: [
+          { name: "南山片区", children: ["高新安荟邻"] },
+          { name: "福田片区", children: ["景田安荟邻"] }
+        ]
+      },
+      {
+        name: "住宅板块",
+        children: [
+          { name: "南山片区", children: ["高新花园"] },
+          { name: "坪山片区", children: ["秀馨苑"] }
+        ]
+      },
+      {
+        name: "物业板块",
+        children: [
+          { name: "南山片区", children: ["高新花园"] },
+          { name: "坪山片区", children: ["秀馨苑"] }
+        ]
+      }
+    ];
+    const orgExpanded = new Set([
+      "商业板块",
+      "商业板块/南山片区",
+      "商业板块/福田片区",
+      "住宅板块",
+      "住宅板块/南山片区",
+      "住宅板块/坪山片区",
+      "物业板块",
+      "物业板块/南山片区",
+      "物业板块/坪山片区"
+    ]);
+    const orgTreeSelect = document.getElementById("orgTreeSelect");
+    const orgTreeTrigger = document.getElementById("orgTreeTrigger");
+    const orgTreeValue = document.getElementById("orgTreeValue");
+    const orgTreePanel = document.getElementById("orgTreePanel");
+    function renderOrgTree() {
+      const rows = [
+        '<div class="org-tree-row org-tree-leaf" data-org-path="全部组织"><span class="org-tree-toggle">·</span><span>全部组织</span></div>'
+      ];
+      orgTreeData.forEach(level1 => {
+        const level1Open = orgExpanded.has(level1.name);
+        rows.push(`<div class="org-tree-row org-tree-level-1" data-org-toggle="${level1.name}"><span class="org-tree-toggle">${level1Open ? "▾" : "▸"}</span><span>${level1.name}</span></div>`);
+        if (!level1Open) return;
+        level1.children.forEach(level2 => {
+          const level2Key = `${level1.name}/${level2.name}`;
+          const level2Open = orgExpanded.has(level2Key);
+          rows.push(`<div class="org-tree-row org-tree-level-2" data-org-toggle="${level2Key}"><span class="org-tree-toggle">${level2Open ? "▾" : "▸"}</span><span>${level2.name}</span></div>`);
+          if (!level2Open) return;
+          level2.children.forEach(level3 => {
+            const path = `${level1.name} / ${level2.name} / ${level3}`;
+            rows.push(`<div class="org-tree-row org-tree-level-3 org-tree-leaf" data-org-path="${path}"><span class="org-tree-toggle">·</span><span>${level3}</span></div>`);
+          });
+        });
+      });
+      orgTreePanel.innerHTML = rows.join("");
+    }
+    function bindOrgTree() {
+      orgTreeTrigger.addEventListener("click", event => {
+        event.stopPropagation();
+        orgTreeSelect.classList.toggle("open");
+      });
+      orgTreePanel.addEventListener("click", event => {
+        const row = event.target.closest(".org-tree-row");
+        if (!row) return;
+        const toggle = row.dataset.orgToggle;
+        if (toggle) {
+          if (orgExpanded.has(toggle)) orgExpanded.delete(toggle);
+          else orgExpanded.add(toggle);
+          renderOrgTree();
+          return;
+        }
+        const path = row.dataset.orgPath;
+        if (path) {
+          orgTreeValue.value = path;
+          orgTreeTrigger.textContent = path;
+          orgTreeSelect.classList.remove("open");
+        }
+      });
+      document.addEventListener("click", event => {
+        if (!orgTreeSelect.contains(event.target)) orgTreeSelect.classList.remove("open");
+      });
+    }
+    renderOrgTree();
+    bindOrgTree();
     const detailData = {
       "PF202605260001": ["PF202605260001", "李明", "AJ202605180018", "PA202605180018", "消费积分", "新增", "+120", "42,800", "低碳任务", "南山项目", "2027-05-25", "2026-05-26 09:30", "-"],
       "PF202605250018": ["PF202605250018", "周女士", "AJ202604220091", "PA202604220091", "碳积分", "新增", "+80", "9,630", "低碳出行", "福田项目", "2026-11-24", "2026-05-25 16:18", "-"],

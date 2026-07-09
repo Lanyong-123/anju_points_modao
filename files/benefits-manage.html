@@ -125,13 +125,86 @@
       color: var(--red);
       font-weight: 700;
     }
+    .org-tree-select {
+      position: relative;
+    }
+    .org-tree-trigger {
+      width: 100%;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .org-tree-trigger::after {
+      content: "⌄";
+      color: #667789;
+      font-size: 13px;
+    }
+    .org-tree-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 30;
+      display: none;
+      width: 360px;
+      max-height: 320px;
+      padding: 8px;
+      border: 1px solid #c9d8e8;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 14px 34px rgba(18, 49, 82, .18);
+      overflow: auto;
+    }
+    .org-tree-select.open .org-tree-panel {
+      display: block;
+    }
+    .org-tree-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 30px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .org-tree-row:hover {
+      background: #eef6ff;
+      color: var(--brand);
+    }
+    .org-tree-toggle {
+      width: 16px;
+      color: #667789;
+      text-align: center;
+      flex: 0 0 16px;
+    }
+    .org-tree-level-2 { padding-left: 28px; }
+    .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-leaf .org-tree-toggle { color: transparent; }
   </style>
 </head>
 <body>
   <div class="page">
     <div class="filter" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
       <div class="field"><label>权益名称</label><input placeholder="权益名称"></div>
-      <div class="field"><label>发放组织</label><select><option>全部组织</option><option>集团总部</option><option>南山项目</option><option>福田项目</option><option>合作服务门店</option></select></div>
+      <div class="field"><label>发放组织</label>
+        <div class="org-tree-select" data-org-tree data-org-default="全部组织">
+          <button class="org-tree-trigger" type="button">全部组织</button>
+          <input type="hidden" value="全部组织">
+          <div class="org-tree-panel"></div>
+        </div>
+      </div>
       <div class="field"><label>权益类型</label><select><option>全部类型</option><option>优惠券权益</option><option>其它权益</option></select></div>
       <div class="field"><label>选择礼券</label><select><option>全部礼券</option><option>免费搬家服务</option><option>优先选房权益</option><option>贴身管家服务</option><option>免费搬家服务</option><option>腾讯会员权益</option></select></div>
       <div class="field"><label>关联条件</label><select><option>全部条件</option><option>会员等级</option><option>身份标签</option><option>特定项目</option></select></div>
@@ -176,16 +249,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="优先选房权益">优先选房权益</span></td><td><span class="badge green">优惠券权益</span></td><td>优先选房权益</td><td>集团总部</td><td>会员等级</td><td>金卡会员、黑金会员</td><td>2,000</td><td><span class="link" data-member-log="claim:优先选房权益">1,286</span></td><td><span class="link" data-member-log="use:优先选房权益">326</span></td><td><span class="link" data-member-log="expired:优先选房权益">48</span></td><td><span class="link" data-member-log="unredeemed:优先选房权益">912</span></td><td>2026-04-20 09:30</td><td>2026-05-01 至 2026-12-31</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="优先选房权益">详情</span>　<span class="link" data-status="disable">禁用</span>　<span class="link" data-delete>删除</span>　<span class="link" data-urge="优先选房权益">催办</span></td></tr>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="生日权益">生日权益</span></td><td><span class="badge green">优惠券权益</span></td><td>免费搬家服务</td><td>南山项目</td><td>身份标签</td><td>项目住户、业主</td><td>800</td><td><span class="link" data-member-log="claim:生日权益">580</span></td><td><span class="link" data-member-log="use:生日权益">142</span></td><td><span class="link" data-member-log="expired:生日权益">12</span></td><td><span class="link" data-member-log="unredeemed:生日权益">426</span></td><td>2026-05-18 15:42</td><td>2026-06-01 至 2026-10-31</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="生日权益">详情</span>　<span class="link" data-status="disable">禁用</span>　<span class="link" data-delete>删除</span>　<span class="link" data-urge="生日权益">催办</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>贴身管家服务</td><td><span class="badge green">优惠券权益</span></td><td>贴身管家服务</td><td>集团总部</td><td>会员等级</td><td>黑金会员</td><td>120</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2026-04-28 11:08</td><td>2026-05-01 至 2026-12-31</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-edit="贴身管家服务">编辑</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="贴身管家服务">贴身管家服务</span></td><td><span class="badge green">优惠券权益</span></td><td>贴身管家服务</td><td>集团总部</td><td>会员等级</td><td>黑金会员</td><td>120</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2026-04-28 11:08</td><td>2026-05-01 至 2026-12-31</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-edit="贴身管家服务">编辑</span>　<span class="link" data-delete>删除</span></td></tr>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="腾讯会员权益">腾讯会员权益</span></td><td><span class="badge green">优惠券权益</span></td><td>腾讯会员权益</td><td>福田项目</td><td>特定项目</td><td>福田项目</td><td>5,000</td><td><span class="link" data-member-log="claim:腾讯会员权益">2,140</span></td><td><span class="link" data-member-log="use:腾讯会员权益">1,025</span></td><td><span class="link" data-member-log="expired:腾讯会员权益">86</span></td><td><span class="link" data-member-log="unredeemed:腾讯会员权益">1,029</span></td><td>2026-05-12 10:16</td><td>2026-05-15 至 2026-09-30</td><td><span class="badge red">已过期</span></td><td><span class="link" data-detail="腾讯会员权益">详情</span>　<span class="link" data-delete>删除</span></td></tr>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="场地预约优先权益">场地预约优先权益</span></td><td><span class="badge">其它权益</span></td><td>--</td><td>宝安项目</td><td>特定项目</td><td>宝安项目</td><td>300</td><td>188</td><td>76</td><td>12</td><td>100</td><td>2026-03-18 14:12</td><td>2026-03-20 至 2026-04-30</td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="场地预约优先权益">详情</span>　<span class="link" data-delete>删除</span></td></tr>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="生日权益-合作门店">生日权益</span></td><td><span class="badge">其它权益</span></td><td>--</td><td>合作服务门店</td><td>身份标签</td><td>员工、项目住户</td><td>-</td><td><span class="link" data-member-log="claim:生日权益-合作门店">680</span></td><td><span class="link" data-member-log="use:生日权益-合作门店">210</span></td><td><span class="link" data-member-log="expired:生日权益-合作门店">35</span></td><td><span class="link" data-member-log="unredeemed:生日权益-合作门店">435</span></td><td>2026-03-26 17:20</td><td>2026-04-01 至 2026-05-31</td><td><span class="badge gray">禁用</span></td><td><span class="link" data-detail="生日权益-合作门店">详情</span>　<span class="link" data-status="enable">启用</span>　<span class="link" data-delete>删除</span></td></tr>
           </tbody>
         </table>
         <div class="pagination">
-          <span>共 326 条</span>
+          <span>共 325 条</span>
           <span>每页</span>
           <select><option>10 条</option><option selected>20 条</option><option>50 条</option></select>
           <button class="page-btn">上一页</button>
@@ -226,7 +298,13 @@
       <div class="panel-bd level-edit-body">
         <div class="grid cols-2">
           <div class="field"><label class="required">权益名称</label><input id="editName" value="优先选房权益"></div>
-          <div class="field"><label class="required">发放组织</label><select id="editOrg"><option>集团总部</option><option>南山项目</option><option>福田项目</option><option>合作服务门店</option></select></div>
+          <div class="field"><label class="required">发放组织</label>
+            <div class="org-tree-select" data-org-tree id="editOrgTree" data-org-default="商业板块 / 南山片区 / 高新安荟邻">
+              <button class="org-tree-trigger" type="button">商业板块 / 南山片区 / 高新安荟邻</button>
+              <input type="hidden" id="editOrg" value="商业板块 / 南山片区 / 高新安荟邻">
+              <div class="org-tree-panel"></div>
+            </div>
+          </div>
           <div class="field"><label class="required">权益类型</label><select id="editType" data-benefit-type><option>优惠券权益</option><option>其它权益</option></select></div>
           <div class="field" id="couponGiftField"><label class="required">选择礼券</label><select id="editGift"><option>免费搬家服务</option><option>优先选房权益</option><option>贴身管家服务</option><option>免费搬家服务</option><option>腾讯会员权益</option></select></div>
           <div class="field" id="benefitTotalField"><label class="required">权益总数</label><input id="editTotal" value="1000"></div>
@@ -383,6 +461,103 @@
   </div>
 
   <script>
+    const orgTreeData = [
+      {
+        name: "商业板块",
+        children: [
+          { name: "南山片区", children: ["高新安荟邻"] },
+          { name: "福田片区", children: ["景田安荟邻"] }
+        ]
+      },
+      {
+        name: "住宅板块",
+        children: [
+          { name: "南山片区", children: ["高新花园"] },
+          { name: "坪山片区", children: ["秀馨苑"] }
+        ]
+      },
+      {
+        name: "物业板块",
+        children: [
+          { name: "南山片区", children: ["高新花园"] },
+          { name: "坪山片区", children: ["秀馨苑"] }
+        ]
+      }
+    ];
+    const orgExpandedKeys = [
+      "商业板块",
+      "商业板块/南山片区",
+      "商业板块/福田片区",
+      "住宅板块",
+      "住宅板块/南山片区",
+      "住宅板块/坪山片区",
+      "物业板块",
+      "物业板块/南山片区",
+      "物业板块/坪山片区"
+    ];
+    function renderOrgTree(tree, expanded) {
+      const rows = [
+        '<div class="org-tree-row org-tree-leaf" data-org-path="全部组织"><span class="org-tree-toggle">·</span><span>全部组织</span></div>'
+      ];
+      orgTreeData.forEach(level1 => {
+        const level1Open = expanded.has(level1.name);
+        rows.push(`<div class="org-tree-row org-tree-level-1" data-org-toggle="${level1.name}"><span class="org-tree-toggle">${level1Open ? "▾" : "▸"}</span><span>${level1.name}</span></div>`);
+        if (!level1Open) return;
+        level1.children.forEach(level2 => {
+          const level2Key = `${level1.name}/${level2.name}`;
+          const level2Open = expanded.has(level2Key);
+          rows.push(`<div class="org-tree-row org-tree-level-2" data-org-toggle="${level2Key}"><span class="org-tree-toggle">${level2Open ? "▾" : "▸"}</span><span>${level2.name}</span></div>`);
+          if (!level2Open) return;
+          level2.children.forEach(level3 => {
+            const path = `${level1.name} / ${level2.name} / ${level3}`;
+            rows.push(`<div class="org-tree-row org-tree-level-3 org-tree-leaf" data-org-path="${path}"><span class="org-tree-toggle">·</span><span>${level3}</span></div>`);
+          });
+        });
+      });
+      tree.querySelector(".org-tree-panel").innerHTML = rows.join("");
+    }
+    function setOrgTreeValue(tree, value) {
+      tree.querySelector(".org-tree-trigger").textContent = value;
+      tree.querySelector("input").value = value;
+    }
+    function initOrgTrees() {
+      document.querySelectorAll("[data-org-tree]").forEach(tree => {
+        const expanded = new Set(orgExpandedKeys);
+        const trigger = tree.querySelector(".org-tree-trigger");
+        const panel = tree.querySelector(".org-tree-panel");
+        setOrgTreeValue(tree, tree.dataset.orgDefault || "全部组织");
+        renderOrgTree(tree, expanded);
+        trigger.addEventListener("click", event => {
+          event.stopPropagation();
+          document.querySelectorAll("[data-org-tree].open").forEach(openTree => {
+            if (openTree !== tree) openTree.classList.remove("open");
+          });
+          tree.classList.toggle("open");
+        });
+        panel.addEventListener("click", event => {
+          const row = event.target.closest(".org-tree-row");
+          if (!row) return;
+          const toggle = row.dataset.orgToggle;
+          if (toggle) {
+            if (expanded.has(toggle)) expanded.delete(toggle);
+            else expanded.add(toggle);
+            renderOrgTree(tree, expanded);
+            return;
+          }
+          const path = row.dataset.orgPath;
+          if (path) {
+            setOrgTreeValue(tree, path);
+            tree.classList.remove("open");
+          }
+        });
+      });
+      document.addEventListener("click", event => {
+        document.querySelectorAll("[data-org-tree].open").forEach(tree => {
+          if (!tree.contains(event.target)) tree.classList.remove("open");
+        });
+      });
+    }
+    initOrgTrees();
     const targetOptions = {
       "会员等级": ["普通会员", "银卡会员", "金卡会员", "黑金会员"],
       "身份标签": ["项目住户", "非会员", "员工", "业主", "租户", "访客"],
@@ -531,7 +706,7 @@
           document.getElementById("editName").value = data[0];
           document.getElementById("editTotal").value = data[8].replaceAll(",", "");
           setRichDesc(data[12]);
-          document.getElementById("editOrg").value = data[3];
+          setOrgTreeValue(document.getElementById("editOrgTree"), data[3]);
           document.getElementById("editType").value = data[1];
           document.getElementById("editGift").value = data[2];
         }
@@ -540,6 +715,7 @@
           document.getElementById("editTotal").value = "1000";
           document.getElementById("editType").value = "优惠券权益";
           document.getElementById("editGift").value = "优先选房权益";
+          setOrgTreeValue(document.getElementById("editOrgTree"), "商业板块 / 南山片区 / 高新安荟邻");
           setRichDesc("会员在指定业务场景可享受对应权益，领取后进入会员权益账户。");
         }
         syncBenefitType();

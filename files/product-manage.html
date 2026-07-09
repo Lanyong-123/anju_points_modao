@@ -556,6 +556,75 @@
       padding-top: 0;
       border-top: 0;
     }
+    .org-tree-select {
+      position: relative;
+    }
+    .org-tree-trigger {
+      width: 100%;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      line-height: 1.25;
+      text-align: left;
+      cursor: pointer;
+    }
+    .org-tree-trigger::after {
+      content: "⌄";
+      color: #667789;
+      font-size: 13px;
+      flex: 0 0 auto;
+    }
+    .org-tree-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 30;
+      display: none;
+      width: 360px;
+      max-height: 320px;
+      padding: 8px;
+      border: 1px solid #c9d8e8;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 14px 34px rgba(18, 49, 82, .18);
+      overflow: auto;
+    }
+    .org-tree-select.open .org-tree-panel {
+      display: block;
+    }
+    .org-tree-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 30px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .org-tree-row:hover {
+      background: #eef6ff;
+      color: var(--brand);
+    }
+    .org-tree-toggle {
+      width: 16px;
+      color: #667789;
+      text-align: center;
+      flex: 0 0 16px;
+    }
+    .org-tree-level-2 { padding-left: 28px; }
+    .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-leaf .org-tree-toggle { color: transparent; }
   </style>
 </head>
 <body>
@@ -563,7 +632,13 @@
     <div class="filter" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
       <div class="field"><label>商品名称/编号</label><input placeholder="商品名称、商品编号"></div>
       <div class="field"><label>兑换方式</label><select><option>全部方式</option><option>免费</option><option>积分</option></select></div>
-      <div class="field"><label>礼券归属</label><select><option>全部归属</option><option>安居集团</option><option>集团总部</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option><option>合作商户</option></select></div>
+      <div class="field"><label>礼券归属</label>
+        <div class="org-tree-select" data-org-tree data-org-all="全部归属" data-org-default="全部归属">
+          <button class="org-tree-trigger" type="button">全部归属</button>
+          <input type="hidden" value="全部归属">
+          <div class="org-tree-panel"></div>
+        </div>
+      </div>
       <div class="field"><label>商品状态</label><select><option>全部状态</option><option>暂存</option><option>进行中</option><option>已过期</option><option>已结束</option><option>启用</option><option>禁用</option></select></div>
       <div class="field"><label>状态</label><select><option>全部</option><option>正常</option><option>删除</option></select></div>
       <div class="field"><label>创建时间</label><input value="2026-05-01 至 2026-06-05"></div>
@@ -706,7 +781,14 @@
           </div>
           <div class="product-row">
             <div class="product-label required">礼券归属</div>
-            <div class="product-control"><select id="editOrg"><option>安居集团</option><option>集团总部</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option><option>合作商户</option></select><div class="product-hint">用于区分商品可使用的礼券归属范围，新增或修改商品时维护。</div></div>
+            <div class="product-control">
+              <div class="org-tree-select" data-org-tree id="editOrgTree" data-org-default="商业板块 / 南山片区 / 高新安荟邻">
+                <button class="org-tree-trigger" type="button">商业板块 / 南山片区 / 高新安荟邻</button>
+                <input type="hidden" id="editOrg" value="商业板块 / 南山片区 / 高新安荟邻">
+                <div class="org-tree-panel"></div>
+              </div>
+              <div class="product-hint">用于区分商品可使用的礼券归属范围，新增或修改商品时维护。</div>
+            </div>
           </div>
           <div class="product-row">
             <div class="product-label">是否特定人群发放</div>
@@ -1003,6 +1085,115 @@
   </div>
 
   <script>
+    const orgTreeData = [
+      {
+        name: "商业板块",
+        children: [
+          { name: "南山片区", children: ["高新安荟邻"] },
+          { name: "福田片区", children: ["景田安荟邻"] }
+        ]
+      },
+      {
+        name: "住宅板块",
+        children: [
+          { name: "南山片区", children: ["高新花园"] },
+          { name: "坪山片区", children: ["秀馨苑"] }
+        ]
+      },
+      {
+        name: "物业板块",
+        children: [
+          { name: "南山片区", children: ["高新花园"] },
+          { name: "坪山片区", children: ["秀馨苑"] }
+        ]
+      }
+    ];
+    const orgExpandedKeys = [
+      "商业板块",
+      "商业板块/南山片区",
+      "商业板块/福田片区",
+      "住宅板块",
+      "住宅板块/南山片区",
+      "住宅板块/坪山片区",
+      "物业板块",
+      "物业板块/南山片区",
+      "物业板块/坪山片区"
+    ];
+    const legacyOrgMap = {
+      "安居集团": "商业板块 / 南山片区 / 高新安荟邻",
+      "集团总部": "商业板块 / 南山片区 / 高新安荟邻",
+      "南山项目": "住宅板块 / 南山片区 / 高新花园",
+      "福田项目": "商业板块 / 福田片区 / 景田安荟邻",
+      "宝安项目": "物业板块 / 坪山片区 / 秀馨苑",
+      "合作商户": "物业板块 / 南山片区 / 高新花园"
+    };
+    function normalizeOrgValue(value, fallback = "商业板块 / 南山片区 / 高新安荟邻") {
+      return legacyOrgMap[value] || value || fallback;
+    }
+    function renderOrgTree(tree, expanded) {
+      const allLabel = tree.dataset.orgAll;
+      const rows = allLabel
+        ? [`<div class="org-tree-row org-tree-leaf" data-org-path="${allLabel}"><span class="org-tree-toggle">·</span><span>${allLabel}</span></div>`]
+        : [];
+      orgTreeData.forEach(level1 => {
+        const level1Open = expanded.has(level1.name);
+        rows.push(`<div class="org-tree-row org-tree-level-1" data-org-toggle="${level1.name}"><span class="org-tree-toggle">${level1Open ? "▾" : "▸"}</span><span>${level1.name}</span></div>`);
+        if (!level1Open) return;
+        level1.children.forEach(level2 => {
+          const level2Key = `${level1.name}/${level2.name}`;
+          const level2Open = expanded.has(level2Key);
+          rows.push(`<div class="org-tree-row org-tree-level-2" data-org-toggle="${level2Key}"><span class="org-tree-toggle">${level2Open ? "▾" : "▸"}</span><span>${level2.name}</span></div>`);
+          if (!level2Open) return;
+          level2.children.forEach(level3 => {
+            const path = `${level1.name} / ${level2.name} / ${level3}`;
+            rows.push(`<div class="org-tree-row org-tree-level-3 org-tree-leaf" data-org-path="${path}"><span class="org-tree-toggle">·</span><span>${level3}</span></div>`);
+          });
+        });
+      });
+      tree.querySelector(".org-tree-panel").innerHTML = rows.join("");
+    }
+    function setOrgTreeValue(tree, value) {
+      tree.querySelector(".org-tree-trigger").textContent = value;
+      tree.querySelector("input").value = value;
+    }
+    function initOrgTrees() {
+      document.querySelectorAll("[data-org-tree]").forEach(tree => {
+        const expanded = new Set(orgExpandedKeys);
+        const trigger = tree.querySelector(".org-tree-trigger");
+        const panel = tree.querySelector(".org-tree-panel");
+        setOrgTreeValue(tree, tree.dataset.orgDefault || tree.dataset.orgAll || "全部归属");
+        renderOrgTree(tree, expanded);
+        trigger.addEventListener("click", event => {
+          event.stopPropagation();
+          document.querySelectorAll("[data-org-tree].open").forEach(openTree => {
+            if (openTree !== tree) openTree.classList.remove("open");
+          });
+          tree.classList.toggle("open");
+        });
+        panel.addEventListener("click", event => {
+          const row = event.target.closest(".org-tree-row");
+          if (!row) return;
+          const toggle = row.dataset.orgToggle;
+          if (toggle) {
+            if (expanded.has(toggle)) expanded.delete(toggle);
+            else expanded.add(toggle);
+            renderOrgTree(tree, expanded);
+            return;
+          }
+          const path = row.dataset.orgPath;
+          if (path) {
+            setOrgTreeValue(tree, path);
+            tree.classList.remove("open");
+          }
+        });
+      });
+      document.addEventListener("click", event => {
+        document.querySelectorAll("[data-org-tree].open").forEach(tree => {
+          if (!tree.contains(event.target)) tree.classList.remove("open");
+        });
+      });
+    }
+    initOrgTrees();
     const productData = {
       "2000积分兑家政服务": ["PR202606050018", "2000积分兑家政服务", "2000 积分", "2000积分兑家政服务券", "安居集团", "838", "162", "进行中", "2026-06-05 09:30", "product-housekeeping.png", "兑换后进入会员券包，可预约家政服务履约。", "2000"],
       "生日礼券": ["PR202606020091", "生日礼券", "免费", "生日礼券权益", "集团总部", "90", "4", "禁用", "2026-06-02 15:42", "product-birthday.png", "会员生日月可免费兑换一次生日礼券。", ""],
@@ -1192,7 +1383,7 @@
         document.getElementById("editTitle").textContent = data ? "修改商品" : "新增商品";
         if (data) {
           document.getElementById("editName").value = data[1];
-          document.getElementById("editOrg").value = data[4];
+          setOrgTreeValue(document.getElementById("editOrgTree"), normalizeOrgValue(data[4]));
           document.getElementById("editDesc").value = data[10];
           document.getElementById("editStart").value = "";
           document.getElementById("editEnd").value = "";
@@ -1208,6 +1399,7 @@
           document.querySelector("input[name='specialTarget'][value='否']").checked = true;
           setMultiSelectValues("specialProjects", "");
           setMultiSelectValues("specialMembers", "");
+          setOrgTreeValue(document.getElementById("editOrgTree"), "商业板块 / 南山片区 / 高新安荟邻");
         }
         syncSpecialTarget();
         document.getElementById("editModal").classList.add("open");
