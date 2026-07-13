@@ -23,7 +23,6 @@ const DEFAULT_MENU = [
     title: "积分中心",
     children: [
       { title: "积分账户管理", url: "files/points-account.html" },
-      { title: "积分账户审核管理", url: "files/points-account-audit.html" },
       { title: "积分明细查询", url: "files/points-detail.html" },
       { title: "积分互换查询", url: "files/points-exchange-query.html" }
     ]
@@ -59,6 +58,13 @@ const DEFAULT_MENU = [
     title: "营销管理",
     children: [
       { title: "营销管理", url: "files/marketing-manage.html" }
+    ]
+  },
+  {
+    title: "任务中心",
+    children: [
+      { title: "待审核", url: "files/task-pending.html" },
+      { title: "已处理", url: "files/task-processed.html" }
     ]
   },
   {

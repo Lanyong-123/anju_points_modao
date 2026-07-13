@@ -46,10 +46,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td>普通会员</td><td>1</td><td>0</td><td><span class="badge green">启用</span></td><td>896,430</td><td>2026-05-20 09:30</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>银卡会员</td><td>2</td><td>2,000</td><td><span class="badge green">启用</span></td><td>282,160</td><td>2026-05-18 15:42</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>金卡会员</td><td>3</td><td>8,000</td><td><span class="badge green">启用</span></td><td>96,720</td><td>2026-05-16 11:08</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>黑金会员</td><td>4</td><td>30,000</td><td><span class="badge red">停用</span></td><td>1,120</td><td>2026-05-10 10:16</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="enable">启用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>V1展露头角</td><td>1</td><td>0</td><td><span class="badge green">启用</span></td><td>896,430</td><td>2026-05-20 09:30</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>V2小有名气</td><td>2</td><td>2,000</td><td><span class="badge green">启用</span></td><td>282,160</td><td>2026-05-18 15:42</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>V3远近闻名</td><td>3</td><td>8,000</td><td><span class="badge green">启用</span></td><td>96,720</td><td>2026-05-16 11:08</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>V4名扬四海</td><td>4</td><td>30,000</td><td><span class="badge red">停用</span></td><td>1,120</td><td>2026-05-10 10:16</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="enable">启用</span>　<span class="link" data-delete>删除</span></td></tr>
           </tbody>
         </table>
         <div class="pagination">
@@ -70,7 +70,7 @@
       <div class="panel-hd"><h3 id="levelModalTitle">新增等级</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd level-edit-body">
         <div class="grid cols-2">
-          <div class="field"><label class="required">等级名称</label><input id="levelName" value="铂金会员"></div>
+          <div class="field"><label class="required">等级名称</label><input id="levelName" value="V4名扬四海"></div>
           <div class="field"><label class="required">权益等级</label><input id="levelSort" value="5"></div>
           <div class="field"><label class="required">等级状态</label><select id="levelStatus"><option>启用</option><option>停用</option></select></div>
           <div class="field"><label class="required">达到该等级所需成长值</label><input id="levelNeedGrowth" value="50000"></div>
@@ -194,7 +194,7 @@
       el.addEventListener("click", () => {
         const isEdit = el.dataset.openLevel === "edit";
         document.getElementById("levelModalTitle").textContent = isEdit ? "编辑等级" : "新增等级";
-        document.getElementById("levelName").value = isEdit ? "金卡会员" : "铂金会员";
+        document.getElementById("levelName").value = isEdit ? "V3远近闻名" : "V4名扬四海";
         document.getElementById("levelSort").value = isEdit ? "3" : "5";
         document.getElementById("levelNeedGrowth").value = isEdit ? "30000" : "50000";
         setupConditionRows();

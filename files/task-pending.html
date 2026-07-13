@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>待审核</title>
+  <link rel="stylesheet" href="../resources/style.css">
+</head>
+<body>
+  <div class="page">
+    <div class="filter">
+      <div class="field"><label>任务编号/业务单号</label><input placeholder="请输入任务编号或业务单号"></div>
+      <div class="field"><label>任务类型</label><select><option>全部类型</option><option>积分账户审核</option><option>优惠券发布审核</option><option>优惠券修改审核</option><option>商品发布审核</option><option>商品修改审核</option><option>商品禁用审核</option><option>商品启用审核</option><option>权益新增审核</option><option>权益修改审核</option><option>权益禁用审核</option><option>权益启用审核</option></select></div>
+      <div class="field"><label>提交人</label><input placeholder="请输入提交人"></div>
+      <div class="field"><label>提交时间</label><input value="2026-05-01 至 2026-05-26"></div>
+      <button class="btn primary">查询</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd"><h3>待审核任务列表</h3></div>
+      <div class="panel-bd">
+        <table>
+          <thead><tr><th>任务类型</th><th>业务单号</th><th>任务标题</th><th>提交人</th><th>提交时间</th><th>状态</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr><td>积分账户审核</td><td>ADJ202605260018</td><td>消费积分调整审核</td><td>运营管理员</td><td>2026-05-26 09:42</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-points-account-audit.html">处理</a></td></tr>
+            <tr><td>优惠券发布审核</td><td>CPN202605260016</td><td>家政服务兑换券发布审核</td><td>营销专员</td><td>2026-05-26 09:20</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-coupon-audit.html?action=publish">处理</a></td></tr>
+            <tr><td>优惠券修改审核</td><td>CPN202605260012</td><td>停车服务券有效期修改审核</td><td>营销主管</td><td>2026-05-26 08:56</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-coupon-audit.html?action=edit">处理</a></td></tr>
+            <tr><td>商品发布审核</td><td>PRD202605250036</td><td>场地预约权益商品发布审核</td><td>商品专员</td><td>2026-05-25 17:35</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-product-audit.html?action=publish">处理</a></td></tr>
+            <tr><td>商品修改审核</td><td>PRD202605250031</td><td>家政服务商品积分修改审核</td><td>商品专员</td><td>2026-05-25 16:48</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-product-audit.html?action=edit">处理</a></td></tr>
+            <tr><td>商品禁用审核</td><td>PRD202605250027</td><td>第三方礼券商品禁用审核</td><td>商品主管</td><td>2026-05-25 15:16</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-product-audit.html?action=disable">处理</a></td></tr>
+            <tr><td>商品启用审核</td><td>PRD202605250023</td><td>免费搬家商品启用审核</td><td>商品主管</td><td>2026-05-25 14:30</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-product-audit.html?action=enable">处理</a></td></tr>
+            <tr><td>权益新增审核</td><td>BEN202605240019</td><td>专属客服权益新增审核</td><td>权益专员</td><td>2026-05-24 16:52</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-benefit-audit.html?action=create">处理</a></td></tr>
+            <tr><td>权益修改审核</td><td>BEN202605240015</td><td>生日礼券权益规则修改审核</td><td>权益专员</td><td>2026-05-24 15:28</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-benefit-audit.html?action=edit">处理</a></td></tr>
+            <tr><td>权益禁用审核</td><td>BEN202605240011</td><td>员工食堂折扣权益禁用审核</td><td>权益主管</td><td>2026-05-24 14:06</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-benefit-audit.html?action=disable">处理</a></td></tr>
+            <tr><td>权益启用审核</td><td>BEN202605240008</td><td>积分倍享权益启用审核</td><td>权益主管</td><td>2026-05-24 11:35</td><td><span class="badge gold">待审核</span></td><td><a class="link" href="task-benefit-audit.html?action=enable">处理</a></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>共 18 条</span><span>每页</span><select><option selected>20 条</option><option>50 条</option></select>
+          <button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">下一页</button>
+          <span>跳至</span><input value="1"><span>页</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

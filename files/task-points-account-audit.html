@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>积分账户审核处理</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .process-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(360px, .65fr); gap: 16px; align-items: start; }
+    .process-layout .panel { margin: 0; }
+    .audit-options { display: flex; gap: 28px; align-items: center; min-height: 36px; }
+    .audit-options label { display: inline-flex; gap: 8px; align-items: center; color: #34465c; font-weight: 700; cursor: pointer; }
+    .audit-options input { width: 16px; height: 16px; accent-color: var(--brand); }
+    .opinion { width: 100%; min-height: 112px; padding: 10px 12px; border: 1px solid #cfd9e5; border-radius: 5px; color: var(--ink); font: inherit; resize: vertical; }
+    .process-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .record-table th, .record-table td { white-space: normal; }
+    @media (max-width: 980px) { .process-layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="panel-hd" style="padding:0 0 14px; border:0; background:transparent">
+      <h3>积分账户审核处理</h3>
+      <button class="btn" id="backBtn">返回待审核</button>
+    </div>
+
+    <div class="process-layout">
+      <div>
+        <div class="panel">
+          <div class="panel-hd"><h3>申请详情</h3><span class="badge gold" id="statusBadge">待审核</span></div>
+          <div class="panel-bd">
+            <div class="detail-list">
+              <span>调整单号</span><strong>ADJ202605260018</strong>
+              <span>积分账户</span><strong>PA202605180018</strong>
+              <span>会员名称</span><strong>李明</strong>
+              <span>会员ID</span><strong>AJ202605180018</strong>
+              <span>积分类型</span><strong>消费积分</strong>
+              <span>调整类型</span><strong>增加</strong>
+              <span>调整积分</span><strong style="color:#00a65a">+500</strong>
+              <span>调整原因</span><strong>补偿积分</strong>
+              <span>提交人</span><strong>运营管理员</strong>
+              <span>提交时间</span><strong>2026-05-26 09:42</strong>
+              <span>附件</span><strong><span class="link" id="attachmentLink">小票图片.png</span></strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-hd"><h3>审核记录</h3></div>
+          <div class="panel-bd">
+            <table class="record-table">
+              <thead><tr><th>审核时间</th><th>积分审核状态</th><th>审核人</th><th>审核意见</th></tr></thead>
+              <tbody id="recordRows"><tr><td>-</td><td><span class="badge gold">待审核</span></td><td>-</td><td>等待审核处理</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hd"><h3>审核操作</h3></div>
+        <div class="panel-bd">
+          <div class="field">
+            <label><span style="color:#e5484d">*</span> 审核结果</label>
+            <div class="audit-options">
+              <label><input type="radio" name="result" value="pass" checked>审核通过</label>
+              <label><input type="radio" name="result" value="reject">审核不通过</label>
+            </div>
+          </div>
+          <div class="notice" id="auditNotice" style="margin-top:14px"><strong>审核通过</strong>通过后系统将按调整单更新会员积分账户，并生成积分流水。</div>
+          <div class="field" style="margin-top:16px">
+            <label><span style="color:#e5484d">*</span> 审核意见</label>
+            <textarea class="opinion" id="auditOpinion">调整依据充分，审核通过</textarea>
+          </div>
+          <div class="process-actions">
+            <button class="btn" id="cancelBtn">取消</button>
+            <button class="btn primary" id="submitBtn">确认提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="attachmentModal">
+    <div class="modal" style="width:880px">
+      <div class="panel-hd"><h3>附件预览</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <img src="../resources/attachments/receipt-ticket.svg" alt="小票图片.png" style="display:block;width:100%;max-height:620px;object-fit:contain;border:1px solid var(--line);border-radius:6px;background:#fff">
+      </div>
+      <div class="modal-ft"><button class="btn primary" data-close-modal>关闭</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="successModal">
+    <div class="modal" style="width:460px">
+      <div class="panel-hd"><h3>处理完成</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd"><div class="notice"><strong id="successResult">审核通过</strong>审核结果已提交，任务已转入已处理列表。</div></div>
+      <div class="modal-ft"><button class="btn primary" id="doneBtn">返回待审核</button></div>
+    </div>
+  </div>
+
+  <script>
+    const readOnly = new URLSearchParams(window.location.search).get("mode") === "view";
+    const openPending = () => {
+      const target = readOnly
+        ? { title: "已处理", url: "files/task-processed.html", local: "task-processed.html" }
+        : { title: "待审核", url: "files/task-pending.html", local: "task-pending.html" };
+      try {
+        if (window.parent !== window && window.parent.openTab) {
+          window.parent.openTab({ title: target.title, url: target.url });
+          return;
+        }
+      } catch (error) {
+        // Direct file previews can restrict access to the parent frame.
+      }
+      window.location.href = target.local;
+    };
+    if (readOnly) {
+      document.title = "积分账户审核详情";
+      document.querySelector(".page > .panel-hd h3").textContent = "积分账户审核详情";
+      document.getElementById("backBtn").textContent = "返回已处理";
+      document.querySelector(".process-layout").style.gridTemplateColumns = "1fr";
+      const auditHeading = [...document.querySelectorAll(".panel-hd h3")].find(item => item.textContent === "审核操作");
+      if (auditHeading) auditHeading.closest(".panel").style.display = "none";
+      const badge = document.getElementById("statusBadge");
+      badge.className = "badge green";
+      badge.textContent = "审核通过";
+      document.getElementById("recordRows").innerHTML = '<tr><td>2026-05-26 10:16</td><td><span class="badge green">审核通过</span></td><td>积分主管</td><td>调整依据充分，审核通过</td></tr>';
+    }
+    document.getElementById("backBtn").addEventListener("click", openPending);
+    document.getElementById("cancelBtn").addEventListener("click", openPending);
+    document.getElementById("doneBtn").addEventListener("click", openPending);
+    document.getElementById("attachmentLink").addEventListener("click", () => document.getElementById("attachmentModal").classList.add("open"));
+
+    document.querySelectorAll('input[name="result"]').forEach(radio => {
+      radio.addEventListener("change", () => {
+        const pass = radio.value === "pass";
+        document.getElementById("auditNotice").innerHTML = pass
+          ? "<strong>审核通过</strong>通过后系统将按调整单更新会员积分账户，并生成积分流水。"
+          : "<strong>审核不通过</strong>不通过后调整单驳回，积分账户不发生变动。";
+        document.getElementById("auditOpinion").value = pass ? "调整依据充分，审核通过" : "调整依据不足，审核不通过";
+      });
+    });
+
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      const opinion = document.getElementById("auditOpinion").value.trim();
+      if (!opinion) {
+        document.getElementById("auditOpinion").focus();
+        return;
+      }
+      const pass = document.querySelector('input[name="result"]:checked').value === "pass";
+      const result = pass ? "审核通过" : "审核不通过";
+      const badge = document.getElementById("statusBadge");
+      badge.className = `badge ${pass ? "green" : "red"}`;
+      badge.textContent = result;
+      document.getElementById("recordRows").innerHTML = `<tr><td>2026-05-26 10:16</td><td><span class="badge ${pass ? "green" : "red"}">${result}</span></td><td>积分主管</td><td>${opinion}</td></tr>`;
+      document.getElementById("successResult").textContent = result;
+      document.getElementById("successModal").classList.add("open");
+    });
+
+    document.querySelectorAll("[data-close-modal]").forEach(button => {
+      button.addEventListener("click", () => button.closest(".modal-mask").classList.remove("open"));
+    });
+  </script>
+</body>
+</html>

@@ -54,7 +54,7 @@
       <div class="chart-wrap">
         <div class="chart-head">
           <h3>各等级会员占比变化</h3>
-          <div class="legend"><span><i class="blue-dot"></i>普通</span><span><i class="green-dot"></i>银卡</span><span><i class="orange-dot"></i>金卡</span><span><i style="background:#123152"></i>黑金</span></div>
+          <div class="legend"><span><i class="blue-dot"></i>V1展露头角</span><span><i class="green-dot"></i>V2小有名气</span><span><i class="orange-dot"></i>V3远近闻名</span><span><i style="background:#123152"></i>V4名扬四海</span></div>
         </div>
         <div class="line-chart">
           <div class="axis-y"><span>50%</span><span>40%</span><span>30%</span><span>20%</span><span>0%</span></div>
@@ -71,7 +71,7 @@
       <div class="panel-bd">
         <table>
           <thead>
-            <tr><th>统计周期</th><th>会员总数</th><th>普通会员占比</th><th>银卡会员占比</th><th>金卡会员占比</th><th>黑金会员占比</th><th>认证会员占比</th></tr>
+            <tr><th>统计周期</th><th>会员总数</th><th>V1展露头角占比</th><th>V2小有名气占比</th><th>V3远近闻名占比</th><th>V4名扬四海占比</th><th>认证会员占比</th></tr>
           </thead>
           <tbody id="analysisRows"></tbody>
         </table>
@@ -129,10 +129,10 @@
     function renderLevelTrend() {
       const host = document.getElementById("levelTrend");
       const series = [
-        { key: "normal", name: "普通", color: "#2f6fbd" },
-        { key: "silver", name: "银卡", color: "#2f9b6b" },
-        { key: "gold", name: "金卡", color: "#d8892c" },
-        { key: "black", name: "黑金", color: "#123152" }
+        { key: "normal", name: "V1展露头角", color: "#2f6fbd" },
+        { key: "silver", name: "V2小有名气", color: "#2f9b6b" },
+        { key: "gold", name: "V3远近闻名", color: "#d8892c" },
+        { key: "black", name: "V4名扬四海", color: "#123152" }
       ];
       const max = 50;
       const paths = series.map(item => {

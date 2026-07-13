@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>优惠券审核处理</title><link rel="stylesheet" href="../resources/style.css"><link rel="stylesheet" href="../resources/task-audit.css"></head>
+<body><div class="page">
+  <div class="panel-hd" style="padding:0 0 14px;border:0;background:transparent"><h3 id="pageTitle">优惠券审核处理</h3><button class="btn" id="backBtn">返回待审核</button></div>
+  <div class="task-process-layout"><div>
+    <div class="panel"><div class="panel-hd"><h3 id="detailTitle">优惠券申请详情</h3><span class="badge gold" id="statusBadge">待审核</span></div><div class="panel-bd"><div class="detail-list" id="detailList"></div><div class="task-change-note" id="changeNote" style="margin-top:16px"></div></div></div>
+    <div class="panel" style="margin-top:16px"><div class="panel-hd"><h3>审核记录</h3></div><div class="panel-bd"><table class="task-record-table"><thead><tr><th>审核时间</th><th>审核状态</th><th>审核人</th><th>审核意见</th></tr></thead><tbody id="recordRows"><tr><td>-</td><td><span class="badge gold">待审核</span></td><td>-</td><td>等待审核处理</td></tr></tbody></table></div></div>
+  </div><div class="panel"><div class="panel-hd"><h3>审核操作</h3></div><div class="panel-bd">
+    <div class="field"><label><span style="color:#e5484d">*</span> 审核结果</label><div class="task-audit-options"><label><input type="radio" name="result" value="pass" checked>审核通过</label><label><input type="radio" name="result" value="reject">审核不通过</label></div></div>
+    <div class="notice" id="auditNotice" style="margin-top:14px"></div><div class="field" style="margin-top:16px"><label><span style="color:#e5484d">*</span> 审核意见</label><textarea class="task-opinion" id="auditOpinion"></textarea></div>
+    <div class="task-process-actions"><button class="btn" id="cancelBtn">取消</button><button class="btn primary" id="submitBtn">确认提交</button></div>
+  </div></div></div>
+</div>
+<div class="modal-mask" id="successModal"><div class="modal" style="width:460px"><div class="panel-hd"><h3>处理完成</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="notice"><strong id="successResult">审核通过</strong>审核结果已提交，任务已转入已处理列表。</div></div><div class="modal-ft"><button class="btn primary" id="doneBtn">返回待审核</button></div></div></div>
+<script>window.TASK_AUDIT_CONFIG={defaultAction:"publish",actions:{publish:{type:"优惠券发布审核",note:"新建家政服务兑换券并申请发布。",passMessage:"优惠券进入待生效状态，并按有效时间自动生效。",fields:[["业务单号","CPN202605260016"],["礼券标题","2000积分兑家政服务"],["礼券类型","电子礼券"],["内部备注名","积分兑家政服务"],["礼券数量","20,000"],["礼券成本","10元/张"],["有效时间","2026-06-01 至 2026-08-31"],["使用说明","适用于上门保洁、维修服务兑换"],["提交人","营销专员"],["提交时间","2026-05-26 09:20"]]},edit:{type:"优惠券修改审核",note:"将停车服务券有效期由2026-06-30延长至2026-08-31。",passMessage:"优惠券修改内容生效，已领取券的有效期保持不变。",fields:[["业务单号","CPN202605260012"],["礼券标题","停车服务抵扣券"],["礼券类型","电子礼券"],["内部备注名","积分兑停车服务"],["礼券数量","10,000"],["礼券成本","20元/张"],["原有效时间","2026-05-01 至 2026-06-30"],["修改后有效时间","2026-05-01 至 2026-08-31"],["提交人","营销主管"],["提交时间","2026-05-26 08:56"]]}}};</script><script src="../plugins/task-audit.js"></script></body></html>
