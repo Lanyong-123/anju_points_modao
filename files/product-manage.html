@@ -640,7 +640,6 @@
         </div>
       </div>
       <div class="field"><label>商品状态</label><select><option>全部状态</option><option>暂存</option><option>进行中</option><option>已过期</option><option>已结束</option><option>启用</option><option>禁用</option></select></div>
-      <div class="field"><label>审核状态</label><select><option>全部状态</option><option>待提交</option><option>待审核</option><option>审核通过</option><option>审核不通过</option></select></div>
       <div class="field"><label>状态</label><select><option>全部</option><option>正常</option><option>删除</option></select></div>
       <div class="field"><label>创建时间</label><input value="2026-05-01 至 2026-06-05"></div>
       <button class="btn primary">查询</button>
@@ -671,7 +670,6 @@
               <th>已核销人数</th>
               <th>兑换时间</th>
               <th>创建时间</th>
-              <th>审核状态</th>
               <th>商品状态</th>
               <th>操作</th>
             </tr>
@@ -1487,32 +1485,6 @@
     });
     syncExchangeType();
     syncLimitInputs();
-  </script>
-  <script>
-    (() => {
-      const audits = [
-        ["审核通过", "green", "task-product-audit.html?action=publish&mode=view"],
-        ["审核通过", "green", "task-product-audit.html?action=enable&mode=view"],
-        ["审核不通过", "red", "task-product-audit.html?action=edit&mode=view&result=reject"],
-        ["审核通过", "green", "task-product-audit.html?action=disable&mode=view"],
-        ["待提交", "gold", "task-product-audit.html?action=edit&mode=view&result=pending"],
-        ["待提交", "gold", "task-product-audit.html?action=edit&mode=view&result=pending"]
-      ];
-      document.querySelectorAll(".product-list-table tbody tr").forEach((row, index) => {
-        const audit = audits[index] || audits[0];
-        if (row.cells.length === 14) {
-          const cell = row.insertCell(7);
-          cell.innerHTML = `<span class="badge ${audit[1]}">${audit[0]}</span>`;
-        }
-        const auditCell = row.cells[7];
-        const productStatusCell = row.cells[8];
-        const operation = row.cells[row.cells.length - 1];
-        row.insertBefore(auditCell, operation);
-        row.insertBefore(productStatusCell, operation);
-        operation.querySelector("span[data-detail]")?.remove();
-        operation.insertAdjacentHTML("afterbegin", `<a class="link" data-audit-detail href="${audit[2]}">审核详情</a>　`);
-      });
-    })();
   </script>
 </body>
 </html>

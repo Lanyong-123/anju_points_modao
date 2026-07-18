@@ -392,7 +392,6 @@
       <div class="field"><label>礼券类型</label><select><option>全部类型</option><option>电子礼券</option><option>实物礼券</option><option>第三方礼券</option></select></div>
       <div class="field"><label>有效方式</label><select><option>全部方式</option><option>统一生效时间</option><option>领取后有效</option></select></div>
       <div class="field"><label>礼券状态</label><select><option>全部状态</option><option>待生效</option><option>已生效</option><option>已失效</option><option>冻结</option></select></div>
-      <div class="field"><label>审核状态</label><select><option>全部状态</option><option>待提交</option><option>待审核</option><option>审核通过</option><option>审核不通过</option></select></div>
       <div class="field"><label>状态</label><select><option>全部</option><option>正常</option><option>删除</option></select></div>
       <div class="field"><label>有效期</label><input value="2026-05-01 至 2026-12-31"></div>
       <div class="field"><label>创建时间</label><input value="2026-04-01 至 2026-05-26"></div>
@@ -424,14 +423,13 @@
               <th>冻结数</th>
               <th>创建时间</th>
               <th>有效期</th>
-              <th>审核状态</th>
               <th>状态</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="2000积分兑家政服务">2000积分兑家政服务</span></td><td><span class="badge green">电子礼券</span></td><td>20,000</td><td>200,000元</td><td><span class="link" data-receive-detail="2000积分兑家政服务" data-receive-status="领取详情" data-receive-total="12,420">12,420</span></td><td><span class="link" data-writeoff-detail="2000积分兑家政服务">5,326</span></td><td><span class="link" data-receive-detail="2000积分兑家政服务" data-receive-status="过期详情" data-receive-total="318" data-receive-filter="已过期">318</span></td><td><span class="link" data-receive-detail="2000积分兑家政服务" data-receive-status="冻结详情" data-receive-total="86" data-receive-filter="已冻结">86</span></td><td>2026-05-01 09:30</td><td>2026-05-01 至 2026-08-31</td><td><span class="badge green">审核通过</span></td><td><span class="badge green">已生效</span></td><td><span class="link" data-detail="2000积分兑家政服务">详情</span>　<a class="link" href="task-coupon-audit.html?action=publish&amp;mode=view">审核详情</a>　<span class="link" data-edit-active="2000积分兑家政服务">编辑</span>　<span class="link" data-status="freeze">冻结</span>　<span class="link" data-delete="2000积分兑家政服务">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="5000积分兑礼物">5000积分兑礼物</span></td><td><span class="badge">实物礼券</span></td><td>8,000</td><td>-</td><td><span class="link" data-receive-detail="5000积分兑礼物" data-receive-status="领取详情" data-receive-total="4,012">4,012</span></td><td><span class="link" data-writeoff-detail="5000积分兑礼物">1,908</span></td><td><span class="link" data-receive-detail="5000积分兑礼物" data-receive-status="过期详情" data-receive-total="92" data-receive-filter="已过期">92</span></td><td><span class="link" data-receive-detail="5000积分兑礼物" data-receive-status="冻结详情" data-receive-total="15" data-receive-filter="已冻结">15</span></td><td>2026-05-06 15:42</td><td>领取后30天</td><td><span class="badge green">审核通过</span></td><td><span class="badge green">待生效</span></td><td><span class="link" data-detail="5000积分兑礼物">详情</span>　<a class="link" href="task-coupon-audit.html?action=publish&amp;mode=view">审核详情</a>　<span class="link" data-edit="5000积分兑礼物">编辑</span>　<span class="link" data-delete="5000积分兑礼物">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="2000积分兑家政服务">2000积分兑家政服务</span></td><td><span class="badge green">电子礼券</span></td><td>20,000</td><td>200,000元</td><td><span class="link" data-receive-detail="2000积分兑家政服务" data-receive-status="领取详情" data-receive-total="12,420">12,420</span></td><td><span class="link" data-writeoff-detail="2000积分兑家政服务">5,326</span></td><td><span class="link" data-receive-detail="2000积分兑家政服务" data-receive-status="过期详情" data-receive-total="318" data-receive-filter="已过期">318</span></td><td><span class="link" data-receive-detail="2000积分兑家政服务" data-receive-status="冻结详情" data-receive-total="86" data-receive-filter="已冻结">86</span></td><td>2026-05-01 09:30</td><td>2026-05-01 至 2026-08-31</td><td><span class="badge green">已生效</span></td><td><span class="link" data-detail="2000积分兑家政服务">详情</span>　<span class="link" data-edit-active="2000积分兑家政服务">编辑</span>　<span class="link" data-status="freeze">冻结</span>　<span class="link" data-delete="2000积分兑家政服务">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="5000积分兑礼物">5000积分兑礼物</span></td><td><span class="badge">实物礼券</span></td><td>8,000</td><td>-</td><td><span class="link" data-receive-detail="5000积分兑礼物" data-receive-status="领取详情" data-receive-total="4,012">4,012</span></td><td><span class="link" data-writeoff-detail="5000积分兑礼物">1,908</span></td><td><span class="link" data-receive-detail="5000积分兑礼物" data-receive-status="过期详情" data-receive-total="92" data-receive-filter="已过期">92</span></td><td><span class="link" data-receive-detail="5000积分兑礼物" data-receive-status="冻结详情" data-receive-total="15" data-receive-filter="已冻结">15</span></td><td>2026-05-06 15:42</td><td>领取后30天</td><td><span class="badge green">待生效</span></td><td><span class="link" data-detail="5000积分兑礼物">详情</span>　<span class="link" data-edit="5000积分兑礼物">编辑</span>　<span class="link" data-delete="5000积分兑礼物">删除</span></td></tr>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="第三方礼券">第三方礼券</span></td><td><span class="badge gold">第三方礼券</span></td><td>10,000</td><td>300,000元</td><td><span class="link" data-receive-detail="第三方礼券" data-receive-status="领取详情" data-receive-total="6,312">6,312</span></td><td><span class="link" data-writeoff-detail="第三方礼券">2,126</span></td><td><span class="link" data-receive-detail="第三方礼券" data-receive-status="过期详情" data-receive-total="0" data-receive-filter="已过期">0</span></td><td><span class="link" data-receive-detail="第三方礼券" data-receive-status="冻结详情" data-receive-total="0" data-receive-filter="已冻结">0</span></td><td>2026-05-12 10:16</td><td>2026-05-15 至 2026-11-30</td><td><span class="badge red">已失效</span></td><td><span class="link" data-detail="第三方礼券">详情</span>　<span class="link" data-delete="第三方礼券">删除</span></td></tr>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="500积分兑礼物">500积分兑礼物</span></td><td><span class="badge">实物礼券</span></td><td>1,000</td><td>-</td><td><span class="link" data-receive-detail="500积分兑礼物" data-receive-status="领取详情" data-receive-total="0">0</span></td><td><span class="link" data-writeoff-detail="500积分兑礼物">0</span></td><td><span class="link" data-receive-detail="500积分兑礼物" data-receive-status="过期详情" data-receive-total="0" data-receive-filter="已过期">0</span></td><td><span class="link" data-receive-detail="500积分兑礼物" data-receive-status="冻结详情" data-receive-total="0" data-receive-filter="已冻结">0</span></td><td>2026-04-20 11:08</td><td>领取后15天</td><td><span class="badge gray">冻结</span></td><td><span class="link" data-detail="500积分兑礼物">详情</span>　<span class="link" data-status="unfreeze">解冻</span>　<span class="link" data-delete="500积分兑礼物">删除</span></td></tr>
             <tr><td><input type="checkbox"></td><td><span class="link" data-detail="500积分兑场地预约优先">500积分兑场地预约优先</span></td><td><span class="badge green">电子礼券</span></td><td>5,000</td><td>25,000元</td><td><span class="link" data-receive-detail="500积分兑场地预约优先" data-receive-status="领取详情" data-receive-total="0">0</span></td><td><span class="link" data-writeoff-detail="500积分兑场地预约优先">0</span></td><td><span class="link" data-receive-detail="500积分兑场地预约优先" data-receive-status="过期详情" data-receive-total="0" data-receive-filter="已过期">0</span></td><td><span class="link" data-receive-detail="500积分兑场地预约优先" data-receive-status="冻结详情" data-receive-total="0" data-receive-filter="已冻结">0</span></td><td>2026-06-05 16:20</td><td>2026-06-10 至 2026-09-30</td><td><span class="badge green">待生效</span></td><td><span class="link" data-detail="500积分兑场地预约优先">详情</span>　<span class="link" data-edit="500积分兑场地预约优先">编辑</span>　<span class="link" data-delete="500积分兑场地预约优先">删除</span></td></tr>
@@ -961,29 +959,6 @@
     document.querySelectorAll("[data-close-modal]").forEach(el => {
       el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
     });
-  </script>
-  <script>
-    (() => {
-      const audits = [
-        ["审核通过", "green", "task-coupon-audit.html?action=publish&mode=view"],
-        ["审核通过", "green", "task-coupon-audit.html?action=publish&mode=view"],
-        ["审核不通过", "red", "task-coupon-audit.html?action=edit&mode=view&result=reject"],
-        ["审核通过", "green", "task-coupon-audit.html?action=edit&mode=view"],
-        ["审核通过", "green", "task-coupon-audit.html?action=publish&mode=view"]
-      ];
-      document.querySelectorAll(".coupon-list-table tbody tr").forEach((row, index) => {
-        const audit = audits[index] || audits[0];
-        if (row.cells.length === 13) {
-          const cell = row.insertCell(row.cells.length - 2);
-          cell.innerHTML = `<span class="badge ${audit[1]}">${audit[0]}</span>`;
-        }
-        const operation = row.cells[row.cells.length - 1];
-        operation.querySelector("span[data-detail]")?.remove();
-        if (!operation.querySelector('a[href*="task-coupon-audit.html"]')) {
-          operation.insertAdjacentHTML("afterbegin", `<a class="link" data-audit-detail href="${audit[2]}">审核详情</a>　`);
-        }
-      });
-    })();
   </script>
 </body>
 </html>

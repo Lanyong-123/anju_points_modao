@@ -210,7 +210,6 @@
       <div class="field"><label>关联条件</label><select><option>全部条件</option><option>会员等级</option><option>身份标签</option><option>特定项目</option></select></div>
       <div class="field"><label>发布对象</label><select><option>全部对象</option><option>V3远近闻名</option><option>V2小有名气</option><option>项目住户</option><option>员工</option><option>南山项目</option></select></div>
       <div class="field"><label>权益状态</label><select><option>全部状态</option><option>暂存</option><option>进行中</option><option>已过期</option><option>已结束</option><option>启用</option><option>禁用</option></select></div>
-      <div class="field"><label>审核状态</label><select><option>全部状态</option><option>待提交</option><option>待审核</option><option>审核通过</option><option>审核不通过</option></select></div>
       <div class="field"><label>状态</label><select><option>全部</option><option>正常</option><option>删除</option></select></div>
       <div class="field"><label>有效期</label><input value="2026-05-01 至 2026-12-31"></div>
       <div class="field"><label>权益创建时间</label><input value="2026-04-01 至 2026-05-26"></div>
@@ -245,7 +244,6 @@
               <th>未核销数</th>
               <th>权益创建时间</th>
               <th>有效期</th>
-              <th>审核状态</th>
               <th>状态</th>
               <th>操作</th>
             </tr>
@@ -751,28 +749,6 @@
     document.querySelectorAll("[data-close-modal]").forEach(el => {
       el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
     });
-  </script>
-  <script>
-    (() => {
-      const audits = [
-        ["审核通过", "green", "task-benefit-audit.html?action=edit&mode=view"],
-        ["待提交", "gold", "task-benefit-audit.html?action=create&mode=view&result=pending"],
-        ["审核不通过", "red", "task-benefit-audit.html?action=edit&mode=view&result=reject"],
-        ["审核通过", "green", "task-benefit-audit.html?action=disable&mode=view"],
-        ["审核通过", "green", "task-benefit-audit.html?action=enable&mode=view"]
-      ];
-      const table = [...document.querySelectorAll("table")].find(item => item.querySelector("thead th:nth-child(2)")?.textContent.trim() === "权益名称");
-      table?.querySelectorAll("tbody tr").forEach((row, index) => {
-        const audit = audits[index] || audits[0];
-        if (row.cells.length === 16) {
-          const cell = row.insertCell(row.cells.length - 2);
-          cell.innerHTML = `<span class="badge ${audit[1]}">${audit[0]}</span>`;
-        }
-        const operation = row.cells[row.cells.length - 1];
-        operation.querySelector("span[data-detail]")?.remove();
-        operation.insertAdjacentHTML("afterbegin", `<a class="link" data-audit-detail href="${audit[2]}">审核详情</a>　`);
-      });
-    })();
   </script>
 </body>
 </html>
