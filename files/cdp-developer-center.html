@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>开发者中心</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .developer-filter {
+      grid-template-columns: minmax(240px, 1.2fr) minmax(180px, .8fr) auto auto;
+    }
+    .developer-table th,
+    .developer-table td {
+      padding: 11px 10px;
+      vertical-align: middle;
+    }
+    .developer-table code {
+      color: var(--navy);
+      font-family: Menlo, Consolas, monospace;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+    .secret-cell,
+    .action-list,
+    .credential-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .secret-cell code {
+      min-width: 220px;
+    }
+    .action-list {
+      white-space: nowrap;
+    }
+    .link.danger {
+      color: #bd1f2d;
+    }
+    .developer-modal {
+      width: min(920px, calc(100vw - 48px));
+    }
+    .developer-modal > .panel-bd {
+      max-height: calc(100vh - 170px);
+      overflow: auto;
+    }
+    .required::before {
+      content: "*";
+      margin-right: 3px;
+      color: var(--red);
+    }
+    .credential-table th {
+      width: 150px;
+      background: #f3f7fa;
+      text-align: left;
+    }
+    .credential-table td {
+      white-space: normal;
+    }
+    .credential-value {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .credential-value code {
+      color: var(--navy);
+      font-family: Menlo, Consolas, monospace;
+      overflow-wrap: anywhere;
+    }
+    @media (max-width: 1100px) {
+      .developer-filter { grid-template-columns: 1fr 1fr; }
+      .secret-cell code { min-width: 150px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter developer-filter">
+      <div class="field"><label>开发者名称</label><input placeholder="请输入开发者名称"></div>
+      <div class="field"><label>状态</label><select><option>全部状态</option><option>启用</option><option>停用</option></select></div>
+      <button class="btn primary">查询</button>
+      <button class="btn">重置</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd">
+        <h3>开发者列表</h3>
+        <div class="toolbar"><button class="btn primary" type="button" data-open-developer="create">新增开发者</button></div>
+      </div>
+      <div class="panel-bd">
+        <table class="developer-table">
+          <thead><tr><th>开发者名称</th><th>调用限额</th><th>Client_ID</th><th>密钥</th><th>状态</th><th>操作</th></tr></thead>
+          <tbody>
+            <tr data-developer-row>
+              <td><strong>智能客服系统</strong></td><td>50,000 次/日</td><td><code>cli_J54SjVRypUdhKMZq2ynfzzgLEpdFNJUgs33V</code></td>
+              <td><div class="secret-cell"><code data-secret data-value="sk_jGhegtwyCc7gsMEC9idMEbfAF7xhpS">••••••••••••••••••••••••••••••••</code><span class="link" data-toggle-row-secret>显示</span><span class="link" data-rotate-row>更换</span></div></td>
+              <td><span class="badge green" data-status>启用</span></td><td><div class="action-list"><span class="link" data-open-developer="edit">修改</span><span class="link danger" data-open-delete>删除</span><span class="link" data-toggle-status>停用</span></div></td>
+            </tr>
+            <tr data-developer-row>
+              <td><strong>营销管理系统</strong></td><td>100,000 次/日</td><td><code>cli_Y7tQ4vF2mP9sZ6cN3xK8dR5wB1hL0uAe</code></td>
+              <td><div class="secret-cell"><code data-secret data-value="sk_8HaV2sQ6nL9cX3pR7mK5wD1zF4jBgE">••••••••••••••••••••••••••••••••</code><span class="link" data-toggle-row-secret>显示</span><span class="link" data-rotate-row>更换</span></div></td>
+              <td><span class="badge green" data-status>启用</span></td><td><div class="action-list"><span class="link" data-open-developer="edit">修改</span><span class="link danger" data-open-delete>删除</span><span class="link" data-toggle-status>停用</span></div></td>
+            </tr>
+            <tr data-developer-row>
+              <td><strong>第三方业务系统</strong></td><td>30,000 次/日</td><td><code>cli_A6mD9qT3wR8xC2vN5kF7sP1hZ4jLbU</code></td>
+              <td><div class="secret-cell"><code data-secret data-value="sk_3DcN7xK2pL8vQ5mR9tF1wB6hY4sAjU">••••••••••••••••••••••••••••••••</code><span class="link" data-toggle-row-secret>显示</span><span class="link" data-rotate-row>更换</span></div></td>
+              <td><span class="badge" data-status>停用</span></td><td><div class="action-list"><span class="link" data-open-developer="edit">修改</span><span class="link danger" data-open-delete>删除</span><span class="link" data-toggle-status>启用</span></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination"><span>共 3 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="developerModal">
+    <div class="modal developer-modal">
+      <div class="panel-hd"><h3 id="developerModalTitle">新增开发者</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="grid cols-2">
+          <div class="field"><label class="required">开发者名称</label><input id="developerName" value="智能客服系统"></div>
+          <div class="field"><label class="required">调用系统</label><input id="callingSystem" value="智能客服系统、营销管理系统"></div>
+          <div class="field"><label class="required">调用限额</label><input id="callLimit" value="50,000 次/日"></div>
+          <div class="field"><label>状态</label><select id="developerStatus"><option>启用</option><option>停用</option></select></div>
+        </div>
+        <div class="panel" style="margin-top:14px;box-shadow:none">
+          <div class="panel-hd"><h3>调用凭证</h3><button class="btn primary" type="button" id="generateCredential">生成密钥</button></div>
+          <div class="panel-bd">
+            <div class="notice" id="credentialHint"><strong>尚未生成调用凭证</strong>点击“生成密钥”后展示 Client_ID 和密钥。</div>
+            <table class="credential-table" id="credentialTable" hidden>
+              <tbody>
+                <tr><th>Client_ID</th><td><div class="credential-value"><code id="clientIdValue"></code></div></td></tr>
+                <tr><th>密钥</th><td><div class="credential-value"><code id="secretValue"></code><div class="credential-actions"><button class="btn" type="button" id="toggleSecret">显示</button><button class="btn" type="button" id="rotateCredential">更换</button></div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="deleteModal">
+    <div class="modal" style="width:min(520px, calc(100vw - 48px))">
+      <div class="panel-hd"><h3>删除开发者</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd"><p style="margin:0">确认删除该开发者？删除后对应调用凭证将失效。</p></div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认删除</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="rotateCredentialModal">
+    <div class="modal" style="width:min(520px, calc(100vw - 48px))">
+      <div class="panel-hd"><h3>更换密钥</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd"><div class="notice"><strong>原密钥将立即失效</strong>请确认调用系统已准备更新新的密钥。</div></div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" type="button" id="confirmRotateCredential">确认更换</button></div>
+    </div>
+  </div>
+
+  <script>
+    const hiddenSecret = "•".repeat(32);
+    const credentialState = { clientId: "", secret: "", visible: false };
+    let rotateTarget = null;
+    const randomToken = (prefix, length) => {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+      let value = prefix;
+      for (let index = 0; index < length; index += 1) value += chars[Math.floor(Math.random() * chars.length)];
+      return value;
+    };
+    const renderCredential = () => {
+      document.getElementById("clientIdValue").textContent = credentialState.clientId;
+      document.getElementById("secretValue").textContent = credentialState.visible ? credentialState.secret : hiddenSecret;
+      document.getElementById("toggleSecret").textContent = credentialState.visible ? "隐藏" : "显示";
+    };
+    const showCredential = () => {
+      document.getElementById("credentialHint").hidden = true;
+      document.getElementById("credentialTable").hidden = false;
+      document.getElementById("generateCredential").hidden = true;
+      renderCredential();
+    };
+    const prepareCredential = (mode, row) => {
+      if (mode === "edit") {
+        credentialState.clientId = row.querySelector("td:nth-child(3) code").textContent;
+        credentialState.secret = row.querySelector("[data-secret]").dataset.value;
+        credentialState.visible = false;
+        showCredential();
+      } else {
+        credentialState.clientId = "";
+        credentialState.secret = "";
+        credentialState.visible = false;
+        document.getElementById("credentialHint").hidden = false;
+        document.getElementById("credentialTable").hidden = true;
+        document.getElementById("generateCredential").hidden = false;
+      }
+    };
+    document.querySelectorAll("[data-open-developer]").forEach(control => {
+      control.addEventListener("click", () => {
+        const mode = control.dataset.openDeveloper;
+        const row = control.closest("[data-developer-row]");
+        document.getElementById("developerModalTitle").textContent = mode === "create" ? "新增开发者" : "修改开发者";
+        if (mode === "edit") {
+          const developerName = row.querySelector("td:first-child").textContent.trim();
+          document.getElementById("developerName").value = developerName;
+          document.getElementById("callingSystem").value = developerName;
+          document.getElementById("callLimit").value = row.querySelector("td:nth-child(2)").textContent.trim();
+          document.getElementById("developerStatus").value = row.querySelector("[data-status]").textContent.trim();
+        } else {
+          document.getElementById("developerName").value = "";
+          document.getElementById("callingSystem").value = "";
+          document.getElementById("callLimit").value = "50,000 次/日";
+          document.getElementById("developerStatus").value = "启用";
+        }
+        prepareCredential(mode, row);
+        document.getElementById("developerModal").classList.add("open");
+      });
+    });
+    document.getElementById("generateCredential").addEventListener("click", () => {
+      credentialState.clientId = randomToken("cli_", 36);
+      credentialState.secret = randomToken("sk_", 30);
+      credentialState.visible = true;
+      showCredential();
+    });
+    document.getElementById("toggleSecret").addEventListener("click", () => {
+      credentialState.visible = !credentialState.visible;
+      renderCredential();
+    });
+    document.getElementById("rotateCredential").addEventListener("click", () => {
+      rotateTarget = "form";
+      document.getElementById("rotateCredentialModal").classList.add("open");
+    });
+    document.querySelectorAll("[data-toggle-row-secret]").forEach(control => {
+      control.addEventListener("click", () => {
+        const secret = control.closest(".secret-cell").querySelector("[data-secret]");
+        const showing = secret.textContent !== hiddenSecret;
+        secret.textContent = showing ? hiddenSecret : secret.dataset.value;
+        control.textContent = showing ? "显示" : "隐藏";
+      });
+    });
+    document.querySelectorAll("[data-rotate-row]").forEach(control => {
+      control.addEventListener("click", () => {
+        rotateTarget = control.closest(".secret-cell").querySelector("[data-secret]");
+        document.getElementById("rotateCredentialModal").classList.add("open");
+      });
+    });
+    document.getElementById("confirmRotateCredential").addEventListener("click", () => {
+      const nextSecret = randomToken("sk_", 30);
+      if (rotateTarget === "form") {
+        credentialState.secret = nextSecret;
+        credentialState.visible = true;
+        renderCredential();
+      } else if (rotateTarget) {
+        rotateTarget.dataset.value = nextSecret;
+        rotateTarget.textContent = hiddenSecret;
+        rotateTarget.closest(".secret-cell").querySelector("[data-toggle-row-secret]").textContent = "显示";
+      }
+      document.getElementById("rotateCredentialModal").classList.remove("open");
+    });
+    document.querySelectorAll("[data-toggle-status]").forEach(control => {
+      control.addEventListener("click", () => {
+        const row = control.closest("[data-developer-row]");
+        const status = row.querySelector("[data-status]");
+        const enabled = status.textContent === "启用";
+        status.textContent = enabled ? "停用" : "启用";
+        status.classList.toggle("green", !enabled);
+        control.textContent = enabled ? "启用" : "停用";
+      });
+    });
+    document.querySelectorAll("[data-open-delete]").forEach(control => control.addEventListener("click", () => document.getElementById("deleteModal").classList.add("open")));
+    document.querySelectorAll("[data-close-modal]").forEach(control => control.addEventListener("click", () => control.closest(".modal-mask").classList.remove("open")));
+  </script>
+</body>
+</html>

@@ -71,6 +71,7 @@
       { "title": "人群管理", "url": "files/cdp-profile.html" },
       { "title": "客户画像", "url": "files/cdp-customer-insight.html" },
       { "title": "数据API管理", "url": "files/cdp-api-management.html" },
+      { "title": "开发者中心", "url": "files/cdp-developer-center.html" },
       { "title": "客户行为分析", "url": "files/cdp-behavior.html" },
       { "title": "客户满意度管理", "url": "files/cdp-satisfaction.html" }
     ]
