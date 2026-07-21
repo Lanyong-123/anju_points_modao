@@ -10,7 +10,7 @@
       grid-template-columns: 1fr auto auto;
     }
     .role-modal {
-      width: min(980px, calc(100vw - 48px));
+      width: min(1180px, calc(100vw - 48px));
     }
     .role-modal .panel-bd {
       max-height: calc(100vh - 170px);
@@ -47,34 +47,89 @@
     }
     .permission-tree-bd {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      padding: 12px;
+      gap: 0;
+      padding: 0;
     }
     .permission-group {
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      padding: 10px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      padding: 0;
       background: #fff;
     }
-    .permission-group strong,
-    .permission-item {
+    .permission-group:last-child {
+      border-bottom: 0;
+    }
+    .permission-node,
+    .permission-item,
+    .permission-action {
       display: flex;
       align-items: center;
       gap: 7px;
       min-height: 28px;
       color: var(--ink);
     }
-    .permission-children {
+    .permission-node {
+      min-height: 42px;
+      padding: 0 14px;
+      background: #f8fcff;
+      font-weight: 800;
+    }
+    .permission-toggle {
+      width: 26px;
+      height: 26px;
+      display: inline-grid;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #5f7286;
+      cursor: pointer;
+    }
+    .permission-toggle::before {
+      content: "⌄";
+      font-size: 15px;
+    }
+    .collapsed > .permission-node .permission-toggle::before,
+    .permission-page.collapsed > .permission-item .permission-toggle::before {
+      content: "›";
+    }
+    .permission-pages {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 4px 10px;
-      margin-top: 6px;
-      padding-left: 24px;
+      gap: 0;
+      padding: 0 14px 8px 48px;
     }
     .permission-item {
+      min-height: 38px;
       color: #34465c;
       font-size: 13px;
+      font-weight: 700;
+    }
+    .permission-item > label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .permission-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 22px;
+      padding: 2px 12px 12px 48px;
+    }
+    .permission-action {
+      min-width: 92px;
+      color: #526477;
+      font-size: 13px;
+    }
+    .permission-group.collapsed .permission-pages,
+    .permission-page.collapsed .permission-actions {
+      display: none;
+    }
+    .permission-tree input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      margin: 0;
     }
     .desensitize-check {
       display: flex;
@@ -175,9 +230,9 @@
         <div class="permission-tree">
           <div class="permission-tree-hd">
             <span class="required-title">角色权限</span>
-            <label><input type="checkbox" checked> 全选菜单</label>
+            <label><input type="checkbox" id="permissionSelectAll"> 全选权限</label>
           </div>
-          <div class="permission-tree-bd">
+          <div class="permission-tree-bd" id="permissionTreeBody">
             <div class="permission-group">
               <strong><input type="checkbox" checked> 后台端-会员中心</strong>
               <div class="permission-children">
@@ -287,6 +342,168 @@
   </div>
 
   <script>
+    const crudActions = ["查询", "新增", "修改", "删除", "启用/停用", "导出"];
+    const queryActions = ["查询", "详情", "导出"];
+    const auditActions = ["查询", "详情", "审核", "导出"];
+    const reportActions = ["查询", "导出"];
+    const permissionData = [
+      { name: "后台端-会员中心", pages: [
+        { name: "会员信息管理", actions: ["查询", "新增", "修改", "详情", "导出"], selected: true },
+        { name: "会员实名审核", actions: auditActions, selected: true },
+        { name: "会员等级管理", actions: crudActions },
+        { name: "会员注销管理", actions: auditActions },
+        { name: "会员变更日志管理", actions: queryActions }
+      ] },
+      { name: "后台端-积分中心", pages: [
+        { name: "积分账户管理", actions: ["查询", "新增", "修改", "详情", "冻结/解冻", "导出"], selected: true },
+        { name: "积分账户审核管理", actions: auditActions, selected: true },
+        { name: "积分明细查询", actions: queryActions, selected: true },
+        { name: "积分互换查询", actions: queryActions }
+      ] },
+      { name: "后台端-权益中心", pages: [
+        { name: "权益管理", actions: crudActions, selected: true },
+        { name: "商品管理", actions: crudActions, selected: true },
+        { name: "优惠券管理", actions: crudActions, selected: true },
+        { name: "优惠券核销管理", actions: ["查询", "核销", "详情", "导出"] }
+      ] },
+      { name: "后台端-清结算管理", pages: [
+        { name: "积分清算规则配置", actions: crudActions },
+        { name: "积分日清报表", actions: reportActions },
+        { name: "过期积分统计报表", actions: reportActions },
+        { name: "积分兑分月结报表", actions: reportActions },
+        { name: "优惠券结算报表", actions: reportActions }
+      ] },
+      { name: "后台端-风控管理", pages: [
+        { name: "风控规则管理", actions: crudActions },
+        { name: "发分主体风控", actions: ["查询", "新增", "修改", "额度调整", "详情", "导出"] },
+        { name: "风控预警中心", actions: ["查询", "详情", "处理", "导出"] },
+        { name: "风控预警报表", actions: reportActions }
+      ] },
+      { name: "后台端-营销管理", pages: [
+        { name: "营销管理", actions: crudActions }
+      ] },
+      { name: "会员报表", pages: [
+        { name: "会员新增/注销报表", actions: reportActions },
+        { name: "会员增长分析报表", actions: reportActions },
+        { name: "积分发分统计表", actions: reportActions },
+        { name: "积分兑存报表", actions: reportActions },
+        { name: "积分本场兑分报表", actions: reportActions },
+        { name: "优惠券发放报表", actions: reportActions },
+        { name: "优惠券效果分析报表", actions: reportActions }
+      ] },
+      { name: "后台端-客户数据管理", pages: [
+        { name: "客户标签管理", actions: crudActions, selected: true },
+        { name: "标签使用报表", actions: reportActions, selected: true },
+        { name: "人群管理", actions: crudActions, selected: true },
+        { name: "客户画像", actions: queryActions, selected: true },
+        { name: "数据API管理", actions: ["查询", "导出"] },
+        { name: "开发者中心", actions: crudActions },
+        { name: "客户行为分析", actions: queryActions, selected: true },
+        { name: "客户满意度管理", actions: ["查询", "详情", "删除", "导出"] }
+      ] },
+      { name: "后台端-系统管理", pages: [
+        { name: "用户管理", actions: ["查询", "新增", "修改", "删除", "启用/停用", "重置密码", "导入", "导出"], selected: true },
+        { name: "角色管理", actions: crudActions, selected: true },
+        { name: "操作日志", actions: queryActions, selected: true },
+        { name: "参数配置", actions: crudActions, selected: true },
+        { name: "数据字典类型", actions: crudActions },
+        { name: "数据字典", actions: crudActions },
+        { name: "脱敏管理", actions: ["查询", "修改", "启用/停用"] }
+      ] },
+      { name: "C端-小程序端", pages: [
+        { name: "手机授权登录", actions: ["查看", "配置"] },
+        { name: "会员中心", actions: ["查看", "配置"] },
+        { name: "积分中心", actions: ["查看", "配置"] },
+        { name: "权益中心", actions: ["查看", "配置"] },
+        { name: "优惠券管理", actions: ["查看", "配置"] },
+        { name: "通知中心", actions: ["查看", "配置"] }
+      ] }
+    ];
+
+    const permissionTreeBody = document.getElementById("permissionTreeBody");
+    permissionTreeBody.innerHTML = permissionData.map((group, groupIndex) => `
+      <section class="permission-group${groupIndex > 2 ? " collapsed" : ""}" data-permission-group>
+        <div class="permission-node">
+          <button class="permission-toggle" type="button" aria-label="展开或收起${group.name}" data-tree-toggle></button>
+          <input type="checkbox" data-group-check>
+          <span>${group.name}</span>
+        </div>
+        <div class="permission-pages">
+          ${group.pages.map((page, pageIndex) => `
+            <div class="permission-page${pageIndex > 1 ? " collapsed" : ""}" data-permission-page>
+              <div class="permission-item">
+                <button class="permission-toggle" type="button" aria-label="展开或收起${page.name}" data-tree-toggle></button>
+                <label><input type="checkbox" data-page-check${page.selected ? " checked" : ""}><span>${page.name}</span></label>
+              </div>
+              <div class="permission-actions">
+                ${page.actions.map(action => `<label class="permission-action"><input type="checkbox" data-action-check${page.selected ? " checked" : ""}> ${action}</label>`).join("")}
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </section>
+    `).join("");
+
+    const syncParentCheck = (parentCheck, childChecks) => {
+      const checkedCount = childChecks.filter(check => check.checked).length;
+      const hasPartial = childChecks.some(check => check.indeterminate);
+      parentCheck.checked = checkedCount === childChecks.length && childChecks.length > 0;
+      parentCheck.indeterminate = hasPartial || (checkedCount > 0 && checkedCount < childChecks.length);
+    };
+    const syncPage = page => {
+      const pageCheck = page.querySelector("[data-page-check]");
+      const actions = [...page.querySelectorAll("[data-action-check]")];
+      syncParentCheck(pageCheck, actions);
+    };
+    const syncGroup = group => {
+      const groupCheck = group.querySelector("[data-group-check]");
+      const pages = [...group.querySelectorAll("[data-page-check]")];
+      syncParentCheck(groupCheck, pages);
+    };
+    const syncAll = () => {
+      const allCheck = document.getElementById("permissionSelectAll");
+      const groups = [...permissionTreeBody.querySelectorAll("[data-group-check]")];
+      syncParentCheck(allCheck, groups);
+    };
+    permissionTreeBody.querySelectorAll("[data-permission-page]").forEach(syncPage);
+    permissionTreeBody.querySelectorAll("[data-permission-group]").forEach(syncGroup);
+    syncAll();
+
+    permissionTreeBody.addEventListener("click", event => {
+      const toggle = event.target.closest("[data-tree-toggle]");
+      if (!toggle) return;
+      const branch = toggle.closest("[data-permission-page], [data-permission-group]");
+      branch.classList.toggle("collapsed");
+      event.preventDefault();
+    });
+    permissionTreeBody.addEventListener("change", event => {
+      const check = event.target;
+      if (check.matches("[data-group-check]")) {
+        const group = check.closest("[data-permission-group]");
+        group.querySelectorAll("[data-page-check], [data-action-check]").forEach(child => {
+          child.checked = check.checked;
+          child.indeterminate = false;
+        });
+      } else if (check.matches("[data-page-check]")) {
+        const page = check.closest("[data-permission-page]");
+        page.querySelectorAll("[data-action-check]").forEach(action => action.checked = check.checked);
+      }
+      const page = check.closest("[data-permission-page]");
+      const group = check.closest("[data-permission-group]");
+      if (page) syncPage(page);
+      if (group) syncGroup(group);
+      syncAll();
+    });
+    document.getElementById("permissionSelectAll").addEventListener("change", event => {
+      permissionTreeBody.querySelectorAll("input[type='checkbox']").forEach(check => {
+        check.checked = event.target.checked;
+        check.indeterminate = false;
+      });
+      permissionTreeBody.querySelectorAll("[data-permission-page]").forEach(syncPage);
+      permissionTreeBody.querySelectorAll("[data-permission-group]").forEach(syncGroup);
+      syncAll();
+    });
+
     document.querySelectorAll("[data-open-role]").forEach(el => {
       el.addEventListener("click", () => {
         document.getElementById("roleModalTitle").textContent = el.dataset.openRole === "create" ? "新增角色" : "编辑角色";
