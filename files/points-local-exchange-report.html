@@ -7,19 +7,87 @@
   <link rel="stylesheet" href="../resources/style.css">
   <style>
     .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+    .exchange-filter { grid-template-columns: minmax(150px, .8fr) minmax(260px, 1.35fr) repeat(3, minmax(150px, 1fr)); }
     .chart-wrap { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; }
     .chart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
     .chart-head h3 { margin: 0; color: var(--navy); font-size: 15px; }
     .chart-note { color: var(--muted); font-size: 12px; font-weight: 800; }
     .bar-list { display: grid; gap: 16px; }
-    .bar-row { display: grid; grid-template-columns: 118px 1fr 112px; gap: 12px; align-items: center; }
+    .bar-row { display: grid; grid-template-columns: 176px 1fr 112px; gap: 12px; align-items: center; }
     .bar-name { color: #123152; font-weight: 800; }
     .bar-track { height: 22px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
     .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2f6fbd, #2f9b6b); }
     .bar-fill.alt { background: linear-gradient(90deg, #2f6fbd, #d8892c); }
     .bar-value { color: #123152; font-weight: 800; text-align: right; }
     .tag { display: inline-flex; align-items: center; justify-content: center; min-width: 68px; height: 24px; border-radius: 999px; background: #eef4fb; color: #123152; font-weight: 800; font-size: 12px; }
+    .empty-state { padding: 34px 12px; color: var(--muted); text-align: center; }
+    .org-tree-select { position: relative; }
+    .org-tree-trigger {
+      width: 100%;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .org-tree-trigger::after { content: "⌄"; color: #667789; font-size: 13px; }
+    .org-tree-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 15;
+      display: none;
+      width: 360px;
+      max-height: 320px;
+      padding: 8px;
+      border: 1px solid #c9d8e8;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 14px 34px rgba(18, 49, 82, .18);
+      overflow: auto;
+    }
+    .org-tree-select.open .org-tree-panel { display: block; }
+    #consumerOrgSelect .org-tree-panel { right: 0; left: auto; }
+    .org-tree-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 30px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .org-tree-row:hover { background: #eef6ff; color: var(--brand); }
+    .org-tree-toggle { width: 16px; color: #667789; text-align: center; flex: 0 0 16px; }
+    .org-tree-level-2 { padding-left: 28px; }
+    .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .exchange-table { width: 100%; table-layout: fixed; }
+    .exchange-table th,
+    .exchange-table td { white-space: normal; overflow-wrap: anywhere; }
+    .exchange-table th:nth-child(1) { width: 8%; }
+    .exchange-table th:nth-child(2) { width: 12%; }
+    .exchange-table th:nth-child(3),
+    .exchange-table th:nth-child(4) { width: 14%; }
+    .exchange-table th:nth-child(5),
+    .exchange-table th:nth-child(8) { width: 10%; }
+    .exchange-table th:nth-child(6),
+    .exchange-table th:nth-child(7),
+    .exchange-table th:nth-child(9),
+    .exchange-table th:nth-child(10) { width: 8%; }
     @media (max-width: 1180px) {
+      .exchange-filter { grid-template-columns: repeat(3, minmax(180px, 1fr)); }
       .report-grid { grid-template-columns: 1fr; }
       .bar-row { grid-template-columns: 96px 1fr; }
       .bar-value { grid-column: 2; text-align: left; }
@@ -28,11 +96,24 @@
 </head>
 <body>
   <div class="page">
-    <div class="filter">
-      <div class="field"><label>统计周期</label><select id="periodType"><option selected>月</option><option>季</option><option>年</option></select></div>
-      <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
-      <div class="field"><label>发分主体</label><select id="issuerSelect"><option selected>集团运营中心</option><option>南山项目</option><option>福田项目</option><option>商业运营公司</option></select></div>
-      <div class="field"><label>消费主体</label><select id="consumeScope"><option selected>在其他发分主体</option><option>在本主体内</option></select></div>
+    <div class="filter exchange-filter">
+      <div class="field"><label>统计周期</label><select id="periodType"><option>日</option><option selected>月</option><option>季</option><option>年</option></select></div>
+      <div class="field"><label>统计时间</label><select id="periodValue"></select><input id="periodRange" value="2026-06-01 至 2026-06-30" hidden></div>
+      <div class="field"><label>发分主体</label>
+        <div class="org-tree-select" id="issuerOrgSelect">
+          <button class="org-tree-trigger" type="button" data-org-trigger>全部组织</button>
+          <input type="hidden" id="issuerOrgValue" value="全部组织">
+          <div class="org-tree-panel" data-org-panel></div>
+        </div>
+      </div>
+      <div class="field"><label>兑换类型</label><select id="exchangeType"><option selected>全部</option><option>在其他发分主体</option><option>在本主体内</option></select></div>
+      <div class="field"><label>消耗主体</label>
+        <div class="org-tree-select" id="consumerOrgSelect">
+          <button class="org-tree-trigger" type="button" data-org-trigger>全部组织</button>
+          <input type="hidden" id="consumerOrgValue" value="全部组织">
+          <div class="org-tree-panel" data-org-panel></div>
+        </div>
+      </div>
       <button class="btn primary" id="queryBtn">查询</button>
       <button class="btn" id="resetBtn">重置</button>
     </div>
@@ -47,8 +128,8 @@
       </div>
       <div class="chart-wrap">
         <div class="chart-head">
-          <h3 id="sceneChartTitle">消耗场景分布</h3>
-          <span class="chart-note" id="sceneChartNote">按场景汇总</span>
+          <h3 id="sceneChartTitle">兑换商品分布</h3>
+          <span class="chart-note" id="sceneChartNote">按商品汇总</span>
         </div>
         <div class="bar-list" id="sceneBars"></div>
       </div>
@@ -60,9 +141,9 @@
         <div class="toolbar"><button class="btn">导出</button></div>
       </div>
       <div class="panel-bd">
-        <table>
+        <table class="exchange-table">
           <thead>
-            <tr><th>统计周期</th><th>发分主体</th><th>消耗主体</th><th>兑换类型</th><th>消耗场景</th><th>消耗总量</th><th>占比</th></tr>
+            <tr><th>统计周期</th><th>兑换商品</th><th>发分主体</th><th>商品归属主体</th><th>兑换类型</th><th>兑分次数</th><th>兑分单价</th><th>总分</th><th>成本（单位）</th><th>总成本</th></tr>
           </thead>
           <tbody id="exchangeRows"></tbody>
         </table>
@@ -72,20 +153,107 @@
   </div>
 
   <script>
+    const orgTreeData = [
+      {
+        name: "商业板块",
+        children: [
+          { name: "南山片区", children: ["高新安荟邻"] },
+          { name: "福田片区", children: ["景田安荟邻"] }
+        ]
+      },
+      {
+        name: "住宅板块",
+        children: [
+          { name: "南山片区", children: ["高新花园"] },
+          { name: "坪山片区", children: ["秀馨苑"] }
+        ]
+      },
+      {
+        name: "物业板块",
+        children: [
+          { name: "南山片区", children: ["高新花园"] },
+          { name: "坪山片区", children: ["秀馨苑"] }
+        ]
+      }
+    ];
+
     const exchangeData = {
       "在其他发分主体": [
-        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "南山项目", type: "在其他发分主体", scene: "租赁服务抵扣", total: 386000 },
-        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "福田项目", type: "在其他发分主体", scene: "物业缴费抵扣", total: 302000 },
-        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "商业运营公司", type: "在其他发分主体", scene: "商业券核销", total: 248000 },
-        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "物业服务公司", type: "在其他发分主体", scene: "维修服务兑换", total: 186000 }
+        { issuer: "商业板块 / 南山片区 / 高新安荟邻", productOwner: "住宅板块 / 南山片区 / 高新花园", type: "在其他发分主体", product: "10元租赁服务券", redeemCount: 772, unitPoints: 500, total: 386000, unitCost: 10, totalCost: 7720 },
+        { issuer: "商业板块 / 南山片区 / 高新安荟邻", productOwner: "商业板块 / 福田片区 / 景田安荟邻", type: "在其他发分主体", product: "20元物业费抵扣券", redeemCount: 302, unitPoints: 1000, total: 302000, unitCost: 20, totalCost: 6040 },
+        { issuer: "住宅板块 / 南山片区 / 高新花园", productOwner: "物业板块 / 坪山片区 / 秀馨苑", type: "在其他发分主体", product: "商业消费券", redeemCount: 310, unitPoints: 800, total: 248000, unitCost: 15, totalCost: 4650 },
+        { issuer: "物业板块 / 坪山片区 / 秀馨苑", productOwner: "商业板块 / 南山片区 / 高新安荟邻", type: "在其他发分主体", product: "上门维修服务券", redeemCount: 310, unitPoints: 600, total: 186000, unitCost: 12, totalCost: 3720 }
       ],
       "在本主体内": [
-        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "集团运营中心", type: "在本主体内", scene: "商品兑换", total: 426000 },
-        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "集团运营中心", type: "在本主体内", scene: "优惠券核销", total: 338000 },
-        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "集团运营中心", type: "在本主体内", scene: "权益兑换", total: 276000 },
-        { period: "2026-06", issuer: "集团运营中心", consumeIssuer: "集团运营中心", type: "在本主体内", scene: "服务抵扣", total: 194000 }
+        { issuer: "商业板块 / 南山片区 / 高新安荟邻", productOwner: "商业板块 / 南山片区 / 高新安荟邻", type: "在本主体内", product: "精选实物礼品", redeemCount: 284, unitPoints: 1500, total: 426000, unitCost: 30, totalCost: 8520 },
+        { issuer: "商业板块 / 福田片区 / 景田安荟邻", productOwner: "商业板块 / 福田片区 / 景田安荟邻", type: "在本主体内", product: "20元优惠券", redeemCount: 338, unitPoints: 1000, total: 338000, unitCost: 20, totalCost: 6760 },
+        { issuer: "住宅板块 / 南山片区 / 高新花园", productOwner: "住宅板块 / 南山片区 / 高新花园", type: "在本主体内", product: "贴身管家服务", redeemCount: 230, unitPoints: 1200, total: 276000, unitCost: 25, totalCost: 5750 },
+        { issuer: "物业板块 / 坪山片区 / 秀馨苑", productOwner: "物业板块 / 坪山片区 / 秀馨苑", type: "在本主体内", product: "搬家服务券", redeemCount: 194, unitPoints: 1000, total: 194000, unitCost: 20, totalCost: 3880 }
       ]
     };
+
+    function createOrgTree(selectId, valueId) {
+      const select = document.getElementById(selectId);
+      const trigger = select.querySelector("[data-org-trigger]");
+      const panel = select.querySelector("[data-org-panel]");
+      const value = document.getElementById(valueId);
+      const expanded = new Set([
+        "商业板块", "商业板块/南山片区", "商业板块/福田片区",
+        "住宅板块", "住宅板块/南山片区", "住宅板块/坪山片区",
+        "物业板块", "物业板块/南山片区", "物业板块/坪山片区"
+      ]);
+      const render = () => {
+        const rows = ['<div class="org-tree-row org-tree-leaf" data-org-path="全部组织"><span class="org-tree-toggle">·</span><span>全部组织</span></div>'];
+        orgTreeData.forEach(level1 => {
+          const level1Open = expanded.has(level1.name);
+          rows.push(`<div class="org-tree-row org-tree-level-1" data-org-toggle="${level1.name}"><span class="org-tree-toggle">${level1Open ? "▾" : "▸"}</span><span>${level1.name}</span></div>`);
+          if (!level1Open) return;
+          level1.children.forEach(level2 => {
+            const level2Key = `${level1.name}/${level2.name}`;
+            const level2Open = expanded.has(level2Key);
+            rows.push(`<div class="org-tree-row org-tree-level-2" data-org-toggle="${level2Key}"><span class="org-tree-toggle">${level2Open ? "▾" : "▸"}</span><span>${level2.name}</span></div>`);
+            if (!level2Open) return;
+            level2.children.forEach(level3 => {
+              const path = `${level1.name} / ${level2.name} / ${level3}`;
+              rows.push(`<div class="org-tree-row org-tree-level-3 org-tree-leaf" data-org-path="${path}"><span class="org-tree-toggle">·</span><span>${level3}</span></div>`);
+            });
+          });
+        });
+        panel.innerHTML = rows.join("");
+      };
+      trigger.addEventListener("click", event => {
+        event.stopPropagation();
+        document.querySelectorAll(".org-tree-select.open").forEach(item => {
+          if (item !== select) item.classList.remove("open");
+        });
+        select.classList.toggle("open");
+      });
+      panel.addEventListener("click", event => {
+        const row = event.target.closest(".org-tree-row");
+        if (!row) return;
+        const toggle = row.dataset.orgToggle;
+        if (toggle) {
+          if (expanded.has(toggle)) expanded.delete(toggle);
+          else expanded.add(toggle);
+          render();
+          return;
+        }
+        if (row.dataset.orgPath) {
+          value.value = row.dataset.orgPath;
+          trigger.textContent = row.dataset.orgPath;
+          select.classList.remove("open");
+          renderAll();
+        }
+      });
+      render();
+      return {
+        reset() {
+          value.value = "全部组织";
+          trigger.textContent = "全部组织";
+          select.classList.remove("open");
+        }
+      };
+    }
 
     function format(num) {
       return num.toLocaleString("zh-CN");
@@ -102,6 +270,10 @@
     }
 
     function renderBars(targetId, data, mode) {
+      if (!data.length) {
+        document.getElementById(targetId).innerHTML = '<div class="empty-state">暂无符合条件的数据</div>';
+        return;
+      }
       const max = Math.max(...data.map(item => item.total));
       const total = sum(data);
       document.getElementById(targetId).innerHTML = data.map(item => {
@@ -116,59 +288,100 @@
       }).join("");
     }
 
-    function renderRows() {
-      const rows = exchangeData[document.getElementById("consumeScope").value];
-      const total = sum(rows);
+    function getFilteredRows() {
+      const type = document.getElementById("exchangeType").value;
+      const issuer = document.getElementById("issuerOrgValue").value;
+      const consumer = document.getElementById("consumerOrgValue").value;
+      let rows = type === "全部" ? [...exchangeData["在其他发分主体"], ...exchangeData["在本主体内"]] : [...exchangeData[type]];
+      if (issuer !== "全部组织") rows = rows.filter(item => item.issuer === issuer);
+      if (consumer !== "全部组织") rows = rows.filter(item => item.productOwner === consumer);
+      return rows;
+    }
+
+    function getPeriodLabel() {
+      return document.getElementById("periodType").value === "日"
+        ? document.getElementById("periodRange").value
+        : document.getElementById("periodValue").value;
+    }
+
+    function renderRows(rows) {
+      const periodLabel = getPeriodLabel();
       document.getElementById("exchangeRows").innerHTML = rows.map(item => `
         <tr>
-          <td>${item.period}</td>
+          <td>${periodLabel}</td>
+          <td>${item.product}</td>
           <td>${item.issuer}</td>
-          <td>${item.consumeIssuer}</td>
+          <td>${item.productOwner}</td>
           <td><span class="tag">${item.type}</span></td>
-          <td>${item.scene}</td>
-          <td>${format(item.total)}</td>
-          <td>${(item.total / total * 100).toFixed(1)}%</td>
+          <td>${format(item.redeemCount)} 次</td>
+          <td>${format(item.unitPoints)} 分</td>
+          <td><a class="link" href="points-detail.html" data-points-detail>${format(item.total)} 分</a></td>
+          <td>¥${item.unitCost.toFixed(2)}</td>
+          <td>¥${format(item.totalCost)}</td>
         </tr>
       `).join("");
       document.getElementById("rowCount").textContent = `共 ${rows.length} 条`;
     }
 
     function renderAll() {
-      const scope = document.getElementById("consumeScope").value;
-      if (scope === "在本主体内") {
-        document.getElementById("issuerSelect").value = "集团运营中心";
-      }
-      const rows = exchangeData[scope];
-      const subjectKey = scope === "在其他发分主体" ? "consumeIssuer" : "issuer";
-      document.getElementById("subjectChartTitle").textContent = scope === "在其他发分主体" ? "其他发分主体消耗分布" : "来源发分主体消耗分布";
-      document.getElementById("subjectChartNote").textContent = scope === "在其他发分主体" ? "本场积他场兑" : "他场积本场兑";
-      renderBars("subjectBars", groupBy(rows, subjectKey), scope === "在其他发分主体" ? "cross" : "local");
-      renderBars("sceneBars", groupBy(rows, "scene"), "local");
-      renderRows();
+      const type = document.getElementById("exchangeType").value;
+      const rows = getFilteredRows();
+      const subjectKey = type === "在本主体内" ? "issuer" : "productOwner";
+      document.getElementById("subjectChartTitle").textContent = type === "全部" ? "商品归属主体分布" : type === "在其他发分主体" ? "其他主体商品兑换分布" : "本主体商品兑换分布";
+      document.getElementById("subjectChartNote").textContent = type === "全部" ? "全部兑换类型" : type === "在其他发分主体" ? "本场积他场兑" : "他场积本场兑";
+      renderBars("subjectBars", groupBy(rows, subjectKey), type === "在其他发分主体" ? "cross" : "local");
+      renderBars("sceneBars", groupBy(rows, "product"), "local");
+      renderRows(rows);
     }
 
     function syncPeriodOptions() {
       const type = document.getElementById("periodType").value;
+      const periodValue = document.getElementById("periodValue");
+      const periodRange = document.getElementById("periodRange");
+      if (type === "日") {
+        periodValue.hidden = true;
+        periodRange.hidden = false;
+        return;
+      }
+      periodValue.hidden = false;
+      periodRange.hidden = true;
       const options = {
         "月": ["2026-06", "2026-05", "2026-04", "2026-03", "2026-02", "2026-01"],
         "季": ["2026年第2季度", "2026年第1季度", "2025年第4季度", "2025年第3季度"],
         "年": ["2026年", "2025年", "2024年"]
       };
-      document.getElementById("periodValue").innerHTML = options[type].map((item, index) =>
+      periodValue.innerHTML = options[type].map((item, index) =>
         `<option ${index === 0 ? "selected" : ""}>${item}</option>`
       ).join("");
     }
 
+    const issuerOrgTree = createOrgTree("issuerOrgSelect", "issuerOrgValue");
+    const consumerOrgTree = createOrgTree("consumerOrgSelect", "consumerOrgValue");
+    document.addEventListener("click", event => {
+      document.querySelectorAll(".org-tree-select.open").forEach(select => {
+        if (!select.contains(event.target)) select.classList.remove("open");
+      });
+      const pointsDetailLink = event.target.closest("[data-points-detail]");
+      if (!pointsDetailLink) return;
+      if (window.parent && window.parent !== window && typeof window.parent.openTab === "function") {
+        event.preventDefault();
+        window.parent.openTab({ title: "积分明细查询", url: "files/points-detail.html" });
+      }
+    });
     document.getElementById("queryBtn").addEventListener("click", renderAll);
     document.getElementById("resetBtn").addEventListener("click", () => {
       document.getElementById("periodType").value = "月";
-      document.getElementById("issuerSelect").value = "集团运营中心";
-      document.getElementById("consumeScope").value = "在其他发分主体";
+      document.getElementById("exchangeType").value = "全部";
+      issuerOrgTree.reset();
+      consumerOrgTree.reset();
       syncPeriodOptions();
       renderAll();
     });
-    document.getElementById("periodType").addEventListener("change", syncPeriodOptions);
-    document.getElementById("consumeScope").addEventListener("change", renderAll);
+    document.getElementById("periodType").addEventListener("change", () => {
+      syncPeriodOptions();
+      renderAll();
+    });
+    document.getElementById("exchangeType").addEventListener("change", renderAll);
     syncPeriodOptions();
     renderAll();
   </script>
