@@ -7,20 +7,289 @@
   <link rel="stylesheet" href="../resources/style.css">
   <style>
     .api-filter {
-      grid-template-columns: repeat(4, minmax(0, 1fr)) auto auto;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto;
     }
-    .api-table th,
-    .api-table td {
-      padding: 10px 8px;
-      vertical-align: middle;
+    .api-stats {
+      margin-bottom: 14px;
     }
-    .api-name {
-      display: grid;
-      gap: 4px;
-      white-space: normal;
+    .api-stats-head {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
     }
-    .api-name strong {
+    .api-stats-head h3 {
+      margin: 0;
       color: var(--navy);
+      font-size: 16px;
+    }
+    .api-stats-head span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .api-stat-top,
+    .api-stat-bottom {
+      display: grid;
+      gap: 12px;
+    }
+    .api-stat-top {
+      grid-template-columns: minmax(0, 1.7fr) minmax(250px, .8fr) minmax(300px, 1fr);
+      margin-bottom: 12px;
+    }
+    .api-stat-bottom {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .api-stat-card {
+      min-width: 0;
+      min-height: 264px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 5px 14px rgba(32, 67, 101, .08);
+    }
+    .stat-card-head {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr) 54px;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .stat-card-head::before {
+      content: "";
+    }
+    .api-stat-card h4 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 15px;
+      text-align: center;
+    }
+    .stat-detail-btn {
+      min-width: 54px;
+      height: 28px;
+      padding: 0 10px;
+      border: 1px solid #9dc8eb;
+      border-radius: 4px;
+      background: #fff;
+      color: #087fd1;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .stat-detail-btn:hover {
+      border-color: #078ee4;
+      background: #eef8ff;
+    }
+    .chart-legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-height: 24px;
+      margin-bottom: 4px;
+      color: #526477;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .chart-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chart-legend i {
+      width: 18px;
+      height: 4px;
+      display: inline-block;
+      border-radius: 4px;
+      background: #36b37e;
+    }
+    .chart-legend .failed { background: #ff6b6b; }
+    .trend-chart {
+      width: 100%;
+      height: 196px;
+      display: block;
+    }
+    .trend-chart text {
+      fill: #728195;
+      font-family: Arial, "PingFang SC", sans-serif;
+      font-size: 11px;
+    }
+    .trend-grid { stroke: #dfe7f0; stroke-width: 1; }
+    .trend-success { fill: none; stroke: #36b37e; stroke-width: 3; }
+    .trend-failed { fill: none; stroke: #ff6b6b; stroke-width: 3; }
+    .pie-wrap {
+      min-height: 214px;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+    .success-pie {
+      width: 154px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: conic-gradient(#36b37e 0 98.9%, #ff6b6b 98.9% 100%);
+      position: relative;
+    }
+    .success-pie::after {
+      content: "";
+      position: absolute;
+      inset: 34px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .pie-center {
+      position: absolute;
+      z-index: 1;
+      display: grid;
+      gap: 3px;
+      color: var(--navy);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .pie-center strong { font-size: 24px; }
+    .pie-note {
+      position: absolute;
+      right: 10px;
+      bottom: 18px;
+      color: #ff6b6b;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .rank-list {
+      display: grid;
+      gap: 13px;
+      padding-top: 6px;
+    }
+    .rank-row {
+      display: grid;
+      grid-template-columns: minmax(112px, 38%) 1fr 64px;
+      gap: 9px;
+      align-items: center;
+      min-height: 31px;
+    }
+    .rank-label {
+      min-width: 0;
+      overflow: hidden;
+      color: #526477;
+      font-size: 12px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .rank-track {
+      height: 18px;
+      overflow: hidden;
+      border-radius: 3px;
+      background: #edf3f8;
+    }
+    .rank-bar {
+      display: block;
+      height: 100%;
+      border-radius: 3px;
+      background: #36c59a;
+    }
+    .rank-bar.cyan { background: #54bfc3; }
+    .rank-bar.orange { background: #f59f23; }
+    .rank-bar.purple { background: #9d8ac7; }
+    .rank-value {
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 800;
+      text-align: right;
+    }
+    .stat-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(17, 44, 70, .42);
+    }
+    .stat-modal.open { display: flex; }
+    .stat-dialog {
+      width: min(920px, 94vw);
+      max-height: 84vh;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 18px 48px rgba(18, 49, 78, .22);
+    }
+    .stat-dialog-head {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .stat-dialog-head h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 18px;
+    }
+    .stat-dialog-close {
+      width: 34px;
+      height: 34px;
+      border: 0;
+      background: transparent;
+      color: #65778b;
+      cursor: pointer;
+      font-size: 26px;
+      line-height: 1;
+    }
+    .stat-dialog-body {
+      max-height: calc(84vh - 122px);
+      overflow: auto;
+      padding: 18px 20px;
+    }
+    .detail-summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .detail-summary span {
+      padding: 7px 12px;
+      border-radius: 4px;
+      background: #eef7fd;
+      color: #365874;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .detail-table th,
+    .detail-table td {
+      padding: 11px 10px;
+      border-bottom: 1px solid var(--line);
+      color: #34495e;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .detail-table th {
+      background: #edf7fd;
+      color: var(--navy);
+      font-size: 13px;
+    }
+    .detail-table td { font-size: 13px; }
+    .stat-dialog-foot {
+      display: flex;
+      justify-content: flex-end;
+      padding: 12px 20px;
+      border-top: 1px solid var(--line);
+      background: #f7fbfe;
+    }
+    @media (max-width: 1180px) {
+      .api-stat-top,
+      .api-stat-bottom { grid-template-columns: 1fr; }
+      .api-stat-card { min-height: 240px; }
     }
   </style>
 </head>
@@ -29,68 +298,193 @@
     <div class="filter api-filter">
       <div class="field"><label>API名称</label><input placeholder="请输入API名称"></div>
       <div class="field"><label>接入系统</label><select><option>全部系统</option><option>智能客服系统</option><option>营销管理系统</option><option>权益中心</option><option>第三方业务系统</option></select></div>
-      <div class="field"><label>API状态</label><select><option>全部状态</option><option>启用</option><option>停用</option><option>调试中</option></select></div>
       <div class="field"><label>调用时间</label><input value="2026-06-01 至 2026-06-09"></div>
       <button class="btn primary">查询</button>
       <button class="btn">重置</button>
     </div>
 
-    <div class="panel">
-      <div class="panel-hd">
-        <h3>画像标签API列表</h3>
+    <section class="api-stats">
+      <div class="api-stats-head">
+        <h3>API调用统计</h3>
+        <span>统计时间：2026-06-01 至 2026-06-09</span>
       </div>
-      <div class="panel-bd">
-        <table class="api-table">
-          <thead>
-            <tr>
-              <th>API名称</th>
-              <th>调用系统</th>
-              <th>调用限额</th>
-              <th>今日调用</th>
-              <th>累计调用</th>
-              <th>成功率</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><div class="api-name"><strong>客户基础画像查询</strong></div></td>
-              <td>智能客服系统、管理端</td>
-              <td>50,000 次/日</td>
-              <td><span class="link">8,920</span></td>
-              <td>286,420</td>
-              <td><span class="badge green">99.6%</span></td>
-            </tr>
-            <tr>
-              <td><div class="api-name"><strong>画像标签批量查询</strong></div></td>
-              <td>营销管理系统</td>
-              <td>100,000 次/日</td>
-              <td><span class="link">12,680</span></td>
-              <td>528,306</td>
-              <td><span class="badge green">99.1%</span></td>
-            </tr>
-            <tr>
-              <td><div class="api-name"><strong>高价值客户标签查询</strong></div></td>
-              <td>权益中心、第三方业务系统</td>
-              <td>30,000 次/日</td>
-              <td><span class="link">2,486</span></td>
-              <td>96,812</td>
-              <td><span class="badge green">98.8%</span></td>
-            </tr>
-            <tr>
-              <td><div class="api-name"><strong>精准营销人群同步</strong></div></td>
-              <td>营销管理系统</td>
-              <td>10,000 次/日</td>
-              <td><span class="link">594</span></td>
-              <td>24,180</td>
-              <td><span class="badge">调试中</span></td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="pagination"><span>共 18 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
+      <div class="api-stat-top">
+        <div class="api-stat-card">
+          <div class="stat-card-head"><h4>API访问量趋势</h4><button class="stat-detail-btn" data-detail="trend">详情</button></div>
+          <div class="chart-legend"><span><i></i>成功</span><span><i class="failed"></i>失败</span></div>
+          <svg class="trend-chart" viewBox="0 0 680 196" role="img" aria-label="API访问量趋势图">
+            <line class="trend-grid" x1="48" y1="20" x2="660" y2="20"></line>
+            <line class="trend-grid" x1="48" y1="60" x2="660" y2="60"></line>
+            <line class="trend-grid" x1="48" y1="100" x2="660" y2="100"></line>
+            <line class="trend-grid" x1="48" y1="140" x2="660" y2="140"></line>
+            <line class="trend-grid" x1="48" y1="172" x2="660" y2="172"></line>
+            <text x="13" y="24">10k</text><text x="19" y="64">7.5k</text><text x="23" y="104">5k</text><text x="19" y="144">2.5k</text><text x="31" y="176">0</text>
+            <polyline class="trend-success" points="48,108 150,82 252,94 354,70 456,48 558,32 660,50"></polyline>
+            <polyline class="trend-failed" points="48,169 150,168 252,169 354,168 456,167 558,166 660,168"></polyline>
+            <g fill="#36b37e"><circle cx="48" cy="108" r="4"></circle><circle cx="150" cy="82" r="4"></circle><circle cx="252" cy="94" r="4"></circle><circle cx="354" cy="70" r="4"></circle><circle cx="456" cy="48" r="4"></circle><circle cx="558" cy="32" r="4"></circle><circle cx="660" cy="50" r="4"></circle></g>
+            <g fill="#ff6b6b"><circle cx="48" cy="169" r="3"></circle><circle cx="150" cy="168" r="3"></circle><circle cx="252" cy="169" r="3"></circle><circle cx="354" cy="168" r="3"></circle><circle cx="456" cy="167" r="3"></circle><circle cx="558" cy="166" r="3"></circle><circle cx="660" cy="168" r="3"></circle></g>
+            <text x="33" y="191">06-03</text><text x="135" y="191">06-04</text><text x="237" y="191">06-05</text><text x="339" y="191">06-06</text><text x="441" y="191">06-07</text><text x="543" y="191">06-08</text><text x="645" y="191">06-09</text>
+          </svg>
+        </div>
+        <div class="api-stat-card">
+          <div class="stat-card-head"><h4>API访问量</h4><button class="stat-detail-btn" data-detail="volume">详情</button></div>
+          <div class="pie-wrap">
+            <div class="success-pie"></div>
+            <div class="pie-center"><strong>98.9%</strong><span>成功率</span></div>
+            <span class="pie-note">失败 1.1%</span>
+          </div>
+        </div>
+        <div class="api-stat-card">
+          <div class="stat-card-head"><h4>访问API次数最多的客户端</h4><button class="stat-detail-btn" data-detail="client">详情</button></div>
+          <div class="rank-list">
+            <div class="rank-row"><span class="rank-label">智能客服系统</span><span class="rank-track"><span class="rank-bar" style="width:100%"></span></span><span class="rank-value">12,680</span></div>
+            <div class="rank-row"><span class="rank-label">营销管理系统</span><span class="rank-track"><span class="rank-bar" style="width:70%"></span></span><span class="rank-value">8,920</span></div>
+            <div class="rank-row"><span class="rank-label">权益中心</span><span class="rank-track"><span class="rank-bar" style="width:20%"></span></span><span class="rank-value">2,486</span></div>
+            <div class="rank-row"><span class="rank-label">第三方业务系统</span><span class="rank-track"><span class="rank-bar" style="width:5%"></span></span><span class="rank-value">594</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="api-stat-bottom">
+        <div class="api-stat-card">
+          <div class="stat-card-head"><h4>访问次数最多的API</h4><button class="stat-detail-btn" data-detail="api">详情</button></div>
+          <div class="rank-list">
+            <div class="rank-row"><span class="rank-label">画像标签批量查询</span><span class="rank-track"><span class="rank-bar cyan" style="width:100%"></span></span><span class="rank-value">12,680</span></div>
+            <div class="rank-row"><span class="rank-label">客户基础画像查询</span><span class="rank-track"><span class="rank-bar cyan" style="width:70%"></span></span><span class="rank-value">8,920</span></div>
+            <div class="rank-row"><span class="rank-label">高价值客户标签查询</span><span class="rank-track"><span class="rank-bar cyan" style="width:20%"></span></span><span class="rank-value">2,486</span></div>
+            <div class="rank-row"><span class="rank-label">精准营销人群同步</span><span class="rank-track"><span class="rank-bar cyan" style="width:5%"></span></span><span class="rank-value">594</span></div>
+          </div>
+        </div>
+        <div class="api-stat-card">
+          <div class="stat-card-head"><h4>平均访问时长最大的API</h4><button class="stat-detail-btn" data-detail="duration">详情</button></div>
+          <div class="rank-list">
+            <div class="rank-row"><span class="rank-label">精准营销人群同步</span><span class="rank-track"><span class="rank-bar orange" style="width:100%"></span></span><span class="rank-value">860ms</span></div>
+            <div class="rank-row"><span class="rank-label">高价值客户标签查询</span><span class="rank-track"><span class="rank-bar orange" style="width:49%"></span></span><span class="rank-value">420ms</span></div>
+            <div class="rank-row"><span class="rank-label">画像标签批量查询</span><span class="rank-track"><span class="rank-bar orange" style="width:36%"></span></span><span class="rank-value">310ms</span></div>
+            <div class="rank-row"><span class="rank-label">客户基础画像查询</span><span class="rank-track"><span class="rank-bar orange" style="width:21%"></span></span><span class="rank-value">180ms</span></div>
+          </div>
+        </div>
+        <div class="api-stat-card">
+          <div class="stat-card-head"><h4>访问次数最多的客户端IP</h4><button class="stat-detail-btn" data-detail="ip">详情</button></div>
+          <div class="rank-list">
+            <div class="rank-row"><span class="rank-label">10.26.18.32</span><span class="rank-track"><span class="rank-bar purple" style="width:100%"></span></span><span class="rank-value">9,862</span></div>
+            <div class="rank-row"><span class="rank-label">10.26.21.87</span><span class="rank-track"><span class="rank-bar purple" style="width:72%"></span></span><span class="rank-value">7,106</span></div>
+            <div class="rank-row"><span class="rank-label">10.26.36.19</span><span class="rank-track"><span class="rank-bar purple" style="width:38%"></span></span><span class="rank-value">3,742</span></div>
+            <div class="rank-row"><span class="rank-label">10.26.42.16</span><span class="rank-track"><span class="rank-bar purple" style="width:18%"></span></span><span class="rank-value">1,806</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
+  </div>
+
+  <div class="stat-modal" id="statModal" aria-hidden="true">
+    <div class="stat-dialog" role="dialog" aria-modal="true" aria-labelledby="statModalTitle">
+      <div class="stat-dialog-head">
+        <h3 id="statModalTitle">统计详情</h3>
+        <button class="stat-dialog-close" type="button" aria-label="关闭">×</button>
       </div>
+      <div class="stat-dialog-body" id="statModalBody"></div>
+      <div class="stat-dialog-foot"><button class="btn stat-dialog-cancel" type="button">关闭</button></div>
     </div>
   </div>
 
+  <script>
+    const detailData = {
+      trend: {
+        title: "API访问量趋势详情",
+        summary: ["统计时间：2026-06-03 至 2026-06-09", "累计访问：50,736 次"],
+        headers: ["日期", "成功次数", "失败次数", "总访问量", "成功率"],
+        rows: [
+          ["2026-06-03", "4,520", "56", "4,576", "98.78%"],
+          ["2026-06-04", "6,180", "68", "6,248", "98.91%"],
+          ["2026-06-05", "5,480", "52", "5,532", "99.06%"],
+          ["2026-06-06", "6,940", "74", "7,014", "98.94%"],
+          ["2026-06-07", "8,210", "92", "8,302", "98.89%"],
+          ["2026-06-08", "9,180", "108", "9,288", "98.84%"],
+          ["2026-06-09", "8,040", "96", "8,136", "98.82%"]
+        ]
+      },
+      volume: {
+        title: "API访问量详情",
+        summary: ["总访问量：49,096 次", "总体成功率：98.9%"],
+        headers: ["调用结果", "访问次数", "占比", "较上期"],
+        rows: [["成功", "48,556", "98.9%", "+6.8%"], ["失败", "540", "1.1%", "-0.3%"]]
+      },
+      client: {
+        title: "客户端访问排行详情",
+        summary: ["统计时间：2026-06-01 至 2026-06-09", "客户端数量：4"],
+        headers: ["客户端", "Client_ID", "访问次数", "成功次数", "成功率"],
+        rows: [
+          ["智能客服系统", "cli_J54SjVRypUdh", "12,680", "12,594", "99.32%"],
+          ["营销管理系统", "cli_K82VmRSe4xQp", "8,920", "8,831", "99.00%"],
+          ["权益中心", "cli_B16NxTUa7mLs", "2,486", "2,451", "98.59%"],
+          ["第三方业务系统", "cli_P39DcYWq2nFk", "594", "576", "96.97%"]
+        ]
+      },
+      api: {
+        title: "API访问排行详情",
+        summary: ["统计时间：2026-06-01 至 2026-06-09", "API数量：4"],
+        headers: ["API名称", "API路径", "访问次数", "失败次数", "成功率"],
+        rows: [
+          ["画像标签批量查询", "/api/v1/profile/tags/batch", "12,680", "114", "99.10%"],
+          ["客户基础画像查询", "/api/v1/profile/basic", "8,920", "36", "99.60%"],
+          ["高价值客户标签查询", "/api/v1/profile/high-value", "2,486", "30", "98.79%"],
+          ["精准营销人群同步", "/api/v1/audience/sync", "594", "18", "96.97%"]
+        ]
+      },
+      duration: {
+        title: "API平均访问时长详情",
+        summary: ["统计时间：2026-06-01 至 2026-06-09", "单位：毫秒"],
+        headers: ["API名称", "API路径", "平均时长", "P95时长", "最大时长"],
+        rows: [
+          ["精准营销人群同步", "/api/v1/audience/sync", "860ms", "1,240ms", "1,680ms"],
+          ["高价值客户标签查询", "/api/v1/profile/high-value", "420ms", "680ms", "920ms"],
+          ["画像标签批量查询", "/api/v1/profile/tags/batch", "310ms", "510ms", "760ms"],
+          ["客户基础画像查询", "/api/v1/profile/basic", "180ms", "290ms", "430ms"]
+        ]
+      },
+      ip: {
+        title: "客户端IP访问排行详情",
+        summary: ["统计时间：2026-06-01 至 2026-06-09", "访问IP数量：4"],
+        headers: ["客户端IP", "所属客户端", "访问次数", "失败次数", "最近访问时间"],
+        rows: [
+          ["10.26.18.32", "智能客服系统", "9,862", "62", "2026-06-09 18:26:14"],
+          ["10.26.21.87", "营销管理系统", "7,106", "71", "2026-06-09 18:20:35"],
+          ["10.26.36.19", "权益中心", "3,742", "48", "2026-06-09 17:58:09"],
+          ["10.26.42.16", "第三方业务系统", "1,806", "55", "2026-06-09 17:42:28"]
+        ]
+      }
+    };
+
+    const modal = document.getElementById("statModal");
+    const modalTitle = document.getElementById("statModalTitle");
+    const modalBody = document.getElementById("statModalBody");
+
+    function openDetail(type) {
+      const data = detailData[type];
+      modalTitle.textContent = data.title;
+      modalBody.innerHTML =
+        '<div class="detail-summary">' + data.summary.map(item => '<span>' + item + '</span>').join("") + '</div>' +
+        '<table class="detail-table"><thead><tr>' + data.headers.map(item => '<th>' + item + '</th>').join("") +
+        '</tr></thead><tbody>' + data.rows.map(row => '<tr>' + row.map(item => '<td>' + item + '</td>').join("") +
+        '</tr>').join("") + '</tbody></table>';
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeDetail() {
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    document.querySelectorAll(".stat-detail-btn").forEach(button => {
+      button.addEventListener("click", () => openDetail(button.dataset.detail));
+    });
+    document.querySelector(".stat-dialog-close").addEventListener("click", closeDetail);
+    document.querySelector(".stat-dialog-cancel").addEventListener("click", closeDetail);
+    modal.addEventListener("click", event => {
+      if (event.target === modal) closeDetail();
+    });
+  </script>
 </body>
 </html>

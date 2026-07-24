@@ -71,12 +71,30 @@
       font-weight: 700;
     }
     .tag-table {
-      min-width: 1080px;
+      min-width: 1160px;
     }
     .tag-table th,
     .tag-table td {
       padding: 10px 8px;
       vertical-align: middle;
+    }
+    .import-upload {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+    }
+    .import-upload input { display: none; }
+    .import-file-name {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--muted);
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .tag-name-cell {
       display: grid;
@@ -262,10 +280,11 @@
 <body>
   <div class="page">
     <div class="filter">
-      <div class="field"><label>标签名称</label><input placeholder="请输入标签名称"></div>
-      <div class="field"><label>标签分类</label><select><option>全部分类</option><option>基本标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option><option>高价值客户标签</option></select></div>
-      <div class="field"><label>标签状态</label><select><option>全部状态</option><option>启用</option><option>停用</option><option>草稿</option></select></div>
-      <button class="btn primary">查询</button>
+      <div class="field"><label>标签名称</label><input id="tagNameFilter" placeholder="请输入标签名称"></div>
+      <div class="field"><label>标签分类</label><select id="tagCategoryFilter"><option>全部分类</option><option>基本标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option><option>高价值客户标签</option></select></div>
+      <div class="field"><label>标签状态</label><select id="tagStatusFilter"><option>全部状态</option><option>启用</option><option>停用</option><option>草稿</option></select></div>
+      <div class="field"><label>标签来源</label><select id="tagSourceFilter"><option>全部来源</option><option>自动标签</option><option>手动标签</option><option>同步标签</option></select></div>
+      <button class="btn primary" id="tagQueryBtn">查询</button>
     </div>
 
     <div class="tag-layout">
@@ -293,6 +312,7 @@
           <h3>客户标签列表</h3>
           <div class="toolbar">
             <button class="btn primary" data-edit="new">新增标签</button>
+            <button class="btn" id="openTagImport">导入</button>
             <button class="btn">导出</button>
           </div>
         </div>
@@ -303,6 +323,7 @@
                 <th><input type="checkbox"></th>
                 <th>标签名称</th>
                 <th>标签分类</th>
+                <th>标签来源</th>
                 <th>打标方式</th>
                 <th>覆盖客户数</th>
                 <th>更新方式</th>
@@ -312,15 +333,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr data-category-row="基本标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="身份类型">身份类型</span></strong><span>年龄、性别、职业、城市、身份类型等</span></div></td><td>基本标签</td><td>数据同步</td><td><span class="link" data-customer="身份类型">38,240</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 14:20</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="身份类型">详情</span>　<span class="link" data-edit="身份类型">编辑</span>　<span class="link" data-log="身份类型">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="行为标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="签到频率">签到频率</span></strong><span>浏览偏好、点击习惯、签到频率等</span></div></td><td>行为标签</td><td>规则自动</td><td><span class="link" data-customer="签到频率">8,936</span></td><td>周期更新 每周一 03:00</td><td>2026-06-08 03:10</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="签到频率">详情</span>　<span class="link" data-edit="签到频率">编辑</span>　<span class="link" data-log="签到频率">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="偏好标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="服务需求偏好">服务需求偏好</span></strong><span>产品偏好、服务需求偏好等</span></div></td><td>偏好标签</td><td>手动维护</td><td><span class="link" data-customer="服务需求偏好">5,182</span></td><td>手动更新</td><td>2026-06-07 18:32</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="服务需求偏好">详情</span>　<span class="link" data-edit="服务需求偏好">编辑</span>　<span class="link" data-log="服务需求偏好">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="服务需求偏好">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="营销响应标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="优惠券使用偏好">优惠券使用偏好</span></strong><span>活动参与度、优惠券使用偏好等</span></div></td><td>营销响应标签</td><td>规则自动</td><td><span class="link" data-customer="优惠券使用偏好">12,680</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 02:05</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="优惠券使用偏好">详情</span>　<span class="link" data-edit="优惠券使用偏好">编辑</span>　<span class="link" data-log="优惠券使用偏好">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="高价值客户标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="活动参与类型热力点">活动参与类型热力点</span></strong><span>高价值客户活动参与类型分布</span></div></td><td>高价值客户标签</td><td>手动维护</td><td><span class="link" data-customer="活动参与类型热力点">326</span></td><td>手动更新</td><td>2026-06-06 10:16</td><td><span class="badge gray">停用</span></td><td><span class="link" data-detail="活动参与类型热力点">详情</span>　<span class="link" data-edit="活动参与类型热力点">编辑</span>　<span class="link" data-log="活动参与类型热力点">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="活动参与类型热力点">更新</button>　<span class="link" data-status="enable">启用</span></td></tr>
-              <tr data-category-row="高价值客户标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="个人表达意愿强烈">个人表达意愿强烈</span></strong><span>高价值客户主动反馈和表达倾向</span></div></td><td>高价值客户标签</td><td>手动维护</td><td><span class="link" data-customer="个人表达意愿强烈">1,286</span></td><td>手动更新</td><td>2026-06-06 11:20</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="个人表达意愿强烈">详情</span>　<span class="link" data-edit="个人表达意愿强烈">编辑</span>　<span class="link" data-log="个人表达意愿强烈">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="个人表达意愿强烈">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="高价值客户标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="多次参与社区活动 / 公益">多次参与社区活动 / 公益</span></strong><span>高价值客户社区活动和公益参与度</span></div></td><td>高价值客户标签</td><td>规则自动</td><td><span class="link" data-customer="多次参与社区活动 / 公益">2,406</span></td><td>周期更新 每周一 03:00</td><td>2026-06-08 03:12</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="多次参与社区活动 / 公益">详情</span>　<span class="link" data-edit="多次参与社区活动 / 公益">编辑</span>　<span class="link" data-log="多次参与社区活动 / 公益">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="高价值客户标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="社群主理人">社群主理人</span></strong><span>高价值客户社群组织和带动能力</span></div></td><td>高价值客户标签</td><td>手动维护</td><td><span class="link" data-customer="社群主理人">428</span></td><td>手动更新</td><td>2026-06-05 16:42</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="社群主理人">详情</span>　<span class="link" data-edit="社群主理人">编辑</span>　<span class="link" data-log="社群主理人">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="社群主理人">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="高价值客户标签"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="积分高 / 使用频繁">积分高 / 使用频繁</span></strong><span>高价值客户积分沉淀和使用活跃度</span></div></td><td>高价值客户标签</td><td>规则自动</td><td><span class="link" data-customer="积分高 / 使用频繁">3,618</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 02:18</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="积分高 / 使用频繁">详情</span>　<span class="link" data-edit="积分高 / 使用频繁">编辑</span>　<span class="link" data-log="积分高 / 使用频繁">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="基本标签" data-tag-name="身份类型" data-tag-source="同步标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="身份类型">身份类型</span></strong><span>年龄、性别、职业、城市、身份类型等</span></div></td><td>基本标签</td><td>同步标签</td><td>数据同步</td><td><span class="link" data-customer="身份类型">38,240</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 14:20</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="身份类型">详情</span>　<span class="link" data-edit="身份类型">编辑</span>　<span class="link" data-log="身份类型">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="行为标签" data-tag-name="签到频率" data-tag-source="自动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="签到频率">签到频率</span></strong><span>浏览偏好、点击习惯、签到频率等</span></div></td><td>行为标签</td><td>自动标签</td><td>规则自动</td><td><span class="link" data-customer="签到频率">8,936</span></td><td>周期更新 每周一 03:00</td><td>2026-06-08 03:10</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="签到频率">详情</span>　<span class="link" data-edit="签到频率">编辑</span>　<span class="link" data-log="签到频率">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="偏好标签" data-tag-name="服务需求偏好" data-tag-source="手动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="服务需求偏好">服务需求偏好</span></strong><span>产品偏好、服务需求偏好等</span></div></td><td>偏好标签</td><td>手动标签</td><td>手动维护</td><td><span class="link" data-customer="服务需求偏好">5,182</span></td><td>手动更新</td><td>2026-06-07 18:32</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="服务需求偏好">详情</span>　<span class="link" data-edit="服务需求偏好">编辑</span>　<span class="link" data-log="服务需求偏好">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="服务需求偏好">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="营销响应标签" data-tag-name="优惠券使用偏好" data-tag-source="自动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="优惠券使用偏好">优惠券使用偏好</span></strong><span>活动参与度、优惠券使用偏好等</span></div></td><td>营销响应标签</td><td>自动标签</td><td>规则自动</td><td><span class="link" data-customer="优惠券使用偏好">12,680</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 02:05</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="优惠券使用偏好">详情</span>　<span class="link" data-edit="优惠券使用偏好">编辑</span>　<span class="link" data-log="优惠券使用偏好">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="高价值客户标签" data-tag-name="活动参与类型热力点" data-tag-source="手动标签" data-tag-status="停用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="活动参与类型热力点">活动参与类型热力点</span></strong><span>高价值客户活动参与类型分布</span></div></td><td>高价值客户标签</td><td>手动标签</td><td>手动维护</td><td><span class="link" data-customer="活动参与类型热力点">326</span></td><td>手动更新</td><td>2026-06-06 10:16</td><td><span class="badge gray">停用</span></td><td><span class="link" data-detail="活动参与类型热力点">详情</span>　<span class="link" data-edit="活动参与类型热力点">编辑</span>　<span class="link" data-log="活动参与类型热力点">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="活动参与类型热力点">更新</button>　<span class="link" data-status="enable">启用</span></td></tr>
+              <tr data-category-row="高价值客户标签" data-tag-name="个人表达意愿强烈" data-tag-source="手动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="个人表达意愿强烈">个人表达意愿强烈</span></strong><span>高价值客户主动反馈和表达倾向</span></div></td><td>高价值客户标签</td><td>手动标签</td><td>手动维护</td><td><span class="link" data-customer="个人表达意愿强烈">1,286</span></td><td>手动更新</td><td>2026-06-06 11:20</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="个人表达意愿强烈">详情</span>　<span class="link" data-edit="个人表达意愿强烈">编辑</span>　<span class="link" data-log="个人表达意愿强烈">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="个人表达意愿强烈">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="高价值客户标签" data-tag-name="多次参与社区活动 / 公益" data-tag-source="自动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="多次参与社区活动 / 公益">多次参与社区活动 / 公益</span></strong><span>高价值客户社区活动和公益参与度</span></div></td><td>高价值客户标签</td><td>自动标签</td><td>规则自动</td><td><span class="link" data-customer="多次参与社区活动 / 公益">2,406</span></td><td>周期更新 每周一 03:00</td><td>2026-06-08 03:12</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="多次参与社区活动 / 公益">详情</span>　<span class="link" data-edit="多次参与社区活动 / 公益">编辑</span>　<span class="link" data-log="多次参与社区活动 / 公益">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="高价值客户标签" data-tag-name="社群主理人" data-tag-source="手动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="社群主理人">社群主理人</span></strong><span>高价值客户社群组织和带动能力</span></div></td><td>高价值客户标签</td><td>手动标签</td><td>手动维护</td><td><span class="link" data-customer="社群主理人">428</span></td><td>手动更新</td><td>2026-06-05 16:42</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="社群主理人">详情</span>　<span class="link" data-edit="社群主理人">编辑</span>　<span class="link" data-log="社群主理人">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="社群主理人">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
+              <tr data-category-row="高价值客户标签" data-tag-name="积分高 / 使用频繁" data-tag-source="自动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="积分高 / 使用频繁">积分高 / 使用频繁</span></strong><span>高价值客户积分沉淀和使用活跃度</span></div></td><td>高价值客户标签</td><td>自动标签</td><td>规则自动</td><td><span class="link" data-customer="积分高 / 使用频繁">3,618</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 02:18</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="积分高 / 使用频繁">详情</span>　<span class="link" data-edit="积分高 / 使用频繁">编辑</span>　<span class="link" data-log="积分高 / 使用频繁">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
             </tbody>
           </table>
           <div class="pagination"><span>共 128 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button><button class="page-btn">下一页</button><select><option>10 条/页</option><option>20 条/页</option></select></div>
@@ -510,6 +531,30 @@
     </div>
   </div>
 
+  <div class="modal-mask" id="tagImportModal">
+    <div class="modal">
+      <div class="panel-hd"><h3>导入标签</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="field">
+          <label class="required">导入文件</label>
+          <label class="import-upload">
+            <span class="btn">选择文件</span>
+            <span class="import-file-name" id="tagImportFileName">未选择文件</span>
+            <input id="tagImportFile" type="file" accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+          </label>
+        </div>
+        <div class="toolbar" style="margin-top:12px;justify-content:flex-start">
+          <button class="btn" id="downloadTagTemplate" type="button">下载导入模板</button>
+        </div>
+        <div class="notice" style="margin-top:12px">
+          <strong>导入说明</strong>
+          支持 XLS、XLSX 格式，文件大小不超过 10MB。请按模板填写标签名称、标签分类、标签来源、打标方式和状态。
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认导入</button></div>
+    </div>
+  </div>
+
   <div class="modal-mask" id="categoryModal">
     <div class="modal">
       <div class="panel-hd"><h3>新增标签分类</h3><button class="btn" data-close-modal>关闭</button></div>
@@ -597,15 +642,40 @@
       });
     });
 
+    function applyTagFilters() {
+      const name = document.getElementById("tagNameFilter").value.trim();
+      const category = document.getElementById("tagCategoryFilter").value;
+      const status = document.getElementById("tagStatusFilter").value;
+      const source = document.getElementById("tagSourceFilter").value;
+      document.querySelectorAll("[data-category-row]").forEach(row => {
+        const matchedName = !name || row.dataset.tagName.includes(name);
+        const matchedCategory = category === "全部分类" || row.dataset.categoryRow === category;
+        const matchedStatus = status === "全部状态" || row.dataset.tagStatus === status;
+        const matchedSource = source === "全部来源" || row.dataset.tagSource === source;
+        row.style.display = matchedName && matchedCategory && matchedStatus && matchedSource ? "" : "none";
+      });
+    }
+
     document.querySelectorAll("[data-filter-category]").forEach(el => {
       el.addEventListener("click", () => {
         document.querySelectorAll("[data-filter-category]").forEach(item => item.classList.remove("active"));
         el.classList.add("active");
-        const category = el.dataset.filterCategory;
-        document.querySelectorAll("[data-category-row]").forEach(row => {
-          row.style.display = category === "全部分类" || row.dataset.categoryRow === category ? "" : "none";
-        });
+        document.getElementById("tagCategoryFilter").value = el.dataset.filterCategory;
+        applyTagFilters();
       });
+    });
+    document.getElementById("tagQueryBtn").addEventListener("click", applyTagFilters);
+    document.getElementById("openTagImport").addEventListener("click", () => {
+      document.getElementById("tagImportModal").classList.add("open");
+    });
+    document.getElementById("tagImportFile").addEventListener("change", event => {
+      document.getElementById("tagImportFileName").textContent = event.target.files[0]?.name || "未选择文件";
+    });
+    document.getElementById("downloadTagTemplate").addEventListener("click", () => {
+      const link = document.createElement("a");
+      link.href = "data:text/csv;charset=utf-8,%EF%BB%BF标签名称,标签分类,标签来源,打标方式,状态";
+      link.download = "客户标签导入模板.csv";
+      link.click();
     });
 
     document.querySelector("[data-category]").addEventListener("click", () => document.getElementById("categoryModal").classList.add("open"));

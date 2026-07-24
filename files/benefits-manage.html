@@ -119,6 +119,12 @@
       margin: 6px 0 6px 22px;
       padding: 0;
     }
+    .benefit-hint {
+      margin-top: 7px;
+      color: #8a99a8;
+      font-size: 12px;
+      line-height: 1.5;
+    }
     .field label.required::before {
       content: "*";
       margin-right: 3px;
@@ -310,6 +316,11 @@
           <div class="field" id="benefitTotalField"><label class="required">权益总数</label><input id="editTotal" value="1000"></div>
           <div class="field"><label>权益图标</label><input id="editIcon" type="file"></div>
           <div class="field"><label>当前图标附件</label><input value="benefit-charge.png" readonly></div>
+          <div class="field" style="grid-column:1/-1">
+            <label>附件上传</label>
+            <input id="editAttachment" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+            <div class="benefit-hint">权益发布的凭证</div>
+          </div>
         </div>
 
         <div class="field" style="margin-top:12px">

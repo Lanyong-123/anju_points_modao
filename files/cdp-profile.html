@@ -68,6 +68,11 @@
       background: #fff;
       overflow: hidden;
     }
+    .form-section.org-form-section {
+      position: relative;
+      z-index: 5;
+      overflow: visible;
+    }
     .form-section-hd {
       min-height: 42px;
       display: flex;
@@ -89,6 +94,57 @@
       gap: 10px;
       align-items: end;
     }
+    .org-tree-select { position: relative; }
+    .org-tree-trigger {
+      width: 100%;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .org-tree-trigger::after { content: "⌄"; color: #667789; font-size: 13px; }
+    .org-tree-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 20;
+      display: none;
+      width: 360px;
+      max-height: 320px;
+      padding: 8px;
+      border: 1px solid #c9d8e8;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 14px 34px rgba(18, 49, 82, .18);
+      overflow: auto;
+    }
+    .org-tree-select.open .org-tree-panel { display: block; }
+    .org-tree-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 30px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .org-tree-row:hover { background: #eef6ff; color: var(--brand); }
+    .org-tree-toggle { width: 16px; color: #667789; text-align: center; flex: 0 0 16px; }
+    .org-tree-level-2 { padding-left: 28px; }
+    .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-leaf .org-tree-toggle { color: transparent; }
     .field label.required::before,
     .profile-required::before {
       content: "*";
@@ -382,13 +438,20 @@
     <div class="modal wide-modal">
       <div class="panel-hd"><h3>新增画像模型</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd">
-        <div class="form-section">
+        <div class="form-section org-form-section">
           <div class="form-section-hd">基础信息</div>
           <div class="form-section-bd">
             <div class="profile-form-grid">
               <div class="field"><label class="required">画像名称</label><input value="高价值客户画像"></div>
               <div class="field"><label class="required">画像类型</label><select><option>客户价值画像</option><option>服务偏好画像</option><option>营销响应画像</option><option>风险关注画像</option></select></div>
               <div class="field"><label class="required">画像状态</label><select><option>启用</option><option>停用</option></select></div>
+              <div class="field"><label>所属组织</label>
+                <div class="org-tree-select" id="profileOrgSelect">
+                  <button class="org-tree-trigger" type="button" id="profileOrgTrigger">全部组织</button>
+                  <input type="hidden" id="profileOrgValue" value="全部组织">
+                  <div class="org-tree-panel" id="profileOrgPanel"></div>
+                </div>
+              </div>
               <div class="field schedule-start"><label class="required">更新方式</label><select id="profileFrequency"><option>周期更新</option><option>手动更新</option></select></div>
               <div class="schedule-config" id="profileScheduleConfig">
                 <div class="schedule-row">
@@ -574,6 +637,87 @@
   </div>
 
   <script>
+    const profileOrgTreeData = [
+      {
+        name: "商业板块",
+        children: [
+          { name: "南山片区", children: ["高新安荟邻"] },
+          { name: "福田片区", children: ["景田安荟邻"] }
+        ]
+      },
+      {
+        name: "住宅板块",
+        children: [
+          { name: "南山片区", children: ["高新花园"] },
+          { name: "坪山片区", children: ["秀馨苑"] }
+        ]
+      },
+      {
+        name: "物业板块",
+        children: [
+          { name: "南山片区", children: ["高新花园"] },
+          { name: "坪山片区", children: ["秀馨苑"] }
+        ]
+      }
+    ];
+    const profileOrgExpanded = new Set([
+      "商业板块", "商业板块/南山片区", "商业板块/福田片区",
+      "住宅板块", "住宅板块/南山片区", "住宅板块/坪山片区",
+      "物业板块", "物业板块/南山片区", "物业板块/坪山片区"
+    ]);
+    const profileOrgSelect = document.getElementById("profileOrgSelect");
+    const profileOrgTrigger = document.getElementById("profileOrgTrigger");
+    const profileOrgValue = document.getElementById("profileOrgValue");
+    const profileOrgPanel = document.getElementById("profileOrgPanel");
+
+    function renderProfileOrgTree() {
+      const rows = [
+        '<div class="org-tree-row org-tree-leaf" data-org-path="全部组织"><span class="org-tree-toggle">·</span><span>全部组织</span></div>'
+      ];
+      profileOrgTreeData.forEach(level1 => {
+        const level1Open = profileOrgExpanded.has(level1.name);
+        rows.push(`<div class="org-tree-row org-tree-level-1" data-org-toggle="${level1.name}"><span class="org-tree-toggle">${level1Open ? "▾" : "▸"}</span><span>${level1.name}</span></div>`);
+        if (!level1Open) return;
+        level1.children.forEach(level2 => {
+          const level2Key = `${level1.name}/${level2.name}`;
+          const level2Open = profileOrgExpanded.has(level2Key);
+          rows.push(`<div class="org-tree-row org-tree-level-2" data-org-toggle="${level2Key}"><span class="org-tree-toggle">${level2Open ? "▾" : "▸"}</span><span>${level2.name}</span></div>`);
+          if (!level2Open) return;
+          level2.children.forEach(level3 => {
+            const path = `${level1.name} / ${level2.name} / ${level3}`;
+            rows.push(`<div class="org-tree-row org-tree-level-3 org-tree-leaf" data-org-path="${path}"><span class="org-tree-toggle">·</span><span>${level3}</span></div>`);
+          });
+        });
+      });
+      profileOrgPanel.innerHTML = rows.join("");
+    }
+
+    profileOrgTrigger.addEventListener("click", event => {
+      event.stopPropagation();
+      profileOrgSelect.classList.toggle("open");
+    });
+    profileOrgPanel.addEventListener("click", event => {
+      const row = event.target.closest(".org-tree-row");
+      if (!row) return;
+      const toggle = row.dataset.orgToggle;
+      if (toggle) {
+        if (profileOrgExpanded.has(toggle)) profileOrgExpanded.delete(toggle);
+        else profileOrgExpanded.add(toggle);
+        renderProfileOrgTree();
+        return;
+      }
+      if (row.hasAttribute("data-org-path")) {
+        const path = row.dataset.orgPath;
+        profileOrgValue.value = path;
+        profileOrgTrigger.textContent = path;
+        profileOrgSelect.classList.remove("open");
+      }
+    });
+    document.addEventListener("click", event => {
+      if (!profileOrgSelect.contains(event.target)) profileOrgSelect.classList.remove("open");
+    });
+    renderProfileOrgTree();
+
     function updateProfileScheduleVisibility() {
       const frequency = document.getElementById("profileFrequency");
       const scheduleType = document.getElementById("profileScheduleType");

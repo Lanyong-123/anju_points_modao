@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../resources/style.css">
   <style>
     .report-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
-    .exchange-filter { grid-template-columns: minmax(150px, .8fr) minmax(260px, 1.35fr) repeat(3, minmax(150px, 1fr)); }
+    .exchange-filter { grid-template-columns: minmax(150px, .8fr) minmax(260px, 1.35fr) repeat(4, minmax(150px, 1fr)); }
     .chart-wrap { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 14px; }
     .chart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
     .chart-head h3 { margin: 0; color: var(--navy); font-size: 15px; }
@@ -76,16 +76,17 @@
     .exchange-table { width: 100%; table-layout: fixed; }
     .exchange-table th,
     .exchange-table td { white-space: normal; overflow-wrap: anywhere; }
-    .exchange-table th:nth-child(1) { width: 8%; }
-    .exchange-table th:nth-child(2) { width: 12%; }
-    .exchange-table th:nth-child(3),
-    .exchange-table th:nth-child(4) { width: 14%; }
-    .exchange-table th:nth-child(5),
-    .exchange-table th:nth-child(8) { width: 10%; }
+    .exchange-table th:nth-child(1) { width: 7%; }
+    .exchange-table th:nth-child(2) { width: 11%; }
+    .exchange-table th:nth-child(3) { width: 8%; }
+    .exchange-table th:nth-child(4),
+    .exchange-table th:nth-child(5) { width: 13%; }
     .exchange-table th:nth-child(6),
+    .exchange-table th:nth-child(9) { width: 9%; }
     .exchange-table th:nth-child(7),
-    .exchange-table th:nth-child(9),
-    .exchange-table th:nth-child(10) { width: 8%; }
+    .exchange-table th:nth-child(8) { width: 8%; }
+    .exchange-table th:nth-child(10),
+    .exchange-table th:nth-child(11) { width: 7%; }
     @media (max-width: 1180px) {
       .exchange-filter { grid-template-columns: repeat(3, minmax(180px, 1fr)); }
       .report-grid { grid-template-columns: 1fr; }
@@ -107,6 +108,7 @@
         </div>
       </div>
       <div class="field"><label>兑换类型</label><select id="exchangeType"><option selected>全部</option><option>在其他发分主体</option><option>在本主体内</option></select></div>
+      <div class="field"><label>礼券类型</label><select id="giftType"><option selected>全部</option><option>电子礼券</option><option>实物礼券</option><option>第三方礼券</option></select></div>
       <div class="field"><label>消耗主体</label>
         <div class="org-tree-select" id="consumerOrgSelect">
           <button class="org-tree-trigger" type="button" data-org-trigger>全部组织</button>
@@ -143,7 +145,7 @@
       <div class="panel-bd">
         <table class="exchange-table">
           <thead>
-            <tr><th>统计周期</th><th>兑换商品</th><th>发分主体</th><th>商品归属主体</th><th>兑换类型</th><th>兑分次数</th><th>兑分单价</th><th>总分</th><th>成本（单位）</th><th>总成本</th></tr>
+            <tr><th>统计周期</th><th>兑换商品</th><th>礼券类型</th><th>发分主体</th><th>商品归属主体</th><th>兑换类型</th><th>兑分次数</th><th>兑分单价</th><th>总分</th><th>成本（单位）</th><th>总成本</th></tr>
           </thead>
           <tbody id="exchangeRows"></tbody>
         </table>
@@ -179,16 +181,16 @@
 
     const exchangeData = {
       "在其他发分主体": [
-        { issuer: "商业板块 / 南山片区 / 高新安荟邻", productOwner: "住宅板块 / 南山片区 / 高新花园", type: "在其他发分主体", product: "10元租赁服务券", redeemCount: 772, unitPoints: 500, total: 386000, unitCost: 10, totalCost: 7720 },
-        { issuer: "商业板块 / 南山片区 / 高新安荟邻", productOwner: "商业板块 / 福田片区 / 景田安荟邻", type: "在其他发分主体", product: "20元物业费抵扣券", redeemCount: 302, unitPoints: 1000, total: 302000, unitCost: 20, totalCost: 6040 },
-        { issuer: "住宅板块 / 南山片区 / 高新花园", productOwner: "物业板块 / 坪山片区 / 秀馨苑", type: "在其他发分主体", product: "商业消费券", redeemCount: 310, unitPoints: 800, total: 248000, unitCost: 15, totalCost: 4650 },
-        { issuer: "物业板块 / 坪山片区 / 秀馨苑", productOwner: "商业板块 / 南山片区 / 高新安荟邻", type: "在其他发分主体", product: "上门维修服务券", redeemCount: 310, unitPoints: 600, total: 186000, unitCost: 12, totalCost: 3720 }
+        { issuer: "商业板块 / 南山片区 / 高新安荟邻", productOwner: "住宅板块 / 南山片区 / 高新花园", type: "在其他发分主体", giftType: "电子礼券", product: "10元租赁服务券", redeemCount: 772, unitPoints: 500, total: 386000, unitCost: 10, totalCost: 7720 },
+        { issuer: "商业板块 / 南山片区 / 高新安荟邻", productOwner: "商业板块 / 福田片区 / 景田安荟邻", type: "在其他发分主体", giftType: "电子礼券", product: "20元物业费抵扣券", redeemCount: 302, unitPoints: 1000, total: 302000, unitCost: 20, totalCost: 6040 },
+        { issuer: "住宅板块 / 南山片区 / 高新花园", productOwner: "物业板块 / 坪山片区 / 秀馨苑", type: "在其他发分主体", giftType: "第三方礼券", product: "商业消费券", redeemCount: 310, unitPoints: 800, total: 248000, unitCost: 15, totalCost: 4650 },
+        { issuer: "物业板块 / 坪山片区 / 秀馨苑", productOwner: "商业板块 / 南山片区 / 高新安荟邻", type: "在其他发分主体", giftType: "电子礼券", product: "上门维修服务券", redeemCount: 310, unitPoints: 600, total: 186000, unitCost: 12, totalCost: 3720 }
       ],
       "在本主体内": [
-        { issuer: "商业板块 / 南山片区 / 高新安荟邻", productOwner: "商业板块 / 南山片区 / 高新安荟邻", type: "在本主体内", product: "精选实物礼品", redeemCount: 284, unitPoints: 1500, total: 426000, unitCost: 30, totalCost: 8520 },
-        { issuer: "商业板块 / 福田片区 / 景田安荟邻", productOwner: "商业板块 / 福田片区 / 景田安荟邻", type: "在本主体内", product: "20元优惠券", redeemCount: 338, unitPoints: 1000, total: 338000, unitCost: 20, totalCost: 6760 },
-        { issuer: "住宅板块 / 南山片区 / 高新花园", productOwner: "住宅板块 / 南山片区 / 高新花园", type: "在本主体内", product: "贴身管家服务", redeemCount: 230, unitPoints: 1200, total: 276000, unitCost: 25, totalCost: 5750 },
-        { issuer: "物业板块 / 坪山片区 / 秀馨苑", productOwner: "物业板块 / 坪山片区 / 秀馨苑", type: "在本主体内", product: "搬家服务券", redeemCount: 194, unitPoints: 1000, total: 194000, unitCost: 20, totalCost: 3880 }
+        { issuer: "商业板块 / 南山片区 / 高新安荟邻", productOwner: "商业板块 / 南山片区 / 高新安荟邻", type: "在本主体内", giftType: "实物礼券", product: "精选实物礼品", redeemCount: 284, unitPoints: 1500, total: 426000, unitCost: 30, totalCost: 8520 },
+        { issuer: "商业板块 / 福田片区 / 景田安荟邻", productOwner: "商业板块 / 福田片区 / 景田安荟邻", type: "在本主体内", giftType: "电子礼券", product: "20元优惠券", redeemCount: 338, unitPoints: 1000, total: 338000, unitCost: 20, totalCost: 6760 },
+        { issuer: "住宅板块 / 南山片区 / 高新花园", productOwner: "住宅板块 / 南山片区 / 高新花园", type: "在本主体内", giftType: "第三方礼券", product: "贴身管家服务", redeemCount: 230, unitPoints: 1200, total: 276000, unitCost: 25, totalCost: 5750 },
+        { issuer: "物业板块 / 坪山片区 / 秀馨苑", productOwner: "物业板块 / 坪山片区 / 秀馨苑", type: "在本主体内", giftType: "电子礼券", product: "搬家服务券", redeemCount: 194, unitPoints: 1000, total: 194000, unitCost: 20, totalCost: 3880 }
       ]
     };
 
@@ -290,9 +292,11 @@
 
     function getFilteredRows() {
       const type = document.getElementById("exchangeType").value;
+      const giftType = document.getElementById("giftType").value;
       const issuer = document.getElementById("issuerOrgValue").value;
       const consumer = document.getElementById("consumerOrgValue").value;
       let rows = type === "全部" ? [...exchangeData["在其他发分主体"], ...exchangeData["在本主体内"]] : [...exchangeData[type]];
+      if (giftType !== "全部") rows = rows.filter(item => item.giftType === giftType);
       if (issuer !== "全部组织") rows = rows.filter(item => item.issuer === issuer);
       if (consumer !== "全部组织") rows = rows.filter(item => item.productOwner === consumer);
       return rows;
@@ -310,6 +314,7 @@
         <tr>
           <td>${periodLabel}</td>
           <td>${item.product}</td>
+          <td>${item.giftType}</td>
           <td>${item.issuer}</td>
           <td>${item.productOwner}</td>
           <td><span class="tag">${item.type}</span></td>
@@ -372,6 +377,7 @@
     document.getElementById("resetBtn").addEventListener("click", () => {
       document.getElementById("periodType").value = "月";
       document.getElementById("exchangeType").value = "全部";
+      document.getElementById("giftType").value = "全部";
       issuerOrgTree.reset();
       consumerOrgTree.reset();
       syncPeriodOptions();
@@ -382,6 +388,7 @@
       renderAll();
     });
     document.getElementById("exchangeType").addEventListener("change", renderAll);
+    document.getElementById("giftType").addEventListener("change", renderAll);
     syncPeriodOptions();
     renderAll();
   </script>
