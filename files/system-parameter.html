@@ -67,7 +67,7 @@
     <div class="filter param-filter">
       <div class="field"><label>参数名称</label><input id="nameFilter" placeholder="请输入参数名称"></div>
       <div class="field"><label>key值</label><input id="keyFilter" placeholder="请输入key值"></div>
-      <div class="field"><label>所属模块</label><select id="moduleFilter"><option>全部模块</option><option>会员管理</option><option>清算管理</option><option>积分帐户审核管理</option></select></div>
+      <div class="field"><label>所属模块</label><select id="moduleFilter"><option>全部模块</option><option>会员管理</option><option>积分中心</option><option>清算管理</option><option>积分帐户审核管理</option></select></div>
       <button class="btn primary" id="queryBtn">查询</button>
       <button class="btn" id="resetBtn">重置</button>
     </div>
@@ -120,6 +120,13 @@
         key: "member.carbon_to_consume_points_ratio",
         value: "1:1",
         desc: "用于设置会员碳积分兑换消费积分的换算比例。"
+      },
+      {
+        module: "积分中心",
+        name: "积分兑现金价值比例",
+        key: "points.cash_exchange_rate",
+        value: "1积分兑0.004元",
+        desc: "用于设置积分折算现金价值的兑换比例，例如1积分兑0.004元。"
       },
       {
         module: "清算管理",
