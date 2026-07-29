@@ -200,6 +200,47 @@
     .org-tree-level-2 { padding-left: 28px; }
     .org-tree-level-3 { padding-left: 52px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .phone-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 26px;
+      white-space: nowrap;
+    }
+    .phone-cell [data-phone-value] {
+      min-width: 88px;
+      font-variant-numeric: tabular-nums;
+    }
+    .phone-toggle {
+      width: 26px;
+      height: 26px;
+      display: inline-grid;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: #1685d1;
+      cursor: pointer;
+    }
+    .phone-toggle:hover,
+    .phone-toggle:focus-visible {
+      background: #eaf6ff;
+      outline: none;
+    }
+    .phone-toggle svg {
+      width: 17px;
+      height: 17px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2;
+    }
+    .phone-toggle svg[hidden] {
+      display: none;
+    }
     @media (max-width: 1180px) {
       .export-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .export-grid { grid-template-columns: 1fr; }
@@ -256,10 +297,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="李明">李明</span></td><td>AJ202605180018</td><td>136****5520</td><td><span class="badge gold">V3远近闻名</span></td><td><span class="badge green">项目住户</span></td><td><span class="badge gray">无名单</span></td><td><span class="badge green">正常</span></td><td>42,800 / 8 / 3</td><td>2026-05-25 签到</td><td><span class="link" data-detail="李明">详情</span>　<span class="link" data-tag="李明">打标签</span>　<span class="link" data-growth="李明">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="set-list">设名单</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="周女士">周女士</span></td><td>AJ202604220091</td><td>139****6812</td><td><span class="badge">V2小有名气</span></td><td><span class="badge">实名认证</span></td><td><span class="badge gold">白名单</span></td><td><span class="badge green">正常</span></td><td>9,630 / 2 / 1</td><td>2026-05-24 领取权益</td><td><span class="link" data-detail="周女士">详情</span>　<span class="link" data-tag="周女士">打标签</span>　<span class="link" data-growth="周女士">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="remove-white">移出白名单</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="王强">王强</span></td><td>AJ202603090112</td><td>188****4019</td><td>V1展露头角</td><td><span class="badge gray">未认证</span></td><td><span class="badge red">黑名单</span></td><td><span class="badge red">冻结</span></td><td>1,200 / 0 / 0</td><td>2026-05-23 风控冻结</td><td><span class="link" data-detail="王强">详情</span>　<span class="link" data-tag="王强">打标签</span>　<span class="link" data-growth="王强">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="unfreeze">解冻</span>　<span class="link" data-list="remove-black">移出黑名单</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="陈先生">陈先生</span></td><td>AJ202605010027</td><td>137****2098</td><td><span class="badge">V2小有名气</span></td><td><span class="badge green">项目住户</span></td><td><span class="badge gray">无名单</span></td><td><span class="badge green">正常</span></td><td>18,420 / 4 / 2</td><td>2026-05-21 兑换券</td><td><span class="link" data-detail="陈先生">详情</span>　<span class="link" data-tag="陈先生">打标签</span>　<span class="link" data-growth="陈先生">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="set-list">设名单</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="李明">李明</span></td><td>AJ202605180018</td><td><span class="phone-cell"><span data-phone-value data-masked="136****5520" data-full="13612345520">136****5520</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td><span class="badge gold">V3远近闻名</span></td><td><span class="badge green">项目住户</span></td><td><span class="badge gray">无名单</span></td><td><span class="badge green">正常</span></td><td>42,800 / 8 / 3</td><td>2026-05-25 签到</td><td><span class="link" data-detail="李明">详情</span>　<span class="link" data-tag="李明">打标签</span>　<span class="link" data-growth="李明">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="set-list">设名单</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="周女士">周女士</span></td><td>AJ202604220091</td><td><span class="phone-cell"><span data-phone-value data-masked="139****6812" data-full="13924686812">139****6812</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td><span class="badge">V2小有名气</span></td><td><span class="badge">实名认证</span></td><td><span class="badge gold">白名单</span></td><td><span class="badge green">正常</span></td><td>9,630 / 2 / 1</td><td>2026-05-24 领取权益</td><td><span class="link" data-detail="周女士">详情</span>　<span class="link" data-tag="周女士">打标签</span>　<span class="link" data-growth="周女士">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="remove-white">移出白名单</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="王强">王强</span></td><td>AJ202603090112</td><td><span class="phone-cell"><span data-phone-value data-masked="188****4019" data-full="18856324019">188****4019</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td>V1展露头角</td><td><span class="badge gray">未认证</span></td><td><span class="badge red">黑名单</span></td><td><span class="badge red">冻结</span></td><td>1,200 / 0 / 0</td><td>2026-05-23 风控冻结</td><td><span class="link" data-detail="王强">详情</span>　<span class="link" data-tag="王强">打标签</span>　<span class="link" data-growth="王强">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="unfreeze">解冻</span>　<span class="link" data-list="remove-black">移出黑名单</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="陈先生">陈先生</span></td><td>AJ202605010027</td><td><span class="phone-cell"><span data-phone-value data-masked="137****2098" data-full="13780632098">137****2098</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td><span class="badge">V2小有名气</span></td><td><span class="badge green">项目住户</span></td><td><span class="badge gray">无名单</span></td><td><span class="badge green">正常</span></td><td>18,420 / 4 / 2</td><td>2026-05-21 兑换券</td><td><span class="link" data-detail="陈先生">详情</span>　<span class="link" data-tag="陈先生">打标签</span>　<span class="link" data-growth="陈先生">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="set-list">设名单</span></td></tr>
           </tbody>
         </table>
         <div class="pagination">
@@ -503,6 +544,19 @@
   </div>
 
   <script>
+    document.querySelectorAll(".phone-toggle").forEach(button => {
+      button.addEventListener("click", () => {
+        const value = button.closest(".phone-cell").querySelector("[data-phone-value]");
+        const showing = button.getAttribute("aria-pressed") === "true";
+        value.textContent = showing ? value.dataset.masked : value.dataset.full;
+        button.setAttribute("aria-pressed", String(!showing));
+        button.setAttribute("aria-label", showing ? "查看手机号" : "隐藏手机号");
+        button.title = showing ? "查看手机号" : "隐藏手机号";
+        button.querySelector("[data-eye-open]").hidden = !showing;
+        button.querySelector("[data-eye-off]").hidden = showing;
+      });
+    });
+
     const orgTreeData = [
       {
         name: "商业板块",
