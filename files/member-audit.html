@@ -73,12 +73,18 @@
     .org-tree-level-2 { padding-left: 28px; }
     .org-tree-level-3 { padding-left: 52px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .audit-list th:nth-child(2),
+    .audit-list td:nth-child(2),
+    .audit-list th:nth-child(4),
+    .audit-list td:nth-child(4) {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div class="page">
     <div class="filter">
-      <div class="field"><label>审核单号/会员</label><input placeholder="审核单号、会员名称、会员ID"></div>
+      <div class="field"><label>会员</label><input placeholder="会员名称、会员ID"></div>
       <div class="field"><label>手机号</label><input placeholder="支持模糊查询"></div>
       <div class="field"><label>审核状态</label><select><option>全部状态</option><option>审核通过</option><option>审核不通过</option></select></div>
       <div class="field"><label>会员类型</label><select><option>全部类型</option><option>项目住户会员</option><option>非员工非住户会员</option></select></div>
@@ -102,7 +108,7 @@
         </div>
       </div>
       <div class="panel-bd">
-        <table>
+        <table class="audit-list">
           <thead>
             <tr>
               <th><input type="checkbox"></th>

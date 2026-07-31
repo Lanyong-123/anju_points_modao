@@ -1655,3 +1655,28 @@ body { background: #eef3f8; }
   margin-top: 5px;
   background: #0f8bff;
 }
+.mini-notifications-page .notice-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.mini-notifications-page .notice-actions button {
+  min-width: 70px;
+  height: 32px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mini-notifications-page .notice-actions .confirm {
+  background: linear-gradient(135deg, #0f8bff, #28b8d8);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(15, 139, 255, .2);
+}
+.mini-notifications-page .notice-actions .cancel {
+  border: 1px solid #ccd9e8;
+  background: #f5f8fc;
+  color: #607286;
+}

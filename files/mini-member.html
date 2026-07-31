@@ -4,6 +4,13 @@
   <style>
     .benefit-level-tabs { margin-top: 8px; }
     .ticket-card.no-action { grid-template-columns: 64px 1fr; padding-right: 12px; }
+    .ticket-card { cursor: pointer; }
+    .detail-dialog { padding: 0; overflow: hidden; text-align: left; }
+    .detail-cover { width: 100%; height: 150px; object-fit: cover; display: block; background: #eaf7f5; }
+    .detail-content { padding: 18px; }
+    .detail-content h3 { margin: 0 0 8px; }
+    .detail-tag { display: inline-block; margin-bottom: 10px; padding: 3px 9px; border-radius: 12px; color: #008d78; background: #e5f8f3; font-size: 12px; }
+    .detail-content p { margin-bottom: 16px; }
   </style>
 </head>
 <body class="mini-member-page">
@@ -51,10 +58,10 @@
       <div class="mini-card summary-card">
         <div class="section-title"><h3>积分换券</h3><button onclick="location.href='mini-coupons.html'">全部</button></div>
         <div class="ticket-list">
-          <div class="ticket-card coupon-card"><div class="ticket-left amount"><strong>家</strong></div><div class="ticket-main"><b>2000积分兑家政服务</b><span>上门保洁、维修服务可用</span></div><button>兑换</button></div>
-          <div class="ticket-card coupon-card"><div class="ticket-left amount"><strong>礼</strong></div><div class="ticket-main"><b>5000积分兑礼物</b><span>精选实物礼品兑换</span></div><button>兑换</button></div>
-          <div class="ticket-card coupon-card"><div class="ticket-left amount"><strong>场</strong></div><div class="ticket-main"><b>500积分兑场地预约优先</b><span>活动场地预约优先权益</span></div><button>兑换</button></div>
-          <div class="ticket-card coupon-card"><div class="ticket-left amount"><strong>三</strong></div><div class="ticket-main"><b>第三方礼券</b><span>合作商户服务礼券</span></div><button>兑换</button></div>
+          <div class="ticket-card coupon-card" data-coupon-detail="housekeeping"><div class="ticket-left amount"><strong>家</strong></div><div class="ticket-main"><b>2000积分兑家政服务</b><span>上门保洁、维修服务可用</span></div><button>兑换</button></div>
+          <div class="ticket-card coupon-card" data-coupon-detail="gift"><div class="ticket-left amount"><strong>礼</strong></div><div class="ticket-main"><b>5000积分兑礼物</b><span>精选实物礼品兑换</span></div><button>兑换</button></div>
+          <div class="ticket-card coupon-card" data-coupon-detail="venue"><div class="ticket-left amount"><strong>场</strong></div><div class="ticket-main"><b>500积分兑场地预约优先</b><span>活动场地预约优先权益</span></div><button>兑换</button></div>
+          <div class="ticket-card coupon-card" data-coupon-detail="partner"><div class="ticket-left amount"><strong>三</strong></div><div class="ticket-main"><b>第三方礼券</b><span>合作商户服务礼券</span></div><button>兑换</button></div>
         </div>
       </div>
     </div>
@@ -93,7 +100,19 @@
       <button class="btn-mini" onclick="closeCarbonModal()">取消</button>
     </div>
   </div>
+  <div class="use-modal" id="detailModal">
+    <div class="use-dialog detail-dialog">
+      <img class="detail-cover" id="detailCover" src="../resources/products/housekeeping-coupon.svg" alt="权益图片">
+      <div class="detail-content">
+        <span class="detail-tag" id="detailType">会员权益</span>
+        <h3 id="detailTitle">免费搬家权益</h3>
+        <p id="detailDescription">为金卡会员提供一次同城基础搬家服务，预约成功后由专属客服确认服务时间与地址。</p>
+        <button class="btn-mini primary" onclick="closeDetailModal()">我知道了</button>
+      </div>
+    </div>
+  </div>
   <script>
+    const detailCover = "../resources/products/housekeeping-coupon.svg";
     const benefitLevels = {
       normal: {
         title: "V1展露头角专享权益",
@@ -135,17 +154,19 @@
       const data = benefitLevels[level] || benefitLevels.gold;
       document.getElementById('benefitTitle').textContent = data.title;
       document.getElementById('benefitList').innerHTML = data.items.map(item => {
-        const action = item.action ? `<button onclick="benefitAction(this)">${item.action}</button>` : "";
+        const action = item.action ? `<button onclick="benefitAction(event, this)">${item.action}</button>` : "";
         const noAction = item.action ? "" : " no-action";
-        return `<div class="ticket-card${noAction}"><div class="ticket-left"><strong>${item.icon}</strong></div><div class="ticket-main"><b>${item.title}</b><span>${item.desc}</span></div>${action}</div>`;
+        return `<div class="ticket-card${noAction}" data-benefit-title="${item.title}" data-benefit-desc="${item.desc}"><div class="ticket-left"><strong>${item.icon}</strong></div><div class="ticket-main"><b>${item.title}</b><span>${item.desc}</span></div>${action}</div>`;
       }).join("");
+      bindBenefitDetails();
     }
     function switchBenefitLevel(level, tab) {
       document.querySelectorAll('.benefit-level-tabs .tab').forEach(item => item.classList.remove('active'));
       tab.classList.add('active');
       renderBenefitLevel(level);
     }
-    function benefitAction(btn) {
+    function benefitAction(event, btn) {
+      event.stopPropagation();
       if (btn.textContent.trim() === '立即领取') {
         btn.textContent = '去使用';
         return;
@@ -168,8 +189,35 @@
     }
     function bindCouponExchangeActions() {
       document.querySelectorAll('.coupon-card button').forEach(btn => {
-        btn.addEventListener('click', () => couponExchangeAction(btn));
+        btn.addEventListener('click', event => {
+          event.stopPropagation();
+          couponExchangeAction(btn);
+        });
       });
+      document.querySelectorAll('[data-coupon-detail]').forEach(card => {
+        card.addEventListener('click', () => {
+          const title = card.querySelector('b').textContent;
+          const desc = card.querySelector('.ticket-main span').textContent;
+          openDetailModal('优惠券详情', title, `${desc}。兑换后可在“我的优惠券”中查看，有效期内到指定服务网点使用。`);
+        });
+      });
+    }
+    function bindBenefitDetails() {
+      document.querySelectorAll('[data-benefit-title]').forEach(card => {
+        card.addEventListener('click', () => {
+          openDetailModal('权益详情', card.dataset.benefitTitle, `${card.dataset.benefitDesc}。该权益仅限当前会员本人使用，具体服务范围及有效期以实际领取结果为准。`);
+        });
+      });
+    }
+    function openDetailModal(type, title, description) {
+      document.getElementById('detailCover').src = detailCover;
+      document.getElementById('detailType').textContent = type;
+      document.getElementById('detailTitle').textContent = title;
+      document.getElementById('detailDescription').textContent = description;
+      document.getElementById('detailModal').classList.add('show');
+    }
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.remove('show');
     }
     function closeUseModal() {
       document.getElementById('useModal').classList.remove('show');

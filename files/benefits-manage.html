@@ -14,11 +14,12 @@
     }
     .member-detail-body {
       max-height: calc(100vh - 150px);
-      overflow: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
     .member-detail-filter {
       display: grid;
-      grid-template-columns: minmax(190px, 1fr) minmax(150px, 220px) minmax(150px, 220px) minmax(150px, 220px) minmax(190px, 1fr) auto auto;
+      grid-template-columns: minmax(180px, 1fr) minmax(140px, 190px) repeat(3, minmax(120px, 160px)) minmax(180px, 1fr) auto auto;
       gap: 12px;
       align-items: center;
       margin-bottom: 18px;
@@ -42,8 +43,14 @@
       margin-bottom: 12px;
     }
     .member-detail-table {
-      min-width: 1280px;
+      min-width: 1420px;
       table-layout: fixed;
+    }
+    .member-detail-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid #c7dfef;
+      border-radius: 6px;
     }
     .member-detail-table th,
     .member-detail-table td {
@@ -63,67 +70,36 @@
     .member-detail-table th:nth-child(5),
     .member-detail-table td:nth-child(5),
     .member-detail-table th:nth-child(6),
-    .member-detail-table td:nth-child(6),
+    .member-detail-table td:nth-child(6) { width: 120px; }
+    .member-detail-table th:nth-child(7),
+    .member-detail-table td:nth-child(7) { width: 170px; }
     .member-detail-table th:nth-child(8),
     .member-detail-table td:nth-child(8),
     .member-detail-table th:nth-child(9),
-    .member-detail-table td:nth-child(9) { width: 120px; }
-    .member-detail-table th:nth-child(7),
-    .member-detail-table td:nth-child(7),
+    .member-detail-table td:nth-child(9),
     .member-detail-table th:nth-child(10),
-    .member-detail-table td:nth-child(10) { width: 160px; }
-    .rich-editor {
-      border: 1px solid #cfd9e5;
-      border-radius: 6px;
-      background: #fff;
-      overflow: hidden;
-    }
-    .rich-editor-toolbar {
-      min-height: 38px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 8px;
-      border-bottom: 1px solid #dfe6ee;
-      background: #f8fafc;
-      flex-wrap: wrap;
-    }
-    .rich-editor-toolbar button {
-      min-width: 34px;
-      height: 28px;
-      padding: 0 9px;
-      border: 1px solid #cfd9e5;
-      border-radius: 5px;
-      background: #fff;
-      color: #123152;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .rich-editor-toolbar button:hover {
-      border-color: #b81f2d;
-      color: #b81f2d;
-    }
-    .rich-editor-body {
-      min-height: 118px;
-      padding: 12px 14px;
-      outline: 0;
-      line-height: 1.7;
-      color: #1d2733;
-    }
-    .rich-editor-body:empty::before {
-      content: attr(data-placeholder);
-      color: #8a99a8;
-    }
-    .rich-editor-body ul,
-    .rich-editor-body ol {
-      margin: 6px 0 6px 22px;
-      padding: 0;
+    .member-detail-table td:nth-child(10) {
+      width: 180px;
+      white-space: nowrap;
     }
     .benefit-hint {
       margin-top: 7px;
       color: #8a99a8;
       font-size: 12px;
       line-height: 1.5;
+    }
+    #editDesc {
+      display: block;
+      width: 100%;
+      min-height: 118px;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      resize: vertical;
+      border: 1px solid #b8cfe3;
+      border-radius: 5px;
+      color: var(--ink);
+      font: inherit;
+      line-height: 1.6;
     }
     .field label.required::before {
       content: "*";
@@ -213,11 +189,8 @@
       </div>
       <div class="field"><label>权益类型</label><select><option>全部类型</option><option>优惠券权益</option><option>其它权益</option></select></div>
       <div class="field"><label>选择礼券</label><select><option>全部礼券</option><option>免费搬家服务</option><option>优先选房权益</option><option>贴身管家服务</option><option>免费搬家服务</option><option>腾讯会员权益</option></select></div>
-      <div class="field"><label>关联条件</label><select><option>全部条件</option><option>会员等级</option><option>身份标签</option><option>特定项目</option></select></div>
-      <div class="field"><label>发布对象</label><select><option>全部对象</option><option>V3远近闻名</option><option>V2小有名气</option><option>项目住户</option><option>员工</option><option>南山项目</option></select></div>
       <div class="field"><label>权益状态</label><select><option>全部状态</option><option>暂存</option><option>进行中</option><option>已过期</option><option>已结束</option><option>启用</option><option>禁用</option></select></div>
       <div class="field"><label>状态</label><select><option>全部</option><option>正常</option><option>删除</option></select></div>
-      <div class="field"><label>有效期</label><input value="2026-05-01 至 2026-12-31"></div>
       <div class="field"><label>权益创建时间</label><input value="2026-04-01 至 2026-05-26"></div>
       <button class="btn primary">查询</button>
     </div>
@@ -249,17 +222,16 @@
               <th>过期数</th>
               <th>未核销数</th>
               <th>权益创建时间</th>
-              <th>有效期</th>
               <th>状态</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="生日权益">生日权益</span></td><td><span class="badge green">优惠券权益</span></td><td>免费搬家服务</td><td>南山项目</td><td>身份标签</td><td>项目住户、业主</td><td>800</td><td><span class="link" data-member-log="claim:生日权益">580</span></td><td><span class="link" data-member-log="use:生日权益">142</span></td><td><span class="link" data-member-log="expired:生日权益">12</span></td><td><span class="link" data-member-log="unredeemed:生日权益">426</span></td><td>2026-05-18 15:42</td><td>2026-06-01 至 2026-10-31</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="生日权益">详情</span>　<span class="link" data-status="disable">禁用</span>　<span class="link" data-delete>删除</span>　<span class="link" data-urge="生日权益">催办</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="贴身管家服务">贴身管家服务</span></td><td><span class="badge green">优惠券权益</span></td><td>贴身管家服务</td><td>集团总部</td><td>会员等级</td><td>V4名扬四海</td><td>120</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2026-04-28 11:08</td><td>2026-05-01 至 2026-12-31</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-edit="贴身管家服务">编辑</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="腾讯会员权益">腾讯会员权益</span></td><td><span class="badge green">优惠券权益</span></td><td>腾讯会员权益</td><td>福田项目</td><td>特定项目</td><td>福田项目</td><td>5,000</td><td><span class="link" data-member-log="claim:腾讯会员权益">2,140</span></td><td><span class="link" data-member-log="use:腾讯会员权益">1,025</span></td><td><span class="link" data-member-log="expired:腾讯会员权益">86</span></td><td><span class="link" data-member-log="unredeemed:腾讯会员权益">1,029</span></td><td>2026-05-12 10:16</td><td>2026-05-15 至 2026-09-30</td><td><span class="badge red">已过期</span></td><td><span class="link" data-detail="腾讯会员权益">详情</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="场地预约优先权益">场地预约优先权益</span></td><td><span class="badge">其它权益</span></td><td>--</td><td>宝安项目</td><td>特定项目</td><td>宝安项目</td><td>300</td><td>188</td><td>76</td><td>12</td><td>100</td><td>2026-03-18 14:12</td><td>2026-03-20 至 2026-04-30</td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="场地预约优先权益">详情</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="生日权益-合作门店">生日权益</span></td><td><span class="badge">其它权益</span></td><td>--</td><td>合作服务门店</td><td>身份标签</td><td>员工、项目住户</td><td>-</td><td><span class="link" data-member-log="claim:生日权益-合作门店">680</span></td><td><span class="link" data-member-log="use:生日权益-合作门店">210</span></td><td><span class="link" data-member-log="expired:生日权益-合作门店">35</span></td><td><span class="link" data-member-log="unredeemed:生日权益-合作门店">435</span></td><td>2026-03-26 17:20</td><td>2026-04-01 至 2026-05-31</td><td><span class="badge gray">禁用</span></td><td><span class="link" data-detail="生日权益-合作门店">详情</span>　<span class="link" data-status="enable">启用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="生日权益">生日权益</span></td><td><span class="badge green">优惠券权益</span></td><td>免费搬家服务</td><td>南山项目</td><td>身份标签</td><td>项目住户、业主</td><td>800</td><td><span class="link" data-member-log="claim:生日权益">580</span></td><td><span class="link" data-member-log="use:生日权益">142</span></td><td><span class="link" data-member-log="expired:生日权益">12</span></td><td><span class="link" data-member-log="unredeemed:生日权益">426</span></td><td>2026-05-18 15:42</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="生日权益">详情</span>　<span class="link" data-status="disable">禁用</span>　<span class="link" data-delete>删除</span>　<span class="link" data-urge="生日权益">催办</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="贴身管家服务">贴身管家服务</span></td><td><span class="badge green">优惠券权益</span></td><td>贴身管家服务</td><td>集团总部</td><td>会员等级</td><td>V4名扬四海</td><td>120</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2026-04-28 11:08</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-edit="贴身管家服务">编辑</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="腾讯会员权益">腾讯会员权益</span></td><td><span class="badge green">优惠券权益</span></td><td>腾讯会员权益</td><td>福田项目</td><td>特定项目</td><td>福田项目</td><td>5,000</td><td><span class="link" data-member-log="claim:腾讯会员权益">2,140</span></td><td><span class="link" data-member-log="use:腾讯会员权益">1,025</span></td><td><span class="link" data-member-log="expired:腾讯会员权益">86</span></td><td><span class="link" data-member-log="unredeemed:腾讯会员权益">1,029</span></td><td>2026-05-12 10:16</td><td><span class="badge red">已过期</span></td><td><span class="link" data-detail="腾讯会员权益">详情</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="场地预约优先权益">场地预约优先权益</span></td><td><span class="badge">其它权益</span></td><td>--</td><td>宝安项目</td><td>特定项目</td><td>宝安项目</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2026-03-18 14:12</td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="场地预约优先权益">详情</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="生日权益-合作门店">生日权益</span></td><td><span class="badge">其它权益</span></td><td>--</td><td>合作服务门店</td><td>身份标签</td><td>员工、项目住户</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2026-03-26 17:20</td><td><span class="badge gray">禁用</span></td><td><span class="link" data-detail="生日权益-合作门店">详情</span>　<span class="link" data-status="enable">启用</span>　<span class="link" data-delete>删除</span></td></tr>
           </tbody>
         </table>
         <div class="pagination">
@@ -314,8 +286,11 @@
           <div class="field"><label class="required">权益类型</label><select id="editType" data-benefit-type><option>优惠券权益</option><option>其它权益</option></select></div>
           <div class="field" id="couponGiftField"><label class="required">选择礼券</label><select id="editGift"><option>免费搬家服务</option><option>贴身管家服务</option><option>免费搬家服务</option><option>腾讯会员权益</option></select></div>
           <div class="field" id="benefitTotalField"><label class="required">权益总数</label><input id="editTotal" value="1000"></div>
-          <div class="field"><label>权益图标</label><input id="editIcon" type="file"></div>
-          <div class="field"><label>当前图标附件</label><input value="benefit-charge.png" readonly></div>
+          <div class="field">
+            <label>权益图标</label>
+            <input id="editIcon" type="file" accept=".jpg,.jpeg,.png,.gif,.bmp">
+            <div class="benefit-hint">图片尺寸为 200*200px，格式为 jpg/jpeg/png/gif/bmp，大小不超过 2MB</div>
+          </div>
           <div class="field" style="grid-column:1/-1">
             <label>附件上传</label>
             <input id="editAttachment" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
@@ -325,17 +300,7 @@
 
         <div class="field" style="margin-top:12px">
           <label>权益描述</label>
-          <textarea id="editDesc" hidden>会员在指定业务场景可享受对应权益，领取后进入会员权益账户。</textarea>
-          <div class="rich-editor">
-            <div class="rich-editor-toolbar" aria-label="权益描述编辑工具栏">
-              <button type="button" data-rich-command="bold">B</button>
-              <button type="button" data-rich-command="italic">I</button>
-              <button type="button" data-rich-command="underline">U</button>
-              <button type="button" data-rich-command="insertUnorderedList">列表</button>
-              <button type="button" data-rich-command="removeFormat">清除</button>
-            </div>
-            <div class="rich-editor-body" id="editDescEditor" contenteditable="true" data-placeholder="请输入权益描述">会员在指定业务场景可享受对应权益，领取后进入会员权益账户。</div>
-          </div>
+          <textarea id="editDesc" rows="5" placeholder="请输入权益描述">会员在指定业务场景可享受对应权益，领取后进入会员权益账户。</textarea>
         </div>
 
         <div class="panel" id="conditionPanel" style="margin-top:16px; box-shadow:none">
@@ -431,6 +396,7 @@
           <input placeholder="请输入会员ID">
           <select><option>全部等级</option><option>V1展露头角</option><option>V2小有名气</option><option>V3远近闻名</option><option>V4名扬四海</option></select>
           <select><option>全部项目</option><option>集团总部</option><option>南山项目</option><option>福田项目</option></select>
+          <select id="memberLogWriteoffStatus"><option>全部核销状态</option><option>未核销</option><option>已核销</option></select>
           <input id="memberLogRange" value="2026-05-01 至 2026-05-26">
           <button class="btn primary">查询</button>
           <button class="btn">重置</button>
@@ -441,10 +407,12 @@
           </div>
           <button class="btn primary">导出列表</button>
         </div>
-        <table class="member-detail-table">
-          <thead><tr id="memberLogHead"><th>微信昵称</th><th>用户名</th><th>会员ID</th><th>手机号</th><th>会员等级</th><th>所属项目</th><th id="memberLogTimeHead">领取时间</th></tr></thead>
-          <tbody id="memberLogRows"></tbody>
-        </table>
+        <div class="member-detail-table-wrap">
+          <table class="member-detail-table">
+            <thead><tr id="memberLogHead"><th>微信昵称</th><th>用户名</th><th>手机号</th><th>会员等级</th><th>所属项目</th><th>核销状态</th><th>核销码</th><th>领取时间</th><th>核销时间</th><th>过期时间</th></tr></thead>
+            <tbody id="memberLogRows"></tbody>
+          </table>
+        </div>
         <div class="pagination">
           <span id="memberLogTotal">共 0 条</span>
           <span>每页</span>
@@ -632,14 +600,9 @@
       document.getElementById("conditionPanel").style.display = isCouponBenefit ? "block" : "none";
     }
 
-    function setRichDesc(text) {
+    function setDesc(text) {
       const content = (text || "").trim() || "会员在指定业务场景可享受对应权益，领取后进入会员权益账户。";
       document.getElementById("editDesc").value = content;
-      document.getElementById("editDescEditor").textContent = content;
-    }
-
-    function syncRichDesc() {
-      document.getElementById("editDesc").value = document.getElementById("editDescEditor").innerHTML.trim();
     }
     function setEditGift(value) {
       const giftSelect = document.getElementById("editGift");
@@ -659,20 +622,41 @@
     });
     document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
 
+    function getBenefitExpireTime(name) {
+      const validRange = (benefitData[name] && benefitData[name][7]) || "";
+      const endDate = validRange.split("至").pop().trim();
+      return endDate ? `${endDate} 23:59` : "";
+    }
+
+    function getClaimTime(writeoffTime) {
+      const matched = writeoffTime.match(/^(\d{4})-(\d{2})-(\d{2})\s+(.+)$/);
+      if (!matched) return "";
+      const date = new Date(Number(matched[1]), Number(matched[2]) - 1, Number(matched[3]));
+      date.setDate(date.getDate() - 3);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day} ${matched[4]}`;
+    }
+
     document.querySelectorAll("[data-member-log]").forEach(el => {
       el.addEventListener("click", () => {
         const [type, name] = el.dataset.memberLog.split(":");
         const rows = (memberLogData[name] && memberLogData[name][type]) || [];
         const titleMap = { claim: "领取会员明细", use: "核销会员明细", expired: "过期会员明细", unredeemed: "未核销会员明细" };
-        const timeMap = { claim: "领取时间", use: "核销时间", expired: "过期时间", unredeemed: "领取时间" };
+        const writeoffStatus = type === "use" ? "已核销" : "未核销";
         currentUnredeemedBenefit = type === "unredeemed" ? name : "";
         document.getElementById("memberLogActions").style.display = type === "unredeemed" ? "flex" : "none";
         document.getElementById("memberLogTitle").textContent = `${name} - ${titleMap[type]}`;
-        document.getElementById("memberLogHead").innerHTML = type === "use"
-          ? `<th>微信昵称</th><th>用户名</th><th>会员ID</th><th>手机号</th><th>会员等级</th><th>所属项目</th><th>核销码</th><th>联系方式</th><th>客户领取方式</th><th id="memberLogTimeHead">核销时间</th>`
-          : `<th>微信昵称</th><th>用户名</th><th>会员ID</th><th>手机号</th><th>会员等级</th><th>所属项目</th><th id="memberLogTimeHead">${timeMap[type]}</th>`;
+        document.getElementById("memberLogWriteoffStatus").value = writeoffStatus;
         document.getElementById("memberLogTotal").textContent = `共 ${rows.length} 条`;
-        document.getElementById("memberLogRows").innerHTML = rows.map(row => `<tr>${[row[0], ...row].map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("");
+        document.getElementById("memberLogRows").innerHTML = rows.map(row => {
+          const expireTime = type === "expired" ? row[5] : getBenefitExpireTime(name);
+          const cells = type === "use"
+            ? [row[0], row[0], row[2], row[3], row[4], "已核销", row[5], getClaimTime(row[8]), row[8], expireTime]
+            : [row[0], row[0], row[2], row[3], row[4], "未核销", "", type === "expired" ? "" : row[5], "", expireTime];
+          return `<tr>${cells.map(cell => `<td>${cell}</td>`).join("")}</tr>`;
+        }).join("");
         document.getElementById("memberLogModal").classList.add("open");
       });
     });
@@ -690,14 +674,6 @@
     });
 
     document.querySelector("[data-benefit-type]").addEventListener("change", syncBenefitType);
-    document.querySelectorAll("[data-rich-command]").forEach(button => {
-      button.addEventListener("click", () => {
-        document.getElementById("editDescEditor").focus();
-        document.execCommand(button.dataset.richCommand, false, null);
-        syncRichDesc();
-      });
-    });
-    document.getElementById("editDescEditor").addEventListener("input", syncRichDesc);
     document.getElementById("conditionBlocks").addEventListener("change", event => {
       if (event.target.matches("[data-condition]")) syncTarget(event.target.closest("[data-condition-row]"));
     });
@@ -721,7 +697,7 @@
         if (data) {
           document.getElementById("editName").value = data[0];
           document.getElementById("editTotal").value = data[8].replaceAll(",", "");
-          setRichDesc(data[12]);
+          setDesc(data[12]);
           setOrgTreeValue(document.getElementById("editOrgTree"), data[3]);
           document.getElementById("editType").value = data[1];
           setEditGift(data[2]);
@@ -732,7 +708,7 @@
           document.getElementById("editType").value = "优惠券权益";
           setEditGift("免费搬家服务");
           setOrgTreeValue(document.getElementById("editOrgTree"), "商业板块 / 南山片区 / 高新安荟邻");
-          setRichDesc("会员在指定业务场景可享受对应权益，领取后进入会员权益账户。");
+          setDesc("会员在指定业务场景可享受对应权益，领取后进入会员权益账户。");
         }
         syncBenefitType();
         document.getElementById("editModal").classList.add("open");
@@ -760,6 +736,18 @@
     document.querySelectorAll("[data-close-modal]").forEach(el => {
       el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
     });
+    const pageParams = new URLSearchParams(window.location.search);
+    if (pageParams.get("view") === "unredeemed") {
+      const benefitName = pageParams.get("benefit") || "生日权益";
+      const trigger = document.querySelector(`[data-member-log="unredeemed:${benefitName}"]`)
+        || document.querySelector('[data-member-log^="unredeemed:"]');
+      if (trigger) {
+        trigger.click();
+        const filters = document.querySelectorAll("#memberLogModal .member-detail-filter input");
+        filters[0].value = pageParams.get("memberName") || "";
+        filters[1].value = pageParams.get("memberId") || "";
+      }
+    }
   </script>
 </body>
 </html>

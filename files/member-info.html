@@ -41,7 +41,7 @@
       font-weight: 700;
     }
     .growth-filter {
-      grid-template-columns: 1.6fr 1fr 1.15fr auto auto;
+      grid-template-columns: 1.6fr 1fr auto auto;
       margin-bottom: 12px;
       box-shadow: none;
     }
@@ -241,6 +241,44 @@
     .phone-toggle svg[hidden] {
       display: none;
     }
+    .member-table th:nth-child(3),
+    .member-table td:nth-child(3) {
+      display: none;
+    }
+    #detailDrawer {
+      width: min(820px, 92vw);
+    }
+    .identity-section {
+      margin-top: 18px;
+    }
+    .identity-section h4 {
+      margin: 0 0 10px;
+      color: var(--navy);
+      font-size: 14px;
+    }
+    .identity-table-wrap {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      overflow: auto;
+    }
+    .identity-table {
+      min-width: 720px;
+    }
+    .identity-table th,
+    .identity-table td {
+      padding: 9px 10px;
+      font-size: 12px;
+    }
+    .asset-links {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .multi-value {
+      display: grid;
+      gap: 3px;
+    }
     @media (max-width: 1180px) {
       .export-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .export-grid { grid-template-columns: 1fr; }
@@ -253,7 +291,8 @@
       <div class="field"><label>会员名称/ID</label><input value="AJ202605180018"></div>
       <div class="field"><label>手机号</label><input placeholder="支持模糊查询"></div>
       <div class="field"><label>会员等级</label><select><option>全部等级</option><option>V3远近闻名</option><option>V2小有名气</option><option>V1展露头角</option></select></div>
-      <div class="field"><label>认证状态</label><select><option>全部认证状态</option><option>项目住户</option><option>实名认证</option><option>未认证</option></select></div>
+      <div class="field"><label>认证状态</label><select><option>全部认证状态</option><option>实名认证</option><option>未认证</option></select></div>
+      <div class="field"><label>用户类型</label><select><option>全部用户类型</option><option>项目住户</option><option>租户</option><option>游客</option></select></div>
       <div class="field"><label>名单状态</label><select><option>全部名单</option><option>黑名单</option><option>白名单</option><option>无名单</option></select></div>
       <div class="field"><label>账号状态</label><select><option>全部状态</option><option>正常</option><option>冻结</option></select></div>
       <div class="field"><label>所属组织</label>
@@ -280,7 +319,7 @@
         </div>
       </div>
       <div class="panel-bd">
-        <table>
+        <table class="member-table">
           <thead>
             <tr>
               <th><input type="checkbox"></th>
@@ -289,6 +328,7 @@
               <th>手机号</th>
               <th>会员等级</th>
               <th>认证状态</th>
+              <th>用户类型</th>
               <th>名单状态</th>
               <th>账号状态</th>
               <th>积分/券/权益</th>
@@ -297,10 +337,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="李明">李明</span></td><td>AJ202605180018</td><td><span class="phone-cell"><span data-phone-value data-masked="136****5520" data-full="13612345520">136****5520</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td><span class="badge gold">V3远近闻名</span></td><td><span class="badge green">项目住户</span></td><td><span class="badge gray">无名单</span></td><td><span class="badge green">正常</span></td><td>42,800 / 8 / 3</td><td>2026-05-25 签到</td><td><span class="link" data-detail="李明">详情</span>　<span class="link" data-tag="李明">打标签</span>　<span class="link" data-growth="李明">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="set-list">设名单</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="周女士">周女士</span></td><td>AJ202604220091</td><td><span class="phone-cell"><span data-phone-value data-masked="139****6812" data-full="13924686812">139****6812</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td><span class="badge">V2小有名气</span></td><td><span class="badge">实名认证</span></td><td><span class="badge gold">白名单</span></td><td><span class="badge green">正常</span></td><td>9,630 / 2 / 1</td><td>2026-05-24 领取权益</td><td><span class="link" data-detail="周女士">详情</span>　<span class="link" data-tag="周女士">打标签</span>　<span class="link" data-growth="周女士">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="remove-white">移出白名单</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="王强">王强</span></td><td>AJ202603090112</td><td><span class="phone-cell"><span data-phone-value data-masked="188****4019" data-full="18856324019">188****4019</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td>V1展露头角</td><td><span class="badge gray">未认证</span></td><td><span class="badge red">黑名单</span></td><td><span class="badge red">冻结</span></td><td>1,200 / 0 / 0</td><td>2026-05-23 风控冻结</td><td><span class="link" data-detail="王强">详情</span>　<span class="link" data-tag="王强">打标签</span>　<span class="link" data-growth="王强">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="unfreeze">解冻</span>　<span class="link" data-list="remove-black">移出黑名单</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="陈先生">陈先生</span></td><td>AJ202605010027</td><td><span class="phone-cell"><span data-phone-value data-masked="137****2098" data-full="13780632098">137****2098</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td><span class="badge">V2小有名气</span></td><td><span class="badge green">项目住户</span></td><td><span class="badge gray">无名单</span></td><td><span class="badge green">正常</span></td><td>18,420 / 4 / 2</td><td>2026-05-21 兑换券</td><td><span class="link" data-detail="陈先生">详情</span>　<span class="link" data-tag="陈先生">打标签</span>　<span class="link" data-growth="陈先生">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="set-list">设名单</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="李明">李明</span></td><td>AJ202605180018</td><td><span class="phone-cell"><span data-phone-value data-masked="136****5520" data-full="13612345520">136****5520</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td><span class="badge gold">V3远近闻名</span></td><td><span class="badge green">实名认证</span></td><td><span class="badge">项目住户</span></td><td><span class="badge gray">无名单</span></td><td><span class="badge green">正常</span></td><td>42,800 / 8 / 3</td><td>2026-05-25 签到</td><td><span class="link" data-detail="李明">详情</span>　<span class="link" data-tag="李明">打标签</span>　<span class="link" data-growth="李明">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="set-list">设名单</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="周女士">周女士</span></td><td>AJ202604220091</td><td><span class="phone-cell"><span data-phone-value data-masked="139****6812" data-full="13924686812">139****6812</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td><span class="badge">V2小有名气</span></td><td><span class="badge">实名认证</span></td><td><span class="badge gold">租户</span></td><td><span class="badge gold">白名单</span></td><td><span class="badge green">正常</span></td><td>9,630 / 2 / 1</td><td>2026-05-24 领取权益</td><td><span class="link" data-detail="周女士">详情</span>　<span class="link" data-tag="周女士">打标签</span>　<span class="link" data-growth="周女士">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="remove-white">移出白名单</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="王强">王强</span></td><td>AJ202603090112</td><td><span class="phone-cell"><span data-phone-value data-masked="188****4019" data-full="18856324019">188****4019</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td>V1展露头角</td><td><span class="badge gray">未认证</span></td><td><span class="badge gray">游客</span></td><td><span class="badge red">黑名单</span></td><td><span class="badge red">冻结</span></td><td>1,200 / 0 / 0</td><td>2026-05-23 风控冻结</td><td><span class="link" data-detail="王强">详情</span>　<span class="link" data-tag="王强">打标签</span>　<span class="link" data-growth="王强">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="unfreeze">解冻</span>　<span class="link" data-list="remove-black">移出黑名单</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="陈先生">陈先生</span></td><td>AJ202605010027</td><td><span class="phone-cell"><span data-phone-value data-masked="137****2098" data-full="13780632098">137****2098</span><button class="phone-toggle" type="button" aria-label="查看手机号" aria-pressed="false" title="查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></td><td><span class="badge">V2小有名气</span></td><td><span class="badge green">实名认证</span></td><td><span class="badge gold">租户</span></td><td><span class="badge gray">无名单</span></td><td><span class="badge green">正常</span></td><td>18,420 / 4 / 2</td><td>2026-05-21 兑换券</td><td><span class="link" data-detail="陈先生">详情</span>　<span class="link" data-tag="陈先生">打标签</span>　<span class="link" data-growth="陈先生">成长明细</span>　<span class="link" data-min-level="single">最低等级设置</span>　<span class="link" data-freeze="freeze">冻结</span>　<span class="link" data-list="set-list">设名单</span></td></tr>
           </tbody>
         </table>
         <div class="pagination">
@@ -325,18 +365,34 @@
     <div class="panel-bd">
       <div class="detail-list">
         <span>会员名称</span><strong id="detailName">李明</strong>
-        <span>会员ID</span><strong id="detailMemberId">AJ202605180018</strong>
-        <span>手机号</span><strong id="detailPhone">136****5520</strong>
+        <span>OneID</span><strong id="detailMemberId">AJ202605180018</strong>
         <span>会员等级</span><strong id="detailLevel">V3远近闻名 <span class="badge gold">最低等级保障</span></strong>
         <span>等级标识</span><strong id="detailLevelMark">当前等级：V3远近闻名 / 最低等级：V2小有名气</strong>
         <span>当前成长值</span><strong id="detailGrowthValue">8,420</strong>
-        <span>认证状态</span><strong id="detailAuth">项目住户</strong>
+        <span>认证状态</span><strong id="detailAuth">实名认证</strong>
+        <span>用户类型</span><strong id="detailUserType">项目住户</strong>
         <span>名单状态</span><strong id="detailListStatus">无名单</strong>
         <span>账号状态</span><strong id="detailAccountStatus">正常</strong>
-        <span>所属组织</span><strong id="detailOrg">南山项目</strong>
         <span>注册渠道</span><strong id="detailChannel">自在安居小程序</strong>
-        <span>会员资产</span><strong id="detailAssets">42,800 积分 / 8 张券 / 3 项权益</strong>
+        <span>会员资产</span><strong id="detailAssets" class="asset-links"></strong>
         <span>标签</span><strong><span class="tag-list" id="detailTags"></span></strong>
+      </div>
+      <div class="identity-section">
+        <h4>会员身份信息</h4>
+        <div class="identity-table-wrap">
+          <table class="identity-table">
+            <thead>
+              <tr>
+                <th>会员ID</th>
+                <th>来源渠道</th>
+                <th>所属项目</th>
+                <th>手机号</th>
+                <th>证件号</th>
+              </tr>
+            </thead>
+            <tbody id="detailIdentityRows"></tbody>
+          </table>
+        </div>
       </div>
       <div class="toolbar" style="justify-content:flex-start; margin-top:14px">
         <button class="btn primary" data-min-level="single">最低等级设置</button>
@@ -380,13 +436,12 @@
       <div class="panel-bd">
         <div class="filter growth-filter">
           <div class="field"><label>变动时间</label><input id="growthDateRange" value="2026-05-01 至 2026-05-31"></div>
-          <div class="field"><label>变动类型</label><select id="growthTypeFilter"><option>全部类型</option><option>签到活跃</option><option>积分获取</option><option>权益领取</option><option>兑换行为</option><option>人工调整</option><option>风控处理</option></select></div>
-          <div class="field"><label>关联业务</label><input id="growthBizFilter" placeholder="支持模糊查询"></div>
+          <div class="field"><label>变动类型</label><select id="growthTypeFilter"><option>全部类型</option><option>居住时长</option><option>积分兑换</option><option>业主身份</option></select></div>
           <button class="btn primary" id="growthSearch">查询</button>
           <button class="btn" id="growthReset">重置</button>
         </div>
         <table>
-          <thead><tr><th>变动时间</th><th>变动类型</th><th>成长值变动</th><th>关联业务</th><th>变动后等级</th><th>说明</th></tr></thead>
+          <thead><tr><th>变动时间</th><th>变动类型</th><th>变动值</th><th>成长值变动</th><th>变动后等级</th></tr></thead>
           <tbody id="growthRows"></tbody>
         </table>
         <div class="pagination growth-pagination">
@@ -415,7 +470,6 @@
           <label><input type="checkbox" value="积分高">积分高</label>
           <label><input type="checkbox" value="积分使用频繁">积分使用频繁</label>
         </div>
-        <div class="field" style="margin-top:12px"><label>自定义标签</label><input id="customTagInput" placeholder="输入自定义标签，多个可用顿号或逗号分隔"></div>
       </div>
       <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="saveTags">确认打标</button></div>
     </div>
@@ -445,7 +499,6 @@
             <label><input type="checkbox" value="小区管理屡教不改">小区管理屡教不改</label>
           </div>
         </div>
-        <div class="field" style="margin-top:12px"><label>自定义标签</label><input id="batchCustomTagInput" placeholder="用户自定义输入，多个可用顿号或逗号分隔"></div>
       </div>
       <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="saveBatchTags">确认打标</button></div>
     </div>
@@ -491,6 +544,7 @@
               <label><input type="checkbox" checked data-sensitive-export> 证件号</label>
               <label><input type="checkbox" checked> 会员等级</label>
               <label><input type="checkbox" checked> 认证状态</label>
+              <label><input type="checkbox" checked> 用户类型</label>
               <label><input type="checkbox" checked> 名单状态</label>
               <label><input type="checkbox" checked> 账号状态</label>
               <label><input type="checkbox" checked> 所属组织</label>
@@ -532,10 +586,9 @@
               <div class="field"><label class="required">单次导出上限</label><input value="100000 条" readonly></div>
               <div class="field" id="exportTimeField" style="display:none"><label class="required">导出时间</label><input value="每日 02:00"></div>
               <div class="field" id="exportFrequencyField" style="display:none"><label class="required">导出频率</label><select><option>每日</option><option>每周</option><option>每月</option></select></div>
-              <div class="field" style="grid-column:1 / -1"><label class="required">文件存储路径</label><input value="/data/export/member-info/"></div>
               <div class="field" style="grid-column:1 / -1"><label class="required">导出格式</label><select id="exportFormat"><option selected>Excel</option><option>CSV</option></select></div>
             </div>
-            <p class="export-note" style="margin-top:10px">定时导出文件将自动存储至指定路径，可由管理员在文件服务或审计日志中查看生成记录。</p>
+            <p class="export-note" style="margin-top:10px">导出任务生成后，可由管理员在文件服务或审计日志中查看生成记录。</p>
           </div>
         </div>
       </div>
@@ -654,12 +707,17 @@
         levelHtml: 'V3远近闻名 <span class="badge gold">最低等级保障</span>',
         levelMark: "当前等级：V3远近闻名 / 最低等级：V2小有名气",
         growthValue: "8,420",
-        auth: "项目住户",
+        auth: "实名认证",
+        userType: "项目住户",
         listStatus: "无名单",
         accountStatus: "正常",
         org: "南山项目",
         channel: "自在安居小程序",
-        assets: "42,800 积分 / 8 张券 / 3 项权益",
+        assets: ["42,800", "8", "3"],
+        identities: [
+          ["WX202605180018", "自在安居小程序", "南山项目", ["136****5520", "135****7618"], "4403**********1028"],
+          ["WY202204090326", "物业服务平台", "南山项目", ["189****3066"], "4403**********1028"]
+        ],
         systemTags: ["高价值客户", "项目住户", "低碳活跃"],
         manualTags: ["积分高"]
       },
@@ -670,11 +728,16 @@
         levelMark: "当前等级：V2小有名气 / 最低等级：未设置",
         growthValue: "2,860",
         auth: "实名认证",
+        userType: "租户",
         listStatus: "白名单",
         accountStatus: "正常",
         org: "福田项目",
         channel: "自在安居小程序",
-        assets: "9,630 积分 / 2 张券 / 1 项权益",
+        assets: ["9,630", "2", "1"],
+        identities: [
+          ["WX202604220091", "自在安居小程序", "福田项目", ["139****6812", "158****3921"], "4403**********2846"],
+          ["ZL202601150078", "租赁服务平台", "福田项目", ["177****8265"], "4403**********2846"]
+        ],
         systemTags: ["白名单客户", "权益活跃"],
         manualTags: []
       },
@@ -685,11 +748,15 @@
         levelMark: "当前等级：V1展露头角 / 最低等级：未设置",
         growthValue: "1,200",
         auth: "未认证",
+        userType: "游客",
         listStatus: "黑名单",
         accountStatus: "冻结",
         org: "集团总部",
         channel: "自在安居小程序",
-        assets: "1,200 积分 / 0 张券 / 0 项权益",
+        assets: ["1,200", "0", "0"],
+        identities: [
+          ["WX202603090112", "自在安居小程序", "—", ["188****4019", "186****5207"], "—"]
+        ],
         systemTags: ["风险关注", "未认证"],
         manualTags: ["个人表达意愿强烈"]
       },
@@ -699,12 +766,17 @@
         levelHtml: "V2小有名气",
         levelMark: "当前等级：V2小有名气 / 最低等级：未设置",
         growthValue: "4,180",
-        auth: "项目住户",
+        auth: "实名认证",
+        userType: "租户",
         listStatus: "无名单",
         accountStatus: "正常",
         org: "南山项目",
         channel: "自在安居小程序",
-        assets: "18,420 积分 / 4 张券 / 2 项权益",
+        assets: ["18,420", "4", "2"],
+        identities: [
+          ["WX202605010027", "自在安居小程序", "南山项目", ["137****2098", "186****4473"], "4403**********5732"],
+          ["ZL202512030156", "租赁服务平台", "南山项目", ["133****7829"], "4403**********5732"]
+        ],
         systemTags: ["项目住户", "兑换活跃"],
         manualTags: []
       }
@@ -720,23 +792,74 @@
       ];
       document.getElementById("detailTags").innerHTML = tags.join("");
     }
+    function renderAssetLinks(assets) {
+      const labels = [
+        ["points", `${assets[0]} 积分`],
+        ["coupons", `${assets[1]} 张券`],
+        ["benefits", `${assets[2]} 项权益`]
+      ];
+      const hrefs = {
+        points: "points-account.html",
+        coupons: "product-manage.html?view=exchange-detail",
+        benefits: "benefits-manage.html?view=unredeemed&benefit=生日权益"
+      };
+      return labels.map(([type, label]) => `<a class="link" href="${hrefs[type]}" data-asset-type="${type}">${label}</a>`).join("<span>/</span>");
+    }
+    function renderIdentityRows(data) {
+      document.getElementById("detailIdentityRows").innerHTML = data.identities.map(row => `
+        <tr>${row.map(value => `<td>${Array.isArray(value) ? `<span class="multi-value">${value.map(item => `<span>${item}</span>`).join("")}</span>` : value}</td>`).join("")}</tr>
+      `).join("");
+    }
     function renderDetail(member) {
       const data = memberData[member] || memberData["李明"];
       activeMember = member;
       document.getElementById("detailName").textContent = member;
       document.getElementById("detailMemberId").textContent = data.id;
-      document.getElementById("detailPhone").textContent = data.phone;
       document.getElementById("detailLevel").innerHTML = data.levelHtml;
       document.getElementById("detailLevelMark").textContent = data.levelMark;
       document.getElementById("detailGrowthValue").textContent = data.growthValue;
       document.getElementById("detailAuth").textContent = data.auth;
+      document.getElementById("detailUserType").textContent = data.userType;
       document.getElementById("detailListStatus").textContent = data.listStatus;
       document.getElementById("detailAccountStatus").textContent = data.accountStatus;
-      document.getElementById("detailOrg").textContent = data.org;
       document.getElementById("detailChannel").textContent = data.channel;
-      document.getElementById("detailAssets").textContent = data.assets;
+      document.getElementById("detailAssets").innerHTML = renderAssetLinks(data.assets);
       renderTags(member);
+      renderIdentityRows(data);
     }
+    document.querySelectorAll(".member-table tbody tr").forEach(row => {
+      const member = row.querySelector("[data-detail]")?.dataset.detail;
+      if (member && memberData[member]) row.children[9].innerHTML = renderAssetLinks(memberData[member].assets);
+    });
+    const assetTargets = {
+      points: { title: "积分账户管理", url: "files/points-account.html" },
+      coupons: { title: "商品管理 - 兑换详情", url: "files/product-manage.html?view=exchange-detail" },
+      benefits: { title: "权益管理 - 未核销会员明细", url: "files/benefits-manage.html?view=unredeemed&benefit=生日权益" }
+    };
+    document.addEventListener("click", event => {
+      const link = event.target.closest("[data-asset-type]");
+      if (!link) return;
+      const rowMember = link.closest(".member-table tbody tr")?.querySelector("[data-detail]")?.dataset.detail;
+      const member = rowMember || activeMember;
+      const data = memberData[member] || memberData["李明"];
+      const baseTarget = assetTargets[link.dataset.assetType];
+      const separator = baseTarget.url.includes("?") ? "&" : "?";
+      const target = {
+        title: baseTarget.title,
+        url: `${baseTarget.url}${separator}memberId=${encodeURIComponent(data.id)}&memberName=${encodeURIComponent(member)}`
+      };
+      if (window.parent && window.parent !== window && typeof window.parent.openTab === "function") {
+        event.preventDefault();
+        try {
+          window.parent.openTab(target);
+        } catch (error) {
+          window.location.href = target.url.replace("files/", "");
+        }
+        return;
+      }
+      event.preventDefault();
+      window.location.href = target.url.replace("files/", "");
+    });
     renderDetail(activeMember);
     document.querySelectorAll("[data-detail]").forEach(el => {
       el.addEventListener("click", () => {
@@ -765,12 +888,12 @@
         level: "V3远近闻名",
         value: "8,420",
         rows: [
-          ["2026-05-25 10:20", "签到活跃", "+20", "每日签到", "V3远近闻名", "小程序签到获得成长值"],
-          ["2026-05-23 15:40", "积分获取", "+120", "低碳出行", "V3远近闻名", "低碳行为任务完成"],
-          ["2026-05-18 09:15", "人工调整", "+300", "会员关怀", "V3远近闻名", "项目重点客户成长值补录"],
-          ["2026-05-15 08:40", "签到活跃", "+20", "每日签到", "V3远近闻名", "连续签到奖励"],
-          ["2026-05-10 19:18", "权益领取", "+80", "生日权益", "V3远近闻名", "领取生日专属权益"],
-          ["2026-05-06 12:05", "兑换行为", "+60", "兑换优惠券", "V3远近闻名", "完成优惠券兑换"]
+          ["2026-05-25 10:20", "居住时长", "1年", "+200", "V3远近闻名"],
+          ["2026-05-23 15:40", "积分兑换", "600", "+60", "V3远近闻名"],
+          ["2026-05-18 09:15", "业主身份", "租客", "+500", "V3远近闻名"],
+          ["2026-05-15 08:40", "居住时长", "1年", "+200", "V3远近闻名"],
+          ["2026-05-10 19:18", "积分兑换", "800", "+80", "V3远近闻名"],
+          ["2026-05-06 12:05", "居住时长", "1年", "+200", "V3远近闻名"]
         ]
       },
       "周女士": {
@@ -778,10 +901,10 @@
         level: "V2小有名气",
         value: "2,860",
         rows: [
-          ["2026-05-24 16:32", "权益领取", "+80", "白名单权益", "V2小有名气", "活动权益领取成功"],
-          ["2026-05-20 11:08", "积分获取", "+60", "线上缴费", "V2小有名气", "缴费任务完成"],
-          ["2026-05-17 09:20", "签到活跃", "+20", "每日签到", "V2小有名气", "小程序签到获得成长值"],
-          ["2026-05-13 15:12", "积分获取", "+100", "活动报名", "V2小有名气", "参与社区活动"]
+          ["2026-05-24 16:32", "居住时长", "8个月", "+150", "V2小有名气"],
+          ["2026-05-20 11:08", "积分兑换", "600", "+60", "V2小有名气"],
+          ["2026-05-17 09:20", "居住时长", "8个月", "+150", "V2小有名气"],
+          ["2026-05-13 15:12", "积分兑换", "1,000", "+100", "V2小有名气"]
         ]
       },
       "王强": {
@@ -789,9 +912,9 @@
         level: "V1展露头角",
         value: "1,200",
         rows: [
-          ["2026-05-23 18:10", "风控处理", "0", "账号冻结", "V1展露头角", "冻结状态不产生成长值"],
-          ["2026-05-12 09:22", "积分获取", "+40", "浏览活动", "V1展露头角", "活动浏览任务完成"],
-          ["2026-05-08 09:01", "签到活跃", "+20", "每日签到", "V1展露头角", "小程序签到获得成长值"]
+          ["2026-05-23 18:10", "积分兑换", "400", "+40", "V1展露头角"],
+          ["2026-05-12 09:22", "积分兑换", "600", "+60", "V1展露头角"],
+          ["2026-05-08 09:01", "居住时长", "6个月", "+100", "V1展露头角"]
         ]
       },
       "陈先生": {
@@ -799,10 +922,10 @@
         level: "V2小有名气",
         value: "4,180",
         rows: [
-          ["2026-05-21 14:05", "兑换行为", "+60", "兑换优惠券", "V2小有名气", "完成兑换行为"],
-          ["2026-05-19 08:30", "签到活跃", "+20", "每日签到", "V2小有名气", "小程序签到获得成长值"],
-          ["2026-05-14 10:00", "积分获取", "+120", "物业缴费", "V2小有名气", "完成缴费成长任务"],
-          ["2026-05-11 16:28", "权益领取", "+80", "租户权益", "V2小有名气", "领取租户专属权益"]
+          ["2026-05-21 14:05", "积分兑换", "600", "+60", "V2小有名气"],
+          ["2026-05-19 08:30", "居住时长", "8个月", "+150", "V2小有名气"],
+          ["2026-05-14 10:00", "业主身份", "租客", "+500", "V2小有名气"],
+          ["2026-05-11 16:28", "积分兑换", "800", "+80", "V2小有名气"]
         ]
       }
     };
@@ -817,11 +940,8 @@
     function applyGrowthFilter(resetPage = true) {
       const data = growthData[growthState.member] || growthData["李明"];
       const type = document.getElementById("growthTypeFilter").value;
-      const biz = document.getElementById("growthBizFilter").value.trim();
       growthState.filteredRows = data.rows.filter(row => {
-        const matchType = type === "全部类型" || row[1] === type;
-        const matchBiz = !biz || row[3].includes(biz) || row[5].includes(biz);
-        return matchType && matchBiz;
+        return type === "全部类型" || row[1] === type;
       });
       if (resetPage) growthState.page = 1;
       renderGrowthRows();
@@ -834,7 +954,7 @@
       const rows = growthState.filteredRows.slice(start, start + pageSize);
       document.getElementById("growthRows").innerHTML = rows.length
         ? rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")
-        : '<tr><td colspan="6" style="text-align:center;color:#667789">暂无匹配成长明细</td></tr>';
+        : '<tr><td colspan="5" style="text-align:center;color:#667789">暂无匹配成长明细</td></tr>';
       document.getElementById("growthTotal").textContent = `共 ${growthState.filteredRows.length} 条`;
       document.getElementById("growthPageNo").textContent = growthState.page;
       document.getElementById("growthJump").value = growthState.page;
@@ -865,7 +985,6 @@
         growthState.member = el.dataset.growth || "李明";
         document.getElementById("growthDateRange").value = "2026-05-01 至 2026-05-31";
         document.getElementById("growthTypeFilter").value = "全部类型";
-        document.getElementById("growthBizFilter").value = "";
         applyGrowthFilter(true);
         document.getElementById("growthModal").classList.add("open");
       });
@@ -874,7 +993,6 @@
     document.getElementById("growthReset").addEventListener("click", () => {
       document.getElementById("growthDateRange").value = "2026-05-01 至 2026-05-31";
       document.getElementById("growthTypeFilter").value = "全部类型";
-      document.getElementById("growthBizFilter").value = "";
       applyGrowthFilter(true);
     });
     document.getElementById("growthPageSize").addEventListener("change", () => applyGrowthFilter(true));
@@ -895,21 +1013,15 @@
         taggingMember = el.dataset.tag || "李明";
         document.getElementById("tagTitle").textContent = `${taggingMember} - 手动打标签`;
         const manualTags = memberData[taggingMember].manualTags;
-        const presetTags = Array.from(document.querySelectorAll("#tagPicker input")).map(input => input.value);
         document.querySelectorAll("#tagPicker input").forEach(input => {
           input.checked = manualTags.includes(input.value);
         });
-        document.getElementById("customTagInput").value = manualTags.filter(tag => !presetTags.includes(tag)).join("、");
         document.getElementById("tagModal").classList.add("open");
       });
     });
     document.getElementById("saveTags").addEventListener("click", () => {
       const checkedTags = Array.from(document.querySelectorAll("#tagPicker input:checked")).map(input => input.value);
-      const customTags = document.getElementById("customTagInput").value
-        .split(/[、,，]/)
-        .map(tag => tag.trim())
-        .filter(Boolean);
-      memberData[taggingMember].manualTags = Array.from(new Set([...checkedTags, ...customTags]));
+      memberData[taggingMember].manualTags = Array.from(new Set(checkedTags));
       if (activeMember === taggingMember) {
         renderTags(activeMember);
       }
@@ -919,7 +1031,6 @@
     });
     document.querySelector("[data-batch-tag]").addEventListener("click", () => {
       document.querySelectorAll("#batchTagPicker input").forEach(input => input.checked = false);
-      document.getElementById("batchCustomTagInput").value = "";
       document.getElementById("batchUploadInput").value = "";
       document.getElementById("batchUploadName").textContent = "未选择文件";
       document.getElementById("saveBatchTags").textContent = "确认打标";
@@ -931,11 +1042,7 @@
     });
     document.getElementById("saveBatchTags").addEventListener("click", () => {
       const checkedTags = Array.from(document.querySelectorAll("#batchTagPicker input:checked")).map(input => input.value);
-      const customTags = document.getElementById("batchCustomTagInput").value
-        .split(/[、,，]/)
-        .map(tag => tag.trim())
-        .filter(Boolean);
-      const tags = Array.from(new Set([...checkedTags, ...customTags]));
+      const tags = Array.from(new Set(checkedTags));
       const hasFile = document.getElementById("batchUploadInput").files.length > 0;
       if (!hasFile) {
         document.getElementById("saveBatchTags").textContent = "请上传Excel";
