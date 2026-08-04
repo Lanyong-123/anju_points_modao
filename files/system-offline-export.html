@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>离线导出任务</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .export-filter {
+      grid-template-columns: 1fr 1.4fr auto auto;
+    }
+    .attachment-name {
+      color: var(--navy);
+      font-weight: 700;
+    }
+    .empty-row {
+      padding: 36px 16px;
+      color: var(--muted);
+      text-align: center;
+    }
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 20;
+      display: none;
+      min-width: 220px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      background: #123152;
+      color: #fff;
+      box-shadow: 0 14px 32px rgba(18,49,82,.22);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .toast.open { display: block; }
+    @media (max-width: 980px) {
+      .export-filter { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="filter export-filter">
+      <div class="field">
+        <label>导出模块</label>
+        <select id="moduleFilter">
+          <option>全部模块</option>
+          <option>会员信息管理</option>
+          <option>积分明细查询</option>
+          <option>积分互换查询</option>
+          <option>权益管理</option>
+          <option>商品管理</option>
+          <option>优惠券管理</option>
+          <option>会员增长分析报表</option>
+          <option>客户标签管理</option>
+          <option>操作日志</option>
+        </select>
+      </div>
+      <div class="field"><label>时间</label><input id="timeFilter" value="2026-05-01 至 2026-06-30" placeholder="请选择起止时间"></div>
+      <button class="btn primary" id="queryBtn">查询</button>
+      <button class="btn" id="resetBtn">重置</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-hd"><h3>离线导出任务列表</h3></div>
+      <div class="panel-bd">
+        <table>
+          <thead>
+            <tr><th>模块名称</th><th>附件名称</th><th>操作</th></tr>
+          </thead>
+          <tbody id="taskRows"></tbody>
+        </table>
+        <div class="pagination">
+          <span id="rowCount">共 0 条</span>
+          <span>每页</span>
+          <select id="pageSize"><option>5 条</option><option selected>10 条</option><option>20 条</option></select>
+          <button class="page-btn" id="prevBtn">上一页</button>
+          <span id="pageButtons"></span>
+          <button class="page-btn" id="nextBtn">下一页</button>
+          <span>跳至</span><input id="jumpPage" value="1"><span>页</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">附件下载已开始</div>
+
+  <script>
+    const tasks = [
+      { module: "会员信息管理", file: "会员信息管理_20260630.xlsx", time: "2026-06-30 18:20" },
+      { module: "积分明细查询", file: "积分明细查询_20260628.xlsx", time: "2026-06-28 14:35" },
+      { module: "积分互换查询", file: "积分互换查询_20260625.xlsx", time: "2026-06-25 09:18" },
+      { module: "权益管理", file: "权益管理_20260622.xlsx", time: "2026-06-22 16:42" },
+      { module: "商品管理", file: "商品管理_20260618.xlsx", time: "2026-06-18 11:06" },
+      { module: "优惠券管理", file: "优惠券管理_20260615.xlsx", time: "2026-06-15 17:26" },
+      { module: "会员增长分析报表", file: "会员增长分析报表_20260610.xlsx", time: "2026-06-10 10:12" },
+      { module: "客户标签管理", file: "客户标签管理_20260606.xlsx", time: "2026-06-06 15:08" },
+      { module: "操作日志", file: "操作日志_20260601.xlsx", time: "2026-06-01 19:30" },
+      { module: "会员信息管理", file: "会员信息管理_20260528.xlsx", time: "2026-05-28 13:45" },
+      { module: "积分明细查询", file: "积分明细查询_20260520.xlsx", time: "2026-05-20 09:22" },
+      { module: "优惠券管理", file: "优惠券管理_20260512.xlsx", time: "2026-05-12 16:10" }
+    ];
+
+    let filteredTasks = [...tasks];
+    let currentPage = 1;
+
+    function getPageSize() {
+      return Number.parseInt(document.getElementById("pageSize").value, 10);
+    }
+
+    function parseTimeRange() {
+      const matches = document.getElementById("timeFilter").value.match(/\d{4}-\d{2}-\d{2}/g) || [];
+      return { start: matches[0] || "", end: matches[1] || "" };
+    }
+
+    function renderRows() {
+      const pageSize = getPageSize();
+      const totalPages = Math.max(1, Math.ceil(filteredTasks.length / pageSize));
+      currentPage = Math.min(currentPage, totalPages);
+      const startIndex = (currentPage - 1) * pageSize;
+      const pageRows = filteredTasks.slice(startIndex, startIndex + pageSize);
+      document.getElementById("taskRows").innerHTML = pageRows.length
+        ? pageRows.map(item => `
+          <tr>
+            <td>${item.module}</td>
+            <td><span class="attachment-name">${item.file}</span></td>
+            <td><span class="link" data-download="${item.file}" data-module="${item.module}">下载</span></td>
+          </tr>`).join("")
+        : `<tr><td class="empty-row" colspan="3">暂无符合条件的离线导出任务</td></tr>`;
+
+      document.getElementById("rowCount").textContent = `共 ${filteredTasks.length} 条`;
+      document.getElementById("jumpPage").value = currentPage;
+      document.getElementById("prevBtn").disabled = currentPage === 1;
+      document.getElementById("nextBtn").disabled = currentPage === totalPages;
+      document.getElementById("pageButtons").innerHTML = Array.from({ length: totalPages }, (_, index) => {
+        const page = index + 1;
+        return `<button class="page-btn${page === currentPage ? " active" : ""}" data-page="${page}">${page}</button>`;
+      }).join("");
+    }
+
+    function queryTasks() {
+      const moduleName = document.getElementById("moduleFilter").value;
+      const { start, end } = parseTimeRange();
+      filteredTasks = tasks.filter(item => {
+        const date = item.time.slice(0, 10);
+        return (moduleName === "全部模块" || item.module === moduleName)
+          && (!start || date >= start)
+          && (!end || date <= end);
+      });
+      currentPage = 1;
+      renderRows();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("open");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("open"), 1600);
+    }
+
+    document.getElementById("queryBtn").addEventListener("click", queryTasks);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      document.getElementById("moduleFilter").value = "全部模块";
+      document.getElementById("timeFilter").value = "2026-05-01 至 2026-06-30";
+      queryTasks();
+    });
+    document.getElementById("pageSize").addEventListener("change", () => {
+      currentPage = 1;
+      renderRows();
+    });
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      if (currentPage > 1) { currentPage -= 1; renderRows(); }
+    });
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      const totalPages = Math.max(1, Math.ceil(filteredTasks.length / getPageSize()));
+      if (currentPage < totalPages) { currentPage += 1; renderRows(); }
+    });
+    document.getElementById("pageButtons").addEventListener("click", event => {
+      const button = event.target.closest("[data-page]");
+      if (!button) return;
+      currentPage = Number(button.dataset.page);
+      renderRows();
+    });
+    document.getElementById("jumpPage").addEventListener("change", event => {
+      const totalPages = Math.max(1, Math.ceil(filteredTasks.length / getPageSize()));
+      currentPage = Math.min(totalPages, Math.max(1, Number.parseInt(event.target.value, 10) || 1));
+      renderRows();
+    });
+    document.getElementById("taskRows").addEventListener("click", event => {
+      const target = event.target.closest("[data-download]");
+      if (!target) return;
+      const content = `模块名称,附件名称\n${target.dataset.module},${target.dataset.download}\n`;
+      const blob = new Blob(["\ufeff" + content], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = target.dataset.download;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      showToast(`${target.dataset.download} 下载已开始`);
+    });
+
+    queryTasks();
+  </script>
+</body>
+</html>

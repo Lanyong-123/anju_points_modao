@@ -89,9 +89,9 @@
               <table>
                 <thead><tr><th><input type="checkbox"></th><th>条件类型</th><th>条件值</th><th>获得成长值</th><th>与上一行关系</th><th>操作</th></tr></thead>
                 <tbody id="thresholdRows">
-                  <tr><td><input type="checkbox"></td><td><select><option>用户积分数</option><option>业主身份</option><option>居住时长</option></select></td><td><input value="每 100 积分"></td><td><input value="1"></td><td><select><option>起始条件</option><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
-                  <tr><td><input type="checkbox"></td><td><select><option>业主身份</option><option>用户积分数</option><option>居住时长</option></select></td><td><select><option>业主</option><option>租户</option><option>游客</option></select></td><td><input value="10"></td><td><select><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
-                  <tr><td><input type="checkbox"></td><td><select><option>居住时长</option><option>用户积分数</option><option>业主身份</option></select></td><td><select><option>满 1 年</option><option>满 6 个月</option><option>满 2 年</option></select></td><td><input value="1"></td><td><select><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+                  <tr><td><input type="checkbox"></td><td><select><option>用户积分数（分）（如：100积分）</option><option>业主身份</option><option>居住时长（年）（如：1年）</option></select></td><td><input type="number" min="0" value="100"></td><td><input value="1"></td><td><select><option>起始条件</option><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+                  <tr><td><input type="checkbox"></td><td><select><option>业主身份</option><option>用户积分数（分）（如：100积分）</option><option>居住时长（年）（如：1年）</option></select></td><td><select><option>业主</option><option>租户</option><option>游客</option></select></td><td><input value="10"></td><td><select><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+                  <tr><td><input type="checkbox"></td><td><select><option>居住时长（年）（如：1年）</option><option>用户积分数（分）（如：100积分）</option><option>业主身份</option></select></td><td><input type="number" min="0" value="1"></td><td><input value="1"></td><td><select><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
                 </tbody>
               </table>
             </div>
@@ -103,8 +103,8 @@
               <table>
                 <thead><tr><th><input type="checkbox"></th><th>条件类型</th><th>条件值</th><th>获得成长值</th><th>与上一行关系</th><th>操作</th></tr></thead>
                 <tbody>
-                  <tr><td><input type="checkbox"></td><td><select><option>用户积分数</option><option>业主身份</option><option>居住时长</option></select></td><td><input value="每 200 积分"></td><td><input value="1"></td><td><select><option>起始条件</option><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
-                  <tr><td><input type="checkbox"></td><td><select><option>业主身份</option><option>用户积分数</option><option>居住时长</option></select></td><td><select><option>租户</option><option>业主</option><option>游客</option></select></td><td><input value="5"></td><td><select><option>或</option><option>且</option></select></td><td><span class="link">删除</span></td></tr>
+                  <tr><td><input type="checkbox"></td><td><select><option>用户积分数（分）（如：100积分）</option><option>业主身份</option><option>居住时长（年）（如：1年）</option></select></td><td><input type="number" min="0" value="100"></td><td><input value="1"></td><td><select><option>起始条件</option><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+                  <tr><td><input type="checkbox"></td><td><select><option>业主身份</option><option>用户积分数（分）（如：100积分）</option><option>居住时长（年）（如：1年）</option></select></td><td><select><option>租户</option><option>业主</option><option>游客</option></select></td><td><input value="5"></td><td><select><option>或</option><option>且</option></select></td><td><span class="link">删除</span></td></tr>
                 </tbody>
               </table>
             </div>
@@ -141,7 +141,6 @@
     const levelModal = document.getElementById("levelModal");
     const conditionValueOptions = {
       "业主身份": ["业主", "租户", "游客"],
-      "居住时长": ["满 1 年", "满 6 个月", "满 2 年"],
       "学历": ["博士", "研究生", "本科", "大专", "其它"]
     };
     function createOptionSelect(options, selectedValue) {
@@ -156,8 +155,16 @@
       return select;
     }
     function createValueInput(type, oldValue) {
-      const value = oldValue || (type === "用户积分数" ? "每 100 积分" : "");
+      const defaults = {
+        "用户积分数（分）（如：100积分）": "100",
+        "居住时长（年）（如：1年）": "1"
+      };
+      const value = defaults[type] || oldValue || "";
       const input = document.createElement("input");
+      if (defaults[type]) {
+        input.type = "number";
+        input.min = "0";
+      }
       input.value = value;
       return input;
     }

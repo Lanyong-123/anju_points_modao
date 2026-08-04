@@ -95,6 +95,7 @@ const DEFAULT_MENU = [
       { title: "参数配置", url: "files/system-parameter.html" },
       { title: "数据字典类型", url: "files/system-dictionary-type.html" },
       { title: "数据字典", url: "files/system-dictionary.html" },
+      { title: "离线导出任务", url: "files/system-offline-export.html" },
       { title: "脱敏管理", url: "files/system-desensitize.html" }
     ]
   },
@@ -226,7 +227,7 @@ function boot(data) {
   openTab(first);
 }
 
-fetch("data/menu.json")
+fetch("data/menu.json?v=offline-export-20260804-2")
   .then(response => {
     if (!response.ok) throw new Error("menu json unavailable");
     return response.json();

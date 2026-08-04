@@ -312,6 +312,7 @@
                 <label class="permission-item"><input type="checkbox" checked> 角色管理</label>
                 <label class="permission-item"><input type="checkbox" checked> 操作日志</label>
                 <label class="permission-item"><input type="checkbox" checked> 参数配置</label>
+                <label class="permission-item"><input type="checkbox"> 离线导出任务</label>
                 <label class="permission-item"><input type="checkbox"> 脱敏管理</label>
               </div>
             </div>
@@ -408,6 +409,7 @@
         { name: "参数配置", actions: crudActions, selected: true },
         { name: "数据字典类型", actions: crudActions },
         { name: "数据字典", actions: crudActions },
+        { name: "离线导出任务", actions: ["查询", "下载"] },
         { name: "脱敏管理", actions: ["查询", "修改", "启用/停用"] }
       ] },
       { name: "C端-小程序端", pages: [
