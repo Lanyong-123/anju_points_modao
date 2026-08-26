@@ -141,7 +141,7 @@
     .help-tip:hover::after { display: block; }
     .scheme-box {
       display: grid;
-      grid-template-columns: 72px 72px 1fr 52px;
+      grid-template-columns: minmax(180px, 1fr) 52px;
       gap: 8px;
       align-items: center;
       max-width: 860px;
@@ -857,12 +857,10 @@
             </div>
           </div>
           <div class="product-row">
-            <div class="product-label">兑换方案 <span class="help-tip" data-tip="商品支持免费兑换或积分兑换。">?</span></div>
+            <div class="product-label required">兑换所需积分</div>
             <div class="product-control">
               <div class="scheme-box">
-                <label class="radio-line"><input type="radio" name="exchangeType" value="free"> 免费</label>
-                <label class="radio-line"><input type="radio" name="exchangeType" value="points" checked> 积分</label>
-                <input id="editPoints" placeholder="请输入">
+                <input id="editPoints" type="number" min="0" step="1" value="5000" placeholder="请输入积分">
                 <span>积分</span>
               </div>
             </div>
@@ -1308,14 +1306,6 @@
     });
     document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
 
-    function syncExchangeType() {
-      const isFree = document.querySelector("input[name='exchangeType'][value='free']").checked;
-      const pointsInput = document.getElementById("editPoints");
-      pointsInput.disabled = isFree;
-      if (isFree) pointsInput.value = "";
-      pointsInput.placeholder = isFree ? "免费兑换无需积分" : "请输入";
-    }
-
     function syncLimitInputs() {
       document.querySelector("[data-total-limit]").style.display = document.getElementById("limitTotalSwitch").checked ? "grid" : "none";
       document.querySelector("[data-daily-limit]").style.display = document.getElementById("limitDailySwitch").checked ? "grid" : "none";
@@ -1352,9 +1342,6 @@
       document.getElementById("specialTargetPanel").style.display = isSpecial ? "grid" : "none";
     }
 
-    document.querySelectorAll("input[name='exchangeType']").forEach(el => {
-      el.addEventListener("change", syncExchangeType);
-    });
     document.querySelectorAll("input[name='specialTarget']").forEach(el => {
       el.addEventListener("change", syncSpecialTarget);
     });
@@ -1398,15 +1385,15 @@
           document.getElementById("editEnd").value = exchangeDates[1] || "2026-08-29";
           document.getElementById("totalLimitInput").value = "";
           document.getElementById("dailyLimitInput").value = "";
-          document.getElementById("editPoints").value = data[11] || "";
-          document.querySelector(`input[name='exchangeType'][value='${data[2] === "免费" ? "free" : "points"}']`).checked = true;
+          const existingPoints = Number(data[11]) || 5000;
+          document.getElementById("editPoints").value = existingPoints;
           document.querySelector(`input[name='specialTarget'][value='${detail.specialTarget === "是" ? "是" : "否"}']`).checked = true;
           setMultiSelectValues("specialProjects", detail.specialProjects);
           setMultiSelectValues("specialMembers", detail.specialMembers);
-          syncExchangeType();
         } else {
           document.getElementById("editStart").value = "";
           document.getElementById("editEnd").value = "2026-08-29";
+          document.getElementById("editPoints").value = "5000";
           document.querySelector("input[name='specialTarget'][value='否']").checked = true;
           setMultiSelectValues("specialProjects", "");
           setMultiSelectValues("specialMembers", "");
@@ -1528,7 +1515,6 @@
       filters[1].value = memberId;
       document.getElementById("exchangeDetailModal").classList.add("open");
     }
-    syncExchangeType();
     syncLimitInputs();
   </script>
 </body>
