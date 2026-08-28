@@ -207,6 +207,7 @@
     }
     .org-tree-level-2 { padding-left: 28px; }
     .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-level-4 { padding-left: 76px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
     .phone-cell {
       display: inline-flex;
@@ -627,24 +628,24 @@
 
     const projectTreeData = [
       {
-        name: "商业板块",
+        name: "广东省",
         children: [
-          { name: "南山片区", children: ["高新安荟邻"] },
-          { name: "福田片区", children: ["景田安荟邻"] }
-        ]
-      },
-      {
-        name: "住宅板块",
-        children: [
-          { name: "南山片区", children: ["高新花园"] },
-          { name: "坪山片区", children: ["秀馨苑"] }
-        ]
-      },
-      {
-        name: "物业板块",
-        children: [
-          { name: "南山片区", children: ["高新花园"] },
-          { name: "坪山片区", children: ["秀馨苑"] }
+          {
+            name: "深圳市",
+            children: [
+              { name: "南山区", children: ["高新安荟邻", "高新花园"] },
+              { name: "福田区", children: ["景田安荟邻"] },
+              { name: "坪山区", children: ["秀馨苑"] },
+              { name: "宝安区", children: ["宝安人才园"] }
+            ]
+          },
+          {
+            name: "广州市",
+            children: [
+              { name: "天河区", children: ["天河安居项目"] },
+              { name: "海珠区", children: ["海珠安居项目"] }
+            ]
+          }
         ]
       }
     ];
@@ -655,15 +656,15 @@
       { name: "集团职能", children: ["财务管理部", "人力资源部", "信息技术部", "审计风控部"] }
     ];
     const projectExpanded = new Set([
-      "商业板块",
-      "商业板块/南山片区",
-      "商业板块/福田片区",
-      "住宅板块",
-      "住宅板块/南山片区",
-      "住宅板块/坪山片区",
-      "物业板块",
-      "物业板块/南山片区",
-      "物业板块/坪山片区"
+      "广东省",
+      "广东省/深圳市",
+      "广东省/深圳市/南山区",
+      "广东省/深圳市/福田区",
+      "广东省/深圳市/坪山区",
+      "广东省/深圳市/宝安区",
+      "广东省/广州市",
+      "广东省/广州市/天河区",
+      "广东省/广州市/海珠区"
     ]);
     const orgExpanded = new Set(["商业板块", "住宅板块", "物业板块", "集团职能"]);
     function createTreeSelect({ selectId, triggerId, valueId, panelId, title, allLabel, data, expanded }) {
@@ -678,7 +679,7 @@
           const path = [...parents, item.name].join(" / ");
           const hasChildren = Array.isArray(item.children) && item.children.length > 0;
           const isOpen = expanded.has(key);
-          const row = `<div class="org-tree-row org-tree-level-${Math.min(depth, 3)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-tree-toggle="${key}"` : `data-tree-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`;
+          const row = `<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-tree-toggle="${key}"` : `data-tree-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`;
           return row + (hasChildren && isOpen ? renderNodes(item.children, [...parents, item.name], depth + 1) : "");
         }).join("");
         panel.innerHTML = `<div class="org-tree-title">${title}</div><div class="org-tree-row org-tree-leaf" data-tree-path="${allLabel}"><span class="org-tree-toggle">·</span><span>${allLabel}</span></div>${renderNodes(data)}`;
