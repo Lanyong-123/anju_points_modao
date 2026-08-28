@@ -304,13 +304,11 @@
       <div class="field"><label>名单状态</label><select><option>全部名单</option><option>黑名单</option><option>白名单</option><option>无名单</option></select></div>
       <div class="field"><label>账号状态</label><select><option>全部状态</option><option>正常</option><option>冻结</option></select></div>
       <div class="field"><label>所属项目</label>
-        <select>
-          <option>全部项目</option>
-          <option>高新安荟邻</option>
-          <option>景田安荟邻</option>
-          <option>高新花园</option>
-          <option>秀馨苑</option>
-        </select>
+        <div class="org-tree-select" id="projectTreeSelect">
+          <button class="org-tree-trigger" type="button" id="projectTreeTrigger">全部项目</button>
+          <input type="hidden" id="projectTreeValue" value="全部项目">
+          <div class="org-tree-panel" id="projectTreePanel"></div>
+        </div>
       </div>
       <div class="field"><label>所属组织</label>
         <div class="org-tree-select" id="orgTreeSelect">
@@ -627,7 +625,7 @@
       });
     });
 
-    const orgTreeData = [
+    const projectTreeData = [
       {
         name: "商业板块",
         children: [
@@ -650,7 +648,13 @@
         ]
       }
     ];
-    const orgExpanded = new Set([
+    const orgTreeData = [
+      { name: "商业板块", children: ["安计部", "数字运营部", "商业运营部", "招商管理部"] },
+      { name: "住宅板块", children: ["住宅运营部", "营销管理部", "客户服务部", "工程管理部"] },
+      { name: "物业板块", children: ["物业管理部", "品质管理部", "安全管理部", "环境管理部"] },
+      { name: "集团职能", children: ["财务管理部", "人力资源部", "信息技术部", "审计风控部"] }
+    ];
+    const projectExpanded = new Set([
       "商业板块",
       "商业板块/南山片区",
       "商业板块/福田片区",
@@ -661,60 +665,76 @@
       "物业板块/南山片区",
       "物业板块/坪山片区"
     ]);
-    const orgTreeSelect = document.getElementById("orgTreeSelect");
-    const orgTreeTrigger = document.getElementById("orgTreeTrigger");
-    const orgTreeValue = document.getElementById("orgTreeValue");
-    const orgTreePanel = document.getElementById("orgTreePanel");
-    function renderOrgTree() {
-      const rows = [
-        '<div class="org-tree-title">安居组织架构</div>',
-        '<div class="org-tree-row org-tree-leaf" data-org-path="全部组织"><span class="org-tree-toggle">·</span><span>全部组织</span></div>'
-      ];
-      orgTreeData.forEach(level1 => {
-        const level1Open = orgExpanded.has(level1.name);
-        rows.push(`<div class="org-tree-row org-tree-level-1" data-org-toggle="${level1.name}"><span class="org-tree-toggle">${level1Open ? "▾" : "▸"}</span><span>${level1.name}</span></div>`);
-        if (!level1Open) return;
-        level1.children.forEach(level2 => {
-          const level2Key = `${level1.name}/${level2.name}`;
-          const level2Open = orgExpanded.has(level2Key);
-          rows.push(`<div class="org-tree-row org-tree-level-2" data-org-toggle="${level2Key}"><span class="org-tree-toggle">${level2Open ? "▾" : "▸"}</span><span>${level2.name}</span></div>`);
-          if (!level2Open) return;
-          level2.children.forEach(level3 => {
-            const path = `${level1.name} / ${level2.name} / ${level3}`;
-            rows.push(`<div class="org-tree-row org-tree-level-3 org-tree-leaf" data-org-path="${path}"><span class="org-tree-toggle">·</span><span>${level3}</span></div>`);
-          });
-        });
-      });
-      orgTreePanel.innerHTML = rows.join("");
-    }
-    function bindOrgTree() {
-      orgTreeTrigger.addEventListener("click", event => {
+    const orgExpanded = new Set(["商业板块", "住宅板块", "物业板块", "集团职能"]);
+    function createTreeSelect({ selectId, triggerId, valueId, panelId, title, allLabel, data, expanded }) {
+      const select = document.getElementById(selectId);
+      const trigger = document.getElementById(triggerId);
+      const value = document.getElementById(valueId);
+      const panel = document.getElementById(panelId);
+      function render() {
+        const renderNodes = (nodes, parents = [], depth = 1) => nodes.map(node => {
+          const item = typeof node === "string" ? { name: node } : node;
+          const key = [...parents, item.name].join("/");
+          const path = [...parents, item.name].join(" / ");
+          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+          const isOpen = expanded.has(key);
+          const row = `<div class="org-tree-row org-tree-level-${Math.min(depth, 3)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-tree-toggle="${key}"` : `data-tree-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`;
+          return row + (hasChildren && isOpen ? renderNodes(item.children, [...parents, item.name], depth + 1) : "");
+        }).join("");
+        panel.innerHTML = `<div class="org-tree-title">${title}</div><div class="org-tree-row org-tree-leaf" data-tree-path="${allLabel}"><span class="org-tree-toggle">·</span><span>${allLabel}</span></div>${renderNodes(data)}`;
+      }
+      trigger.addEventListener("click", event => {
         event.stopPropagation();
-        orgTreeSelect.classList.toggle("open");
+        document.querySelectorAll(".org-tree-select.open").forEach(tree => {
+          if (tree !== select) tree.classList.remove("open");
+        });
+        select.classList.toggle("open");
       });
-      orgTreePanel.addEventListener("click", event => {
+      panel.addEventListener("click", event => {
         const row = event.target.closest(".org-tree-row");
         if (!row) return;
-        const toggle = row.dataset.orgToggle;
+        const toggle = row.dataset.treeToggle;
         if (toggle) {
-          if (orgExpanded.has(toggle)) orgExpanded.delete(toggle);
-          else orgExpanded.add(toggle);
-          renderOrgTree();
+          if (expanded.has(toggle)) expanded.delete(toggle);
+          else expanded.add(toggle);
+          render();
           return;
         }
-        const path = row.dataset.orgPath;
+        const path = row.dataset.treePath;
         if (path) {
-          orgTreeValue.value = path;
-          orgTreeTrigger.textContent = path;
-          orgTreeSelect.classList.remove("open");
+          value.value = path;
+          trigger.textContent = path;
+          select.classList.remove("open");
         }
       });
-      document.addEventListener("click", event => {
-        if (!orgTreeSelect.contains(event.target)) orgTreeSelect.classList.remove("open");
-      });
+      render();
+      return select;
     }
-    renderOrgTree();
-    bindOrgTree();
+    const projectTreeSelect = createTreeSelect({
+      selectId: "projectTreeSelect",
+      triggerId: "projectTreeTrigger",
+      valueId: "projectTreeValue",
+      panelId: "projectTreePanel",
+      title: "安居项目架构",
+      allLabel: "全部项目",
+      data: projectTreeData,
+      expanded: projectExpanded
+    });
+    const orgTreeSelect = createTreeSelect({
+      selectId: "orgTreeSelect",
+      triggerId: "orgTreeTrigger",
+      valueId: "orgTreeValue",
+      panelId: "orgTreePanel",
+      title: "安居组织架构",
+      allLabel: "全部组织",
+      data: orgTreeData,
+      expanded: orgExpanded
+    });
+    document.addEventListener("click", event => {
+      [projectTreeSelect, orgTreeSelect].forEach(tree => {
+        if (!tree.contains(event.target)) tree.classList.remove("open");
+      });
+    });
     const detailDrawer = document.getElementById("detailDrawer");
     let activeMember = "李明";
     let taggingMember = "李明";
