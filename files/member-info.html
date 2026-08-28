@@ -172,6 +172,14 @@
       box-shadow: 0 14px 34px rgba(18, 49, 82, .18);
       overflow: auto;
     }
+    .org-tree-title {
+      padding: 6px 8px 9px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid #e4ebf3;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 800;
+    }
     .org-tree-select.open .org-tree-panel {
       display: block;
     }
@@ -295,6 +303,15 @@
       <div class="field"><label>用户类型</label><select><option>全部用户类型</option><option>项目住户</option><option>租户</option><option>游客</option></select></div>
       <div class="field"><label>名单状态</label><select><option>全部名单</option><option>黑名单</option><option>白名单</option><option>无名单</option></select></div>
       <div class="field"><label>账号状态</label><select><option>全部状态</option><option>正常</option><option>冻结</option></select></div>
+      <div class="field"><label>所属项目</label>
+        <select>
+          <option>全部项目</option>
+          <option>高新安荟邻</option>
+          <option>景田安荟邻</option>
+          <option>高新花园</option>
+          <option>秀馨苑</option>
+        </select>
+      </div>
       <div class="field"><label>所属组织</label>
         <div class="org-tree-select" id="orgTreeSelect">
           <button class="org-tree-trigger" type="button" id="orgTreeTrigger">全部组织</button>
@@ -650,6 +667,7 @@
     const orgTreePanel = document.getElementById("orgTreePanel");
     function renderOrgTree() {
       const rows = [
+        '<div class="org-tree-title">安居组织架构</div>',
         '<div class="org-tree-row org-tree-leaf" data-org-path="全部组织"><span class="org-tree-toggle">·</span><span>全部组织</span></div>'
       ];
       orgTreeData.forEach(level1 => {
