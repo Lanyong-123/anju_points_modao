@@ -9,6 +9,11 @@
     .dict-filter {
       grid-template-columns: 1fr 1.3fr auto auto;
     }
+    [data-open-dict="create"],
+    [data-batch-delete],
+    .dict-action-list [data-delete] {
+      display: none;
+    }
     .dict-code {
       color: #526477;
       font-family: Menlo, Consolas, monospace;
