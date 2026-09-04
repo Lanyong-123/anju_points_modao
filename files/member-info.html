@@ -250,6 +250,12 @@
     .phone-toggle svg[hidden] {
       display: none;
     }
+    .phone-column-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
     .member-table th:nth-child(3),
     .member-table td:nth-child(3) {
       display: none;
@@ -338,10 +344,10 @@
         <table class="member-table">
           <thead>
             <tr>
-              <th><input type="checkbox"></th>
+              <th><input type="checkbox" id="memberCheckAll" aria-label="全选会员"></th>
               <th>会员名称</th>
               <th>会员ID</th>
-              <th>手机号</th>
+              <th><span class="phone-column-heading"><span>手机号</span><button class="phone-toggle" type="button" id="batchViewPhone" aria-label="批量查看手机号" aria-pressed="false" title="批量查看手机号"><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-open><path d="M2.06 12.35a1 1 0 0 1 0-.7C3.6 7.58 7.5 5 12 5s8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7C20.4 16.42 16.5 19 12 19S3.6 16.42 2.06 12.35Z"></path><circle cx="12" cy="12" r="3"></circle></svg><svg viewBox="0 0 24 24" aria-hidden="true" data-eye-off hidden><path d="m2 2 20 20"></path><path d="M6.71 6.71C4.86 7.87 3.25 9.58 2.06 11.65a1 1 0 0 0 0 .7C3.6 16.42 7.5 19 12 19c1.52 0 2.96-.29 4.25-.82"></path><path d="M10.73 5.08C11.15 5.03 11.57 5 12 5c4.5 0 8.4 2.58 9.94 6.65a1 1 0 0 1 0 .7 11.1 11.1 0 0 1-2.06 3.12"></path></svg></button></span></th>
               <th>会员等级</th>
               <th>认证状态</th>
               <th>用户类型</th>
@@ -613,19 +619,60 @@
   </div>
 
   <script>
-    document.querySelectorAll(".phone-toggle").forEach(button => {
+    function setPhoneVisibility(button, show) {
+      const value = button.closest(".phone-cell").querySelector("[data-phone-value]");
+      value.textContent = show ? value.dataset.full : value.dataset.masked;
+      button.setAttribute("aria-pressed", String(show));
+      button.setAttribute("aria-label", show ? "隐藏手机号" : "查看手机号");
+      button.title = show ? "隐藏手机号" : "查看手机号";
+      button.querySelector("[data-eye-open]").hidden = show;
+      button.querySelector("[data-eye-off]").hidden = !show;
+    }
+
+    const rowPhoneButtons = [...document.querySelectorAll(".phone-cell .phone-toggle")];
+    const batchViewPhone = document.getElementById("batchViewPhone");
+
+    function setBatchPhoneVisibility(show) {
+      batchViewPhone.setAttribute("aria-pressed", String(show));
+      batchViewPhone.setAttribute("aria-label", show ? "批量隐藏手机号" : "批量查看手机号");
+      batchViewPhone.title = show ? "批量隐藏手机号" : "批量查看手机号";
+      batchViewPhone.querySelector("[data-eye-open]").hidden = show;
+      batchViewPhone.querySelector("[data-eye-off]").hidden = !show;
+    }
+
+    function syncBatchPhoneVisibility() {
+      setBatchPhoneVisibility(rowPhoneButtons.length > 0 && rowPhoneButtons.every(button => button.getAttribute("aria-pressed") === "true"));
+    }
+
+    rowPhoneButtons.forEach(button => {
       button.addEventListener("click", () => {
-        const value = button.closest(".phone-cell").querySelector("[data-phone-value]");
         const showing = button.getAttribute("aria-pressed") === "true";
-        value.textContent = showing ? value.dataset.masked : value.dataset.full;
-        button.setAttribute("aria-pressed", String(!showing));
-        button.setAttribute("aria-label", showing ? "查看手机号" : "隐藏手机号");
-        button.title = showing ? "查看手机号" : "隐藏手机号";
-        button.querySelector("[data-eye-open]").hidden = !showing;
-        button.querySelector("[data-eye-off]").hidden = showing;
+        setPhoneVisibility(button, !showing);
+        syncBatchPhoneVisibility();
       });
     });
 
+    batchViewPhone.addEventListener("click", () => {
+      const show = batchViewPhone.getAttribute("aria-pressed") !== "true";
+      rowPhoneButtons.forEach(button => setPhoneVisibility(button, show));
+      setBatchPhoneVisibility(show);
+    });
+
+    const memberCheckAll = document.getElementById("memberCheckAll");
+    const memberChecks = [...document.querySelectorAll(".member-table tbody > tr > td:first-child input[type='checkbox']")];
+    memberCheckAll.addEventListener("change", () => {
+      memberChecks.forEach(checkbox => {
+        checkbox.checked = memberCheckAll.checked;
+      });
+      memberCheckAll.indeterminate = false;
+    });
+    memberChecks.forEach(checkbox => {
+      checkbox.addEventListener("change", () => {
+        const checkedCount = memberChecks.filter(item => item.checked).length;
+        memberCheckAll.checked = checkedCount === memberChecks.length;
+        memberCheckAll.indeterminate = checkedCount > 0 && checkedCount < memberChecks.length;
+      });
+    });
     const projectTreeData = [
       {
         name: "广东省",
