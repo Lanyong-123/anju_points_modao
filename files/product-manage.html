@@ -519,14 +519,14 @@
       white-space: nowrap;
     }
     .product-list-table {
-      min-width: 1780px;
+      min-width: 1940px;
     }
-    .product-list-table th:nth-child(11),
-    .product-list-table td:nth-child(11) {
+    .product-list-table th:nth-child(12),
+    .product-list-table td:nth-child(12) {
       min-width: 300px;
     }
-    .product-list-table th:nth-child(14),
-    .product-list-table td:nth-child(14) {
+    .product-list-table th:nth-child(15),
+    .product-list-table td:nth-child(15) {
       min-width: 180px;
     }
     .drawer-section-title {
@@ -610,6 +610,7 @@
     }
     .org-tree-level-2 { padding-left: 28px; }
     .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-level-4 { padding-left: 76px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
   </style>
 </head>
@@ -617,11 +618,18 @@
   <div class="page">
     <div class="filter" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
       <div class="field"><label>商品名称</label><input placeholder="商品名称"></div>
-      <div class="field"><label>兑换方式</label><select><option>全部方式</option><option>免费</option><option>积分</option></select></div>
-      <div class="field"><label>礼券归属</label>
-        <div class="org-tree-select" data-org-tree data-org-all="全部归属" data-org-default="全部归属">
-          <button class="org-tree-trigger" type="button">全部归属</button>
-          <input type="hidden" value="全部归属">
+      <div class="field"><label>关联礼券</label><select><option>全部礼券</option><option>2000积分兑家政服务券</option><option>生日礼券权益</option><option>停车缴费抵扣券</option><option>深度保洁体验券</option><option>家政服务免单券</option></select></div>
+      <div class="field"><label>发放组织</label>
+        <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织" data-org-default="全部组织">
+          <button class="org-tree-trigger" type="button">全部组织</button>
+          <input type="hidden" value="全部组织">
+          <div class="org-tree-panel"></div>
+        </div>
+      </div>
+      <div class="field"><label>发放项目</label>
+        <div class="org-tree-select" data-org-tree data-tree-type="project" data-org-all="全部项目" data-org-default="全部项目">
+          <button class="org-tree-trigger" type="button">全部项目</button>
+          <input type="hidden" value="全部项目">
           <div class="org-tree-panel"></div>
         </div>
       </div>
@@ -647,9 +655,10 @@
               <th><input type="checkbox"></th>
               <th>商品图标</th>
               <th>商品名称</th>
-              <th>兑换方案</th>
+              <th>兑换所需积分</th>
               <th>关联礼券</th>
-              <th>礼券归属</th>
+              <th>发放组织</th>
+              <th>发放项目</th>
               <th>已领取数</th>
               <th>已核销数</th>
               <th>过期数</th>
@@ -661,12 +670,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td><img class="product-cover" src="../resources/products/housekeeping-coupon.svg" alt="2000积分兑家政服务券" data-preview-image="../resources/products/housekeeping-coupon.svg"></td><td>2000积分兑家政服务</td><td>2000 积分</td><td>2000积分兑家政服务券</td><td>安居集团</td><td><span class="link" data-stat-detail="claim" data-product-name="2000积分兑家政服务">162</span></td><td><span class="link" data-stat-detail="use" data-product-name="2000积分兑家政服务">32</span></td><td><span class="link" data-stat-detail="expired" data-product-name="2000积分兑家政服务">8</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="2000积分兑家政服务">122</span></td><td>2026-06-05 00:00 至 2027-01-01 23:59</td><td>2026-06-05 09:30</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="2000积分兑家政服务">详情</span>　<span class="link" data-status="disable" data-product="2000积分兑家政服务">禁用</span>　<span class="link" data-delete="2000积分兑家政服务">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="thumb">礼</span></td><td>生日礼券</td><td>免费</td><td>生日礼券权益</td><td>集团总部</td><td><span class="link" data-stat-detail="claim" data-product-name="生日礼券">4</span></td><td><span class="link" data-stat-detail="use" data-product-name="生日礼券">1</span></td><td><span class="link" data-stat-detail="expired" data-product-name="生日礼券">1</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="生日礼券">2</span></td><td>2026-01-14 00:00 至 2026-01-31 23:59</td><td>2026-06-02 15:42</td><td><span class="badge gray">禁用</span></td><td><span class="link" data-detail="生日礼券">详情</span>　<span class="link" data-status="enable" data-product="生日礼券">启用</span>　<span class="link" data-delete="生日礼券">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="thumb">停</span></td><td>停车抵扣券</td><td>300 积分</td><td>停车缴费抵扣券</td><td>宝安项目</td><td><span class="link" data-stat-detail="claim" data-product-name="停车抵扣券">38</span></td><td><span class="link" data-stat-detail="use" data-product-name="停车抵扣券">16</span></td><td><span class="link" data-stat-detail="expired" data-product-name="停车抵扣券">22</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="停车抵扣券">0</span></td><td>2026-04-28 00:00 至 2026-05-31 23:59</td><td>2026-04-28 14:08</td><td><span class="badge red">已过期</span></td><td><span class="link" data-detail="停车抵扣券">详情</span>　<span class="link" data-delete="停车抵扣券">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="thumb">洁</span></td><td>深度保洁服务</td><td>免费</td><td>深度保洁体验券</td><td>合作商户</td><td><span class="link" data-stat-detail="claim" data-product-name="深度保洁服务">76</span></td><td><span class="link" data-stat-detail="use" data-product-name="深度保洁服务">58</span></td><td><span class="link" data-stat-detail="expired" data-product-name="深度保洁服务">10</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="深度保洁服务">8</span></td><td>2026-04-18 00:00 至 2026-05-18 23:59</td><td>2026-04-18 10:22</td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="深度保洁服务">详情</span>　<span class="link" data-delete="深度保洁服务">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="thumb">搬</span></td><td>免费搬家服务</td><td>1200 积分</td><td>-</td><td>南山项目</td><td><span class="link" data-stat-detail="claim" data-product-name="免费搬家服务">0</span></td><td><span class="link" data-stat-detail="use" data-product-name="免费搬家服务">0</span></td><td><span class="link" data-stat-detail="expired" data-product-name="免费搬家服务">0</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="免费搬家服务">0</span></td><td>用户输入</td><td>2026-05-30 11:20</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-edit="免费搬家服务">修改</span>　<span class="link" data-delete="免费搬家服务">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="thumb">物</span></td><td>家政服务包</td><td>500 积分</td><td>家政服务免单券</td><td>福田项目</td><td><span class="link" data-stat-detail="claim" data-product-name="家政服务包">0</span></td><td><span class="link" data-stat-detail="use" data-product-name="家政服务包">0</span></td><td><span class="link" data-stat-detail="expired" data-product-name="家政服务包">0</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="家政服务包">0</span></td><td>用户输入</td><td>2026-05-26 10:16</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-edit="家政服务包">修改</span>　<span class="link" data-delete="家政服务包">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><img class="product-cover" src="../resources/products/housekeeping-coupon.svg" alt="2000积分兑家政服务券" data-preview-image="../resources/products/housekeeping-coupon.svg"></td><td>2000积分兑家政服务</td><td>2000</td><td>2000积分兑家政服务券</td><td>商业板块 / 安计部</td><td>高新安荟邻</td><td><span class="link" data-stat-detail="claim" data-product-name="2000积分兑家政服务">162</span></td><td><span class="link" data-stat-detail="use" data-product-name="2000积分兑家政服务">32</span></td><td><span class="link" data-stat-detail="expired" data-product-name="2000积分兑家政服务">8</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="2000积分兑家政服务">122</span></td><td>2026-06-05 00:00 至 2027-01-01 23:59</td><td>2026-06-05 09:30</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="2000积分兑家政服务">详情</span>　<span class="link" data-status="disable" data-product="2000积分兑家政服务">禁用</span>　<span class="link" data-delete="2000积分兑家政服务">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="thumb">礼</span></td><td>生日礼券</td><td>5000</td><td>生日礼券权益</td><td>集团职能</td><td>高新安荟邻</td><td><span class="link" data-stat-detail="claim" data-product-name="生日礼券">4</span></td><td><span class="link" data-stat-detail="use" data-product-name="生日礼券">1</span></td><td><span class="link" data-stat-detail="expired" data-product-name="生日礼券">1</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="生日礼券">2</span></td><td>2026-01-14 00:00 至 2026-01-31 23:59</td><td>2026-06-02 15:42</td><td><span class="badge gray">禁用</span></td><td><span class="link" data-detail="生日礼券">详情</span>　<span class="link" data-status="enable" data-product="生日礼券">启用</span>　<span class="link" data-delete="生日礼券">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="thumb">停</span></td><td>停车抵扣券</td><td>300</td><td>停车缴费抵扣券</td><td>物业板块 / 物业管理部</td><td>宝安人才园</td><td><span class="link" data-stat-detail="claim" data-product-name="停车抵扣券">38</span></td><td><span class="link" data-stat-detail="use" data-product-name="停车抵扣券">16</span></td><td><span class="link" data-stat-detail="expired" data-product-name="停车抵扣券">22</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="停车抵扣券">0</span></td><td>2026-04-28 00:00 至 2026-05-31 23:59</td><td>2026-04-28 14:08</td><td><span class="badge red">已过期</span></td><td><span class="link" data-detail="停车抵扣券">详情</span>　<span class="link" data-delete="停车抵扣券">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="thumb">洁</span></td><td>深度保洁服务</td><td>5000</td><td>深度保洁体验券</td><td>商业板块 / 商业运营部</td><td>天河安居项目</td><td><span class="link" data-stat-detail="claim" data-product-name="深度保洁服务">76</span></td><td><span class="link" data-stat-detail="use" data-product-name="深度保洁服务">58</span></td><td><span class="link" data-stat-detail="expired" data-product-name="深度保洁服务">10</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="深度保洁服务">8</span></td><td>2026-04-18 00:00 至 2026-05-18 23:59</td><td>2026-04-18 10:22</td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="深度保洁服务">详情</span>　<span class="link" data-delete="深度保洁服务">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="thumb">搬</span></td><td>免费搬家服务</td><td>1200</td><td>-</td><td>住宅板块 / 客户服务部</td><td>高新花园</td><td><span class="link" data-stat-detail="claim" data-product-name="免费搬家服务">0</span></td><td><span class="link" data-stat-detail="use" data-product-name="免费搬家服务">0</span></td><td><span class="link" data-stat-detail="expired" data-product-name="免费搬家服务">0</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="免费搬家服务">0</span></td><td>用户输入</td><td>2026-05-30 11:20</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-edit="免费搬家服务">修改</span>　<span class="link" data-delete="免费搬家服务">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="thumb">物</span></td><td>家政服务包</td><td>500</td><td>家政服务免单券</td><td>商业板块 / 数字运营部</td><td>景田安荟邻</td><td><span class="link" data-stat-detail="claim" data-product-name="家政服务包">0</span></td><td><span class="link" data-stat-detail="use" data-product-name="家政服务包">0</span></td><td><span class="link" data-stat-detail="expired" data-product-name="家政服务包">0</span></td><td><span class="link" data-stat-detail="unredeemed" data-product-name="家政服务包">0</span></td><td>用户输入</td><td>2026-05-26 10:16</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-edit="家政服务包">修改</span>　<span class="link" data-delete="家政服务包">删除</span></td></tr>
           </tbody>
         </table>
         <div class="pagination">
@@ -774,14 +783,25 @@
             </div>
           </div>
           <div class="product-row">
-            <div class="product-label required">礼券归属</div>
+            <div class="product-label">发放项目</div>
             <div class="product-control">
-              <div class="org-tree-select" data-org-tree id="editOrgTree" data-org-default="商业板块 / 南山片区 / 高新安荟邻">
-                <button class="org-tree-trigger" type="button">商业板块 / 南山片区 / 高新安荟邻</button>
-                <input type="hidden" id="editOrg" value="商业板块 / 南山片区 / 高新安荟邻">
+              <div class="org-tree-select" data-org-tree data-tree-type="project" id="editOrgTree" data-org-default="广东省 / 深圳市 / 南山区 / 高新安荟邻">
+                <button class="org-tree-trigger" type="button">广东省 / 深圳市 / 南山区 / 高新安荟邻</button>
+                <input type="hidden" id="editOrg" value="广东省 / 深圳市 / 南山区 / 高新安荟邻">
                 <div class="org-tree-panel"></div>
               </div>
-              <div class="product-hint">用于区分商品可使用的礼券归属范围，新增或修改商品时维护。</div>
+              <div class="product-hint">用于选择商品的发放项目，按省、市、区、具体项目选择。</div>
+            </div>
+          </div>
+          <div class="product-row">
+            <div class="product-label">发放组织</div>
+            <div class="product-control">
+              <div class="org-tree-select" data-org-tree data-tree-type="org" id="editIssuerOrgTree" data-org-default="商业板块 / 安计部">
+                <button class="org-tree-trigger" type="button">商业板块 / 安计部</button>
+                <input type="hidden" id="editIssuerOrg" value="商业板块 / 安计部">
+                <div class="org-tree-panel"></div>
+              </div>
+              <div class="product-hint">请选择商品发放组织。</div>
             </div>
           </div>
           <div class="product-row">
@@ -1076,71 +1096,62 @@
   </div>
 
   <script>
+    const projectTreeData = [{
+      name: "广东省",
+      children: [
+        { name: "深圳市", children: [
+          { name: "南山区", children: ["高新安荟邻", "高新花园"] },
+          { name: "福田区", children: ["景田安荟邻"] },
+          { name: "坪山区", children: ["秀馨苑"] },
+          { name: "宝安区", children: ["宝安人才园"] }
+        ] },
+        { name: "广州市", children: [
+          { name: "天河区", children: ["天河安居项目"] },
+          { name: "海珠区", children: ["海珠安居项目"] }
+        ] }
+      ]
+    }];
     const orgTreeData = [
-      {
-        name: "商业板块",
-        children: [
-          { name: "南山片区", children: ["高新安荟邻"] },
-          { name: "福田片区", children: ["景田安荟邻"] }
-        ]
-      },
-      {
-        name: "住宅板块",
-        children: [
-          { name: "南山片区", children: ["高新花园"] },
-          { name: "坪山片区", children: ["秀馨苑"] }
-        ]
-      },
-      {
-        name: "物业板块",
-        children: [
-          { name: "南山片区", children: ["高新花园"] },
-          { name: "坪山片区", children: ["秀馨苑"] }
-        ]
-      }
+      { name: "商业板块", children: ["安计部", "数字运营部", "商业运营部", "招商管理部"] },
+      { name: "住宅板块", children: ["住宅运营部", "营销管理部", "客户服务部", "工程管理部"] },
+      { name: "物业板块", children: ["物业管理部", "品质管理部", "安全管理部", "环境管理部"] },
+      { name: "集团职能", children: ["财务管理部", "人力资源部", "信息技术部", "审计风控部"] }
     ];
-    const orgExpandedKeys = [
-      "商业板块",
-      "商业板块/南山片区",
-      "商业板块/福田片区",
-      "住宅板块",
-      "住宅板块/南山片区",
-      "住宅板块/坪山片区",
-      "物业板块",
-      "物业板块/南山片区",
-      "物业板块/坪山片区"
+    const projectExpandedKeys = [
+      "广东省", "广东省/深圳市", "广东省/深圳市/南山区", "广东省/深圳市/福田区",
+      "广东省/深圳市/坪山区", "广东省/深圳市/宝安区", "广东省/广州市",
+      "广东省/广州市/天河区", "广东省/广州市/海珠区"
     ];
+    const orgExpandedKeys = ["商业板块", "住宅板块", "物业板块", "集团职能"];
     const legacyOrgMap = {
-      "安居集团": "商业板块 / 南山片区 / 高新安荟邻",
-      "集团总部": "商业板块 / 南山片区 / 高新安荟邻",
-      "南山项目": "住宅板块 / 南山片区 / 高新花园",
-      "福田项目": "商业板块 / 福田片区 / 景田安荟邻",
-      "宝安项目": "物业板块 / 坪山片区 / 秀馨苑",
-      "合作商户": "物业板块 / 南山片区 / 高新花园"
+      "安居集团": "广东省 / 深圳市 / 南山区 / 高新安荟邻",
+      "集团总部": "广东省 / 深圳市 / 南山区 / 高新安荟邻",
+      "南山项目": "广东省 / 深圳市 / 南山区 / 高新花园",
+      "福田项目": "广东省 / 深圳市 / 福田区 / 景田安荟邻",
+      "宝安项目": "广东省 / 深圳市 / 宝安区 / 宝安人才园",
+      "合作商户": "广东省 / 广州市 / 天河区 / 天河安居项目"
     };
-    function normalizeOrgValue(value, fallback = "商业板块 / 南山片区 / 高新安荟邻") {
+    function normalizeOrgValue(value, fallback = "广东省 / 深圳市 / 南山区 / 高新安荟邻") {
       return legacyOrgMap[value] || value || fallback;
     }
     function renderOrgTree(tree, expanded) {
       const allLabel = tree.dataset.orgAll;
+      const treeData = tree.dataset.treeType === "org" ? orgTreeData : projectTreeData;
       const rows = allLabel
         ? [`<div class="org-tree-row org-tree-leaf" data-org-path="${allLabel}"><span class="org-tree-toggle">·</span><span>${allLabel}</span></div>`]
         : [];
-      orgTreeData.forEach(level1 => {
-        const level1Open = expanded.has(level1.name);
-        rows.push(`<div class="org-tree-row org-tree-level-1" data-org-toggle="${level1.name}"><span class="org-tree-toggle">${level1Open ? "▾" : "▸"}</span><span>${level1.name}</span></div>`);
-        if (!level1Open) return;
-        level1.children.forEach(level2 => {
-          const level2Key = `${level1.name}/${level2.name}`;
-          const level2Open = expanded.has(level2Key);
-          rows.push(`<div class="org-tree-row org-tree-level-2" data-org-toggle="${level2Key}"><span class="org-tree-toggle">${level2Open ? "▾" : "▸"}</span><span>${level2.name}</span></div>`);
-          if (!level2Open) return;
-          level2.children.forEach(level3 => {
-            const path = `${level1.name} / ${level2.name} / ${level3}`;
-            rows.push(`<div class="org-tree-row org-tree-level-3 org-tree-leaf" data-org-path="${path}"><span class="org-tree-toggle">·</span><span>${level3}</span></div>`);
-          });
+      const renderNodes = (nodes, parents = [], depth = 1) => {
+        nodes.forEach(node => {
+          const item = typeof node === "string" ? { name: node } : node;
+          const key = [...parents, item.name].join("/");
+          const path = [...parents, item.name].join(" / ");
+          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+          const isOpen = expanded.has(key);
+          rows.push(`<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-org-toggle="${key}"` : `data-org-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`);
+          if (hasChildren && isOpen) renderNodes(item.children, [...parents, item.name], depth + 1);
         });
-      });
+      };
+      renderNodes(treeData);
       tree.querySelector(".org-tree-panel").innerHTML = rows.join("");
     }
     function setOrgTreeValue(tree, value) {
@@ -1149,7 +1160,7 @@
     }
     function initOrgTrees() {
       document.querySelectorAll("[data-org-tree]").forEach(tree => {
-        const expanded = new Set(orgExpandedKeys);
+        const expanded = new Set(tree.dataset.treeType === "org" ? orgExpandedKeys : projectExpandedKeys);
         const trigger = tree.querySelector(".org-tree-trigger");
         const panel = tree.querySelector(".org-tree-panel");
         setOrgTreeValue(tree, tree.dataset.orgDefault || tree.dataset.orgAll || "全部归属");
@@ -1380,6 +1391,7 @@
           const exchangeDates = (detail.exchangeTime || "").match(/\d{4}-\d{2}-\d{2}/g) || [];
           document.getElementById("editName").value = data[1];
           setOrgTreeValue(document.getElementById("editOrgTree"), normalizeOrgValue(data[4]));
+          setOrgTreeValue(document.getElementById("editIssuerOrgTree"), data[4] === "集团总部" ? "集团职能" : "商业板块 / 安计部");
           document.getElementById("editDesc").value = data[10];
           document.getElementById("editStart").value = exchangeDates[0] || "";
           document.getElementById("editEnd").value = exchangeDates[1] || "2026-08-29";
@@ -1397,7 +1409,8 @@
           document.querySelector("input[name='specialTarget'][value='否']").checked = true;
           setMultiSelectValues("specialProjects", "");
           setMultiSelectValues("specialMembers", "");
-          setOrgTreeValue(document.getElementById("editOrgTree"), "商业板块 / 南山片区 / 高新安荟邻");
+          setOrgTreeValue(document.getElementById("editOrgTree"), "广东省 / 深圳市 / 南山区 / 高新安荟邻");
+          setOrgTreeValue(document.getElementById("editIssuerOrgTree"), "商业板块 / 安计部");
         }
         syncSpecialTarget();
         document.getElementById("editModal").classList.add("open");

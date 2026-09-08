@@ -133,6 +133,66 @@
       display: grid;
       gap: 7px;
     }
+    .permission-tree {
+      max-height: 330px;
+      overflow: auto;
+      padding: 8px 10px;
+      background: #fff;
+    }
+    .permission-tree-node {
+      display: grid;
+      gap: 3px;
+    }
+    .permission-tree-row {
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 4px;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .permission-tree-row:hover {
+      background: #f1f8fd;
+    }
+    .permission-tree-toggle {
+      width: 22px;
+      height: 22px;
+      display: inline-grid;
+      place-items: center;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #71849a;
+      cursor: pointer;
+      transition: transform .16s ease;
+    }
+    .permission-tree-node.expanded > .permission-tree-row .permission-tree-toggle {
+      transform: rotate(90deg);
+    }
+    .permission-tree-node.leaf > .permission-tree-row .permission-tree-toggle {
+      visibility: hidden;
+    }
+    .permission-tree-row label {
+      min-height: 30px;
+      flex: 1;
+      cursor: pointer;
+    }
+    .permission-tree-children {
+      display: none;
+      gap: 3px;
+      padding-left: 24px;
+    }
+    .permission-tree-node.expanded > .permission-tree-children {
+      display: grid;
+    }
+    .permission-summary {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     @media (max-width: 1180px) {
       .user-filter { grid-template-columns: 1fr 1fr; }
       .user-layout { grid-template-columns: 220px minmax(0, 1fr); }
@@ -282,18 +342,10 @@
           <div class="field"><label>邮箱</label><input value="chengmt@anju.com"></div>
           <div class="field"><label class="required">状态</label><select><option selected>启用</option><option>停用</option></select></div>
           <div class="field">
-            <label class="required">数据权限（下拉，支持复选）</label>
+            <label class="required">数据权限（树形结构，支持复选）</label>
             <div class="data-permission" id="dataPermission">
-              <div class="permission-select" data-toggle-dropdown="dataPermission"><span>集团总部、运营中心、福田项目</span><span>⌄</span></div>
-              <div class="permission-panel">
-                <label><input type="checkbox" checked> 全部数据</label>
-                <label><input type="checkbox" checked> 集团总部</label>
-                <label><input type="checkbox" checked> 运营中心</label>
-                <label><input type="checkbox"> 客服中心</label>
-                <label><input type="checkbox"> 南山项目</label>
-                <label><input type="checkbox" checked> 福田项目</label>
-                <label><input type="checkbox"> 数据治理组</label>
-              </div>
+              <div class="permission-select" data-toggle-dropdown="dataPermission"><span class="permission-summary" id="dataPermissionSummary">高新安荟邻、景田安荟邻</span><span>⌄</span></div>
+              <div class="permission-panel permission-tree" id="dataPermissionTree"></div>
             </div>
           </div>
         </div>
@@ -323,6 +375,107 @@
   </div>
 
   <script>
+    const dataPermissionTreeData = [
+      {
+        name: "广东省",
+        children: [
+          {
+            name: "深圳市",
+            children: [
+              { name: "南山区", children: ["高新安荟邻", "高新花园"] },
+              { name: "福田区", children: ["景田安荟邻"] },
+              { name: "坪山区", children: ["秀馨苑"] },
+              { name: "宝安区", children: ["宝安人才园"] }
+            ]
+          },
+          {
+            name: "广州市",
+            children: [
+              { name: "天河区", children: ["天河安居项目"] },
+              { name: "海珠区", children: ["海珠人才公寓"] }
+            ]
+          }
+        ]
+      }
+    ];
+    const defaultPermissionProjects = new Set(["高新安荟邻", "景田安荟邻"]);
+    const dataPermissionTree = document.getElementById("dataPermissionTree");
+    const dataPermissionSummary = document.getElementById("dataPermissionSummary");
+
+    function createPermissionTreeNode(item, depth = 0) {
+      const nodeData = typeof item === "string" ? { name: item } : item;
+      const hasChildren = Array.isArray(nodeData.children) && nodeData.children.length > 0;
+      const node = document.createElement("div");
+      node.className = `permission-tree-node${hasChildren ? " expanded" : " leaf"}`;
+      node.dataset.permissionName = nodeData.name;
+      node.innerHTML = `
+        <div class="permission-tree-row">
+          <button class="permission-tree-toggle" type="button" aria-label="${hasChildren ? "展开或收起" : "无下级"}">▶</button>
+          <label><input type="checkbox"${!hasChildren && defaultPermissionProjects.has(nodeData.name) ? " checked" : ""}> <span>${nodeData.name}</span></label>
+        </div>
+      `;
+      if (hasChildren) {
+        const children = document.createElement("div");
+        children.className = "permission-tree-children";
+        nodeData.children.forEach(child => children.appendChild(createPermissionTreeNode(child, depth + 1)));
+        node.appendChild(children);
+        node.querySelector(":scope > .permission-tree-row .permission-tree-toggle").addEventListener("click", event => {
+          event.stopPropagation();
+          node.classList.toggle("expanded");
+        });
+      }
+      node.querySelector(":scope > .permission-tree-row input[type='checkbox']").addEventListener("change", event => {
+        const checked = event.target.checked;
+        node.querySelectorAll(".permission-tree-children input[type='checkbox']").forEach(input => {
+          input.checked = checked;
+          input.indeterminate = false;
+        });
+        syncPermissionParents(node);
+        updatePermissionSummary();
+      });
+      return node;
+    }
+
+    function getDirectPermissionCheckbox(node) {
+      return node.querySelector(":scope > .permission-tree-row input[type='checkbox']");
+    }
+
+    function syncPermissionNode(node) {
+      const childrenContainer = node.querySelector(":scope > .permission-tree-children");
+      if (!childrenContainer) return;
+      const childNodes = [...childrenContainer.children].filter(child => child.classList.contains("permission-tree-node"));
+      childNodes.forEach(syncPermissionNode);
+      const childChecks = childNodes.map(getDirectPermissionCheckbox);
+      const ownCheck = getDirectPermissionCheckbox(node);
+      ownCheck.checked = childChecks.length > 0 && childChecks.every(input => input.checked);
+      ownCheck.indeterminate = childChecks.some(input => input.checked || input.indeterminate) && !ownCheck.checked;
+    }
+
+    function syncPermissionParents(node) {
+      let parent = node.parentElement.closest(".permission-tree-node");
+      while (parent) {
+        const childrenContainer = parent.querySelector(":scope > .permission-tree-children");
+        const childNodes = [...childrenContainer.children].filter(child => child.classList.contains("permission-tree-node"));
+        const childChecks = childNodes.map(getDirectPermissionCheckbox);
+        const parentCheck = getDirectPermissionCheckbox(parent);
+        parentCheck.checked = childChecks.every(input => input.checked);
+        parentCheck.indeterminate = childChecks.some(input => input.checked || input.indeterminate) && !parentCheck.checked;
+        parent = parent.parentElement.closest(".permission-tree-node");
+      }
+    }
+
+    function updatePermissionSummary() {
+      const selectedLeaves = [...dataPermissionTree.querySelectorAll(".permission-tree-node.leaf")]
+        .filter(node => getDirectPermissionCheckbox(node).checked)
+        .map(node => node.dataset.permissionName);
+      dataPermissionSummary.textContent = selectedLeaves.length ? selectedLeaves.join("、") : "请选择数据权限";
+      dataPermissionSummary.title = dataPermissionSummary.textContent;
+    }
+
+    dataPermissionTreeData.forEach(item => dataPermissionTree.appendChild(createPermissionTreeNode(item)));
+    [...dataPermissionTree.children].forEach(syncPermissionNode);
+    updatePermissionSummary();
+
     document.querySelectorAll("[data-open-user]").forEach(el => {
       el.addEventListener("click", () => {
         document.getElementById("userModalTitle").textContent = el.dataset.openUser === "create" ? "新增用户" : "编辑用户";

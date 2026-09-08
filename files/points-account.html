@@ -42,6 +42,13 @@
       <div class="field"><label>账户类型</label><select><option>全部类型</option><option>消费积分</option><option>碳积分</option></select></div>
       <div class="field"><label>账户状态</label><select><option>全部状态</option><option>正常</option><option>冻结</option></select></div>
       <div class="field"><label>积分审核状态</label><select><option>全部状态</option><option>待审核</option><option>审核通过</option><option>审核不通过</option></select></div>
+      <div class="field"><label>所属项目</label>
+        <div class="project-tree-select" data-project-tree>
+          <button class="project-tree-trigger" type="button" data-project-tree-trigger aria-expanded="false">全部项目</button>
+          <input type="hidden" data-project-tree-value value="全部项目">
+          <div class="project-tree-panel" data-project-tree-panel></div>
+        </div>
+      </div>
       <div class="field"><label>更新时间</label><input value="2026-05-01 至 2026-05-26"></div>
       <button class="btn primary">查询</button>
     </div>
@@ -255,6 +262,7 @@
     </div>
   </div>
 
+  <script src="../resources/project-tree.js"></script>
   <script>
     const pageParams = new URLSearchParams(window.location.search);
     document.getElementById("memberIdFilter").value = pageParams.get("memberId") || "";

@@ -72,6 +72,7 @@
     }
     .org-tree-level-2 { padding-left: 28px; }
     .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-level-4 { padding-left: 76px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
     .audit-list th:nth-child(2),
     .audit-list td:nth-child(2),
@@ -88,11 +89,11 @@
       <div class="field"><label>手机号</label><input placeholder="支持模糊查询"></div>
       <div class="field"><label>审核状态</label><select><option>全部状态</option><option>审核通过</option><option>审核不通过</option></select></div>
       <div class="field"><label>用户类型</label><select><option>全部用户类型</option><option>项目住户</option><option>租户</option><option>游客</option></select></div>
-      <div class="field"><label>所属组织</label>
-        <div class="org-tree-select" id="orgTreeSelect">
-          <button class="org-tree-trigger" type="button" id="orgTreeTrigger">全部组织</button>
-          <input type="hidden" id="orgTreeValue" value="全部组织">
-          <div class="org-tree-panel" id="orgTreePanel"></div>
+      <div class="field"><label>所属项目</label>
+        <div class="org-tree-select" id="projectTreeSelect">
+          <button class="org-tree-trigger" type="button" id="projectTreeTrigger">全部项目</button>
+          <input type="hidden" id="projectTreeValue" value="全部项目">
+          <div class="org-tree-panel" id="projectTreePanel"></div>
         </div>
       </div>
       <div class="field"><label>审核时间</label><input value="2026-05-01 至 2026-05-26"></div>
@@ -117,7 +118,7 @@
               <th>会员ID</th>
               <th>手机号</th>
               <th>用户类型</th>
-              <th>所属组织</th>
+              <th>所属项目</th>
               <th>审核状态</th>
               <th>自动校验结果</th>
               <th>审核时间</th>
@@ -126,13 +127,13 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td>RA202605260018</td><td><span class="link" data-detail="RA202605260018">李明</span></td><td>AJ202605180018</td><td>136****5520</td><td>项目住户</td><td>商业板块 / 南山片区 / 高新安荟邻</td><td><span class="badge green">审核通过</span></td><td>三要素一致、住户合同有效</td><td>2026-05-26 09:12</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605260018">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605260018</td><td><span class="link" data-detail="RA202605260018">李明</span></td><td>AJ202605180018</td><td>136****5520</td><td>项目住户</td><td>广东省 / 深圳市 / 南山区 / 高新安荟邻</td><td><span class="badge green">审核通过</span></td><td>三要素一致、住户合同有效</td><td>2026-05-26 09:12</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605260018">详情</span></td></tr>
             <tr><td><input type="checkbox"></td><td>RA202605260019</td><td><span class="link" data-detail="RA202605260019">周女士</span></td><td>AJ202604220091</td><td>139****6812</td><td>租户</td><td>-</td><td><span class="badge red">审核不通过</span></td><td>证件 OCR 置信度低于阈值</td><td>2026-05-26 08:45</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605260019">详情</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>RA202605250027</td><td><span class="link" data-detail="RA202605250027">陈先生</span></td><td>AJ202605010027</td><td>137****2098</td><td>租户</td><td>商业板块 / 福田片区 / 景田安荟邻</td><td><span class="badge red">审核不通过</span></td><td>租赁合同已过期</td><td>2026-05-25 17:20</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605250027">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605250027</td><td><span class="link" data-detail="RA202605250027">陈先生</span></td><td>AJ202605010027</td><td>137****2098</td><td>租户</td><td>广东省 / 深圳市 / 福田区 / 景田安荟邻</td><td><span class="badge red">审核不通过</span></td><td>租赁合同已过期</td><td>2026-05-25 17:20</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605250027">详情</span></td></tr>
             <tr><td><input type="checkbox"></td><td>RA202605250031</td><td><span class="link" data-detail="RA202605250031">王强</span></td><td>AJ202603090112</td><td>188****4019</td><td>游客</td><td>-</td><td><span class="badge red">审核不通过</span></td><td>命中黑名单、手机号异常</td><td>2026-05-25 16:02</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605250031">详情</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>RA202605240066</td><td><span class="link" data-detail="RA202605240066">赵女士</span></td><td>AJ202605240066</td><td>135****9087</td><td>项目住户</td><td>住宅板块 / 南山片区 / 高新花园</td><td><span class="badge green">审核通过</span></td><td>身份三要素一致、合同姓名匹配成功</td><td>2026-05-24 14:35</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605240066">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605240066</td><td><span class="link" data-detail="RA202605240066">赵女士</span></td><td>AJ202605240066</td><td>135****9087</td><td>项目住户</td><td>广东省 / 深圳市 / 南山区 / 高新花园</td><td><span class="badge green">审核通过</span></td><td>身份三要素一致、合同姓名匹配成功</td><td>2026-05-24 14:35</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605240066">详情</span></td></tr>
             <tr><td><input type="checkbox"></td><td>RA202605240071</td><td><span class="link" data-detail="RA202605240071">林先生</span></td><td>AJ202605240071</td><td>136****7021</td><td>游客</td><td>-</td><td><span class="badge green">审核通过</span></td><td>台胞证姓名与手机号匹配</td><td>2026-05-24 11:26</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605240071">详情</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>RA202605230083</td><td><span class="link" data-detail="RA202605230083">许女士</span></td><td>AJ202605230083</td><td>138****8016</td><td>项目住户</td><td>物业板块 / 坪山片区 / 秀馨苑</td><td><span class="badge green">审核通过</span></td><td>通行证信息一致、合同有效</td><td>2026-05-23 16:42</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605230083">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RA202605230083</td><td><span class="link" data-detail="RA202605230083">许女士</span></td><td>AJ202605230083</td><td>138****8016</td><td>项目住户</td><td>广东省 / 深圳市 / 坪山区 / 秀馨苑</td><td><span class="badge green">审核通过</span></td><td>通行证信息一致、合同有效</td><td>2026-05-23 16:42</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605230083">详情</span></td></tr>
             <tr><td><input type="checkbox"></td><td>RA202605230096</td><td><span class="link" data-detail="RA202605230096">安德鲁</span></td><td>AJ202605230096</td><td>137****6628</td><td>游客</td><td>-</td><td><span class="badge green">审核通过</span></td><td>外国人永居证信息一致</td><td>2026-05-23 10:18</td><td><span class="badge green">已通知</span></td><td><span class="link" data-detail="RA202605230096">详情</span></td></tr>
           </tbody>
         </table>
@@ -161,7 +162,7 @@
         <span>手机号</span><strong id="detailPhone">136****5520</strong>
         <span>证件类型</span><strong id="detailCertType">护照</strong>
         <span>用户类型</span><strong id="detailType">项目住户</strong>
-        <span>所属组织</span><strong id="detailProject">商业板块 / 南山片区 / 高新安荟邻</strong>
+        <span>所属项目</span><strong id="detailProject">广东省 / 深圳市 / 南山区 / 高新安荟邻</strong>
         <span>审核状态</span><strong id="detailStatus">审核通过</strong>
         <span>审核时间</span><strong id="detailTime">2026-05-26 09:12</strong>
       </div>
@@ -200,98 +201,86 @@
   </div>
 
   <script>
-    const orgTreeData = [
+    const projectTreeData = [
       {
-        name: "商业板块",
+        name: "广东省",
         children: [
-          { name: "南山片区", children: ["高新安荟邻"] },
-          { name: "福田片区", children: ["景田安荟邻"] }
-        ]
-      },
-      {
-        name: "住宅板块",
-        children: [
-          { name: "南山片区", children: ["高新花园"] },
-          { name: "坪山片区", children: ["秀馨苑"] }
-        ]
-      },
-      {
-        name: "物业板块",
-        children: [
-          { name: "南山片区", children: ["高新花园"] },
-          { name: "坪山片区", children: ["秀馨苑"] }
+          {
+            name: "深圳市",
+            children: [
+              { name: "南山区", children: ["高新安荟邻", "高新花园"] },
+              { name: "福田区", children: ["景田安荟邻"] },
+              { name: "坪山区", children: ["秀馨苑"] },
+              { name: "宝安区", children: ["宝安人才园"] }
+            ]
+          },
+          {
+            name: "广州市",
+            children: [
+              { name: "天河区", children: ["天河安居项目"] },
+              { name: "海珠区", children: ["海珠安居项目"] }
+            ]
+          }
         ]
       }
     ];
-    const orgExpanded = new Set([
-      "商业板块",
-      "商业板块/南山片区",
-      "商业板块/福田片区",
-      "住宅板块",
-      "住宅板块/南山片区",
-      "住宅板块/坪山片区",
-      "物业板块",
-      "物业板块/南山片区",
-      "物业板块/坪山片区"
+    const projectExpanded = new Set([
+      "广东省",
+      "广东省/深圳市",
+      "广东省/深圳市/南山区",
+      "广东省/深圳市/福田区",
+      "广东省/深圳市/坪山区",
+      "广东省/深圳市/宝安区",
+      "广东省/广州市",
+      "广东省/广州市/天河区",
+      "广东省/广州市/海珠区"
     ]);
-    const orgTreeSelect = document.getElementById("orgTreeSelect");
-    const orgTreeTrigger = document.getElementById("orgTreeTrigger");
-    const orgTreeValue = document.getElementById("orgTreeValue");
-    const orgTreePanel = document.getElementById("orgTreePanel");
-    function renderOrgTree() {
-      const rows = [
-        '<div class="org-tree-row org-tree-leaf" data-org-path="全部组织"><span class="org-tree-toggle">·</span><span>全部组织</span></div>'
-      ];
-      orgTreeData.forEach(level1 => {
-        const level1Open = orgExpanded.has(level1.name);
-        rows.push(`<div class="org-tree-row org-tree-level-1" data-org-toggle="${level1.name}"><span class="org-tree-toggle">${level1Open ? "▾" : "▸"}</span><span>${level1.name}</span></div>`);
-        if (!level1Open) return;
-        level1.children.forEach(level2 => {
-          const level2Key = `${level1.name}/${level2.name}`;
-          const level2Open = orgExpanded.has(level2Key);
-          rows.push(`<div class="org-tree-row org-tree-level-2" data-org-toggle="${level2Key}"><span class="org-tree-toggle">${level2Open ? "▾" : "▸"}</span><span>${level2.name}</span></div>`);
-          if (!level2Open) return;
-          level2.children.forEach(level3 => {
-            const path = `${level1.name} / ${level2.name} / ${level3}`;
-            rows.push(`<div class="org-tree-row org-tree-level-3 org-tree-leaf" data-org-path="${path}"><span class="org-tree-toggle">·</span><span>${level3}</span></div>`);
-          });
-        });
-      });
-      orgTreePanel.innerHTML = rows.join("");
+    const projectTreeSelect = document.getElementById("projectTreeSelect");
+    const projectTreeTrigger = document.getElementById("projectTreeTrigger");
+    const projectTreeValue = document.getElementById("projectTreeValue");
+    const projectTreePanel = document.getElementById("projectTreePanel");
+    function renderProjectTree() {
+      const renderNodes = (nodes, parents = [], depth = 1) => nodes.map(node => {
+        const item = typeof node === "string" ? { name: node } : node;
+        const key = [...parents, item.name].join("/");
+        const path = [...parents, item.name].join(" / ");
+        const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+        const isOpen = projectExpanded.has(key);
+        const row = `<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-project-toggle="${key}"` : `data-project-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`;
+        return row + (hasChildren && isOpen ? renderNodes(item.children, [...parents, item.name], depth + 1) : "");
+      }).join("");
+      projectTreePanel.innerHTML = `<div class="org-tree-row org-tree-leaf" data-project-path="全部项目"><span class="org-tree-toggle">·</span><span>全部项目</span></div>${renderNodes(projectTreeData)}`;
     }
-    function bindOrgTree() {
-      orgTreeTrigger.addEventListener("click", event => {
-        event.stopPropagation();
-        orgTreeSelect.classList.toggle("open");
-      });
-      orgTreePanel.addEventListener("click", event => {
-        const row = event.target.closest(".org-tree-row");
-        if (!row) return;
-        const toggle = row.dataset.orgToggle;
-        if (toggle) {
-          if (orgExpanded.has(toggle)) orgExpanded.delete(toggle);
-          else orgExpanded.add(toggle);
-          renderOrgTree();
-          return;
-        }
-        const path = row.dataset.orgPath;
-        if (path) {
-          orgTreeValue.value = path;
-          orgTreeTrigger.textContent = path;
-          orgTreeSelect.classList.remove("open");
-        }
-      });
-      document.addEventListener("click", event => {
-        if (!orgTreeSelect.contains(event.target)) orgTreeSelect.classList.remove("open");
-      });
-    }
-    renderOrgTree();
-    bindOrgTree();
+    projectTreeTrigger.addEventListener("click", event => {
+      event.stopPropagation();
+      projectTreeSelect.classList.toggle("open");
+    });
+    projectTreePanel.addEventListener("click", event => {
+      const row = event.target.closest(".org-tree-row");
+      if (!row) return;
+      const toggle = row.dataset.projectToggle;
+      if (toggle) {
+        if (projectExpanded.has(toggle)) projectExpanded.delete(toggle);
+        else projectExpanded.add(toggle);
+        renderProjectTree();
+        return;
+      }
+      const path = row.dataset.projectPath;
+      if (path) {
+        projectTreeValue.value = path;
+        projectTreeTrigger.textContent = path;
+        projectTreeSelect.classList.remove("open");
+      }
+    });
+    document.addEventListener("click", event => {
+      if (!projectTreeSelect.contains(event.target)) projectTreeSelect.classList.remove("open");
+    });
+    renderProjectTree();
     const auditData = {
       RA202605260018: {
-        name: "李明", id: "AJ202605180018", phone: "136****5520", type: "项目住户", project: "商业板块 / 南山片区 / 高新安荟邻",
+        name: "李明", id: "AJ202605180018", phone: "136****5520", type: "项目住户", project: "广东省 / 深圳市 / 南山区 / 高新安荟邻",
         certType: "护照", status: "审核通过", time: "2026-05-26 09:12",
-        checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["住户合同", "通过", "商业板块 / 南山片区 / 高新安荟邻 3 栋 1201 合同有效"]],
+        checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["住户合同", "通过", "广东省 / 深圳市 / 南山区 / 高新安荟邻 3 栋 1201 合同有效"]],
         materials: [["护照附件", "姓名李明，护照号 E123****8", "通过", "passport"], ["租赁合同", "合同号 HT2026051809，合同期至 2027-04-30", "通过", "contract"]]
       },
       RA202605260019: {
@@ -301,7 +290,7 @@
         materials: [["军官证附件", "姓名周女士，军官证号局部识别置信度偏低", "不通过", "officer"]]
       },
       RA202605250027: {
-        name: "陈先生", id: "AJ202605010027", phone: "137****2098", type: "租户", project: "商业板块 / 福田片区 / 景田安荟邻",
+        name: "陈先生", id: "AJ202605010027", phone: "137****2098", type: "租户", project: "广东省 / 深圳市 / 福田区 / 景田安荟邻",
         certType: "户口本", status: "审核不通过", time: "2026-05-25 17:20",
         checks: [["住户合同", "不通过", "系统合同状态显示已过期"], ["身份三要素", "通过", "姓名、手机号、证件号一致"]],
         materials: [["户口本附件", "户主页及本人页信息与提交姓名一致", "通过", "household"], ["租赁合同", "合同号 HT2025052507，合同期已结束", "不通过", "contract"]]
@@ -313,10 +302,10 @@
         materials: [["工商营业执照附件", "企业名称安居服务商，统一社会信用代码 9144**********09", "通过", "business"]]
       },
       RA202605240066: {
-        name: "赵女士", id: "AJ202605240066", phone: "135****9087", type: "项目住户", project: "住宅板块 / 南山片区 / 高新花园",
+        name: "赵女士", id: "AJ202605240066", phone: "135****9087", type: "项目住户", project: "广东省 / 深圳市 / 南山区 / 高新花园",
         certType: "武警证", status: "审核通过", time: "2026-05-24 14:35",
         checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["住户合同", "通过", "合同姓名与提交姓名匹配成功"]],
-        materials: [["武警证附件", "姓名赵女士，证件号 WJ2026****66", "通过", "armedPolice"], ["租赁合同", "住宅板块 / 南山片区 / 高新花园 5 栋 801，合同期有效", "通过", "contract"]]
+        materials: [["武警证附件", "姓名赵女士，证件号 WJ2026****66", "通过", "armedPolice"], ["租赁合同", "广东省 / 深圳市 / 南山区 / 高新花园 5 栋 801，合同期有效", "通过", "contract"]]
       },
       RA202605240071: {
         name: "林先生", id: "AJ202605240071", phone: "136****7021", type: "游客", project: "-",
@@ -325,10 +314,10 @@
         materials: [["台胞证附件", "姓名林先生，台胞证号 8300****21", "通过", "taiwan"]]
       },
       RA202605230083: {
-        name: "许女士", id: "AJ202605230083", phone: "138****8016", type: "项目住户", project: "物业板块 / 坪山片区 / 秀馨苑",
+        name: "许女士", id: "AJ202605230083", phone: "138****8016", type: "项目住户", project: "广东省 / 深圳市 / 坪山区 / 秀馨苑",
         certType: "港澳居民来往内地通行证", status: "审核通过", time: "2026-05-23 16:42",
-        checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["住户合同", "通过", "物业板块 / 坪山片区 / 秀馨苑合同有效"]],
-        materials: [["港澳居民来往内地通行证附件", "姓名许女士，通行证号 H/M 123****16", "通过", "hkMacao"], ["租赁合同", "物业板块 / 坪山片区 / 秀馨苑 2 栋 603，合同期有效", "通过", "contract"]]
+        checks: [["身份三要素", "通过", "姓名、手机号、证件号一致"], ["住户合同", "通过", "广东省 / 深圳市 / 坪山区 / 秀馨苑合同有效"]],
+        materials: [["港澳居民来往内地通行证附件", "姓名许女士，通行证号 H/M 123****16", "通过", "hkMacao"], ["租赁合同", "广东省 / 深圳市 / 坪山区 / 秀馨苑 2 栋 603，合同期有效", "通过", "contract"]]
       },
       RA202605230096: {
         name: "安德鲁", id: "AJ202605230096", phone: "137****6628", type: "游客", project: "-",
@@ -415,7 +404,7 @@
       contract: {
         title: "租赁合同附件",
         notice: "用于后台系统自动核对住户身份、项目房源和合同期限。",
-        rows: [["附件名称", "租赁合同.pdf"], ["合同号", "HT2026051809"], ["房屋地址", "商业板块 / 南山片区 / 高新安荟邻 3 栋 1201"], ["合同期限", "2026-05-01 至 2027-04-30"]]
+        rows: [["附件名称", "租赁合同.pdf"], ["合同号", "HT2026051809"], ["房屋地址", "广东省 / 深圳市 / 南山区 / 高新安荟邻 3 栋 1201"], ["合同期限", "2026-05-01 至 2027-04-30"]]
       }
     };
     function bindPreview() {
