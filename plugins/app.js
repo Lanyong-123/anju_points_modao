@@ -7,6 +7,12 @@ const menuTree = document.getElementById("menuTree");
 const workTabs = document.getElementById("workTabs");
 const frame = document.getElementById("pageFrame");
 const pageTitle = document.getElementById("pageTitle");
+const BUILD_VERSION = "20260908-2";
+
+function versionedUrl(url) {
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}v=${BUILD_VERSION}`;
+}
 
 const DEFAULT_MENU = [
   {
@@ -137,7 +143,7 @@ function openTab(item) {
     state.tabs.push({ title: item.title, url, locked: false });
   }
   state.activeUrl = url;
-  frame.src = url;
+  frame.src = versionedUrl(url);
   pageTitle.textContent = item.title;
   setActiveMenu(url);
   renderTabs();
@@ -153,7 +159,7 @@ function closeTab(url) {
     const next = state.tabs[index] || state.tabs[index - 1] || state.tabs[0];
     if (next) {
       state.activeUrl = next.url;
-      frame.src = next.url;
+      frame.src = versionedUrl(next.url);
       pageTitle.textContent = next.title;
       setActiveMenu(next.url);
     }
@@ -227,7 +233,7 @@ function boot(data) {
   openTab(first);
 }
 
-fetch("data/menu.json?v=offline-export-20260804-2")
+fetch(`data/menu.json?v=${BUILD_VERSION}`)
   .then(response => {
     if (!response.ok) throw new Error("menu json unavailable");
     return response.json();
