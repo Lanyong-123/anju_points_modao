@@ -1,27 +1,190 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>发分主体风控</title><link rel="stylesheet" href="../resources/style.css"><style>.field label.required::before{content:"*";color:var(--red);margin-right:2px}.adjust-modal{width:min(820px,calc(100vw - 48px))}.adjust-modal .panel-bd{max-height:calc(100vh - 170px);overflow:auto}.adjust-record-table{margin-top:14px}.adjust-record-table th,.adjust-record-table td{white-space:nowrap}</style></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>发分主体风控</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .field label.required::before { content: "*"; color: var(--red); margin-right: 2px; }
+    .adjust-modal { width: min(820px, calc(100vw - 48px)); }
+    .adjust-modal .panel-bd { max-height: calc(100vh - 170px); overflow: auto; }
+    .adjust-record-table { margin-top: 14px; }
+    .adjust-record-table th,
+    .adjust-record-table td { white-space: nowrap; }
+    .org-tree-select { position: relative; width: 100%; }
+    .org-tree-trigger {
+      width: 100%; height: 34px; padding: 0 32px 0 12px; border: 1px solid var(--line);
+      border-radius: 5px; background: #fff; color: var(--text); text-align: left; cursor: pointer;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative;
+    }
+    .org-tree-trigger::after {
+      content: "⌄"; position: absolute; right: 11px; top: 50%; transform: translateY(-55%); color: #667789;
+    }
+    .org-tree-panel {
+      display: none; position: absolute; z-index: 30; top: calc(100% + 4px); left: 0;
+      min-width: 100%; width: max-content; max-width: 420px; max-height: 320px; overflow: auto;
+      padding: 6px 0; border: 1px solid var(--line); border-radius: 5px; background: #fff;
+      box-shadow: 0 8px 24px rgba(31, 55, 78, .16);
+    }
+    .org-tree-select.open .org-tree-panel { display: block; }
+    .org-tree-row {
+      display: flex; align-items: center; gap: 6px; min-width: 210px; padding: 7px 12px;
+      color: #334a62; cursor: pointer; white-space: nowrap;
+    }
+    .org-tree-row:hover { background: #eef6ff; color: var(--brand); }
+    .org-tree-toggle { width: 16px; flex: 0 0 16px; color: #667789; text-align: center; }
+    .org-tree-level-2 { padding-left: 28px; }
+    .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-level-4 { padding-left: 76px; }
+    .org-tree-leaf .org-tree-toggle { color: transparent; }
+    #quotaModal .modal,
+    #quotaModal .panel-bd { overflow: visible; }
+    #quotaModal [data-tree-type="project"] .org-tree-panel {
+      right: 0;
+      left: auto;
+    }
+  </style>
+</head>
 <body>
   <div class="page">
     <div class="filter">
-      <div class="field"><label>发分主体</label><input placeholder="主体名称、主体编号"></div>
+      <div class="field"><label>主体名称/编号</label><input placeholder="主体名称、主体编号"></div>
       <div class="field"><label>风控状态</label><select><option>全部状态</option><option>正常</option><option>限制发分</option></select></div>
-      <div class="field"><label>所属组织</label><select><option>全部组织</option><option>安居集团</option><option>南山项目</option><option>福田项目</option></select></div>
+      <div class="field"><label>发分主体</label>
+        <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织" data-org-default="全部组织">
+          <button class="org-tree-trigger" type="button">全部组织</button>
+          <input type="hidden" value="全部组织">
+          <div class="org-tree-panel"></div>
+        </div>
+      </div>
+      <div class="field"><label>发分项目</label>
+        <div class="org-tree-select" data-org-tree data-tree-type="project" data-org-all="全部项目" data-org-default="全部项目">
+          <button class="org-tree-trigger" type="button">全部项目</button>
+          <input type="hidden" value="全部项目">
+          <div class="org-tree-panel"></div>
+        </div>
+      </div>
       <button class="btn primary">查询</button>
     </div>
     <div class="panel"><div class="panel-hd"><h3>发分主体风控列表</h3><div class="toolbar"><button class="btn primary" data-quota="batch">年度额度设置</button><button class="btn" data-control="batch-limit">批量限制</button><button class="btn">导出</button></div></div><div class="panel-bd">
-      <table><thead><tr><th><input type="checkbox"></th><th>主体编号</th><th>发分主体</th><th>所属组织</th><th>额度年度</th><th>年度发分额度</th><th>年度已发</th><th>额度预警比例</th><th>风控状态</th><th>操作</th></tr></thead><tbody>
-        <tr><td><input type="checkbox"></td><td>IS202605001</td><td>南山项目营销中心</td><td>南山项目</td><td>2026年</td><td>50,000,000</td><td>18,620,000</td><td>80%</td><td><span class="badge green">正常</span></td><td><span class="link" data-adjust-quota="IS202605001" data-issuer="南山项目营销中心" data-current-quota="50,000,000">额度调整</span>　<span class="link" data-control="limit">限制</span></td></tr>
-        <tr><td><input type="checkbox"></td><td>IS202605002</td><td>停车权益平台</td><td>安居集团</td><td>2026年</td><td>30,000,000</td><td>24,980,000</td><td>80%</td><td><span class="badge gold">限制发分</span></td><td><span class="link" data-adjust-quota="IS202605002" data-issuer="停车权益平台" data-current-quota="30,000,000">额度调整</span>　<span class="link" data-control="unlimit">解除限制</span></td></tr>
-        <tr><td><input type="checkbox"></td><td>IS202605003</td><td>异常活动批量发分</td><td>福田项目</td><td>2026年</td><td>8,000,000</td><td>8,260,000</td><td>90%</td><td><span class="badge gold">限制发分</span></td><td><span class="link" data-adjust-quota="IS202605003" data-issuer="异常活动批量发分" data-current-quota="8,000,000">额度调整</span>　<span class="link" data-control="unlimit">解除限制</span></td></tr>
+      <table><thead><tr><th><input type="checkbox"></th><th>主体编号</th><th>发分组织</th><th>发分项目</th><th>额度年度</th><th>年度发分额度</th><th>年度已发</th><th>额度预警比例</th><th>风控状态</th><th>操作</th></tr></thead><tbody>
+        <tr><td><input type="checkbox"></td><td>IS202605001</td><td>住宅板块 / 营销管理部</td><td>高新花园</td><td>2026年</td><td>50,000,000</td><td>18,620,000</td><td>80%</td><td><span class="badge green">正常</span></td><td><span class="link" data-adjust-quota="IS202605001" data-issuer="住宅板块 / 营销管理部" data-current-quota="50,000,000">额度调整</span>　<span class="link" data-control="limit">限制</span></td></tr>
+        <tr><td><input type="checkbox"></td><td>IS202605002</td><td>物业板块 / 物业管理部</td><td>宝安人才园</td><td>2026年</td><td>30,000,000</td><td>24,980,000</td><td>80%</td><td><span class="badge gold">限制发分</span></td><td><span class="link" data-adjust-quota="IS202605002" data-issuer="物业板块 / 物业管理部" data-current-quota="30,000,000">额度调整</span>　<span class="link" data-control="unlimit">解除限制</span></td></tr>
+        <tr><td><input type="checkbox"></td><td>IS202605003</td><td>商业板块 / 数字运营部</td><td>景田安荟邻</td><td>2026年</td><td>8,000,000</td><td>8,260,000</td><td>90%</td><td><span class="badge gold">限制发分</span></td><td><span class="link" data-adjust-quota="IS202605003" data-issuer="商业板块 / 数字运营部" data-current-quota="8,000,000">额度调整</span>　<span class="link" data-control="unlimit">解除限制</span></td></tr>
       </tbody></table>
       <div class="pagination"><span>共 126 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button></div>
     </div></div>
   </div>
-  <div class="modal-mask" id="quotaModal"><div class="modal"><div class="panel-hd"><h3>年度额度设置</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="grid cols-2"><div class="field"><label class="required">发分主体</label><select required><option>南山项目营销中心</option><option>停车权益平台</option><option>异常活动批量发分</option><option>福田项目物业公司</option></select></div><div class="field"><label class="required">组织架构</label><select required><option>安居集团 / 南山项目 / 营销中心</option><option>安居集团 / 停车事业部 / 权益平台</option><option>安居集团 / 福田项目 / 物业公司</option></select></div><div class="field"><label class="required">额度年度</label><select required><option>2026年</option><option>2027年</option><option>2028年</option></select></div><div class="field"><label class="required">发分额度</label><input required value="50000000"></div></div></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认设置</button></div></div></div>
-  <div class="modal-mask" id="adjustQuotaModal"><div class="modal adjust-modal"><div class="panel-hd"><h3>额度调整</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="detail-list"><span>发分主体</span><strong id="adjustIssuerName">南山项目营销中心</strong><span>当前年度额度</span><strong id="adjustCurrentQuota">50,000,000</strong></div><div class="grid cols-2" style="margin-top:14px"><div class="field"><label class="required">发分额度</label><input id="adjustQuotaInput" required value="55000000"></div><div class="field"><label class="required">附件（额度调整凭证，大小不超过 10MB）</label><input id="adjustAttachmentInput" type="file" required accept="image/*,.jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx"></div></div><div class="notice" style="margin-top:12px"><strong>额度调整</strong>用于调整当前记录的年度发分额度，可多次调整；每次确认后生成调整记录。</div><table class="adjust-record-table"><thead><tr><th>发分额度</th><th>附件</th><th>调整时间</th></tr></thead><tbody id="adjustRecordRows"></tbody></table></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="saveAdjustQuota" type="button">确认调整</button></div></div></div>
+  <div class="modal-mask" id="quotaModal">
+    <div class="modal">
+      <div class="panel-hd"><h3>年度额度设置</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="grid cols-2">
+          <div class="field"><label>发分组织</label>
+            <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="请选择" data-org-default="请选择">
+              <button class="org-tree-trigger" type="button">请选择</button>
+              <input type="hidden" value="请选择">
+              <div class="org-tree-panel"></div>
+            </div>
+          </div>
+          <div class="field"><label>发分项目</label>
+            <div class="org-tree-select" data-org-tree data-tree-type="project" data-org-all="请选择" data-org-default="请选择">
+              <button class="org-tree-trigger" type="button">请选择</button>
+              <input type="hidden" value="请选择">
+              <div class="org-tree-panel"></div>
+            </div>
+          </div>
+          <div class="field"><label class="required">额度年度</label><select required><option>2026年</option><option>2027年</option><option>2028年</option></select></div>
+          <div class="field"><label class="required">发分额度</label><input required value="50000000"></div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认设置</button></div>
+    </div>
+  </div>
+  <div class="modal-mask" id="adjustQuotaModal"><div class="modal adjust-modal"><div class="panel-hd"><h3>额度调整</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="detail-list"><span>发分组织</span><strong id="adjustIssuerName">住宅板块 / 营销管理部</strong><span>当前年度额度</span><strong id="adjustCurrentQuota">50,000,000</strong></div><div class="grid cols-2" style="margin-top:14px"><div class="field"><label class="required">发分额度</label><input id="adjustQuotaInput" required value="55000000"></div><div class="field"><label class="required">附件（额度调整凭证，大小不超过 10MB）</label><input id="adjustAttachmentInput" type="file" required accept="image/*,.jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx"></div></div><div class="notice" style="margin-top:12px"><strong>额度调整</strong>用于调整当前记录的年度发分额度，可多次调整；每次确认后生成调整记录。</div><table class="adjust-record-table"><thead><tr><th>发分额度</th><th>附件</th><th>调整时间</th></tr></thead><tbody id="adjustRecordRows"></tbody></table></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="saveAdjustQuota" type="button">确认调整</button></div></div></div>
   <div class="modal-mask" id="controlModal"><div class="modal"><div class="panel-hd"><h3 id="controlTitle">主体风控操作</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="notice" id="controlNotice"><strong>限制发分</strong>限制后该主体仅允许人工审核后发分。</div><div class="field" style="margin-top:12px"><label>操作原因</label><input value="额度异常或触发风控规则"></div></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div></div></div>
   <script>
+    const projectTreeData = [{
+      name: "广东省",
+      children: [
+        { name: "深圳市", children: [
+          { name: "南山区", children: ["高新安荟邻", "高新花园"] },
+          { name: "福田区", children: ["景田安荟邻"] },
+          { name: "坪山区", children: ["秀馨苑"] },
+          { name: "宝安区", children: ["宝安人才园"] }
+        ] },
+        { name: "广州市", children: [
+          { name: "天河区", children: ["天河安居项目"] },
+          { name: "海珠区", children: ["海珠安居项目"] }
+        ] }
+      ]
+    }];
+    const orgTreeData = [
+      { name: "商业板块", children: ["安计部", "数字运营部", "商业运营部", "招商管理部"] },
+      { name: "住宅板块", children: ["住宅运营部", "营销管理部", "客户服务部", "工程管理部"] },
+      { name: "物业板块", children: ["物业管理部", "品质管理部", "安全管理部", "环境管理部"] },
+      { name: "集团职能", children: ["财务管理部", "人力资源部", "信息技术部", "审计风控部"] }
+    ];
+    const projectExpandedKeys = [
+      "广东省", "广东省/深圳市", "广东省/深圳市/南山区", "广东省/深圳市/福田区",
+      "广东省/深圳市/坪山区", "广东省/深圳市/宝安区", "广东省/广州市",
+      "广东省/广州市/天河区", "广东省/广州市/海珠区"
+    ];
+    const orgExpandedKeys = ["商业板块", "住宅板块", "物业板块", "集团职能"];
+
+    function renderOrgTree(tree, expanded) {
+      const allLabel = tree.dataset.orgAll;
+      const treeData = tree.dataset.treeType === "org" ? orgTreeData : projectTreeData;
+      const rows = [`<div class="org-tree-row org-tree-leaf" data-org-path="${allLabel}"><span class="org-tree-toggle">·</span><span>${allLabel}</span></div>`];
+      const renderNodes = (nodes, parents = [], depth = 1) => {
+        nodes.forEach(node => {
+          const item = typeof node === "string" ? { name: node } : node;
+          const key = [...parents, item.name].join("/");
+          const path = [...parents, item.name].join(" / ");
+          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+          const isOpen = expanded.has(key);
+          rows.push(`<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-org-toggle="${key}"` : `data-org-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`);
+          if (hasChildren && isOpen) renderNodes(item.children, [...parents, item.name], depth + 1);
+        });
+      };
+      renderNodes(treeData);
+      tree.querySelector(".org-tree-panel").innerHTML = rows.join("");
+    }
+
+    document.querySelectorAll("[data-org-tree]").forEach(tree => {
+      const expanded = new Set(tree.dataset.treeType === "org" ? orgExpandedKeys : projectExpandedKeys);
+      const trigger = tree.querySelector(".org-tree-trigger");
+      const hiddenInput = tree.querySelector("input");
+      const panel = tree.querySelector(".org-tree-panel");
+      renderOrgTree(tree, expanded);
+      trigger.addEventListener("click", event => {
+        event.stopPropagation();
+        document.querySelectorAll("[data-org-tree].open").forEach(item => {
+          if (item !== tree) item.classList.remove("open");
+        });
+        tree.classList.toggle("open");
+      });
+      panel.addEventListener("click", event => {
+        const row = event.target.closest(".org-tree-row");
+        if (!row) return;
+        if (row.dataset.orgToggle) {
+          expanded.has(row.dataset.orgToggle) ? expanded.delete(row.dataset.orgToggle) : expanded.add(row.dataset.orgToggle);
+          renderOrgTree(tree, expanded);
+          return;
+        }
+        if (row.dataset.orgPath) {
+          trigger.textContent = row.dataset.orgPath;
+          hiddenInput.value = row.dataset.orgPath;
+          tree.classList.remove("open");
+        }
+      });
+    });
+    document.addEventListener("click", event => {
+      document.querySelectorAll("[data-org-tree].open").forEach(tree => {
+        if (!tree.contains(event.target)) tree.classList.remove("open");
+      });
+    });
     document.querySelectorAll("[data-quota]").forEach(el => el.addEventListener("click", () => document.getElementById("quotaModal").classList.add("open")));
     const adjustRecords = {
       IS202605001: [["50,000,000", "年度额度审批单.pdf", "2026-05-01 09:30"]],

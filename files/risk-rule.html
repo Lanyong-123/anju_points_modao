@@ -31,6 +31,55 @@
       font-weight: 700;
       white-space: nowrap;
     }
+    .risk-detail-drawer {
+      width: min(980px, calc(100vw - 48px));
+    }
+    .risk-detail-form {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .risk-detail-form .field input:disabled,
+    .risk-detail-form .field select:disabled,
+    .risk-detail-conditions input:disabled,
+    .risk-detail-conditions select:disabled {
+      background: #edf1f5;
+      border-color: #d7e0e8;
+      color: #607080;
+      cursor: not-allowed;
+      opacity: 1;
+      -webkit-text-fill-color: #607080;
+    }
+    .risk-detail-form .risk-check-options {
+      height: 34px;
+      min-height: 34px;
+      padding: 0 10px;
+      border: 1px solid #d7e0e8;
+      border-radius: 5px;
+      background: #edf1f5;
+      color: #607080;
+    }
+    .risk-detail-form .risk-check-option {
+      color: #607080;
+      cursor: not-allowed;
+    }
+    .risk-detail-conditions {
+      margin-top: 14px;
+      box-shadow: none;
+    }
+    .risk-detail-conditions table {
+      min-width: 760px;
+    }
+    .risk-detail-conditions th,
+    .risk-detail-conditions td {
+      white-space: nowrap;
+    }
+    @media (max-width: 760px) {
+      .risk-detail-drawer {
+        width: calc(100vw - 24px);
+      }
+      .risk-detail-form {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
   </style>
 </head>
 <body>
@@ -56,11 +105,11 @@
       </div>
       <div class="panel-bd">
         <table>
-          <thead><tr><th><input type="checkbox"></th><th>规则编号</th><th>规则名称</th><th>风控场景</th><th>触发条件</th><th>风险等级</th><th>处置动作</th><th>命中次数</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead>
+          <thead><tr><th><input type="checkbox"></th><th>规则编号</th><th>规则名称</th><th>风控场景</th><th>风险等级</th><th>处置动作</th><th>预警方式</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td>RK20260501001</td><td><span class="link" data-detail="RK20260501001">单会员日发分上限</span></td><td>会员风控</td><td>单日发分 &gt; 10,000</td><td><span class="badge red">高风险</span></td><td>拦截并预警</td><td>36</td><td><span class="badge green">启用</span></td><td>2026-05-26 09:30</td><td><span class="link" data-detail="RK20260501001">详情</span>　<span class="link" data-edit="RK20260501001">编辑</span>　<span class="link" data-status="disable">停用</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>RK20260501002</td><td><span class="link" data-detail="RK20260501002">会员高频核销预警</span></td><td>会员风控</td><td>10分钟核销 &gt; 20次</td><td><span class="badge gold">中风险</span></td><td>预警</td><td>18</td><td><span class="badge green">启用</span></td><td>2026-05-24 14:20</td><td><span class="link" data-detail="RK20260501002">详情</span>　<span class="link" data-edit="RK20260501002">编辑</span>　<span class="link" data-status="disable">停用</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>RK20260501003</td><td><span class="link" data-detail="RK20260501003">每年发分上限</span></td><td>发分主体风控</td><td>额度使用率 &gt; 80%</td><td><span class="badge gold">中风险</span></td><td>预警</td><td>9</td><td><span class="badge green">启用</span></td><td>2026-05-20 16:10</td><td><span class="link" data-detail="RK20260501003">详情</span>　<span class="link" data-edit="RK20260501003">编辑</span>　<span class="link" data-status="disable">停用</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RK20260501001</td><td><span class="link" data-detail="RK20260501001">单会员日发分上限</span></td><td>会员风控</td><td><span class="badge red">高风险</span></td><td>拦截并预警</td><td>平台、邮件、企微</td><td><span class="badge green">启用</span></td><td>2026-05-26 09:30</td><td><span class="link" data-detail="RK20260501001">详情</span>　<span class="link" data-edit="RK20260501001">编辑</span>　<span class="link" data-status="disable">停用</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RK20260501002</td><td><span class="link" data-detail="RK20260501002">会员高频核销预警</span></td><td>会员风控</td><td><span class="badge gold">中风险</span></td><td>预警</td><td>平台、企微</td><td><span class="badge green">启用</span></td><td>2026-05-24 14:20</td><td><span class="link" data-detail="RK20260501002">详情</span>　<span class="link" data-edit="RK20260501002">编辑</span>　<span class="link" data-status="disable">停用</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>RK20260501003</td><td><span class="link" data-detail="RK20260501003">每年发分上限</span></td><td>发分主体风控</td><td><span class="badge gold">中风险</span></td><td>预警</td><td>平台、邮件、企微</td><td><span class="badge green">启用</span></td><td>2026-05-20 16:10</td><td><span class="link" data-detail="RK20260501003">详情</span>　<span class="link" data-edit="RK20260501003">编辑</span>　<span class="link" data-status="disable">停用</span></td></tr>
           </tbody>
         </table>
         <div class="pagination"><span>共 28 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><span>跳至</span><input value="1"><span>页</span></div>
@@ -68,18 +117,28 @@
     </div>
   </div>
 
-  <aside class="drawer" id="detailDrawer">
+  <aside class="drawer risk-detail-drawer" id="detailDrawer">
     <div class="panel-hd"><h3>风控规则详情</h3><button class="btn" data-close-drawer>关闭</button></div>
     <div class="panel-bd">
-      <div class="detail-list">
-        <span>规则编号</span><strong id="dCode">RK20260501001</strong>
-        <span>规则名称</span><strong id="dName">单会员日发分上限</strong>
-        <span>风控场景</span><strong id="dScene">发分</strong>
-        <span>触发条件</span><strong id="dCondition">单会员单日发分大于 10,000 积分</strong>
-        <span>风险等级</span><strong id="dLevel">高风险</strong>
-        <span>处置动作</span><strong id="dAction">拦截并生成预警</strong>
-        <span>预警方式</span><strong id="dMethod">平台、邮件</strong>
-        <span>预警角色</span><strong id="dReceiver">风控管理员、积分运营主管</strong>
+      <div class="grid risk-detail-form">
+        <div class="field"><label>规则编号</label><input id="dCode" disabled value="RK20260501001"></div>
+        <div class="field"><label>规则名称</label><input id="dName" disabled value="单会员日发分上限"></div>
+        <div class="field"><label>风控场景</label><select id="dScene" disabled><option>会员风控</option><option>发分主体风控</option></select></div>
+        <div class="field"><label>风险等级</label><select id="dLevel" disabled><option>高风险</option><option>中风险</option><option>低风险</option></select></div>
+        <div class="field"><label>规则状态</label><select id="dStatus" disabled><option>启用</option><option>停用</option></select></div>
+        <div class="field"><label>统计周期</label><select id="dPeriod" disabled><option>单日</option><option>10分钟</option><option>季度</option><option>年</option></select></div>
+        <div class="field"><label>处置动作</label><select id="dAction" disabled><option>拦截并预警</option><option>预警</option></select></div>
+        <div class="field"><label>预警角色</label><input id="dReceiver" disabled value="风控管理员、积分运营主管"></div>
+        <div class="field"><label>预警方式</label><div class="risk-check-options"><label class="risk-check-option"><input id="dMethodPlatform" type="checkbox" disabled checked> 平台</label><label class="risk-check-option"><input id="dMethodEmail" type="checkbox" disabled checked> 邮件</label><label class="risk-check-option"><input id="dMethodWecom" type="checkbox" disabled checked> 企微</label></div></div>
+      </div>
+      <div class="panel risk-detail-conditions">
+        <div class="panel-hd"><h3>规则条件配置</h3></div>
+        <div class="panel-bd">
+          <table>
+            <thead><tr><th>指标</th><th>判断关系</th><th>阈值</th><th>与上一行关系</th></tr></thead>
+            <tbody id="dConditionRows"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </aside>
@@ -95,7 +154,7 @@
           <div class="field"><label class="required">规则状态</label><select id="editStatus" required><option>启用</option><option>停用</option></select></div>
           <div class="field" id="periodField"><label class="required">统计周期</label><select id="editPeriod" required><option>季度</option><option>年</option></select></div>
           <div class="field" id="actionField"><label class="required">处置动作</label><select id="editAction" required><option>拦截并预警</option><option>预警</option></select></div>
-          <div class="field" id="methodField"><label class="required">预警方式</label><div class="risk-check-options" aria-required="true"><label class="risk-check-option"><input type="checkbox" checked> 平台</label><label class="risk-check-option"><input type="checkbox" checked> 邮件</label></div></div>
+          <div class="field" id="methodField"><label class="required">预警方式</label><div class="risk-check-options" aria-required="true"><label class="risk-check-option"><input type="checkbox" checked> 平台</label><label class="risk-check-option"><input type="checkbox" checked> 邮件</label><label class="risk-check-option"><input type="checkbox" checked> 企微</label></div></div>
           <div class="field" id="roleField"><label class="required">预警角色</label><select id="editRole" required><option>风控管理员</option><option>积分运营主管</option><option>项目负责人</option><option>系统管理员</option></select><small>命中会员风控规则后，通知相应角色及会员。</small></div>
         </div>
         <div class="panel" id="memberRulePanel" style="margin-top:14px; box-shadow:none">
@@ -110,7 +169,7 @@
         <div class="grid cols-2" id="issuerRulePanel" style="margin-top:12px; display:none">
           <div class="field"><label class="required">额度预警比例%</label><input type="number" min="1" max="100" required value="80"></div>
           <div class="field"><label class="required">预警角色</label><select required><option>风控管理员</option><option>积分运营主管</option><option>项目负责人</option></select></div>
-          <div class="field"><label class="required">预警方式</label><div class="risk-check-options" aria-required="true"><label class="risk-check-option"><input type="checkbox" checked> 平台</label><label class="risk-check-option"><input type="checkbox" checked> 邮件</label></div></div>
+          <div class="field"><label class="required">预警方式</label><div class="risk-check-options" aria-required="true"><label class="risk-check-option"><input type="checkbox" checked> 平台</label><label class="risk-check-option"><input type="checkbox" checked> 邮件</label><label class="risk-check-option"><input type="checkbox" checked> 企微</label></div></div>
         </div>
       </div>
       <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
@@ -123,14 +182,79 @@
 
   <script>
     const rules = {
-      RK20260501001: ["RK20260501001", "单会员日发分上限", "会员风控", "单会员单日发分大于 10,000 积分", "高风险", "拦截并预警", "平台、邮件", "风控管理员、积分运营主管", "启用"],
-      RK20260501002: ["RK20260501002", "会员高频核销预警", "会员风控", "10分钟核销大于20次", "中风险", "预警", "平台", "风控管理员", "启用"],
-      RK20260501003: ["RK20260501003", "每年发分上限", "发分主体风控", "额度使用率大于80%", "中风险", "预警", "平台、邮件", "积分运营主管", "启用"]
+      RK20260501001: ["RK20260501001", "单会员日发分上限", "会员风控", "单会员单日发分大于 10,000 积分", "高风险", "拦截并预警", "平台、邮件、企微", "风控管理员、积分运营主管", "启用"],
+      RK20260501002: ["RK20260501002", "会员高频核销预警", "会员风控", "10分钟核销大于20次", "中风险", "预警", "平台、企微", "风控管理员", "启用"],
+      RK20260501003: ["RK20260501003", "每年发分上限", "发分主体风控", "额度使用率大于80%", "中风险", "预警", "平台、邮件、企微", "积分运营主管", "启用"]
+    };
+    const ruleDetails = {
+      RK20260501001: {
+        code: "RK20260501001",
+        name: "单会员日发分上限",
+        scene: "会员风控",
+        level: "高风险",
+        status: "启用",
+        period: "单日",
+        action: "拦截并预警",
+        methods: ["平台", "邮件", "企微"],
+        receiver: "风控管理员、积分运营主管",
+        conditions: [
+          ["单会员单日积分获取上限", "大于", "10,000积分", "起始条件"],
+          ["短时间同一IP多账号注册并获取积分", "命中", "3次/10分钟", "且"]
+        ]
+      },
+      RK20260501002: {
+        code: "RK20260501002",
+        name: "会员高频核销预警",
+        scene: "会员风控",
+        level: "中风险",
+        status: "启用",
+        period: "10分钟",
+        action: "预警",
+        methods: ["平台", "企微"],
+        receiver: "风控管理员",
+        conditions: [
+          ["单会员10分钟核销次数", "大于", "20次", "起始条件"],
+          ["同一设备切换多账号核销", "命中", "3个账号/10分钟", "或"]
+        ]
+      },
+      RK20260501003: {
+        code: "RK20260501003",
+        name: "每年发分上限",
+        scene: "发分主体风控",
+        level: "中风险",
+        status: "启用",
+        period: "年",
+        action: "预警",
+        methods: ["平台", "邮件", "企微"],
+        receiver: "积分运营主管",
+        conditions: [
+          ["年度发分额度使用率", "大于", "80%", "起始条件"],
+          ["单日发分总量", "大于", "500,000积分", "且"]
+        ]
+      }
     };
     const drawer = document.getElementById("detailDrawer");
     document.querySelectorAll("[data-detail]").forEach(el => el.addEventListener("click", () => {
-      const data = rules[el.dataset.detail] || rules.RK20260501001;
-      ["Code", "Name", "Scene", "Condition", "Level", "Action", "Method", "Receiver"].forEach((key, index) => document.getElementById(`d${key}`).textContent = data[index]);
+      const data = ruleDetails[el.dataset.detail] || ruleDetails.RK20260501001;
+      document.getElementById("dCode").value = data.code;
+      document.getElementById("dName").value = data.name;
+      document.getElementById("dScene").value = data.scene;
+      document.getElementById("dLevel").value = data.level;
+      document.getElementById("dStatus").value = data.status;
+      document.getElementById("dPeriod").value = data.period;
+      document.getElementById("dAction").value = data.action;
+      document.getElementById("dReceiver").value = data.receiver;
+      document.getElementById("dMethodPlatform").checked = data.methods.includes("平台");
+      document.getElementById("dMethodEmail").checked = data.methods.includes("邮件");
+      document.getElementById("dMethodWecom").checked = data.methods.includes("企微");
+      document.getElementById("dConditionRows").innerHTML = data.conditions.map(condition => `
+        <tr>
+          <td><select disabled><option>${condition[0]}</option></select></td>
+          <td><select disabled><option>${condition[1]}</option></select></td>
+          <td><input disabled value="${condition[2]}"></td>
+          <td><select disabled><option>${condition[3]}</option></select></td>
+        </tr>
+      `).join("");
       drawer.classList.add("open");
     }));
     document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));

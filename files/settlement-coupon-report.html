@@ -1,32 +1,149 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>优惠券结算报表</title><link rel="stylesheet" href="../resources/style.css"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>优惠券结算报表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .org-tree-select { position: relative; width: 100%; }
+    .org-tree-trigger {
+      width: 100%; height: 34px; padding: 0 32px 0 12px; border: 1px solid var(--line);
+      border-radius: 5px; background: #fff; color: var(--text); text-align: left; cursor: pointer;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative;
+    }
+    .org-tree-trigger::after {
+      content: "⌄"; position: absolute; right: 11px; top: 50%; transform: translateY(-55%); color: #667789;
+    }
+    .org-tree-panel {
+      display: none; position: absolute; z-index: 30; top: calc(100% + 4px); left: 0;
+      min-width: 100%; width: max-content; max-width: 420px; max-height: 320px; overflow: auto;
+      padding: 6px 0; border: 1px solid var(--line); border-radius: 5px; background: #fff;
+      box-shadow: 0 8px 24px rgba(31, 55, 78, .16);
+    }
+    .org-tree-select.open .org-tree-panel { display: block; }
+    .org-tree-row {
+      display: flex; align-items: center; gap: 6px; min-width: 210px; padding: 7px 12px;
+      color: #334a62; cursor: pointer; white-space: nowrap;
+    }
+    .org-tree-row:hover { background: #eef6ff; color: var(--brand); }
+    .org-tree-toggle { width: 16px; flex: 0 0 16px; color: #667789; text-align: center; }
+    .org-tree-level-2 { padding-left: 28px; }
+    .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-level-4 { padding-left: 76px; }
+    .org-tree-leaf .org-tree-toggle { color: transparent; }
+  </style>
+</head>
 <body>
   <div class="page">
     <div class="filter">
       <div class="field"><label>结算日期</label><input value="2026-05-26"></div>
       <div class="field"><label>优惠券/礼券名称</label><input placeholder="优惠券、礼券名称"></div>
-      <div class="field"><label>核销商户</label><select><option>全部商户</option><option>安居物业</option><option>停车服务商</option><option>合作商户平台</option></select></div>
-      <div class="field"><label>结算主体</label><select><option>全部主体</option><option>安居集团</option><option>南山项目</option><option>合作商户</option></select></div>
+      <div class="field"><label>结算组织</label>
+        <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织" data-org-default="全部组织">
+          <button class="org-tree-trigger" type="button">全部组织</button>
+          <input type="hidden" value="全部组织">
+          <div class="org-tree-panel"></div>
+        </div>
+      </div>
+      <div class="field"><label>结算项目</label>
+        <div class="org-tree-select" data-org-tree data-tree-type="project" data-org-all="全部项目" data-org-default="全部项目">
+          <button class="org-tree-trigger" type="button">全部项目</button>
+          <input type="hidden" value="全部项目">
+          <div class="org-tree-panel"></div>
+        </div>
+      </div>
       <button class="btn primary">查询</button>
     </div>
     <div class="panel"><div class="panel-hd"><h3>优惠券结算报表</h3><div class="toolbar"><button class="btn">导出</button></div></div><div class="panel-bd">
-      <table><thead><tr><th>结算批次</th><th>优惠券/礼券名称</th><th>核销商户</th><th>核销积分数量</th><th>结算金额</th><th>结算主体</th><th>结算日期</th><th>操作</th></tr></thead><tbody>
-        <tr><td>CPSET20260526001</td><td>2000积分兑家政服务</td><td>安居物业</td><td>5,326</td><td>532.60元</td><td>安居集团</td><td>2026-05-26</td><td><span class="link" data-detail="2000积分兑家政服务">交易单</span></td></tr>
-        <tr><td>CPSET20260526002</td><td>5000积分兑礼物</td><td>停车服务商</td><td>1,908</td><td>381.60元</td><td>南山项目</td><td>2026-05-26</td><td><span class="link" data-detail="5000积分兑礼物">交易单</span></td></tr>
-        <tr><td>CPSET20260526003</td><td>500积分兑场地预约优先</td><td>合作商户平台</td><td>2,126</td><td>636.60元</td><td>合作商户</td><td>2026-05-26</td><td><span class="link" data-detail="500积分兑场地预约优先">交易单</span></td></tr>
-        <tr><td>CPSET20260526004</td><td>2000积分兑贴身管家服务</td><td>合作商户平台</td><td>1,166</td><td>466.40元</td><td>合作商户</td><td>2026-05-26</td><td><span class="link" data-detail="2000积分兑贴身管家服务">交易单</span></td></tr>
+      <table><thead><tr><th>结算批次</th><th>优惠券/礼券名称</th><th>核销积分数量</th><th>结算金额</th><th>结算组织</th><th>结算项目</th><th>结算日期</th><th>操作</th></tr></thead><tbody>
+        <tr><td>CPSET20260526001</td><td>2000积分兑家政服务</td><td>5,326</td><td>532.60元</td><td>商业板块 / 安计部</td><td>高新安荟邻</td><td>2026-05-26</td><td><a class="link" href="coupon-writeoff.html?couponTitle=2000%E7%A7%AF%E5%88%86%E5%85%91%E5%AE%B6%E6%94%BF%E6%9C%8D%E5%8A%A1&amp;org=%E5%95%86%E4%B8%9A%E6%9D%BF%E5%9D%97%20%2F%20%E5%AE%89%E8%AE%A1%E9%83%A8&amp;project=%E9%AB%98%E6%96%B0%E5%AE%89%E8%8D%9F%E9%82%BB">交易单</a></td></tr>
+        <tr><td>CPSET20260526002</td><td>5000积分兑礼物</td><td>1,908</td><td>381.60元</td><td>住宅板块 / 营销管理部</td><td>高新花园</td><td>2026-05-26</td><td><a class="link" href="coupon-writeoff.html?couponTitle=5000%E7%A7%AF%E5%88%86%E5%85%91%E7%A4%BC%E7%89%A9&amp;org=%E4%BD%8F%E5%AE%85%E6%9D%BF%E5%9D%97%20%2F%20%E8%90%A5%E9%94%80%E7%AE%A1%E7%90%86%E9%83%A8&amp;project=%E9%AB%98%E6%96%B0%E8%8A%B1%E5%9B%AD">交易单</a></td></tr>
+        <tr><td>CPSET20260526003</td><td>500积分兑场地预约优先</td><td>2,126</td><td>636.60元</td><td>商业板块 / 数字运营部</td><td>景田安荟邻</td><td>2026-05-26</td><td><a class="link" href="coupon-writeoff.html?couponTitle=500%E7%A7%AF%E5%88%86%E5%85%91%E5%9C%BA%E5%9C%B0%E9%A2%84%E7%BA%A6%E4%BC%98%E5%85%88&amp;org=%E5%95%86%E4%B8%9A%E6%9D%BF%E5%9D%97%20%2F%20%E6%95%B0%E5%AD%97%E8%BF%90%E8%90%A5%E9%83%A8&amp;project=%E6%99%AF%E7%94%B0%E5%AE%89%E8%8D%9F%E9%82%BB">交易单</a></td></tr>
+        <tr><td>CPSET20260526004</td><td>2000积分兑贴身管家服务</td><td>1,166</td><td>466.40元</td><td>住宅板块 / 客户服务部</td><td>高新花园</td><td>2026-05-26</td><td><a class="link" href="coupon-writeoff.html?couponTitle=2000%E7%A7%AF%E5%88%86%E5%85%91%E8%B4%B4%E8%BA%AB%E7%AE%A1%E5%AE%B6%E6%9C%8D%E5%8A%A1&amp;org=%E4%BD%8F%E5%AE%85%E6%9D%BF%E5%9D%97%20%2F%20%E5%AE%A2%E6%88%B7%E6%9C%8D%E5%8A%A1%E9%83%A8&amp;project=%E9%AB%98%E6%96%B0%E8%8A%B1%E5%9B%AD">交易单</a></td></tr>
       </tbody></table>
     </div></div>
   </div>
-  <div class="modal-mask" id="tradeModal"><div class="modal" style="width:980px"><div class="panel-hd"><h3 id="tradeTitle">优惠券核销交易单</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd">
-    <div class="notice"><strong>财务对账原始凭证</strong>交易单包含优惠券码、核销商户、核销金额及核销流水，可作为财务对账原始凭证。</div>
-    <table style="margin-top:12px"><thead><tr><th>核销流水号</th><th>优惠券码</th><th>会员名称</th><th>会员ID</th><th>核销商户</th><th>核销金额</th><th>关联订单号</th><th>核销时间</th></tr></thead><tbody>
-      <tr><td>CV202605260018</td><td>CPN-AJ-202605-00018</td><td>李明</td><td>AJ202605180018</td><td>安居物业</td><td>10元</td><td>ORD202605260088</td><td>2026-05-26 09:18</td></tr>
-      <tr><td>CV202605260026</td><td>CPN-AJ-202605-00026</td><td>周女士</td><td>AJ202604220091</td><td>安居物业</td><td>10元</td><td>ORD202605260126</td><td>2026-05-26 10:42</td></tr>
-      <tr><td>CV202605260039</td><td>CPN-AJ-202605-00039</td><td>陈先生</td><td>AJ202605010027</td><td>安居物业</td><td>10元</td><td>ORD202605260239</td><td>2026-05-26 14:20</td></tr>
-    </tbody></table>
-    <div class="pagination"><span>共 5,326 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button></div>
-  </div></div></div>
-  <script>document.querySelectorAll("[data-detail]").forEach(el=>el.addEventListener("click",()=>{document.getElementById("tradeTitle").textContent=`${el.dataset.detail} - 优惠券核销交易单`;document.getElementById("tradeModal").classList.add("open")}));document.querySelectorAll("[data-close-modal]").forEach(el=>el.addEventListener("click",()=>el.closest(".modal-mask").classList.remove("open")));</script>
+  <script>
+    const projectTreeData = [{
+      name: "广东省",
+      children: [
+        { name: "深圳市", children: [
+          { name: "南山区", children: ["高新安荟邻", "高新花园"] },
+          { name: "福田区", children: ["景田安荟邻"] },
+          { name: "坪山区", children: ["秀馨苑"] },
+          { name: "宝安区", children: ["宝安人才园"] }
+        ] },
+        { name: "广州市", children: [
+          { name: "天河区", children: ["天河安居项目"] },
+          { name: "海珠区", children: ["海珠安居项目"] }
+        ] }
+      ]
+    }];
+    const orgTreeData = [
+      { name: "商业板块", children: ["安计部", "数字运营部", "商业运营部", "招商管理部"] },
+      { name: "住宅板块", children: ["住宅运营部", "营销管理部", "客户服务部", "工程管理部"] },
+      { name: "物业板块", children: ["物业管理部", "品质管理部", "安全管理部", "环境管理部"] },
+      { name: "集团职能", children: ["财务管理部", "人力资源部", "信息技术部", "审计风控部"] }
+    ];
+    const projectExpandedKeys = [
+      "广东省", "广东省/深圳市", "广东省/深圳市/南山区", "广东省/深圳市/福田区",
+      "广东省/深圳市/坪山区", "广东省/深圳市/宝安区", "广东省/广州市",
+      "广东省/广州市/天河区", "广东省/广州市/海珠区"
+    ];
+    const orgExpandedKeys = ["商业板块", "住宅板块", "物业板块", "集团职能"];
+
+    function renderOrgTree(tree, expanded) {
+      const allLabel = tree.dataset.orgAll;
+      const treeData = tree.dataset.treeType === "org" ? orgTreeData : projectTreeData;
+      const rows = [`<div class="org-tree-row org-tree-leaf" data-org-path="${allLabel}"><span class="org-tree-toggle">·</span><span>${allLabel}</span></div>`];
+      const renderNodes = (nodes, parents = [], depth = 1) => {
+        nodes.forEach(node => {
+          const item = typeof node === "string" ? { name: node } : node;
+          const key = [...parents, item.name].join("/");
+          const path = [...parents, item.name].join(" / ");
+          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+          const isOpen = expanded.has(key);
+          rows.push(`<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-org-toggle="${key}"` : `data-org-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`);
+          if (hasChildren && isOpen) renderNodes(item.children, [...parents, item.name], depth + 1);
+        });
+      };
+      renderNodes(treeData);
+      tree.querySelector(".org-tree-panel").innerHTML = rows.join("");
+    }
+
+    document.querySelectorAll("[data-org-tree]").forEach(tree => {
+      const expanded = new Set(tree.dataset.treeType === "org" ? orgExpandedKeys : projectExpandedKeys);
+      const trigger = tree.querySelector(".org-tree-trigger");
+      const hiddenInput = tree.querySelector("input");
+      const panel = tree.querySelector(".org-tree-panel");
+      renderOrgTree(tree, expanded);
+      trigger.addEventListener("click", event => {
+        event.stopPropagation();
+        document.querySelectorAll("[data-org-tree].open").forEach(item => {
+          if (item !== tree) item.classList.remove("open");
+        });
+        tree.classList.toggle("open");
+      });
+      panel.addEventListener("click", event => {
+        const row = event.target.closest(".org-tree-row");
+        if (!row) return;
+        if (row.dataset.orgToggle) {
+          expanded.has(row.dataset.orgToggle) ? expanded.delete(row.dataset.orgToggle) : expanded.add(row.dataset.orgToggle);
+          renderOrgTree(tree, expanded);
+          return;
+        }
+        if (row.dataset.orgPath) {
+          trigger.textContent = row.dataset.orgPath;
+          hiddenInput.value = row.dataset.orgPath;
+          tree.classList.remove("open");
+        }
+      });
+    });
+    document.addEventListener("click", event => {
+      document.querySelectorAll("[data-org-tree].open").forEach(tree => {
+        if (!tree.contains(event.target)) tree.classList.remove("open");
+      });
+    });
+  </script>
 </body></html>

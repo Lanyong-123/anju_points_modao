@@ -1,22 +1,150 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>过期积分统计报表</title><link rel="stylesheet" href="../resources/style.css"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>过期积分统计报表</title>
+  <link rel="stylesheet" href="../resources/style.css">
+  <style>
+    .org-tree-select { position: relative; width: 100%; }
+    .org-tree-trigger {
+      width: 100%; height: 34px; padding: 0 32px 0 12px; border: 1px solid var(--line);
+      border-radius: 5px; background: #fff; color: var(--text); text-align: left; cursor: pointer;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative;
+    }
+    .org-tree-trigger::after {
+      content: "⌄"; position: absolute; right: 11px; top: 50%; transform: translateY(-55%); color: #667789;
+    }
+    .org-tree-panel {
+      display: none; position: absolute; z-index: 30; top: calc(100% + 4px); left: 0;
+      min-width: 100%; width: max-content; max-width: 420px; max-height: 320px; overflow: auto;
+      padding: 6px 0; border: 1px solid var(--line); border-radius: 5px; background: #fff;
+      box-shadow: 0 8px 24px rgba(31, 55, 78, .16);
+    }
+    .org-tree-select.open .org-tree-panel { display: block; }
+    .org-tree-row {
+      display: flex; align-items: center; gap: 6px; min-width: 210px; padding: 7px 12px;
+      color: #334a62; cursor: pointer; white-space: nowrap;
+    }
+    .org-tree-row:hover { background: #eef6ff; color: var(--brand); }
+    .org-tree-toggle { width: 16px; flex: 0 0 16px; color: #667789; text-align: center; }
+    .org-tree-level-2 { padding-left: 28px; }
+    .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-level-4 { padding-left: 76px; }
+    .org-tree-leaf .org-tree-toggle { color: transparent; }
+  </style>
+</head>
 <body>
   <div class="page">
-    <div class="filter">
+    <div class="filter" style="grid-template-columns: repeat(5, minmax(0, 1fr)) auto;">
       <div class="field"><label>统计周期</label><select><option>按年</option><option>按季</option><option selected>按月</option></select></div>
       <div class="field"><label>统计时间</label><input value="2026-05"></div>
       <div class="field"><label>积分类型</label><select><option>全部类型</option><option>消费积分</option><option>碳积分</option></select></div>
-      <div class="field"><label>发分主体</label><select><option>全部主体</option><option>南山项目营销中心</option><option>停车权益平台</option><option>低碳联盟平台</option><option>福田项目物业公司</option></select></div>
+      <div class="field"><label>发分组织</label>
+        <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织" data-org-default="全部组织">
+          <button class="org-tree-trigger" type="button">全部组织</button>
+          <input type="hidden" value="全部组织">
+          <div class="org-tree-panel"></div>
+        </div>
+      </div>
+      <div class="field"><label>发分项目</label>
+        <div class="org-tree-select" data-org-tree data-tree-type="project" data-org-all="全部项目" data-org-default="全部项目">
+          <button class="org-tree-trigger" type="button">全部项目</button>
+          <input type="hidden" value="全部项目">
+          <div class="org-tree-panel"></div>
+        </div>
+      </div>
       <button class="btn primary">查询</button>
     </div>
     <div class="panel"><div class="panel-hd"><h3>过期积分统计列表</h3><div class="toolbar"><button class="btn">导出</button></div></div><div class="panel-bd">
-      <table><thead><tr><th>积分类型</th><th>发分主体</th><th>过期会员数</th><th>过期积分</th><th>操作</th></tr></thead><tbody>
-        <tr><td><span class="badge">消费积分</span></td><td>南山项目营销中心</td><td>3,860</td><td>1,526,430</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
-        <tr><td><span class="badge green">碳积分</span></td><td>低碳联盟平台</td><td>2,180</td><td>860,000</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
-        <tr><td><span class="badge">消费积分</span></td><td>停车权益平台</td><td>2,220</td><td>900,000</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
+      <table><thead><tr><th>积分类型</th><th>发分组织</th><th>发分项目</th><th>过期会员数</th><th>过期积分</th><th>操作</th></tr></thead><tbody>
+        <tr><td><span class="badge">消费积分</span></td><td>住宅板块 / 营销管理部</td><td>高新花园</td><td>3,860</td><td>1,526,430</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
+        <tr><td><span class="badge green">碳积分</span></td><td>集团职能 / 信息技术部</td><td>高新安荟邻</td><td>2,180</td><td>860,000</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
+        <tr><td><span class="badge">消费积分</span></td><td>物业板块 / 物业管理部</td><td>宝安人才园</td><td>2,220</td><td>900,000</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
       </tbody></table>
       <div class="pagination"><span>共 3 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
     </div></div>
   </div>
+  <script>
+    const projectTreeData = [{
+      name: "广东省",
+      children: [
+        { name: "深圳市", children: [
+          { name: "南山区", children: ["高新安荟邻", "高新花园"] },
+          { name: "福田区", children: ["景田安荟邻"] },
+          { name: "坪山区", children: ["秀馨苑"] },
+          { name: "宝安区", children: ["宝安人才园"] }
+        ] },
+        { name: "广州市", children: [
+          { name: "天河区", children: ["天河安居项目"] },
+          { name: "海珠区", children: ["海珠安居项目"] }
+        ] }
+      ]
+    }];
+    const orgTreeData = [
+      { name: "商业板块", children: ["安计部", "数字运营部", "商业运营部", "招商管理部"] },
+      { name: "住宅板块", children: ["住宅运营部", "营销管理部", "客户服务部", "工程管理部"] },
+      { name: "物业板块", children: ["物业管理部", "品质管理部", "安全管理部", "环境管理部"] },
+      { name: "集团职能", children: ["财务管理部", "人力资源部", "信息技术部", "审计风控部"] }
+    ];
+    const projectExpandedKeys = [
+      "广东省", "广东省/深圳市", "广东省/深圳市/南山区", "广东省/深圳市/福田区",
+      "广东省/深圳市/坪山区", "广东省/深圳市/宝安区", "广东省/广州市",
+      "广东省/广州市/天河区", "广东省/广州市/海珠区"
+    ];
+    const orgExpandedKeys = ["商业板块", "住宅板块", "物业板块", "集团职能"];
+
+    function renderOrgTree(tree, expanded) {
+      const allLabel = tree.dataset.orgAll;
+      const treeData = tree.dataset.treeType === "org" ? orgTreeData : projectTreeData;
+      const rows = [`<div class="org-tree-row org-tree-leaf" data-org-path="${allLabel}"><span class="org-tree-toggle">·</span><span>${allLabel}</span></div>`];
+      const renderNodes = (nodes, parents = [], depth = 1) => {
+        nodes.forEach(node => {
+          const item = typeof node === "string" ? { name: node } : node;
+          const key = [...parents, item.name].join("/");
+          const path = [...parents, item.name].join(" / ");
+          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+          const isOpen = expanded.has(key);
+          rows.push(`<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-org-toggle="${key}"` : `data-org-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`);
+          if (hasChildren && isOpen) renderNodes(item.children, [...parents, item.name], depth + 1);
+        });
+      };
+      renderNodes(treeData);
+      tree.querySelector(".org-tree-panel").innerHTML = rows.join("");
+    }
+
+    document.querySelectorAll("[data-org-tree]").forEach(tree => {
+      const expanded = new Set(tree.dataset.treeType === "org" ? orgExpandedKeys : projectExpandedKeys);
+      const trigger = tree.querySelector(".org-tree-trigger");
+      const hiddenInput = tree.querySelector("input");
+      const panel = tree.querySelector(".org-tree-panel");
+      renderOrgTree(tree, expanded);
+      trigger.addEventListener("click", event => {
+        event.stopPropagation();
+        document.querySelectorAll("[data-org-tree].open").forEach(item => {
+          if (item !== tree) item.classList.remove("open");
+        });
+        tree.classList.toggle("open");
+      });
+      panel.addEventListener("click", event => {
+        const row = event.target.closest(".org-tree-row");
+        if (!row) return;
+        if (row.dataset.orgToggle) {
+          expanded.has(row.dataset.orgToggle) ? expanded.delete(row.dataset.orgToggle) : expanded.add(row.dataset.orgToggle);
+          renderOrgTree(tree, expanded);
+          return;
+        }
+        if (row.dataset.orgPath) {
+          trigger.textContent = row.dataset.orgPath;
+          hiddenInput.value = row.dataset.orgPath;
+          tree.classList.remove("open");
+        }
+      });
+    });
+    document.addEventListener("click", event => {
+      document.querySelectorAll("[data-org-tree].open").forEach(tree => {
+        if (!tree.contains(event.target)) tree.classList.remove("open");
+      });
+    });
+  </script>
 </body></html>
