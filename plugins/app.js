@@ -7,7 +7,7 @@ const menuTree = document.getElementById("menuTree");
 const workTabs = document.getElementById("workTabs");
 const frame = document.getElementById("pageFrame");
 const pageTitle = document.getElementById("pageTitle");
-const BUILD_VERSION = "20260908-2";
+const BUILD_VERSION = "20260920-2";
 
 function versionedUrl(url) {
   const separator = url.includes("?") ? "&" : "?";
@@ -99,7 +99,6 @@ const DEFAULT_MENU = [
       { title: "角色管理", url: "files/system-role.html" },
       { title: "操作日志", url: "files/system-log.html" },
       { title: "参数配置", url: "files/system-parameter.html" },
-      { title: "数据字典类型", url: "files/system-dictionary-type.html" },
       { title: "数据字典", url: "files/system-dictionary.html" },
       { title: "离线导出任务", url: "files/system-offline-export.html" },
       { title: "脱敏管理", url: "files/system-desensitize.html" }
