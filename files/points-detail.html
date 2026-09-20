@@ -83,6 +83,7 @@
       <div class="field"><label>积分类型</label><select><option>全部类型</option><option>消费积分</option><option>碳积分</option></select></div>
       <div class="field"><label>交易类型</label><select><option>全部类型</option><option>新增</option><option>消耗</option><option>冻结</option><option>解冻</option><option>过期清零</option><option>调整</option></select></div>
       <div class="field"><label>业务来源</label><select><option>全部来源</option><option>签到</option><option>低碳任务</option><option>优惠券兑换</option><option>人工调整</option><option>风控处理</option></select></div>
+      <div class="field"><label>商品名称</label><input placeholder="请输入商品名称"></div>
       <div class="field"><label>积分发放组织</label>
         <div class="org-tree-select" id="orgTreeSelect">
           <button class="org-tree-trigger" type="button" id="orgTreeTrigger">全部组织</button>
@@ -112,6 +113,7 @@
               <th>积分变动</th>
               <th>变动后积分</th>
               <th>业务来源</th>
+              <th>商品名称</th>
               <th>积分发放组织</th>
               <th>到期日期</th>
               <th>交易时间</th>
@@ -121,12 +123,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605260001">李明</span></td><td><span class="badge">消费积分</span></td><td><span class="badge green">新增</span></td><td>+120</td><td>42,800</td><td>低碳任务</td><td>南山项目</td><td>2027-05-25</td><td>2026-05-26 09:30</td><td><span class="badge green">可用</span></td><td>-</td><td><span class="link" data-detail="PF202605260001">详情</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605250018">周女士</span></td><td><span class="badge green">碳积分</span></td><td><span class="badge green">新增</span></td><td>+80</td><td>9,630</td><td>低碳出行</td><td>福田项目</td><td>2026-11-24</td><td>2026-05-25 16:18</td><td><span class="badge green">可用</span></td><td>-</td><td><span class="link" data-detail="PF202605250018">详情</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605250188">赵先生</span></td><td><span class="badge">消费积分</span></td><td><span class="badge gray">过期清零</span></td><td>-300</td><td>0</td><td>积分有效期规则</td><td>南山项目</td><td>2026-05-25</td><td>2026-05-25 23:59</td><td><span class="badge green">可用</span></td><td>-</td><td><span class="link" data-detail="PF202605250188">详情</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605240112">王强</span></td><td><span class="badge">消费积分</span></td><td><span class="badge red">冻结</span></td><td>-1,200</td><td>1,200</td><td>风控处理</td><td>集团总部</td><td>2027-03-08</td><td>2026-05-24 11:20</td><td><span class="badge red">冻结</span></td><td>-</td><td><span class="link" data-detail="PF202605240112">详情</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605230027">陈先生</span></td><td><span class="badge green">碳积分</span></td><td><span class="badge">消耗</span></td><td>-500</td><td>18,420</td><td>优惠券兑换</td><td>南山项目</td><td>2026-10-31</td><td>2026-05-23 14:05</td><td><span class="badge green">可用</span></td><td><span class="link" data-attachment="小票图片.png">小票图片.png</span></td><td><span class="link" data-detail="PF202605230027">详情</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605220039">李明</span></td><td><span class="badge">消费积分</span></td><td><span class="badge gold">调整</span></td><td>+500</td><td>42,680</td><td>人工调整</td><td>集团总部</td><td>2027-05-21</td><td>2026-05-22 10:12</td><td><span class="badge green">可用</span></td><td><span class="link" data-attachment="小票图片.png">小票图片.png</span></td><td><span class="link" data-detail="PF202605220039">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605260001">李明</span></td><td><span class="badge">消费积分</span></td><td><span class="badge green">新增</span></td><td>+120</td><td>42,800</td><td>低碳任务</td><td>-</td><td>南山项目</td><td>2027-05-25</td><td>2026-05-26 09:30</td><td><span class="badge green">可用</span></td><td>-</td><td><span class="link" data-detail="PF202605260001">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605250018">周女士</span></td><td><span class="badge green">碳积分</span></td><td><span class="badge green">新增</span></td><td>+80</td><td>9,630</td><td>低碳出行</td><td>-</td><td>福田项目</td><td>2026-11-24</td><td>2026-05-25 16:18</td><td><span class="badge green">可用</span></td><td>-</td><td><span class="link" data-detail="PF202605250018">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605250188">赵先生</span></td><td><span class="badge">消费积分</span></td><td><span class="badge gray">过期清零</span></td><td>-300</td><td>0</td><td>积分有效期规则</td><td>-</td><td>南山项目</td><td>2026-05-25</td><td>2026-05-25 23:59</td><td><span class="badge green">可用</span></td><td>-</td><td><span class="link" data-detail="PF202605250188">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605240112">王强</span></td><td><span class="badge">消费积分</span></td><td><span class="badge red">冻结</span></td><td>-1,200</td><td>1,200</td><td>风控处理</td><td>-</td><td>集团总部</td><td>2027-03-08</td><td>2026-05-24 11:20</td><td><span class="badge red">冻结</span></td><td>-</td><td><span class="link" data-detail="PF202605240112">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605230027">陈先生</span></td><td><span class="badge green">碳积分</span></td><td><span class="badge">消耗</span></td><td>-500</td><td>18,420</td><td>优惠券兑换</td><td>500积分兑场地预约优先</td><td>南山项目</td><td>2026-10-31</td><td>2026-05-23 14:05</td><td><span class="badge green">可用</span></td><td><span class="link" data-attachment="小票图片.png">小票图片.png</span></td><td><span class="link" data-detail="PF202605230027">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="PF202605220039">李明</span></td><td><span class="badge">消费积分</span></td><td><span class="badge gold">调整</span></td><td>+500</td><td>42,680</td><td>人工调整</td><td>-</td><td>集团总部</td><td>2027-05-21</td><td>2026-05-22 10:12</td><td><span class="badge green">可用</span></td><td><span class="link" data-attachment="小票图片.png">小票图片.png</span></td><td><span class="link" data-detail="PF202605220039">详情</span></td></tr>
           </tbody>
         </table>
         <div class="pagination">

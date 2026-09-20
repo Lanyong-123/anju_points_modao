@@ -140,8 +140,7 @@
   <script>
     const levelModal = document.getElementById("levelModal");
     const conditionValueOptions = {
-      "业主身份": ["业主", "租户", "游客"],
-      "学历": ["博士", "研究生", "本科", "大专", "其它"]
+      "业主身份": ["业主", "租户", "游客"]
     };
     function createOptionSelect(options, selectedValue) {
       const select = document.createElement("select");
@@ -184,14 +183,8 @@
       document.querySelectorAll(".rule-block tbody tr").forEach(row => {
         const typeSelect = row.children[1].querySelector("select");
         if (!typeSelect) return;
-        if (![...typeSelect.options].some(option => option.value === "学历" || option.textContent === "学历")) {
-          const educationOption = document.createElement("option");
-          educationOption.textContent = "学历";
-          educationOption.value = "学历";
-          typeSelect.appendChild(educationOption);
-        }
-        if (!typeSelect.dataset.educationBound) {
-          typeSelect.dataset.educationBound = "true";
+        if (!typeSelect.dataset.conditionBound) {
+          typeSelect.dataset.conditionBound = "true";
           typeSelect.addEventListener("change", () => syncConditionValue(typeSelect));
         }
       });

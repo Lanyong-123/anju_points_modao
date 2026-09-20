@@ -104,6 +104,77 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
     }
+    .export-mode-line {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-height: 34px;
+      flex-wrap: wrap;
+    }
+    .export-help {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .export-help-trigger {
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #7b8da4;
+      cursor: help;
+    }
+    .export-help-trigger svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+    .export-help-trigger:hover,
+    .export-help-trigger:focus-visible {
+      color: var(--blue);
+      outline: none;
+    }
+    .export-help-tooltip {
+      position: absolute;
+      z-index: 10;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      width: max-content;
+      max-width: 300px;
+      padding: 8px 10px;
+      border-radius: 5px;
+      background: #26364a;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(27, 42, 61, .2);
+      opacity: 0;
+      visibility: hidden;
+      transform: translate(-50%, 4px);
+      transition: opacity .15s ease, transform .15s ease, visibility .15s ease;
+      pointer-events: none;
+    }
+    .export-help-tooltip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      border: 5px solid transparent;
+      border-top-color: #26364a;
+      transform: translateX(-50%);
+    }
+    .export-help:hover .export-help-tooltip,
+    .export-help:focus-within .export-help-tooltip {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, 0);
+    }
     .export-note {
       color: var(--muted);
       font-size: 12px;
@@ -600,17 +671,21 @@
             <div class="export-grid">
               <div class="field">
                 <label class="required">导出方式</label>
-                <div style="display:flex;gap:18px;align-items:center;height:34px">
+                <div class="export-mode-line">
                   <label class="export-mode"><input type="radio" name="exportMode" value="batch" checked> 批量导出</label>
-                  <label class="export-mode"><input type="radio" name="exportMode" value="schedule"> 定时导出</label>
+                  <label class="export-mode"><input type="radio" name="exportMode" value="backend"> 后台导出</label>
+                  <span class="export-help">
+                    <button class="export-help-trigger" type="button" aria-label="查看后台导出提示" aria-describedby="backendExportTip">
+                      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7.9 7.5a2.2 2.2 0 0 1 2.3-2c1.35 0 2.35.8 2.35 2 0 1.05-.55 1.55-1.45 2.15-.8.55-1.1 1-1.1 1.85" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="14.25" r=".9" fill="currentColor"/></svg>
+                    </button>
+                    <span class="export-help-tooltip" id="backendExportTip" role="tooltip">请进入系统管理/离线导出任务中进行结果导出</span>
+                  </span>
                 </div>
               </div>
               <div class="field"><label class="required">单次导出上限</label><input value="100000 条" readonly></div>
-              <div class="field" id="exportTimeField" style="display:none"><label class="required">导出时间</label><input value="每日 02:00"></div>
-              <div class="field" id="exportFrequencyField" style="display:none"><label class="required">导出频率</label><select><option>每日</option><option>每周</option><option>每月</option></select></div>
               <div class="field" style="grid-column:1 / -1"><label class="required">导出格式</label><select id="exportFormat"><option selected>Excel</option><option>CSV</option></select></div>
             </div>
-            <p class="export-note" style="margin-top:10px">导出任务生成后，可由管理员在文件服务或审计日志中查看生成记录。</p>
+            <p class="export-note" style="margin-top:10px">导出任务将记录操作人、导出字段和脱敏规则，便于审计追溯。</p>
           </div>
         </div>
       </div>
@@ -1167,13 +1242,6 @@
     });
     exportChecks.forEach(item => item.addEventListener("change", refreshExportCheckAll));
     refreshExportCheckAll();
-    document.querySelectorAll("input[name='exportMode']").forEach(item => {
-      item.addEventListener("change", () => {
-        const scheduled = document.querySelector("input[name='exportMode'][value='schedule']").checked;
-        document.getElementById("exportTimeField").style.display = scheduled ? "block" : "none";
-        document.getElementById("exportFrequencyField").style.display = scheduled ? "block" : "none";
-      });
-    });
     document.querySelectorAll("[data-close-modal]").forEach(el => {
       el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
     });
