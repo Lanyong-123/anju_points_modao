@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>会员信息管理</title>
-  <link rel="stylesheet" href="../resources/style.css?v=20260923-1">
+  <link rel="stylesheet" href="../resources/style.css?v=20260923-2">
   <style>
     .batch-upload {
       display: flex;
@@ -499,7 +499,6 @@
         <span>用户类型</span><strong id="detailUserType">项目住户</strong>
         <span>名单状态</span><strong id="detailListStatus">无名单</strong>
         <span>账号状态</span><strong id="detailAccountStatus">正常</strong>
-        <span>注册渠道</span><strong id="detailChannel">自在安居小程序</strong>
         <span>会员资产</span><strong id="detailAssets" class="asset-links"></strong>
         <span>标签</span><strong><span class="tag-list" id="detailTags"></span></strong>
       </div>
@@ -935,7 +934,6 @@
         listStatus: "无名单",
         accountStatus: "正常",
         org: "南山项目",
-        channel: "自在安居小程序",
         assets: ["42,800", "8", "3"],
         products: [["2000积分兑家政服务", "2026-06-05 09:18", "2027-01-01 23:59"], ["停车抵扣券", "2026-06-08 15:26", "2026-12-31 23:59"]],
         benefits: [["优先选房权益", "2026-05-02 09:30", "2026-12-31 23:59"], ["生日权益", "2026-06-03 10:20", "2026-12-31 23:59"]],
@@ -957,7 +955,6 @@
         listStatus: "白名单",
         accountStatus: "正常",
         org: "福田项目",
-        channel: "自在安居小程序",
         assets: ["9,630", "2", "1"],
         products: [["生日礼券", "2026-06-06 10:20", "2026-12-31 23:59"], ["深度保洁服务", "2026-06-09 14:08", "2026-12-31 23:59"]],
         benefits: [["贴身管家服务", "2026-05-03 10:08", "2026-12-31 23:59"]],
@@ -979,7 +976,6 @@
         listStatus: "黑名单",
         accountStatus: "冻结",
         org: "集团总部",
-        channel: "自在安居小程序",
         assets: ["1,200", "0", "0"],
         products: [],
         benefits: [],
@@ -1000,7 +996,6 @@
         listStatus: "无名单",
         accountStatus: "正常",
         org: "南山项目",
-        channel: "自在安居小程序",
         assets: ["18,420", "4", "2"],
         products: [["家政服务包", "2026-06-02 15:28", "2027-01-01 23:59"], ["免费搬家服务", "2026-06-05 11:36", "2026-12-31 23:59"]],
         benefits: [["生日权益", "2026-06-02 15:28", "2026-12-31 23:59"], ["腾讯会员权益", "2026-05-16 10:12", "2026-12-31 23:59"]],
@@ -1053,7 +1048,6 @@
       document.getElementById("detailUserType").textContent = data.userType;
       document.getElementById("detailListStatus").textContent = data.listStatus;
       document.getElementById("detailAccountStatus").textContent = data.accountStatus;
-      document.getElementById("detailChannel").textContent = data.channel;
       document.getElementById("detailAssets").innerHTML = renderAssetLinks(data.assets);
       renderTags(member);
       renderIdentityRows(data);
