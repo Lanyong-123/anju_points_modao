@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>用户管理</title>
-  <link rel="stylesheet" href="../resources/style.css?v=20260908-2">
+  <link rel="stylesheet" href="../resources/style.css?v=20260923-1">
   <style>
     .user-filter {
       grid-template-columns: minmax(260px, 1.2fr) minmax(160px, .7fr) minmax(220px, 1fr) auto auto;
@@ -133,6 +133,15 @@
       display: grid;
       gap: 7px;
     }
+    .org-permission .permission-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      z-index: 30;
+      margin-top: 0;
+      box-shadow: 0 14px 34px rgba(18, 49, 82, .18);
+    }
     .permission-tree {
       max-height: 330px;
       overflow: auto;
@@ -258,7 +267,7 @@
               <tr>
                 <td><input type="checkbox"></td>
                 <td>王超</td>
-                <td>集团总部</td>
+                <td>集团职能 / 信息技术部，集团职能 / 审计风控部</td>
                 <td>系统超级管理员</td>
                 <td>138****6021</td>
                 <td>wangchao@anju.com</td>
@@ -269,7 +278,7 @@
               <tr>
                 <td><input type="checkbox"></td>
                 <td>程敏婷</td>
-                <td>运营中心</td>
+                <td>商业板块 / 安计部，商业板块 / 数字运营部</td>
                 <td>积分运营管理员</td>
                 <td>136****8519</td>
                 <td>chengmt@anju.com</td>
@@ -280,7 +289,7 @@
               <tr>
                 <td><input type="checkbox"></td>
                 <td>万源</td>
-                <td>数据治理组</td>
+                <td>集团职能 / 审计风控部</td>
                 <td>数据审计管理员</td>
                 <td>139****5208</td>
                 <td>wanyuan@anju.com</td>
@@ -291,7 +300,7 @@
               <tr>
                 <td><input type="checkbox"></td>
                 <td>于业政</td>
-                <td>福田项目</td>
+                <td>住宅板块 / 住宅运营部，住宅板块 / 客户服务部</td>
                 <td>项目运营专员</td>
                 <td>137****1866</td>
                 <td>yuyz@anju.com</td>
@@ -302,7 +311,7 @@
               <tr>
                 <td><input type="checkbox"></td>
                 <td>刘琳</td>
-                <td>客服中心</td>
+                <td>住宅板块 / 客户服务部</td>
                 <td>客服运营管理员</td>
                 <td>135****7092</td>
                 <td>liulin@anju.com</td>
@@ -324,7 +333,13 @@
       <div class="panel-bd">
         <div class="user-form">
           <div class="field"><label class="required">姓名</label><input value="程敏婷"></div>
-          <div class="field"><label class="required">所属组织</label><select><option>集团总部</option><option selected>运营中心</option><option>客服中心</option><option>南山项目</option><option>福田项目</option><option>数据治理组</option></select></div>
+          <div class="field">
+            <label class="required">所属组织（树形结构，支持复选）</label>
+            <div class="data-permission org-permission" id="orgPermission">
+              <div class="permission-select" data-toggle-dropdown="orgPermission"><span class="permission-summary" id="orgPermissionSummary">商业板块 / 安计部，商业板块 / 数字运营部</span><span>⌄</span></div>
+              <div class="permission-panel permission-tree" id="orgPermissionTree"></div>
+            </div>
+          </div>
           <div class="field">
             <label class="required">角色名称（下拉，支持多选）</label>
             <div class="data-permission" id="rolePermission">
@@ -375,6 +390,92 @@
   </div>
 
   <script>
+    const organizationTreeData = [
+      { name: "商业板块", children: ["安计部", "数字运营部", "商业运营部", "招商管理部"] },
+      { name: "住宅板块", children: ["住宅运营部", "营销管理部", "客户服务部", "工程管理部"] },
+      { name: "物业板块", children: ["物业管理部", "品质管理部", "安全管理部", "环境管理部"] },
+      { name: "集团职能", children: ["财务管理部", "人力资源部", "信息技术部", "审计风控部"] }
+    ];
+    const defaultOrganizations = new Set(["商业板块 / 安计部", "商业板块 / 数字运营部"]);
+    const orgPermissionTree = document.getElementById("orgPermissionTree");
+    const orgPermissionSummary = document.getElementById("orgPermissionSummary");
+
+    function getDirectOrgCheckbox(node) {
+      return node.querySelector(":scope > .permission-tree-row input[type='checkbox']");
+    }
+
+    function createOrgTreeNode(item, parents = []) {
+      const nodeData = typeof item === "string" ? { name: item } : item;
+      const hasChildren = Array.isArray(nodeData.children) && nodeData.children.length > 0;
+      const pathParts = [...parents, nodeData.name];
+      const path = pathParts.join(" / ");
+      const node = document.createElement("div");
+      node.className = `permission-tree-node${hasChildren ? " expanded" : " leaf"}`;
+      node.dataset.orgPath = path;
+      node.innerHTML = `
+        <div class="permission-tree-row">
+          <button class="permission-tree-toggle" type="button" aria-label="${hasChildren ? "展开或收起" : "无下级"}">▶</button>
+          <label><input type="checkbox"${!hasChildren && defaultOrganizations.has(path) ? " checked" : ""}> <span>${nodeData.name}</span></label>
+        </div>
+      `;
+      if (hasChildren) {
+        const children = document.createElement("div");
+        children.className = "permission-tree-children";
+        nodeData.children.forEach(child => children.appendChild(createOrgTreeNode(child, pathParts)));
+        node.appendChild(children);
+        node.querySelector(":scope > .permission-tree-row .permission-tree-toggle").addEventListener("click", event => {
+          event.stopPropagation();
+          node.classList.toggle("expanded");
+        });
+      }
+      getDirectOrgCheckbox(node).addEventListener("change", event => {
+        const checked = event.target.checked;
+        node.querySelectorAll(".permission-tree-children input[type='checkbox']").forEach(input => {
+          input.checked = checked;
+          input.indeterminate = false;
+        });
+        syncOrgParents(node);
+        updateOrgSummary();
+      });
+      return node;
+    }
+
+    function syncOrgNode(node) {
+      const childrenContainer = node.querySelector(":scope > .permission-tree-children");
+      if (!childrenContainer) return;
+      const childNodes = [...childrenContainer.children].filter(child => child.classList.contains("permission-tree-node"));
+      childNodes.forEach(syncOrgNode);
+      const childChecks = childNodes.map(getDirectOrgCheckbox);
+      const ownCheck = getDirectOrgCheckbox(node);
+      ownCheck.checked = childChecks.length > 0 && childChecks.every(input => input.checked);
+      ownCheck.indeterminate = childChecks.some(input => input.checked || input.indeterminate) && !ownCheck.checked;
+    }
+
+    function syncOrgParents(node) {
+      let parent = node.parentElement.closest(".permission-tree-node");
+      while (parent) {
+        const childrenContainer = parent.querySelector(":scope > .permission-tree-children");
+        const childNodes = [...childrenContainer.children].filter(child => child.classList.contains("permission-tree-node"));
+        const childChecks = childNodes.map(getDirectOrgCheckbox);
+        const parentCheck = getDirectOrgCheckbox(parent);
+        parentCheck.checked = childChecks.every(input => input.checked);
+        parentCheck.indeterminate = childChecks.some(input => input.checked || input.indeterminate) && !parentCheck.checked;
+        parent = parent.parentElement.closest(".permission-tree-node");
+      }
+    }
+
+    function updateOrgSummary() {
+      const selected = [...orgPermissionTree.querySelectorAll(".permission-tree-node.leaf")]
+        .filter(node => getDirectOrgCheckbox(node).checked)
+        .map(node => node.dataset.orgPath);
+      orgPermissionSummary.textContent = selected.length ? selected.join("，") : "请选择所属组织";
+      orgPermissionSummary.title = orgPermissionSummary.textContent;
+    }
+
+    organizationTreeData.forEach(item => orgPermissionTree.appendChild(createOrgTreeNode(item)));
+    [...orgPermissionTree.children].forEach(syncOrgNode);
+    updateOrgSummary();
+
     const dataPermissionTreeData = [
       {
         name: "广东省",

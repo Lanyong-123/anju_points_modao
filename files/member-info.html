@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>会员信息管理</title>
-  <link rel="stylesheet" href="../resources/style.css?v=20260908-2">
+  <link rel="stylesheet" href="../resources/style.css?v=20260923-1">
   <style>
     .batch-upload {
       display: flex;
@@ -365,6 +365,39 @@
       display: grid;
       gap: 3px;
     }
+    .asset-detail-modal {
+      width: min(1180px, calc(100vw - 32px));
+    }
+    .asset-detail-modal .panel-bd {
+      max-height: calc(100vh - 120px);
+      overflow: auto;
+    }
+    .asset-detail-filter {
+      display: grid;
+      grid-template-columns: 1.3fr 1.05fr .9fr .95fr .9fr 1.2fr auto auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+    .asset-detail-filter input,
+    .asset-detail-filter select {
+      min-width: 0;
+    }
+    .asset-detail-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+    .asset-detail-table-wrap {
+      overflow: auto;
+    }
+    .asset-detail-table {
+      min-width: 1120px;
+    }
+    .asset-detail-table th,
+    .asset-detail-table td {
+      white-space: nowrap;
+    }
     @media (max-width: 1180px) {
       .export-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .export-grid { grid-template-columns: 1fr; }
@@ -424,7 +457,7 @@
               <th>用户类型</th>
               <th>名单状态</th>
               <th>账号状态</th>
-              <th>积分/券/权益</th>
+              <th>积分/商品/权益</th>
               <th>最近操作</th>
               <th>操作</th>
             </tr>
@@ -493,6 +526,35 @@
       </div>
     </div>
   </aside>
+
+  <div class="modal-mask" id="assetDetailModal">
+    <div class="modal asset-detail-modal">
+      <div class="panel-hd"><h3 id="assetDetailTitle">未核销商品</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="asset-detail-filter">
+          <input id="assetDetailKeyword" placeholder="请输入商品名称/用户名/手机号">
+          <input id="assetDetailMemberId" placeholder="请输入会员ID">
+          <select><option>全部等级</option><option>V1展露头角</option><option>V2小有名气</option><option>V3远近闻名</option><option>V4名扬四海</option></select>
+          <select><option>全部项目</option><option>集团总部</option><option>南山项目</option><option>福田项目</option></select>
+          <select><option selected>未核销</option><option>已核销</option></select>
+          <input value="2026-05-01 至 2026-06-30">
+          <button class="btn primary">查询</button>
+          <button class="btn">重置</button>
+        </div>
+        <div class="asset-detail-actions"><button class="btn primary">导出列表</button></div>
+        <div class="asset-detail-table-wrap">
+          <table class="asset-detail-table">
+            <thead><tr><th id="assetDetailFirstHead">商品名称</th><th>用户名</th><th>手机号</th><th>会员等级</th><th>所属项目</th><th>核销状态</th><th>核销码</th><th>领取时间</th><th>核销时间</th><th>过期时间</th></tr></thead>
+            <tbody id="assetDetailRows"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <span id="assetDetailTotal">共 0 条</span><span>每页</span><select><option selected>10 条</option><option>20 条</option></select>
+          <button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">下一页</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="modal-mask" id="freezeModal">
     <div class="modal">
@@ -875,6 +937,8 @@
         org: "南山项目",
         channel: "自在安居小程序",
         assets: ["42,800", "8", "3"],
+        products: [["2000积分兑家政服务", "2026-06-05 09:18", "2027-01-01 23:59"], ["停车抵扣券", "2026-06-08 15:26", "2026-12-31 23:59"]],
+        benefits: [["优先选房权益", "2026-05-02 09:30", "2026-12-31 23:59"], ["生日权益", "2026-06-03 10:20", "2026-12-31 23:59"]],
         identities: [
           ["WX202605180018", "自在安居小程序", "南山项目", ["136****5520", "135****7618"], "4403**********1028"],
           ["WY202204090326", "物业服务平台", "南山项目", ["189****3066"], "4403**********1028"]
@@ -895,6 +959,8 @@
         org: "福田项目",
         channel: "自在安居小程序",
         assets: ["9,630", "2", "1"],
+        products: [["生日礼券", "2026-06-06 10:20", "2026-12-31 23:59"], ["深度保洁服务", "2026-06-09 14:08", "2026-12-31 23:59"]],
+        benefits: [["贴身管家服务", "2026-05-03 10:08", "2026-12-31 23:59"]],
         identities: [
           ["WX202604220091", "自在安居小程序", "福田项目", ["139****6812", "158****3921"], "4403**********2846"],
           ["ZL202601150078", "租赁服务平台", "福田项目", ["177****8265"], "4403**********2846"]
@@ -915,6 +981,8 @@
         org: "集团总部",
         channel: "自在安居小程序",
         assets: ["1,200", "0", "0"],
+        products: [],
+        benefits: [],
         identities: [
           ["WX202603090112", "自在安居小程序", "—", ["188****4019", "186****5207"], "—"]
         ],
@@ -934,6 +1002,8 @@
         org: "南山项目",
         channel: "自在安居小程序",
         assets: ["18,420", "4", "2"],
+        products: [["家政服务包", "2026-06-02 15:28", "2027-01-01 23:59"], ["免费搬家服务", "2026-06-05 11:36", "2026-12-31 23:59"]],
+        benefits: [["生日权益", "2026-06-02 15:28", "2026-12-31 23:59"], ["腾讯会员权益", "2026-05-16 10:12", "2026-12-31 23:59"]],
         identities: [
           ["WX202605010027", "自在安居小程序", "南山项目", ["137****2098", "186****4473"], "4403**********5732"],
           ["ZL202512030156", "租赁服务平台", "南山项目", ["133****7829"], "4403**********5732"]
@@ -956,13 +1026,13 @@
     function renderAssetLinks(assets) {
       const labels = [
         ["points", `${assets[0]} 积分`],
-        ["coupons", `${assets[1]} 张券`],
+        ["products", `${assets[1]} 个商品`],
         ["benefits", `${assets[2]} 项权益`]
       ];
       const hrefs = {
         points: "points-account.html",
-        coupons: "product-manage.html?view=exchange-detail",
-        benefits: "benefits-manage.html?view=unredeemed&benefit=生日权益"
+        products: "#",
+        benefits: "#"
       };
       return labels.map(([type, label]) => `<a class="link" href="${hrefs[type]}" data-asset-type="${type}">${label}</a>`).join("<span>/</span>");
     }
@@ -993,16 +1063,35 @@
       if (member && memberData[member]) row.children[9].innerHTML = renderAssetLinks(memberData[member].assets);
     });
     const assetTargets = {
-      points: { title: "积分账户管理", url: "files/points-account.html" },
-      coupons: { title: "商品管理 - 兑换详情", url: "files/product-manage.html?view=exchange-detail" },
-      benefits: { title: "权益管理 - 未核销会员明细", url: "files/benefits-manage.html?view=unredeemed&benefit=生日权益" }
+      points: { title: "积分账户管理", url: "files/points-account.html" }
     };
+    function openAssetDetail(type, member, data) {
+      const isProduct = type === "products";
+      const rows = data[type] || [];
+      const level = data.levelHtml.split("<")[0].trim();
+      document.getElementById("assetDetailTitle").textContent = isProduct ? "未核销商品" : "未核销权益";
+      document.getElementById("assetDetailFirstHead").textContent = isProduct ? "商品名称" : "权益名称";
+      document.getElementById("assetDetailKeyword").placeholder = isProduct ? "请输入商品名称/用户名/手机号" : "请输入权益名称/用户名/手机号";
+      document.getElementById("assetDetailKeyword").value = member;
+      document.getElementById("assetDetailMemberId").value = data.id;
+      document.getElementById("assetDetailRows").innerHTML = rows.map(row => {
+        const cells = [row[0], member, data.phone, level, data.org, "未核销", "", row[1], "", row[2]];
+        return `<tr>${cells.map(cell => `<td>${cell}</td>`).join("")}</tr>`;
+      }).join("");
+      document.getElementById("assetDetailTotal").textContent = `共 ${rows.length} 条`;
+      document.getElementById("assetDetailModal").classList.add("open");
+    }
     document.addEventListener("click", event => {
       const link = event.target.closest("[data-asset-type]");
       if (!link) return;
       const rowMember = link.closest(".member-table tbody tr")?.querySelector("[data-detail]")?.dataset.detail;
       const member = rowMember || activeMember;
       const data = memberData[member] || memberData["李明"];
+      if (link.dataset.assetType === "products" || link.dataset.assetType === "benefits") {
+        event.preventDefault();
+        openAssetDetail(link.dataset.assetType, member, data);
+        return;
+      }
       const baseTarget = assetTargets[link.dataset.assetType];
       const separator = baseTarget.url.includes("?") ? "&" : "?";
       const target = {
