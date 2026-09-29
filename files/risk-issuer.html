@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>发分主体风控</title>
-  <link rel="stylesheet" href="../resources/style.css">
+  <link rel="stylesheet" href="../resources/style.css?v=20260929-1">
   <style>
     .field label.required::before { content: "*"; color: var(--red); margin-right: 2px; }
     .adjust-modal { width: min(820px, calc(100vw - 48px)); }
@@ -103,7 +103,7 @@
     </div>
   </div>
   <div class="modal-mask" id="adjustQuotaModal"><div class="modal adjust-modal"><div class="panel-hd"><h3>额度调整</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="detail-list"><span>发分组织</span><strong id="adjustIssuerName">住宅板块 / 营销管理部</strong><span>当前年度额度</span><strong id="adjustCurrentQuota">50,000,000</strong></div><div class="grid cols-2" style="margin-top:14px"><div class="field"><label class="required">发分额度</label><input id="adjustQuotaInput" required value="55000000"></div><div class="field"><label class="required">附件（额度调整凭证，大小不超过 10MB）</label><input id="adjustAttachmentInput" type="file" required accept="image/*,.jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx"></div></div><div class="notice" style="margin-top:12px"><strong>额度调整</strong>用于调整当前记录的年度发分额度，可多次调整；每次确认后生成调整记录。</div><table class="adjust-record-table"><thead><tr><th>发分额度</th><th>附件</th><th>调整时间</th></tr></thead><tbody id="adjustRecordRows"></tbody></table></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="saveAdjustQuota" type="button">确认调整</button></div></div></div>
-  <div class="modal-mask" id="controlModal"><div class="modal"><div class="panel-hd"><h3 id="controlTitle">主体风控操作</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="notice" id="controlNotice"><strong>限制发分</strong>限制后该主体仅允许人工审核后发分。</div><div class="field" style="margin-top:12px"><label>操作原因</label><input value="额度异常或触发风控规则"></div></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div></div></div>
+  <div class="modal-mask" id="controlModal"><div class="modal"><div class="panel-hd"><h3 id="controlTitle">主体风控操作</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="notice" id="controlNotice"><strong>限制发分</strong>限制后该主体不允许进行年度额度设置和额度调整。</div><div class="field" style="margin-top:12px"><label>操作原因</label><input value="额度异常或触发风控规则"></div></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div></div></div>
   <script>
     const projectTreeData = [{
       name: "广东省",
@@ -227,7 +227,11 @@
       adjustRecords[activeAdjustNo].unshift([quota.replace(/\B(?=(\d{3})+(?!\d))/g, ","), attachment, nowText()]);
       renderAdjustRecords(activeAdjustNo);
     });
-    const copy = { limit: ["限制发分", "限制后该主体仅允许人工审核后发分。"], unlimit: ["解除限制", "解除后恢复正常发分能力。"], "batch-limit": ["批量限制发分", "对已勾选主体批量限制发分。"] };
+    const copy = {
+      limit: ["限制发分", "限制后该主体不允许进行年度额度设置和额度调整。"],
+      unlimit: ["解除限制", "解除后恢复正常发分能力。"],
+      "batch-limit": ["批量限制发分", "限制后所选主体不允许进行年度额度设置和额度调整。"]
+    };
     document.querySelectorAll("[data-control]").forEach(el => el.addEventListener("click", () => { const c = copy[el.dataset.control] || copy.limit; document.getElementById("controlTitle").textContent = c[0]; document.getElementById("controlNotice").innerHTML = `<strong>${c[0]}</strong>${c[1]}`; document.getElementById("controlModal").classList.add("open"); }));
     document.querySelectorAll("[data-close-modal]").forEach(el => el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open")));
   </script>
