@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>客户行为分析</title>
-  <link rel="stylesheet" href="../resources/style.css">
+  <link rel="stylesheet" href="../resources/style.css?v=20261010-1">
   <style>
     .behavior-filter {
       grid-template-columns: 1.2fr 1fr 1fr auto auto;
@@ -113,7 +113,7 @@
     <div class="filter behavior-filter">
       <div class="field"><label>统计时间</label><input value="2026-06-01 至 2026-06-09"></div>
       <div class="field"><label>行为类型</label><select><option>全部行为</option><option>活动参与次数</option><option>场地预约频次数</option><option>场地核销次数</option><option>积分获取次数</option><option>积分兑换次数</option><option>社群活跃发帖数</option><option>邻里互助任务数</option></select></div>
-      <div class="field"><label>所属项目</label><select><option>全部项目</option><option>南山项目</option><option>福田项目</option><option>集团总部</option></select></div>
+      <div class="field"><label>所属项目</label><div class="project-tree-select" data-project-tree><button class="project-tree-trigger" type="button" data-project-tree-trigger aria-expanded="false">全部项目</button><input type="hidden" data-project-tree-value value="全部项目"><div class="project-tree-panel" data-project-tree-panel></div></div></div>
       <button class="btn primary">查询</button>
       <button class="btn">重置</button>
     </div>
@@ -229,6 +229,7 @@
       <div class="modal-ft"><button class="btn" data-close-modal>关闭</button><button class="btn primary">导出明细</button></div>
     </div>
   </div>
+  <script src="../resources/project-tree.js?v=20261010-1"></script>
   <script>
     document.querySelectorAll("[data-detail]").forEach(el => {
       el.addEventListener("click", () => {

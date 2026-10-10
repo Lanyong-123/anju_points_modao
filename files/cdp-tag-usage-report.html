@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>标签使用报表</title>
-  <link rel="stylesheet" href="../resources/style.css">
+  <link rel="stylesheet" href="../resources/style.css?v=20261010-1">
   <style>
     .report-table th,
     .report-table td {
@@ -74,7 +74,7 @@
         <div class="filter compact-filter">
           <div class="field"><label>微信昵称/用户名</label><input placeholder="请输入微信昵称或用户名"></div>
           <div class="field"><label>会员ID</label><input placeholder="请输入会员ID"></div>
-          <div class="field"><label>所属项目</label><select><option>全部项目</option><option>南山项目</option><option>福田项目</option><option>集团总部</option></select></div>
+          <div class="field"><label>所属项目</label><div class="project-tree-select" data-project-tree><button class="project-tree-trigger" type="button" data-project-tree-trigger aria-expanded="false">全部项目</button><input type="hidden" data-project-tree-value value="全部项目"><div class="project-tree-panel" data-project-tree-panel></div></div></div>
           <button class="btn primary">查询</button>
         </div>
         <table>
@@ -112,6 +112,7 @@
     </div>
   </div>
 
+  <script src="../resources/project-tree.js?v=20261010-1"></script>
   <script>
     document.querySelectorAll("[data-customer]").forEach(el => {
       el.addEventListener("click", () => {

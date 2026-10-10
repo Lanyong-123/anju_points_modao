@@ -701,3 +701,11 @@ td input:not([type="checkbox"]), td select {
 .project-tree-level-3 { padding-left: 52px; }
 .project-tree-level-4 { padding-left: 76px; }
 .project-tree-leaf .project-tree-toggle { color: transparent; }
+.project-tree-check {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  padding: 0;
+  flex: 0 0 15px;
+  accent-color: var(--brand);
+}

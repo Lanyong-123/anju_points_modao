@@ -39,6 +39,14 @@
     const value = select.querySelector("[data-project-tree-value]");
     const panel = select.querySelector("[data-project-tree-panel]");
     const expanded = new Set(defaultExpanded);
+    const selected = new Set();
+
+    function updateValue() {
+      const paths = [...selected];
+      value.value = paths.length ? paths.join("，") : "全部项目";
+      trigger.textContent = paths.length ? paths.map(path => path.split(" / ").pop()).join("、") : "全部项目";
+      trigger.title = value.value;
+    }
 
     function render() {
       const renderNodes = (nodes, parents = [], depth = 1) => nodes.map(node => {
@@ -47,10 +55,11 @@
         const path = [...parents, item.name].join(" / ");
         const hasChildren = Array.isArray(item.children) && item.children.length > 0;
         const isOpen = expanded.has(key);
-        const row = `<div class="project-tree-row project-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " project-tree-leaf"}" ${hasChildren ? `data-project-toggle="${key}"` : `data-project-path="${path}"`}><span class="project-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`;
+        const checkbox = hasChildren ? "" : `<input class="project-tree-check" type="checkbox" ${selected.has(path) ? "checked" : ""} aria-label="选择${item.name}">`;
+        const row = `<div class="project-tree-row project-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " project-tree-leaf"}" ${hasChildren ? `data-project-toggle="${key}"` : `data-project-path="${path}"`}><span class="project-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span>${checkbox}<span>${item.name}</span></div>`;
         return row + (hasChildren && isOpen ? renderNodes(item.children, [...parents, item.name], depth + 1) : "");
       }).join("");
-      panel.innerHTML = `<div class="project-tree-title">安居项目架构</div><div class="project-tree-row project-tree-leaf" data-project-path="全部项目"><span class="project-tree-toggle">·</span><span>全部项目</span></div>${renderNodes(projectTreeData)}`;
+      panel.innerHTML = `<div class="project-tree-title">安居项目架构（支持多选）</div><div class="project-tree-row project-tree-leaf" data-project-path="全部项目"><span class="project-tree-toggle">·</span><input class="project-tree-check" type="checkbox" ${selected.size === 0 ? "checked" : ""} aria-label="选择全部项目"><span>全部项目</span></div>${renderNodes(projectTreeData)}`;
     }
 
     trigger.addEventListener("click", event => {
@@ -62,6 +71,7 @@
       trigger.setAttribute("aria-expanded", String(select.classList.contains("open")));
     });
     panel.addEventListener("click", event => {
+      event.stopPropagation();
       const row = event.target.closest(".project-tree-row");
       if (!row) return;
       const toggle = row.dataset.projectToggle;
@@ -73,10 +83,11 @@
       }
       const path = row.dataset.projectPath;
       if (path) {
-        value.value = path;
-        trigger.textContent = path;
-        select.classList.remove("open");
-        trigger.setAttribute("aria-expanded", "false");
+        if (path === "全部项目") selected.clear();
+        else if (selected.has(path)) selected.delete(path);
+        else selected.add(path);
+        updateValue();
+        render();
       }
     });
     render();

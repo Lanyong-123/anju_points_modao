@@ -4,7 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>会员注销管理</title>
-  <link rel="stylesheet" href="../resources/style.css">
+  <link rel="stylesheet" href="../resources/style.css?v=20261010-1">
+  <style>
+    .org-tree-select { position: relative; }
+    .org-tree-trigger { width:100%; height:34px; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 10px; border:1px solid #cfd9e5; border-radius:5px; background:#fff; color:var(--ink); font-size:13px; line-height:1; cursor:pointer; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+    .org-tree-trigger::after { content:"⌄"; color:#667789; flex:0 0 auto; }
+    .org-tree-panel { position:absolute; top:calc(100% + 6px); left:0; z-index:15; display:none; width:360px; max-height:320px; padding:8px; border:1px solid #c9d8e8; border-radius:8px; background:#fff; box-shadow:0 14px 34px rgba(18,49,82,.18); overflow:auto; }
+    .org-tree-select.open .org-tree-panel { display:block; }
+    .org-tree-title { padding:6px 8px 9px; margin-bottom:4px; border-bottom:1px solid #e4ebf3; color:var(--navy); font-size:13px; font-weight:800; }
+    .org-tree-row { display:flex; align-items:center; gap:7px; min-height:30px; padding:4px 8px; border-radius:5px; color:#34465c; font-size:13px; font-weight:700; cursor:pointer; }
+    .org-tree-row:hover { background:#eef6ff; color:var(--brand); }
+    .org-tree-toggle { width:16px; color:#667789; text-align:center; flex:0 0 16px; }
+    .org-tree-level-2 { padding-left:28px; } .org-tree-level-3 { padding-left:52px; } .org-tree-level-4 { padding-left:76px; }
+    .org-tree-leaf .org-tree-toggle { color:transparent; }
+    .org-tree-check { width:15px; height:15px; margin:0; padding:0; flex:0 0 15px; accent-color:var(--brand); }
+  </style>
 </head>
 <body>
   <div class="page">
@@ -14,6 +28,7 @@
       <div class="field"><label>注销状态</label><select><option>全部状态</option><option>待处理</option><option>已注销</option><option>已取消</option></select></div>
       <div class="field"><label>注销来源</label><select><option>全部来源</option><option>小程序申请</option><option>后台处理</option><option>客服代办</option></select></div>
       <div class="field"><label>注销原因</label><select><option>全部原因</option><option>不再使用</option><option>手机号变更</option><option>隐私诉求</option><option>异常账号处理</option></select></div>
+      <div class="field"><label>所属项目</label><div class="org-tree-select" id="projectTreeSelect"><button class="org-tree-trigger" type="button" id="projectTreeTrigger">全部项目</button><input type="hidden" id="projectTreeValue" value="全部项目"><div class="org-tree-panel" id="projectTreePanel"></div></div></div>
       <div class="field"><label>申请时间</label><input value="2026-05-01 至 2026-05-26"></div>
       <button class="btn primary">查询</button>
     </div>
@@ -93,6 +108,17 @@
   </aside>
 
   <script>
+    const projectTreeData = [{ name:"广东省", children:[{ name:"深圳市", children:[{ name:"南山区", children:["高新安荟邻","高新花园"] },{ name:"福田区", children:["景田安荟邻"] },{ name:"坪山区", children:["秀馨苑"] },{ name:"宝安区", children:["宝安人才园"] }] },{ name:"广州市", children:[{ name:"天河区", children:["天河安居项目"] },{ name:"海珠区", children:["海珠安居项目"] }] }] }];
+    function initProjectTree() {
+      const select = document.getElementById("projectTreeSelect"), trigger = document.getElementById("projectTreeTrigger"), value = document.getElementById("projectTreeValue"), panel = document.getElementById("projectTreePanel");
+      const expanded = new Set(["广东省","广东省/深圳市","广东省/深圳市/南山区","广东省/深圳市/福田区","广东省/深圳市/坪山区","广东省/深圳市/宝安区","广东省/广州市","广东省/广州市/天河区","广东省/广州市/海珠区"]), selected = new Set();
+      const update = () => { const paths=[...selected]; value.value=paths.length?paths.join("，"):"全部项目"; trigger.textContent=paths.length?paths.map(path=>path.split(" / ").pop()).join("、"):"全部项目"; trigger.title=value.value; };
+      function render() { const nodes=(items,parents=[],depth=1)=>items.map(node=>{ const item=typeof node==="string"?{name:node}:node,key=[...parents,item.name].join("/"),path=[...parents,item.name].join(" / "),hasChildren=Array.isArray(item.children)&&item.children.length,isOpen=expanded.has(key); return `<div class="org-tree-row org-tree-level-${Math.min(depth,4)}${hasChildren?"":" org-tree-leaf"}" ${hasChildren?`data-tree-toggle="${key}"`:`data-tree-path="${path}"`}><span class="org-tree-toggle">${hasChildren?(isOpen?"▾":"▸"):"·"}</span>${hasChildren?"":`<input class="org-tree-check" type="checkbox" ${selected.has(path)?"checked":""}>`}<span>${item.name}</span></div>${hasChildren&&isOpen?nodes(item.children,[...parents,item.name],depth+1):""}`; }).join(""); panel.innerHTML=`<div class="org-tree-title">安居项目架构（支持多选）</div><div class="org-tree-row org-tree-leaf" data-tree-path="全部项目"><span class="org-tree-toggle">·</span><input class="org-tree-check" type="checkbox" ${selected.size?"":"checked"}><span>全部项目</span></div>${nodes(projectTreeData)}`; }
+      trigger.addEventListener("click",event=>{ event.stopPropagation(); select.classList.toggle("open"); });
+      panel.addEventListener("click",event=>{ event.stopPropagation(); const row=event.target.closest(".org-tree-row"); if(!row)return; if(row.dataset.treeToggle){ expanded.has(row.dataset.treeToggle)?expanded.delete(row.dataset.treeToggle):expanded.add(row.dataset.treeToggle); render(); return; } const path=row.dataset.treePath; if(path==="全部项目")selected.clear(); else if(selected.has(path))selected.delete(path); else selected.add(path); update(); render(); });
+      document.addEventListener("click",event=>{ if(!select.contains(event.target))select.classList.remove("open"); }); render();
+    }
+    initProjectTree();
     const drawer = document.getElementById("cancelDrawer");
     document.querySelectorAll("[data-detail]").forEach(el => {
       el.addEventListener("click", () => drawer.classList.add("open"));

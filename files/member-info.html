@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>会员信息管理</title>
-  <link rel="stylesheet" href="../resources/style.css?v=20260923-2">
+  <link rel="stylesheet" href="../resources/style.css?v=20261010-1">
   <style>
     .batch-upload {
       display: flex;
@@ -280,6 +280,14 @@
     .org-tree-level-3 { padding-left: 52px; }
     .org-tree-level-4 { padding-left: 76px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .org-tree-check {
+      width: 15px;
+      height: 15px;
+      margin: 0;
+      padding: 0;
+      flex: 0 0 15px;
+      accent-color: var(--brand);
+    }
     .phone-cell {
       display: inline-flex;
       align-items: center;
@@ -412,7 +420,7 @@
       <div class="field"><label>会员等级</label><select><option>全部等级</option><option>V3远近闻名</option><option>V2小有名气</option><option>V1展露头角</option></select></div>
       <div class="field"><label>认证状态</label><select><option>全部认证状态</option><option>实名认证</option><option>未认证</option></select></div>
       <div class="field"><label>用户类型</label><select><option>全部用户类型</option><option>项目住户</option><option>租户</option><option>游客</option></select></div>
-      <div class="field"><label>名单状态</label><select><option>全部名单</option><option>黑名单</option><option>白名单</option><option>无名单</option></select></div>
+      <div class="field"><label>名单状态</label><select><option>全部名单</option><option>黑名单</option><option>无名单</option></select></div>
       <div class="field"><label>账号状态</label><select><option>全部状态</option><option>正常</option><option>冻结</option></select></div>
       <div class="field"><label>所属项目</label>
         <div class="org-tree-select" id="projectTreeSelect">
@@ -436,7 +444,7 @@
       <div class="panel-hd">
         <h3>会员信息列表</h3>
         <div class="toolbar">
-          <button class="btn primary" data-list="batch-list">批量设名单</button>
+          <button class="btn primary" data-list="batch-add-black">批量拉入黑名单</button>
           <button class="btn" data-freeze="batch-freeze">批量冻结</button>
           <button class="btn" data-freeze="batch-unfreeze">批量解冻</button>
           <button class="btn" data-batch-tag>批量打标签</button>
@@ -568,19 +576,16 @@
 
   <div class="modal-mask" id="listModal">
     <div class="modal">
-      <div class="panel-hd"><h3 id="listTitle">黑名单 / 白名单设置</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-hd"><h3 id="listTitle">黑名单管理</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd">
         <div class="notice" id="listNotice"></div>
         <div class="field" style="margin-top:12px">
           <label class="required">名单类型</label>
-          <select id="listType">
-            <option>黑名单</option>
-            <option>白名单</option>
-          </select>
+          <input id="listType" value="黑名单" readonly>
         </div>
-        <div class="field" style="margin-top:12px"><label class="required">设置原因</label><input value="专项活动白名单或异常行为黑名单处理"></div>
+        <div class="field" style="margin-top:12px"><label class="required">操作原因</label><input value="异常行为黑名单处理"></div>
       </div>
-      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认设置</button></div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="listConfirm">确认</button></div>
     </div>
   </div>
 
@@ -850,11 +855,18 @@
       "广东省/广州市/海珠区"
     ]);
     const orgExpanded = new Set(["商业板块", "住宅板块", "物业板块", "集团职能"]);
-    function createTreeSelect({ selectId, triggerId, valueId, panelId, title, allLabel, data, expanded }) {
+    function createTreeSelect({ selectId, triggerId, valueId, panelId, title, allLabel, data, expanded, multiple = false }) {
       const select = document.getElementById(selectId);
       const trigger = document.getElementById(triggerId);
       const value = document.getElementById(valueId);
       const panel = document.getElementById(panelId);
+      const selected = new Set();
+      function updateValue() {
+        const paths = [...selected];
+        value.value = paths.length ? paths.join("，") : allLabel;
+        trigger.textContent = paths.length ? paths.map(path => path.split(" / ").pop()).join("、") : allLabel;
+        trigger.title = value.value;
+      }
       function render() {
         const renderNodes = (nodes, parents = [], depth = 1) => nodes.map(node => {
           const item = typeof node === "string" ? { name: node } : node;
@@ -862,10 +874,12 @@
           const path = [...parents, item.name].join(" / ");
           const hasChildren = Array.isArray(item.children) && item.children.length > 0;
           const isOpen = expanded.has(key);
-          const row = `<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-tree-toggle="${key}"` : `data-tree-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`;
+          const check = multiple && !hasChildren ? `<input class="org-tree-check" type="checkbox" ${selected.has(path) ? "checked" : ""} aria-label="选择${item.name}">` : "";
+          const row = `<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-tree-toggle="${key}"` : `data-tree-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span>${check}<span>${item.name}</span></div>`;
           return row + (hasChildren && isOpen ? renderNodes(item.children, [...parents, item.name], depth + 1) : "");
         }).join("");
-        panel.innerHTML = `<div class="org-tree-title">${title}</div><div class="org-tree-row org-tree-leaf" data-tree-path="${allLabel}"><span class="org-tree-toggle">·</span><span>${allLabel}</span></div>${renderNodes(data)}`;
+        const allCheck = multiple ? `<input class="org-tree-check" type="checkbox" ${selected.size === 0 ? "checked" : ""} aria-label="选择${allLabel}">` : "";
+        panel.innerHTML = `<div class="org-tree-title">${title}${multiple ? "（支持多选）" : ""}</div><div class="org-tree-row org-tree-leaf" data-tree-path="${allLabel}"><span class="org-tree-toggle">·</span>${allCheck}<span>${allLabel}</span></div>${renderNodes(data)}`;
       }
       trigger.addEventListener("click", event => {
         event.stopPropagation();
@@ -875,6 +889,7 @@
         select.classList.toggle("open");
       });
       panel.addEventListener("click", event => {
+        event.stopPropagation();
         const row = event.target.closest(".org-tree-row");
         if (!row) return;
         const toggle = row.dataset.treeToggle;
@@ -886,6 +901,14 @@
         }
         const path = row.dataset.treePath;
         if (path) {
+          if (multiple) {
+            if (path === allLabel) selected.clear();
+            else if (selected.has(path)) selected.delete(path);
+            else selected.add(path);
+            updateValue();
+            render();
+            return;
+          }
           value.value = path;
           trigger.textContent = path;
           select.classList.remove("open");
@@ -902,7 +925,8 @@
       title: "安居项目架构",
       allLabel: "全部项目",
       data: projectTreeData,
-      expanded: projectExpanded
+      expanded: projectExpanded,
+      multiple: true
     });
     const orgTreeSelect = createTreeSelect({
       selectId: "orgTreeSelect",
@@ -952,7 +976,7 @@
         growthValue: "2,860",
         auth: "实名认证",
         userType: "租户",
-        listStatus: "白名单",
+        listStatus: "无名单",
         accountStatus: "正常",
         org: "福田项目",
         assets: ["9,630", "2", "1"],
@@ -962,7 +986,7 @@
           ["WX202604220091", "自在安居小程序", "福田项目", ["139****6812", "158****3921"], "4403**********2846"],
           ["ZL202601150078", "租赁服务平台", "福田项目", ["177****8265"], "4403**********2846"]
         ],
-        systemTags: ["白名单客户", "权益活跃"],
+        systemTags: ["权益活跃"],
         manualTags: []
       },
       "王强": {
@@ -1121,9 +1145,8 @@
       "batch-unfreeze": ["批量解冻会员", "将对已勾选会员批量解冻，恢复正常服务权限；请确认风险处理完成。"]
     };
     const listCopy = {
-      "set-list": ["设置名单", "请选择业务场景后执行名单设置：黑名单用于限制注册/登录和服务权限，白名单用于专属权益和优先活动。"],
-      "batch-list": ["批量设名单", "请选择名单类型后批量设置：黑名单用于限制注册/登录和服务权限，白名单用于专属权益和优先活动。"],
-      "remove-white": ["移出白名单", "移出白名单后，会员不再享受白名单专属权益，但不影响正常账号状态。"],
+      "add-black": ["拉入黑名单", "拉入黑名单后，会员将受到注册、登录及服务权限限制。"],
+      "batch-add-black": ["批量拉入黑名单", "将对已勾选会员批量拉入黑名单，并限制相关服务权限。"],
       "remove-black": ["移出黑名单", "移出黑名单后，会员解除名单限制；如账号仍冻结，需另行执行解冻操作。"]
     };
     const growthData = {
@@ -1213,14 +1236,55 @@
         document.getElementById("freezeModal").classList.add("open");
       });
     });
+    document.querySelectorAll(".member-table tbody tr").forEach(row => {
+      const statusBadge = row.children[7]?.querySelector(".badge");
+      const listAction = row.querySelector("[data-list]");
+      if (statusBadge) {
+        statusBadge.dataset.listStatus = "";
+        if (statusBadge.textContent.trim() === "白名单") {
+          statusBadge.textContent = "无名单";
+          statusBadge.className = "badge gray";
+        }
+      }
+      if (listAction && ["set-list", "remove-white"].includes(listAction.dataset.list)) {
+        listAction.dataset.list = "add-black";
+        listAction.textContent = "拉入黑名单";
+      }
+    });
+    let activeListTrigger = null;
     document.querySelectorAll("[data-list]").forEach(el => {
       el.addEventListener("click", () => {
-        const copy = listCopy[el.dataset.list] || listCopy["set-list"];
+        activeListTrigger = el;
+        const copy = listCopy[el.dataset.list] || listCopy["add-black"];
         document.getElementById("listTitle").textContent = copy[0];
         document.getElementById("listNotice").innerHTML = `<strong>${copy[0]}</strong>${copy[1]}`;
-        document.getElementById("listType").value = el.dataset.list.includes("white") ? "白名单" : "黑名单";
+        document.getElementById("listType").value = "黑名单";
         document.getElementById("listModal").classList.add("open");
       });
+    });
+    function applyListState(row, inBlackList) {
+      if (!row) return;
+      const statusBadge = row.querySelector("[data-list-status]");
+      const action = row.querySelector("[data-list]");
+      if (statusBadge) {
+        statusBadge.textContent = inBlackList ? "黑名单" : "无名单";
+        statusBadge.className = inBlackList ? "badge red" : "badge gray";
+      }
+      if (action) {
+        action.dataset.list = inBlackList ? "remove-black" : "add-black";
+        action.textContent = inBlackList ? "移出黑名单" : "拉入黑名单";
+      }
+      const memberName = row.querySelector("[data-detail]")?.dataset.detail;
+      if (memberName && memberData[memberName]) memberData[memberName].listStatus = inBlackList ? "黑名单" : "无名单";
+    }
+    document.getElementById("listConfirm").addEventListener("click", () => {
+      const isBatch = activeListTrigger?.dataset.list === "batch-add-black";
+      if (isBatch) {
+        memberChecks.filter(checkbox => checkbox.checked).forEach(checkbox => applyListState(checkbox.closest("tr"), true));
+      } else {
+        applyListState(activeListTrigger?.closest("tr"), activeListTrigger?.dataset.list !== "remove-black");
+      }
+      document.getElementById("listModal").classList.remove("open");
     });
     document.querySelectorAll("[data-growth]").forEach(el => {
       el.addEventListener("click", () => {
