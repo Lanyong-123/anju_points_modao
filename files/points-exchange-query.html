@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>积分互换查询</title>
-  <link rel="stylesheet" href="../resources/style.css">
+  <link rel="stylesheet" href="../resources/style.css?v=20261014-1">
   <style>
     .org-tree-select {
       position: relative;
@@ -73,6 +73,13 @@
     .org-tree-level-2 { padding-left: 28px; }
     .org-tree-level-3 { padding-left: 52px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .exchange-detail-section { margin-top: 18px; border: 1px solid var(--line); border-radius: 8px; background: #fff; overflow: hidden; }
+    .exchange-detail-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); background: #f7fbff; }
+    .exchange-detail-head h4 { margin: 0; color: var(--navy); font-size: 14px; }
+    .exchange-detail-table th, .exchange-detail-table td { text-align: center; white-space: nowrap; }
+    .exchange-detail-table .exchange-result td { border-top: 2px solid #9ed9ee; background: #f1fbff; font-weight: 800; }
+    .point-change-out { color: #cf4f4f; font-weight: 800; }
+    .point-change-in { color: #11976f; font-weight: 800; }
   </style>
 </head>
 <body>
@@ -144,7 +151,7 @@
     </div>
   </div>
 
-  <aside class="drawer" id="detailDrawer">
+  <aside class="drawer" id="detailDrawer" style="width:760px">
     <div class="panel-hd"><h3>积分互换详情</h3><button class="btn" data-close-drawer>关闭</button></div>
     <div class="panel-bd">
       <div class="detail-list">
@@ -162,6 +169,13 @@
         <span>兑换比例</span><strong id="drawerRatio">10 异业积分 = 1 安居积分</strong>
         <span>兑换示例</span><strong id="drawerExample">10,000 合作商户积分兑入 1,000 安居积分</strong>
       </div>
+      <section class="exchange-detail-section">
+        <div class="exchange-detail-head"><h4>积分互换明细</h4></div>
+        <table class="exchange-detail-table">
+          <thead><tr><th>积分类型</th><th>积分变动</th><th>积分互换类型</th></tr></thead>
+          <tbody id="exchangeDetailRows"></tbody>
+        </table>
+      </section>
     </div>
   </aside>
 
@@ -260,6 +274,24 @@
       "PX202605230035": ["PX202605230035", "陈先生", "AJ202605010027", "PA202605010027", "消费积分", "积分互换", "+300", "兑入", "停车权益平台", "安居积分系统", "南山项目", "2026-05-23 14:20", "5 停车积分 = 1 安居积分", "1,500 停车积分兑入 300 安居积分"],
       "PX202605220052": ["PX202605220052", "李明", "AJ202605180018", "PA202605180018", "碳积分", "积分互换", "-200", "兑出", "安居积分系统", "停车权益平台", "集团总部", "2026-05-22 10:33", "100 安居积分 = 5 停车积分", "200 安居积分兑出 10 停车积分"]
     };
+    const exchangeDetailData = {
+      "PX202605260001": [["碳积分", "-200", "兑出"], ["碳积分", "-300", "兑出"], ["碳积分", "-500", "兑出"], ["消费积分", "+1,000", "兑入"]],
+      "PX202605250016": [["碳积分", "-250", "兑出"], ["碳积分", "-350", "兑出"], ["消费积分", "+600", "兑入"]],
+      "PX202605240089": [["碳积分", "-500", "兑出"], ["碳积分", "-700", "兑出"], ["碳积分", "-800", "兑出"], ["消费积分", "+2,000", "兑入"]],
+      "PX202605230035": [["碳积分", "-120", "兑出"], ["碳积分", "-180", "兑出"], ["消费积分", "+300", "兑入"]],
+      "PX202605220052": [["碳积分", "-80", "兑出"], ["碳积分", "-120", "兑出"], ["消费积分", "+200", "兑入"]]
+    };
+    function renderExchangeDetails(flowNo) {
+      const rows = exchangeDetailData[flowNo] || exchangeDetailData.PX202605260001;
+      document.getElementById("exchangeDetailRows").innerHTML = rows.map((row, index) => {
+        const isResult = index === rows.length - 1;
+        return `<tr class="${isResult ? "exchange-result" : ""}">
+          <td><span class="badge ${isResult ? "" : "green"}">${row[0]}</span></td>
+          <td><span class="${isResult ? "point-change-in" : "point-change-out"}">${row[1]}</span></td>
+          <td><span class="badge ${isResult ? "green" : "gold"}">${row[2]}</span></td>
+        </tr>`;
+      }).join("");
+    }
     const drawer = document.getElementById("detailDrawer");
     document.querySelectorAll("[data-detail]").forEach(el => {
       el.addEventListener("click", () => {
@@ -277,6 +309,7 @@
         document.getElementById("drawerTime").textContent = data[11];
         document.getElementById("drawerRatio").textContent = data[12];
         document.getElementById("drawerExample").textContent = data[13];
+        renderExchangeDetails(data[0]);
         drawer.classList.add("open");
       });
     });
