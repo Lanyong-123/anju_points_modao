@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>角色管理</title>
-  <link rel="stylesheet" href="../resources/style.css?v=20261015-2">
+  <link rel="stylesheet" href="../resources/style.css?v=20261015-3">
   <style>
     .role-filter {
       grid-template-columns: 1fr auto auto;
@@ -240,7 +240,7 @@
             <label>脱敏查看配置</label>
             <div class="desensitize-config">
               <label class="desensitize-checkbox"><input type="checkbox" id="roleDesensitizeCheck"><span>是否启用脱敏展示</span></label>
-              <div class="desensitize-tip" id="roleDesensitizeTip" aria-live="polite">需要点击字段后的眼睛图标进行查看信息；</div>
+              <div class="desensitize-tip" id="roleDesensitizeTip" aria-live="polite">可以点击字段后的眼睛图标进行查看信息；</div>
             </div>
           </div>
         </div>
@@ -528,7 +528,7 @@
     function updateRoleDesensitizeTip() {
       roleDesensitizeTip.textContent = roleDesensitizeCheck.checked
         ? "字段脱敏展示无眼睛图标查看功能"
-        : "需要点击字段后的眼睛图标进行查看信息；";
+        : "可以点击字段后的眼睛图标进行查看信息；";
     }
     roleDesensitizeCheck.addEventListener("change", updateRoleDesensitizeTip);
 

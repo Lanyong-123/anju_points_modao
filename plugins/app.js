@@ -7,7 +7,7 @@ const menuTree = document.getElementById("menuTree");
 const workTabs = document.getElementById("workTabs");
 const frame = document.getElementById("pageFrame");
 const pageTitle = document.getElementById("pageTitle");
-const BUILD_VERSION = "20261015-2";
+const BUILD_VERSION = "20261015-3";
 
 function versionedUrl(url) {
   const separator = url.includes("?") ? "&" : "?";
