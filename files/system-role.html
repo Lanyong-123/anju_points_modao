@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>角色管理</title>
-  <link rel="stylesheet" href="../resources/style.css">
+  <link rel="stylesheet" href="../resources/style.css?v=20261015-1">
   <style>
     .role-filter {
       grid-template-columns: 1fr auto auto;
@@ -131,24 +131,40 @@
       flex: 0 0 16px;
       margin: 0;
     }
-    .desensitize-check {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 36px;
-      padding: 0 10px;
+    .desensitize-config {
+      min-height: 76px;
+      padding: 9px 10px;
       border: 1px solid #cfd9e5;
       border-radius: 5px;
       background: #fff;
+    }
+    .desensitize-options {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      min-height: 24px;
+    }
+    .desensitize-radio {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
       color: #34465c;
       font-size: 13px;
       font-weight: 700;
+      cursor: pointer;
     }
-    .desensitize-check input {
+    .desensitize-radio input {
       width: 16px;
       height: 16px;
       flex: 0 0 16px;
       margin: 0;
+      accent-color: var(--brand);
+    }
+    .desensitize-tip {
+      margin-top: 7px;
+      color: #74869a;
+      font-size: 12px;
+      line-height: 1.5;
     }
     .action-list {
       display: flex;
@@ -225,7 +241,16 @@
         <div class="role-form">
           <div class="field"><label class="required">角色名称</label><input value="积分运营管理员"></div>
           <div class="field"><label class="required">角色分类</label><select><option>系统管理</option><option selected>运营管理员</option><option>运维管理员</option><option>审计管理员</option></select></div>
-          <div class="field"><label>是否脱敏</label><label class="desensitize-check"><input type="checkbox" id="roleDesensitizeCheck" checked> 是，保存后该角色按脱敏规则展示敏感字段</label></div>
+          <div class="field">
+            <label>脱敏配置</label>
+            <div class="desensitize-config">
+              <div class="desensitize-options" role="radiogroup" aria-label="脱敏配置">
+                <label class="desensitize-radio"><input type="radio" name="roleDesensitize" value="yes"> 是</label>
+                <label class="desensitize-radio"><input type="radio" name="roleDesensitize" value="no" checked> 否</label>
+              </div>
+              <div class="desensitize-tip" id="roleDesensitizeTip" aria-live="polite">为否时敏感字段不脱敏展示，需要点击字段后的眼睛进行查看</div>
+            </div>
+          </div>
         </div>
         <div class="permission-tree">
           <div class="permission-tree-hd">
@@ -506,10 +531,21 @@
       syncAll();
     });
 
+    const roleDesensitizeRadios = [...document.querySelectorAll('input[name="roleDesensitize"]')];
+    const roleDesensitizeTip = document.getElementById("roleDesensitizeTip");
+    function updateRoleDesensitizeTip() {
+      const selected = roleDesensitizeRadios.find(radio => radio.checked)?.value || "no";
+      roleDesensitizeTip.textContent = selected === "yes"
+        ? "为是时敏感字段脱敏展示"
+        : "为否时敏感字段不脱敏展示，需要点击字段后的眼睛进行查看";
+    }
+    roleDesensitizeRadios.forEach(radio => radio.addEventListener("change", updateRoleDesensitizeTip));
+
     document.querySelectorAll("[data-open-role]").forEach(el => {
       el.addEventListener("click", () => {
         document.getElementById("roleModalTitle").textContent = el.dataset.openRole === "create" ? "新增角色" : "编辑角色";
-        document.getElementById("roleDesensitizeCheck").checked = true;
+        document.querySelector('input[name="roleDesensitize"][value="no"]').checked = true;
+        updateRoleDesensitizeTip();
         document.getElementById("roleModal").classList.add("open");
       });
     });
