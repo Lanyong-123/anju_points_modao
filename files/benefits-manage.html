@@ -46,6 +46,14 @@
       min-width: 1420px;
       table-layout: fixed;
     }
+    .benefit-list-table {
+      min-width: 1760px;
+    }
+    .benefit-list-table th,
+    .benefit-list-table td {
+      vertical-align: middle;
+      white-space: nowrap;
+    }
     .member-detail-table-wrap {
       width: 100%;
       overflow-x: auto;
@@ -232,6 +240,7 @@
       <div class="field"><label>权益类型</label><select><option>全部类型</option><option>优惠券权益</option><option>其它权益</option></select></div>
       <div class="field"><label>关联礼券</label><select><option>全部礼券</option><option>免费搬家服务</option><option>优先选房权益</option><option>贴身管家服务</option><option>免费搬家服务</option><option>腾讯会员权益</option></select></div>
       <div class="field"><label>权益状态</label><select><option>全部状态</option><option>暂存</option><option>进行中</option><option>已过期</option><option>已结束</option><option>启用</option><option>禁用</option></select></div>
+      <div class="field"><label>礼券状态</label><select><option>全部状态</option><option>待生效</option><option>已生效</option><option>已失效</option><option>冻结</option></select></div>
       <div class="field"><label>状态</label><select><option>全部</option><option>正常</option><option>删除</option></select></div>
       <div class="field"><label>权益创建时间</label><input value="2026-04-01 至 2026-05-26"></div>
       <button class="btn primary">查询</button>
@@ -248,7 +257,7 @@
         </div>
       </div>
       <div class="panel-bd">
-        <table>
+        <table class="benefit-list-table">
           <thead>
             <tr>
               <th><input type="checkbox"></th>
@@ -263,16 +272,17 @@
               <th>过期数</th>
               <th>未核销数</th>
               <th>权益创建时间</th>
-              <th>状态</th>
+              <th>权益状态</th>
+              <th>礼券状态</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="生日权益">生日权益</span></td><td><span class="badge green">优惠券权益</span></td><td>免费搬家服务</td><td>商业板块 / 安计部</td><td>高新安荟邻</td><td>800</td><td><span class="link" data-member-log="claim:生日权益">580</span></td><td><span class="link" data-member-log="use:生日权益">142</span></td><td><span class="link" data-member-log="expired:生日权益">12</span></td><td><span class="link" data-member-log="unredeemed:生日权益">426</span></td><td>2026-05-18 15:42</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="生日权益">详情</span>　<span class="link" data-status="disable">禁用</span>　<span class="link" data-delete>删除</span>　<span class="link" data-urge="生日权益">催办</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="贴身管家服务">贴身管家服务</span></td><td><span class="badge green">优惠券权益</span></td><td>贴身管家服务</td><td>集团职能</td><td>景田安荟邻</td><td>120</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2026-04-28 11:08</td><td><span class="badge gold">暂存</span></td><td><span class="link" data-edit="贴身管家服务">编辑</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="腾讯会员权益">腾讯会员权益</span></td><td><span class="badge green">优惠券权益</span></td><td>腾讯会员权益</td><td>商业板块 / 数字运营部</td><td>景田安荟邻</td><td>5,000</td><td><span class="link" data-member-log="claim:腾讯会员权益">2,140</span></td><td><span class="link" data-member-log="use:腾讯会员权益">1,025</span></td><td><span class="link" data-member-log="expired:腾讯会员权益">86</span></td><td><span class="link" data-member-log="unredeemed:腾讯会员权益">1,029</span></td><td>2026-05-12 10:16</td><td><span class="badge red">已过期</span></td><td><span class="link" data-detail="腾讯会员权益">详情</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="场地预约优先权益">场地预约优先权益</span></td><td><span class="badge">其它权益</span></td><td>--</td><td>住宅板块 / 客户服务部</td><td>宝安人才园</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2026-03-18 14:12</td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="场地预约优先权益">详情</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="生日权益-合作门店">生日权益</span></td><td><span class="badge">其它权益</span></td><td>--</td><td>商业板块 / 商业运营部</td><td>天河安居项目</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2026-03-26 17:20</td><td><span class="badge gray">禁用</span></td><td><span class="link" data-detail="生日权益-合作门店">详情</span>　<span class="link" data-status="enable">启用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="生日权益">生日权益</span></td><td><span class="badge green">优惠券权益</span></td><td>免费搬家服务</td><td>商业板块 / 安计部</td><td>高新安荟邻</td><td>800</td><td><span class="link" data-member-log="claim:生日权益">580</span></td><td><span class="link" data-member-log="use:生日权益">142</span></td><td><span class="link" data-member-log="expired:生日权益">12</span></td><td><span class="link" data-member-log="unredeemed:生日权益">426</span></td><td>2026-05-18 15:42</td><td><span class="badge green">进行中</span></td><td><span class="badge green">已生效</span></td><td><span class="link" data-detail="生日权益">详情</span>　<span class="link" data-status="disable">禁用</span>　<span class="link" data-delete>删除</span>　<span class="link" data-urge="生日权益">催办</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="贴身管家服务">贴身管家服务</span></td><td><span class="badge green">优惠券权益</span></td><td>贴身管家服务</td><td>集团职能</td><td>景田安荟邻</td><td>120</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2026-04-28 11:08</td><td><span class="badge gold">暂存</span></td><td><span class="badge gold">待生效</span></td><td><span class="link" data-edit="贴身管家服务">编辑</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="腾讯会员权益">腾讯会员权益</span></td><td><span class="badge green">优惠券权益</span></td><td>腾讯会员权益</td><td>商业板块 / 数字运营部</td><td>景田安荟邻</td><td>5,000</td><td><span class="link" data-member-log="claim:腾讯会员权益">2,140</span></td><td><span class="link" data-member-log="use:腾讯会员权益">1,025</span></td><td><span class="link" data-member-log="expired:腾讯会员权益">86</span></td><td><span class="link" data-member-log="unredeemed:腾讯会员权益">1,029</span></td><td>2026-05-12 10:16</td><td><span class="badge red">已过期</span></td><td><span class="badge red">已失效</span></td><td><span class="link" data-detail="腾讯会员权益">详情</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="场地预约优先权益">场地预约优先权益</span></td><td><span class="badge">其它权益</span></td><td>--</td><td>住宅板块 / 客户服务部</td><td>宝安人才园</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2026-03-18 14:12</td><td><span class="badge gray">已结束</span></td><td>-</td><td><span class="link" data-detail="场地预约优先权益">详情</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="生日权益-合作门店">生日权益</span></td><td><span class="badge">其它权益</span></td><td>--</td><td>商业板块 / 商业运营部</td><td>天河安居项目</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>2026-03-26 17:20</td><td><span class="badge gray">禁用</span></td><td>-</td><td><span class="link" data-detail="生日权益-合作门店">详情</span>　<span class="link" data-status="enable">启用</span>　<span class="link" data-delete>删除</span></td></tr>
           </tbody>
         </table>
         <div class="pagination">

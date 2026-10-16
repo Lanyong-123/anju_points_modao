@@ -598,7 +598,7 @@
     <div class="modal">
       <div class="panel-hd"><h3 id="statusTitle">优惠券状态设置</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd">
-        <div class="notice" id="statusNotice"><strong>冻结优惠券</strong>冻结后优惠券不可继续核销，已核销记录不受影响。</div>
+        <div class="notice" id="statusNotice"><strong>冻结优惠券</strong>商品管理、权益管理将联动进行冻结，已领取礼券的用户可以继续使用，未领取的不展示。</div>
         <div class="field" style="margin-top:12px"><label>操作原因</label><input id="statusReason" value="风险核查"></div>
       </div>
       <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div>
@@ -875,9 +875,9 @@
     });
 
     const statusCopy = {
-      freeze: ["冻结优惠券", "冻结后优惠券不可继续领取或核销，已核销记录不受影响。", "风险核查"],
+      freeze: ["冻结优惠券", "商品管理、权益管理将联动进行冻结，已领取礼券的用户可以继续使用，未领取的不展示。", "风险核查"],
       unfreeze: ["解冻优惠券", "解冻后优惠券恢复领取和核销能力。", "风险解除"],
-      "batch-freeze": ["批量冻结优惠券", "将对已勾选优惠券批量冻结，冻结后停止领取和核销。", "批量风险核查"],
+      "batch-freeze": ["批量冻结优惠券", "商品管理、权益管理将联动进行冻结，已领取礼券的用户可以继续使用，未领取的不展示。", "批量风险核查"],
       "batch-unfreeze": ["批量解冻优惠券", "将对已勾选优惠券批量解冻，恢复正常使用。", "批量风险解除"],
     };
     document.querySelectorAll("[data-status]").forEach(el => {
