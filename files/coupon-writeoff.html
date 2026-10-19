@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../resources/style.css?v=20260908-2">
   <style>
     .writeoff-list-table {
-      min-width: 2140px;
+      min-width: 2250px;
     }
     .writeoff-list-table th,
     .writeoff-list-table td {
@@ -23,6 +23,45 @@
       overflow-wrap: anywhere;
       word-break: break-word;
       font-family: Arial, sans-serif;
+    }
+    .settlement-tip {
+      position: relative;
+      display: inline-grid;
+      width: 17px;
+      height: 17px;
+      margin-left: 4px;
+      place-items: center;
+      border: 1px solid #7da8d0;
+      border-radius: 50%;
+      color: var(--brand);
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1;
+      cursor: help;
+      vertical-align: middle;
+    }
+    .settlement-tip::after {
+      content: attr(data-tip);
+      position: absolute;
+      right: -12px;
+      bottom: calc(100% + 8px);
+      z-index: 20;
+      display: none;
+      width: max-content;
+      max-width: 280px;
+      padding: 8px 10px;
+      border-radius: 5px;
+      background: #17324f;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.5;
+      white-space: normal;
+      box-shadow: 0 6px 18px rgba(18,49,82,.22);
+    }
+    .settlement-tip:hover::after,
+    .settlement-tip:focus::after {
+      display: block;
     }
     .field label.required::before {
       content: "*";
@@ -100,12 +139,127 @@
       color: var(--red);
       font-weight: 700;
     }
+    .operation-links {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .revoke-link {
+      color: #d46b08;
+    }
+    .revoke-modal {
+      width: min(760px, calc(100vw - 48px));
+      max-height: calc(100vh - 32px);
+      display: flex;
+      flex-direction: column;
+    }
+    .revoke-modal form {
+      min-height: 0;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+    .revoke-modal-body {
+      overflow-y: auto;
+    }
+    .revoke-warning {
+      margin-bottom: 18px;
+      border-color: #f3c1c5;
+      border-left-color: #cf2338;
+      background: #fff7f8;
+      color: #6f2630;
+    }
+    .revoke-warning strong {
+      color: #cf2338;
+    }
+    .revoke-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .revoke-modal .field label {
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .revoke-modal .field label.required::before {
+      content: "*";
+      margin-right: 6px;
+      color: #f5222d;
+    }
+    .revoke-modal .field textarea {
+      width: 100%;
+      min-height: 78px;
+      padding: 9px 10px;
+      resize: vertical;
+      border: 1px solid #b8cfe3;
+      border-radius: 5px;
+      color: var(--ink);
+      font: inherit;
+      line-height: 1.5;
+    }
+    .revoke-modal .full-field {
+      grid-column: 1 / -1;
+    }
+    .revoke-upload-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      clip-path: inset(50%);
+    }
+    .revoke-modal .revoke-upload-card {
+      display: grid;
+      width: 112px;
+      height: 112px;
+      margin: 0;
+      place-items: center;
+      align-content: center;
+      gap: 6px;
+      border: 1px dashed #b8cfe3;
+      border-radius: 7px;
+      background: #fff;
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .revoke-modal .revoke-upload-card:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+    .revoke-modal #revokeFlow[readonly] {
+      background: #fff;
+      color: var(--ink);
+      cursor: default;
+    }
+    .revoke-upload-plus {
+      color: var(--brand);
+      font-size: 28px;
+      line-height: 1;
+    }
+    .revoke-file-name {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .revoke-attachment-tip {
+      margin-top: 16px;
+    }
     @media (max-width: 760px) {
       .writeoff-detail-drawer {
         width: calc(100vw - 24px);
       }
       .writeoff-detail-drawer .detail-list {
         grid-template-columns: 100px minmax(0, 1fr);
+      }
+      .revoke-fields {
+        grid-template-columns: 1fr;
+      }
+      .revoke-modal .full-field {
+        grid-column: auto;
       }
     }
   </style>
@@ -131,6 +285,7 @@
       </div>
       <div class="field"><label>兑换方式</label><select><option>全部方式</option><option>权益领取</option><option>商品领取</option></select></div>
       <div class="field"><label>核销状态</label><select><option>全部状态</option><option>未核销</option><option>已核销</option><option>已冻结</option></select></div>
+      <div class="field"><label>结算状态</label><select><option>全部状态</option><option>已结算</option><option>未结算</option></select></div>
       <div class="field"><label>过期状态</label><select><option>全部状态</option><option>未过期</option><option>已过期</option></select></div>
       <div class="field"><label>时间范围</label><input value="2026-05-01 至 2026-05-26"></div>
       <button class="btn primary" id="writeoffSearchButton" type="button">查询</button>
@@ -160,6 +315,7 @@
               <th>成本（元）</th>
               <th>领取时间</th>
               <th>核销状态</th>
+              <th>结算状态<span class="settlement-tip" tabindex="0" role="note" aria-label="已结算的礼券不能进行撤销核销" data-tip="已结算的礼券不能进行撤销核销。">i</span></th>
               <th>核销时间</th>
               <th>过期时间</th>
               <th>过期状态</th>
@@ -167,11 +323,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td>CV202605260018</td><td><span class="link" data-detail="CV202605260018">2000积分兑家政服务</span></td><td><span class="badge green">电子礼券</span></td><td>李明</td><td>183****1328</td><td class="code-cell">9QLXVP41O4S3L27H1</td><td>商业板块 / 安计部</td><td>高新安荟邻</td><td>商品领取</td><td>10.00</td><td>2026-05-20 10:14</td><td><span class="badge green">已核销</span></td><td>2026-05-26 09:18</td><td>2026-08-29 23:59</td><td><span class="badge green">未过期</span></td><td><span class="link" data-detail="CV202605260018">详情</span>　<span class="link" data-revoke="CV202605260018">撤销</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>CV202605250091</td><td><span class="link" data-detail="CV202605250091">5000积分兑礼物</span></td><td><span class="badge">实物礼券</span></td><td>周女士</td><td>139****6812</td><td class="code-cell">QK8205M6R2Y9K1A</td><td>住宅板块 / 营销管理部</td><td>高新花园</td><td>权益领取</td><td>8.00</td><td>2026-05-21 09:25</td><td><span class="badge green">已核销</span></td><td>2026-05-25 18:42</td><td>2026-06-30 23:59</td><td><span class="badge green">未过期</span></td><td><span class="link" data-detail="CV202605250091">详情</span>　<span class="link" data-revoke="CV202605250091">撤销</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>-</td><td><span class="link" data-detail="CV202605240027">500积分兑场地预约优先</span></td><td><span class="badge gold">第三方礼券</span></td><td>陈先生</td><td>137****2098</td><td class="code-cell">-</td><td>商业板块 / 数字运营部</td><td>景田安荟邻</td><td>权益领取</td><td>30.00</td><td>2026-05-24 11:08</td><td><span class="badge">未核销</span></td><td>-</td><td>2026-11-30 23:59</td><td><span class="badge green">未过期</span></td><td><span class="link" data-detail="CV202605240027">详情</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>-</td><td><span class="link" data-detail="CV202605200076">2000积分兑贴身管家服务</span></td><td><span class="badge">实物礼券</span></td><td>赵先生</td><td>137****2108</td><td class="code-cell">-</td><td>住宅板块 / 客户服务部</td><td>高新花园</td><td>商品领取</td><td>5.00</td><td>2026-05-20 15:20</td><td><span class="badge gold">已冻结</span></td><td>-</td><td>2026-06-04 23:59</td><td><span class="badge green">未过期</span></td><td><span class="link" data-detail="CV202605200076">详情</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>-</td><td><span class="link" data-detail="CV202605190036">500积分兑礼物</span></td><td><span class="badge">实物礼券</span></td><td>刘女士</td><td>138****7120</td><td class="code-cell">-</td><td>商业板块 / 安计部</td><td>景田安荟邻</td><td>商品领取</td><td>5.00</td><td>2026-05-04 10:36</td><td><span class="badge">未核销</span></td><td>-</td><td>2026-05-19 23:59</td><td><span class="badge gray">已过期</span></td><td><span class="link" data-detail="CV202605190036">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>CV202605260018</td><td><span class="link" data-detail="CV202605260018">2000积分兑家政服务</span></td><td><span class="badge green">电子礼券</span></td><td>李明</td><td>183****1328</td><td class="code-cell">9QLXVP41O4S3L27H1</td><td>商业板块 / 安计部</td><td>高新安荟邻</td><td>商品领取</td><td>10.00</td><td>2026-05-20 10:14</td><td><span class="badge green">已核销</span></td><td><span class="badge green">已结算</span></td><td>2026-05-26 09:18</td><td>2026-08-29 23:59</td><td><span class="badge green">未过期</span></td><td><span class="link" data-detail="CV202605260018">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>CV202605250091</td><td><span class="link" data-detail="CV202605250091">5000积分兑礼物</span></td><td><span class="badge">实物礼券</span></td><td>周女士</td><td>139****6812</td><td class="code-cell">QK8205M6R2Y9K1A</td><td>住宅板块 / 营销管理部</td><td>高新花园</td><td>权益领取</td><td>8.00</td><td>2026-05-21 09:25</td><td><span class="badge green">已核销</span></td><td><span class="badge gold">未结算</span></td><td>2026-05-25 18:42</td><td>2026-06-30 23:59</td><td><span class="badge green">未过期</span></td><td><span class="operation-links"><span class="link" data-detail="CV202605250091">详情</span><span class="link revoke-link" data-revoke="CV202605250091">撤销</span></span></td></tr>
+            <tr><td><input type="checkbox"></td><td>-</td><td><span class="link" data-detail="CV202605240027">500积分兑场地预约优先</span></td><td><span class="badge gold">第三方礼券</span></td><td>陈先生</td><td>137****2098</td><td class="code-cell">-</td><td>商业板块 / 数字运营部</td><td>景田安荟邻</td><td>权益领取</td><td>30.00</td><td>2026-05-24 11:08</td><td><span class="badge">未核销</span></td><td><span class="badge gold">未结算</span></td><td>-</td><td>2026-11-30 23:59</td><td><span class="badge green">未过期</span></td><td><span class="link" data-detail="CV202605240027">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>-</td><td><span class="link" data-detail="CV202605200076">2000积分兑贴身管家服务</span></td><td><span class="badge">实物礼券</span></td><td>赵先生</td><td>137****2108</td><td class="code-cell">-</td><td>住宅板块 / 客户服务部</td><td>高新花园</td><td>商品领取</td><td>5.00</td><td>2026-05-20 15:20</td><td><span class="badge gold">已冻结</span></td><td><span class="badge gold">未结算</span></td><td>-</td><td>2026-06-04 23:59</td><td><span class="badge green">未过期</span></td><td><span class="link" data-detail="CV202605200076">详情</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>-</td><td><span class="link" data-detail="CV202605190036">500积分兑礼物</span></td><td><span class="badge">实物礼券</span></td><td>刘女士</td><td>138****7120</td><td class="code-cell">-</td><td>商业板块 / 安计部</td><td>景田安荟邻</td><td>商品领取</td><td>5.00</td><td>2026-05-04 10:36</td><td><span class="badge">未核销</span></td><td><span class="badge gold">未结算</span></td><td>-</td><td>2026-05-19 23:59</td><td><span class="badge gray">已过期</span></td><td><span class="link" data-detail="CV202605190036">详情</span></td></tr>
           </tbody>
         </table>
         <div class="pagination" id="writeoffPagination">
@@ -243,19 +399,50 @@
   </aside>
 
   <div class="modal-mask" id="revokeModal">
-    <div class="modal">
-      <div class="panel-hd"><h3>核销撤销</h3><button class="btn" data-close-modal>关闭</button></div>
-      <div class="panel-bd">
-        <div class="notice"><strong>核销撤销</strong>针对已核销记录执行撤销，录入撤销原因后记录恢复为“待使用”。</div>
-        <div class="grid cols-2" style="margin-top:12px">
-          <div class="field"><label>核销流水号</label><input id="revokeFlow" value="CV202605260018" readonly></div>
-          <div class="field"><label>撤销原因</label><select><option>退款</option><option>核销错误</option><option>客户投诉处理</option><option>其他</option></select></div>
+    <div class="modal revoke-modal">
+      <div class="panel-hd"><h3>核销撤销</h3><button class="btn" type="button" data-close-revoke>关闭</button></div>
+      <form id="revokeForm">
+        <div class="panel-bd revoke-modal-body">
+          <div class="notice revoke-warning">
+            <strong>核销撤销</strong>
+            撤销后退回原扣积分，原券作废，不能再次核销。积分保留原有效期：有效部分恢复可用，人工冻结部分仍冻结，已过期部分清零。
+          </div>
+          <div class="revoke-fields">
+            <div class="field">
+              <label>核销流水号</label>
+              <input id="revokeFlow" readonly value="CV202605250091">
+            </div>
+            <div class="field">
+              <label class="required" for="revokeReason">撤销原因</label>
+              <select id="revokeReason" required>
+                <option value="" selected disabled>请选择撤销原因</option>
+                <option>核销操作有误</option>
+                <option>会员申请撤销</option>
+                <option>商户申请撤销</option>
+                <option>其他</option>
+              </select>
+            </div>
+            <div class="field full-field">
+              <label class="required" for="revokeDescription">撤销说明</label>
+              <textarea id="revokeDescription" required placeholder="请输入撤销说明"></textarea>
+            </div>
+            <div class="field full-field">
+              <label class="required" for="revokeAttachment">附件上传</label>
+              <input class="revoke-upload-input" id="revokeAttachment" type="file" required accept="image/jpeg,image/png,image/gif,image/bmp,image/webp">
+              <label class="revoke-upload-card" for="revokeAttachment">
+                <span class="revoke-upload-plus">+</span>
+                <span>选择图片</span>
+              </label>
+              <div class="revoke-file-name" id="revokeFileName">未选择图片</div>
+            </div>
+          </div>
+          <div class="notice revoke-attachment-tip">
+            <strong>附件要求</strong>
+            支持上传图片通用类型，如 JPG、JPEG、PNG、GIF、BMP、WEBP，用于审核时查看调整依据。
+          </div>
         </div>
-        <div class="field" style="margin-top:12px"><label class="required">撤销说明</label><input required value="用户订单退款，撤销本次核销。"></div>
-        <div class="field" style="margin-top:12px"><label class="required">附件上传</label><input type="file" required accept="image/*,.jpg,.jpeg,.png,.gif,.bmp,.webp"></div>
-        <div class="notice" style="margin-top:12px"><strong>附件要求</strong>支持上传图片通用类型，如 JPG、JPEG、PNG、GIF、BMP、WEBP，用于审核时查看调整依据。</div>
-      </div>
-      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认撤销</button></div>
+        <div class="modal-ft"><button class="btn" type="button" data-close-revoke>取消</button><button class="btn primary" type="submit" id="confirmRevoke">确认撤销</button></div>
+      </form>
     </div>
   </div>
 
@@ -503,15 +690,52 @@
     });
     document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
 
-    document.querySelectorAll("[data-revoke]").forEach(el => {
-      el.addEventListener("click", () => {
-        document.getElementById("revokeFlow").value = el.dataset.revoke;
-        document.getElementById("revokeModal").classList.add("open");
+    const revokeModal = document.getElementById("revokeModal");
+    const revokeFlow = document.getElementById("revokeFlow");
+    const revokeForm = document.getElementById("revokeForm");
+    const revokeAttachment = document.getElementById("revokeAttachment");
+    const revokeFileName = document.getElementById("revokeFileName");
+    let revokeTarget = null;
+    let revokeId = "";
+    document.querySelectorAll("[data-revoke]").forEach(control => {
+      control.addEventListener("click", () => {
+        revokeTarget = control.closest("tr");
+        revokeId = control.dataset.revoke;
+        revokeForm.reset();
+        revokeFlow.value = revokeId;
+        revokeFileName.textContent = "未选择图片";
+        revokeModal.classList.add("open");
       });
     });
-    document.querySelectorAll("[data-close-modal]").forEach(el => {
-      el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
+    revokeAttachment.addEventListener("change", () => {
+      revokeFileName.textContent = revokeAttachment.files[0]?.name || "未选择图片";
     });
+    document.querySelectorAll("[data-close-revoke]").forEach(control => {
+      control.addEventListener("click", () => {
+        revokeModal.classList.remove("open");
+        revokeTarget = null;
+        revokeId = "";
+      });
+    });
+    revokeForm.addEventListener("submit", event => {
+      event.preventDefault();
+      if (!revokeTarget) return;
+      const cells = revokeTarget.querySelectorAll("td");
+      cells[1].textContent = "-";
+      cells[12].innerHTML = '<span class="badge">未核销</span>';
+      cells[14].textContent = "-";
+      revokeTarget.querySelector("[data-revoke]")?.remove();
+      if (detailData[revokeId]) {
+        detailData[revokeId][0] = "-";
+        detailData[revokeId][9] = "--";
+        detailData[revokeId][10] = "--";
+        detailData[revokeId][12] = "待使用";
+      }
+      revokeModal.classList.remove("open");
+      revokeTarget = null;
+      revokeId = "";
+    });
+
   </script>
 </body>
 </html>
