@@ -73,6 +73,57 @@
     .org-tree-level-2 { padding-left: 28px; }
     .org-tree-level-3 { padding-left: 52px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .points-detail-drawer {
+      width: min(1160px, calc(100vw - 48px));
+    }
+    .points-detail-drawer .detail-list {
+      grid-template-columns: 110px minmax(160px, 1fr) 110px minmax(160px, 1fr);
+    }
+    .consume-detail-section {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+    .consume-detail-section h4 {
+      margin: 0 0 12px;
+      color: var(--navy);
+      font-size: 15px;
+    }
+    .consume-detail-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+    }
+    .consume-detail-table {
+      min-width: 1080px;
+    }
+    .consume-detail-table th,
+    .consume-detail-table td {
+      white-space: nowrap;
+    }
+    .consume-detail-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+    .consume-change {
+      color: var(--brand);
+      font-weight: 800;
+    }
+    #consumeDetailPages {
+      display: inline-flex;
+      gap: 8px;
+    }
+    #consumeDetailPagination .page-btn:disabled {
+      cursor: not-allowed;
+      opacity: .45;
+    }
+    @media (max-width: 760px) {
+      .points-detail-drawer {
+        width: calc(100vw - 24px);
+      }
+      .points-detail-drawer .detail-list {
+        grid-template-columns: 100px minmax(0, 1fr);
+      }
+    }
   </style>
 </head>
 <body>
@@ -146,7 +197,7 @@
     </div>
   </div>
 
-  <aside class="drawer" id="detailDrawer">
+  <aside class="drawer points-detail-drawer" id="detailDrawer">
     <div class="panel-hd"><h3>积分明细详情</h3><button class="btn" data-close-drawer>关闭</button></div>
     <div class="panel-bd">
       <div class="detail-list">
@@ -163,6 +214,33 @@
         <span>交易时间</span><strong id="drawerTime">2026-05-26 09:30</strong>
         <span>附件</span><strong id="drawerAttachment">-</strong>
       </div>
+      <section class="consume-detail-section" id="consumeDetailSection" hidden>
+        <h4>消耗积分明细</h4>
+        <div class="consume-detail-table-wrap">
+          <table class="consume-detail-table">
+            <thead>
+              <tr>
+                <th>积分类型</th>
+                <th>交易类型</th>
+                <th>积分变动</th>
+                <th>业务来源</th>
+                <th>积分发放组织</th>
+                <th>积分发放项目</th>
+                <th>到期日期</th>
+                <th>交易时间</th>
+              </tr>
+            </thead>
+            <tbody id="consumeDetailRows"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="consumeDetailPagination">
+          <span id="consumeDetailTotal">总记录：0</span>
+          <button class="page-btn" id="consumeDetailPrev" type="button">上一页</button>
+          <span id="consumeDetailPages"></span>
+          <button class="page-btn" id="consumeDetailNext" type="button">下一页</button>
+          <select id="consumeDetailPageSize"><option selected value="5">5 条/页</option><option value="10">10 条/页</option><option value="20">20 条/页</option></select>
+        </div>
+      </section>
     </div>
   </aside>
 
@@ -272,6 +350,82 @@
       "PF202605230027": ["PF202605230027", "陈先生", "AJ202605010027", "PA202605010027", "碳积分", "消耗", "-500", "18,420", "优惠券兑换", "南山项目", "2026-10-31", "2026-05-23 14:05", "小票图片.png"],
       "PF202605220039": ["PF202605220039", "李明", "AJ202605180018", "PA202605180018", "消费积分", "调整", "+500", "42,680", "人工调整", "集团总部", "2027-05-21", "2026-05-22 10:12", "小票图片.png"]
     };
+    const consumeDetailData = {
+      "PF202605230027": [
+        ["消费积分", "消耗", "-27", "商品兑换", "商业板块 / 安计部", "高新安荟邻", "2027/12/31", "2026/05/23 14:05:01"],
+        ["消费积分", "消耗", "-50", "商品兑换", "商业板块 / 数字运营部", "高新安荟邻", "2027/12/31", "2026/05/23 14:05:01"],
+        ["消费积分", "消耗", "-50", "商品兑换", "住宅板块 / 客户服务部", "高新安荟邻", "2027/12/31", "2026/05/23 14:05:02"],
+        ["消费积分", "消耗", "-20", "商品兑换", "物业板块 / 物业管理部", "高新安荟邻", "2027/12/31", "2026/05/23 14:05:02"],
+        ["消费积分", "消耗", "-100", "商品兑换", "集团职能 / 信息技术部", "高新安荟邻", "2027/12/31", "2026/05/23 14:05:03"],
+        ["消费积分", "消耗", "-33", "商品兑换", "商业板块 / 安计部", "景田安荟邻", "2027/12/31", "2026/05/23 14:05:03"],
+        ["消费积分", "消耗", "-70", "商品兑换", "住宅板块 / 营销管理部", "高新花园", "2027/12/31", "2026/05/23 14:05:04"],
+        ["消费积分", "消耗", "-80", "商品兑换", "物业板块 / 品质管理部", "宝安人才园", "2027/12/31", "2026/05/23 14:05:04"],
+        ["消费积分", "消耗", "-70", "商品兑换", "商业板块 / 商业运营部", "天河安居项目", "2027/12/31", "2026/05/23 14:05:05"]
+      ]
+    };
+    const consumeDetailSection = document.getElementById("consumeDetailSection");
+    const consumeDetailRows = document.getElementById("consumeDetailRows");
+    const consumeDetailTotal = document.getElementById("consumeDetailTotal");
+    const consumeDetailPages = document.getElementById("consumeDetailPages");
+    const consumeDetailPrev = document.getElementById("consumeDetailPrev");
+    const consumeDetailNext = document.getElementById("consumeDetailNext");
+    const consumeDetailPageSize = document.getElementById("consumeDetailPageSize");
+    let currentConsumeDetailId = "";
+    let currentConsumeDetailPage = 1;
+
+    function renderConsumeDetails() {
+      const rows = consumeDetailData[currentConsumeDetailId] || [];
+      consumeDetailSection.hidden = rows.length === 0;
+      if (!rows.length) return;
+      const pageSize = Number(consumeDetailPageSize.value);
+      const pageCount = Math.max(1, Math.ceil(rows.length / pageSize));
+      currentConsumeDetailPage = Math.min(currentConsumeDetailPage, pageCount);
+      const start = (currentConsumeDetailPage - 1) * pageSize;
+      consumeDetailRows.innerHTML = rows.slice(start, start + pageSize).map(row => `
+        <tr>
+          <td><span class="badge">${row[0]}</span></td>
+          <td>${row[1]}</td>
+          <td class="consume-change">${row[2]}</td>
+          <td>${row[3]}</td>
+          <td>${row[4]}</td>
+          <td>${row[5]}</td>
+          <td>${row[6]}</td>
+          <td>${row[7]}</td>
+        </tr>
+      `).join("");
+      consumeDetailTotal.textContent = `总记录：${rows.length}`;
+      consumeDetailPages.innerHTML = Array.from({ length: pageCount }, (_, index) => {
+        const page = index + 1;
+        return `<button class="page-btn${page === currentConsumeDetailPage ? " active" : ""}" type="button" data-consume-page="${page}">${page}</button>`;
+      }).join("");
+      consumeDetailPrev.disabled = currentConsumeDetailPage === 1;
+      consumeDetailNext.disabled = currentConsumeDetailPage === pageCount;
+    }
+
+    consumeDetailPageSize.addEventListener("change", () => {
+      currentConsumeDetailPage = 1;
+      renderConsumeDetails();
+    });
+    consumeDetailPrev.addEventListener("click", () => {
+      if (currentConsumeDetailPage > 1) {
+        currentConsumeDetailPage -= 1;
+        renderConsumeDetails();
+      }
+    });
+    consumeDetailNext.addEventListener("click", () => {
+      const rows = consumeDetailData[currentConsumeDetailId] || [];
+      const pageCount = Math.max(1, Math.ceil(rows.length / Number(consumeDetailPageSize.value)));
+      if (currentConsumeDetailPage < pageCount) {
+        currentConsumeDetailPage += 1;
+        renderConsumeDetails();
+      }
+    });
+    consumeDetailPages.addEventListener("click", event => {
+      const button = event.target.closest("[data-consume-page]");
+      if (!button) return;
+      currentConsumeDetailPage = Number(button.dataset.consumePage);
+      renderConsumeDetails();
+    });
     const drawer = document.getElementById("detailDrawer");
     document.querySelectorAll("[data-detail]").forEach(el => {
       el.addEventListener("click", () => {
@@ -290,6 +444,9 @@
         document.getElementById("drawerExpireDate").textContent = data[10];
         document.getElementById("drawerTime").textContent = data[11];
         document.getElementById("drawerAttachment").innerHTML = data[12] === "-" ? "-" : `<span class="link" data-attachment="${data[12]}">${data[12]}</span>`;
+        currentConsumeDetailId = data[5] === "消耗" ? el.dataset.detail : "";
+        currentConsumeDetailPage = 1;
+        renderConsumeDetails();
         bindAttachments();
         drawer.classList.add("open");
       });
