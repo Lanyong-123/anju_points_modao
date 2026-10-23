@@ -175,6 +175,52 @@
       visibility: visible;
       transform: translate(-50%, 0);
     }
+    .level-help {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      margin-left: 4px;
+      border: 1px solid #8aa7c3;
+      border-radius: 50%;
+      color: #5f7f9e;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+      cursor: help;
+      vertical-align: middle;
+    }
+    .level-help::after {
+      content: attr(data-tip);
+      position: absolute;
+      z-index: 20;
+      left: 0;
+      bottom: calc(100% + 8px);
+      width: max-content;
+      max-width: 280px;
+      padding: 8px 10px;
+      border-radius: 5px;
+      background: #26364a;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(27, 42, 61, .2);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(4px);
+      transition: opacity .15s ease, transform .15s ease, visibility .15s ease;
+      pointer-events: none;
+    }
+    .level-help:hover::after,
+    .level-help:focus-visible::after {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
     .export-note {
       color: var(--muted);
       font-size: 12px;
@@ -500,8 +546,8 @@
       <div class="detail-list">
         <span>会员名称</span><strong id="detailName">李明</strong>
         <span>OneID</span><strong id="detailMemberId">AJ202605180018</strong>
-        <span>会员等级</span><strong id="detailLevel">V3远近闻名 <span class="badge gold">最低等级保障</span></strong>
-        <span>等级标识</span><strong id="detailLevelMark">当前等级：V3远近闻名 / 最低等级：V2小有名气</strong>
+        <span>原始等级</span><strong id="detailLevel">V3远近闻名</strong>
+        <span>最低等级设置 <span class="level-help" tabindex="0" role="note" aria-label="用户会员等级为原始等级、最低等级中最高等级" data-tip="用户会员等级为原始等级、最低等级中最高等级">?</span></span><strong id="detailLevelMark">V2小有名气</strong>
         <span>当前成长值</span><strong id="detailGrowthValue">8,420</strong>
         <span>认证状态</span><strong id="detailAuth">实名认证</strong>
         <span>用户类型</span><strong id="detailUserType">项目住户</strong>
@@ -950,8 +996,8 @@
       "李明": {
         id: "AJ202605180018",
         phone: "136****5520",
-        levelHtml: 'V3远近闻名 <span class="badge gold">最低等级保障</span>',
-        levelMark: "当前等级：V3远近闻名 / 最低等级：V2小有名气",
+        levelHtml: "V3远近闻名",
+        levelMark: "V2小有名气",
         growthValue: "8,420",
         auth: "实名认证",
         userType: "项目住户",
@@ -972,7 +1018,7 @@
         id: "AJ202604220091",
         phone: "139****6812",
         levelHtml: "V2小有名气",
-        levelMark: "当前等级：V2小有名气 / 最低等级：未设置",
+        levelMark: "未设置",
         growthValue: "2,860",
         auth: "实名认证",
         userType: "租户",
@@ -993,7 +1039,7 @@
         id: "AJ202603090112",
         phone: "188****4019",
         levelHtml: "V1展露头角",
-        levelMark: "当前等级：V1展露头角 / 最低等级：未设置",
+        levelMark: "未设置",
         growthValue: "1,200",
         auth: "未认证",
         userType: "游客",
@@ -1013,7 +1059,7 @@
         id: "AJ202605010027",
         phone: "137****2098",
         levelHtml: "V2小有名气",
-        levelMark: "当前等级：V2小有名气 / 最低等级：未设置",
+        levelMark: "未设置",
         growthValue: "4,180",
         auth: "实名认证",
         userType: "租户",
