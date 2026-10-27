@@ -59,7 +59,7 @@
       <div class="panel-bd">
         <table>
           <thead>
-            <tr><th>统计周期</th><th>时间维度</th><th>渠道</th><th>会员新增数量</th><th>会员注销数量</th><th>净增数量</th><th>新增占比</th><th>操作</th></tr>
+            <tr><th>统计周期</th><th>时间维度</th><th>渠道</th><th>会员新增数量</th><th>会员注销数量</th><th>净增数量</th><th>操作</th></tr>
           </thead>
           <tbody id="reportRows"></tbody>
         </table>
@@ -125,10 +125,8 @@
 
     function renderRows() {
       const rows = document.getElementById("reportRows");
-      const totalAdded = data.reduce((sum, item) => sum + item.added, 0);
       rows.innerHTML = data.map(item => {
         const net = item.added - item.canceled;
-        const rate = (item.added / totalAdded * 100).toFixed(1);
         return `
           <tr>
             <td>${item.period}</td>
@@ -137,7 +135,6 @@
             <td>${format(item.added)}</td>
             <td>${format(item.canceled)}</td>
             <td>${format(net)}</td>
-            <td>${rate}%</td>
             <td><a class="link" href="member-info.html" data-member-info>查看明细</a></td>
           </tr>
         `;
