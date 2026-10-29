@@ -131,32 +131,9 @@
     }
     .node-fields {
       display: grid;
-      grid-template-columns: minmax(200px, .9fr) minmax(260px, 1.2fr) minmax(260px, 1.1fr);
+      grid-template-columns: minmax(240px, .8fr) minmax(320px, 1.2fr);
       gap: 16px;
       align-items: start;
-    }
-    .review-target {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      min-height: 34px;
-      padding: 0 12px;
-      border: 1px solid #b8cfe3;
-      border-radius: 5px;
-      background: #fbfdff;
-    }
-    .review-target label {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin: 0;
-      white-space: nowrap;
-      cursor: pointer;
-    }
-    .review-target input[type="radio"] {
-      width: 16px;
-      height: 16px;
-      margin: 0;
     }
     .role-multi { position: relative; }
     .role-multi-trigger {
@@ -272,15 +249,10 @@
       "department-head": ["积分运营部负责人", "财务管理部负责人", "风控管理部负责人"],
       director: ["会员运营中心负责人", "数字运营中心负责人"]
     };
-    const personOptions = {
-      minister: ["张伟（积分运营部长）", "李娜（财务管理部长）", "王敏（风控管理部长）"],
-      "department-head": ["陈刚（积分运营部负责人）", "赵宁（财务管理部负责人）", "刘敏（风控管理部负责人）"],
-      director: ["周海（会员运营中心负责人）", "林岚（数字运营中心负责人）"]
-    };
     let nodeSeed = 2;
     let nodes = [
-      { id: 1, name: "部长审核", level: "minister", targetType: "role", assignee: ["积分运营部长"] },
-      { id: 2, name: "部门负责人审核", level: "department-head", targetType: "role", assignee: ["积分运营部负责人"] }
+      { id: 1, name: "部长审核", level: "minister", assignee: ["积分运营部长"] },
+      { id: 2, name: "部门负责人审核", level: "department-head", assignee: ["积分运营部负责人"] }
     ];
 
     const nodeList = document.getElementById("nodeList");
@@ -293,15 +265,6 @@
       })[character]);
     }
 
-    function targetOptions(node) {
-      return node.targetType === "person" ? personOptions[node.level] : roleOptions[node.level];
-    }
-
-    function optionHtml(options, selected) {
-      const selectedValues = Array.isArray(selected) ? selected : [selected];
-      return options.map(item => `<option${selectedValues.includes(item) ? " selected" : ""}>${item}</option>`).join("");
-    }
-
     function roleMultiHtml(node) {
       const selectedRoles = Array.isArray(node.assignee) ? node.assignee : [];
       const summary = selectedRoles.length ? selectedRoles.join("、") : "请选择审核角色";
@@ -309,7 +272,7 @@
         <div class="role-multi" data-role-multi>
           <button class="role-multi-trigger" type="button" aria-haspopup="listbox" aria-expanded="false"><span>${escapeHtml(summary)}</span><i>⌄</i></button>
           <div class="role-multi-menu" role="listbox" aria-multiselectable="true">
-            ${targetOptions(node).map(role => `<label class="role-multi-option"><input type="checkbox" data-role-option value="${escapeHtml(role)}"${selectedRoles.includes(role) ? " checked" : ""}>${escapeHtml(role)}</label>`).join("")}
+            ${roleOptions[node.level].map(role => `<label class="role-multi-option"><input type="checkbox" data-role-option value="${escapeHtml(role)}"${selectedRoles.includes(role) ? " checked" : ""}>${escapeHtml(role)}</label>`).join("")}
           </div>
         </div>`;
     }
@@ -344,17 +307,10 @@
                 <label class="required">审核角色层级</label>
                 <select data-node-field="level">${levelOptions.map(item => `<option value="${item.value}"${item.value === node.level ? " selected" : ""}>${item.label}</option>`).join("")}</select>
               </div>
-              <div class="field">
-                <label class="required">审核对象</label>
-                <div class="review-target">
-                  <label><input type="radio" name="target-${node.id}" value="role"${node.targetType === "role" ? " checked" : ""}>审核角色</label>
-                  <label><input type="radio" name="target-${node.id}" value="person"${node.targetType === "person" ? " checked" : ""}>审核人</label>
-                </div>
-              </div>
               <div class="field assignee-field">
-                <label class="required">${node.targetType === "person" ? "选择审核人" : "选择审核角色"}</label>
-                ${node.targetType === "role" ? roleMultiHtml(node) : `<select data-node-field="assignee">${optionHtml(targetOptions(node), node.assignee)}</select>`}
-                ${node.targetType === "role" ? '<div class="multi-select-hint">支持多选，可同时配置多个审核角色</div>' : ""}
+                <label class="required">选择审核角色</label>
+                ${roleMultiHtml(node)}
+                <div class="multi-select-hint">支持多选，可同时配置多个审核角色</div>
               </div>
             </div>
             <div class="node-actions">
@@ -389,16 +345,7 @@
       if (event.target.matches('[data-node-field="name"]')) node.name = event.target.value.trim();
       if (event.target.matches('[data-node-field="level"]')) {
         node.level = event.target.value;
-        node.assignee = node.targetType === "person" ? personOptions[node.level][0] : [roleOptions[node.level][0]];
-      }
-      if (event.target.matches('input[type="radio"]')) {
-        node.targetType = event.target.value;
-        node.assignee = node.targetType === "person" ? personOptions[node.level][0] : [roleOptions[node.level][0]];
-      }
-      if (event.target.matches('[data-node-field="assignee"]')) {
-        node.assignee = node.targetType === "role"
-          ? Array.from(event.target.selectedOptions).map(option => option.value)
-          : event.target.value;
+        node.assignee = [roleOptions[node.level][0]];
       }
       renderNodes();
     });
@@ -444,7 +391,7 @@
 
     document.getElementById("addNode").addEventListener("click", () => {
       nodeSeed += 1;
-      nodes.push({ id: nodeSeed, name: "新增审核节点", level: "minister", targetType: "role", assignee: [roleOptions.minister[0]] });
+      nodes.push({ id: nodeSeed, name: "新增审核节点", level: "minister", assignee: [roleOptions.minister[0]] });
       renderNodes();
       showToast("已新增流程节点");
     });
@@ -454,7 +401,7 @@
         showToast("请至少配置一个审核节点");
         return;
       }
-      const unassignedRoleNode = nodes.find(node => node.targetType === "role" && !node.assignee.length);
+      const unassignedRoleNode = nodes.find(node => !node.assignee.length);
       if (unassignedRoleNode) {
         const roleMulti = nodeList.querySelector(`[data-node-id="${unassignedRoleNode.id}"] [data-role-multi]`);
         roleMulti.classList.add("invalid", "open");
