@@ -529,10 +529,6 @@
             <div class="gift-label required">礼券成本</div>
             <div class="gift-control"><div class="money-input"><input id="editValue" placeholder="请输入礼券成本" value="10"><span>元</span></div><div class="gift-hint">单张兑换券的价值</div></div>
           </div>
-          <div class="gift-row">
-            <div class="gift-label required">有效方式 <span class="help-tip" data-tip="统一生效时间适用于固定活动周期；领取后有效适用于按用户领取时间分别计算有效期">?</span></div>
-            <div class="gift-control"><div class="radio-line"><label><input type="radio" name="validType" value="fixed" checked> 统一生效时间</label><label><input type="radio" name="validType" value="after"> 领取后有效</label></div></div>
-          </div>
           <div class="gift-row valid-panel active" data-valid-panel="fixed">
             <div class="gift-label required">有效时间</div>
             <div class="gift-control"><div class="grid cols-2"><input id="editStart" value="2026-05-01"><input id="editEnd" value="2026-08-31"></div><div class="gift-hint">编辑修改后不改变已领取数据的有效时间</div></div>
@@ -864,14 +860,6 @@
     document.querySelectorAll("input[name='giftType']").forEach(radio => {
       radio.addEventListener("change", () => {
         syncGiftType(radio.value);
-      });
-    });
-
-    document.querySelectorAll("input[name='validType']").forEach(radio => {
-      radio.addEventListener("change", () => {
-        document.querySelectorAll("[data-valid-panel]").forEach(panel => {
-          panel.classList.toggle("active", panel.dataset.validPanel === radio.value);
-        });
       });
     });
 
