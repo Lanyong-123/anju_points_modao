@@ -674,13 +674,13 @@
       <div class="panel-bd">
         <div class="notice" id="freezeNotice"></div>
         <div class="field" id="freezeReasonPresetField" style="margin-top:12px">
-          <label id="freezeReasonLabel">冻结原因</label>
-          <div class="freeze-reason-options" id="freezeReasonOptions" role="radiogroup" aria-label="冻结原因">
+          <label class="required" id="freezeReasonLabel">冻结原因</label>
+          <div class="freeze-reason-options" id="freezeReasonOptions" role="radiogroup" aria-label="冻结原因" aria-required="true">
             <button class="freeze-reason-option selected" type="button" role="radio" aria-checked="true" data-freeze-reason="恶意刷分">恶意刷分</button>
             <button class="freeze-reason-option" type="button" role="radio" aria-checked="false" data-freeze-reason="虚假认证">虚假认证</button>
             <button class="freeze-reason-option" type="button" role="radio" aria-checked="false" data-freeze-reason="其它">其它</button>
           </div>
-          <div class="freeze-reason-options" id="unfreezeReasonOptions" role="radiogroup" aria-label="解冻原因" hidden>
+          <div class="freeze-reason-options" id="unfreezeReasonOptions" role="radiogroup" aria-label="解冻原因" aria-required="true" hidden>
             <button class="freeze-reason-option selected" type="button" role="radio" aria-checked="true" data-unfreeze-reason="风控核查通过">风控核查通过</button>
             <button class="freeze-reason-option" type="button" role="radio" aria-checked="false" data-unfreeze-reason="违规状态解除">违规状态解除</button>
             <button class="freeze-reason-option" type="button" role="radio" aria-checked="false" data-unfreeze-reason="账户安全恢复">账户安全恢复</button>
@@ -699,15 +699,15 @@
       <div class="panel-bd">
         <div class="notice" id="listNotice"></div>
         <div class="field" id="listReasonPresetField" style="margin-top:12px">
-          <label id="listReasonLabel">拉黑原因</label>
-          <div class="list-reason-options" id="addListReasonOptions" role="radiogroup" aria-label="拉黑原因">
+          <label class="required" id="listReasonLabel">拉黑原因</label>
+          <div class="list-reason-options" id="addListReasonOptions" role="radiogroup" aria-label="拉黑原因" aria-required="true">
             <button class="list-reason-option selected" type="button" role="radio" aria-checked="true" data-list-reason="同IP多账号批量操作">同IP多账号批量操作</button>
             <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-list-reason="频繁兑换同一商品或异常高频兑换">频繁兑换同一商品或异常高频兑换</button>
             <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-list-reason="账户异常或涉嫌非真实交易">账户异常或涉嫌非真实交易</button>
             <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-list-reason="违反平台规则或存在不良记录">违反平台规则或存在不良记录</button>
             <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-list-reason="其它">其它</button>
           </div>
-          <div class="list-reason-options" id="removeListReasonOptions" role="radiogroup" aria-label="取消黑名单原因" hidden>
+          <div class="list-reason-options" id="removeListReasonOptions" role="radiogroup" aria-label="取消黑名单原因" aria-required="true" hidden>
             <button class="list-reason-option selected" type="button" role="radio" aria-checked="true" data-remove-list-reason="违规行为已纠正">违规行为已纠正</button>
             <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-remove-list-reason="误判或系统错误">误判或系统错误</button>
             <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-remove-list-reason="其它">其它</button>
