@@ -40,6 +40,43 @@
       color: var(--red);
       font-weight: 700;
     }
+    .freeze-reason-options,
+    .list-reason-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .freeze-reason-options[hidden],
+    .list-reason-options[hidden] {
+      display: none;
+    }
+    .freeze-reason-option,
+    .list-reason-option {
+      min-width: 92px;
+      height: 34px;
+      padding: 0 16px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: #fff;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .freeze-reason-option:hover,
+    .list-reason-option:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+    .freeze-reason-option.selected,
+    .list-reason-option.selected {
+      border-color: var(--brand);
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      box-shadow: 0 0 0 1px var(--brand) inset;
+    }
     .growth-filter {
       grid-template-columns: 1.6fr 1fr auto auto;
       margin-bottom: 12px;
@@ -623,7 +660,21 @@
       <div class="panel-hd"><h3 id="freezeTitle">冻结 / 解冻管理</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd">
         <div class="notice" id="freezeNotice"></div>
-        <div class="field" style="margin-top:12px"><label class="required">操作原因</label><input value="疑似恶意刷分，临时冻结服务权限"></div>
+        <div class="field" id="freezeReasonPresetField" style="margin-top:12px">
+          <label id="freezeReasonLabel">冻结原因</label>
+          <div class="freeze-reason-options" id="freezeReasonOptions" role="radiogroup" aria-label="冻结原因">
+            <button class="freeze-reason-option selected" type="button" role="radio" aria-checked="true" data-freeze-reason="恶意刷分">恶意刷分</button>
+            <button class="freeze-reason-option" type="button" role="radio" aria-checked="false" data-freeze-reason="虚假认证">虚假认证</button>
+            <button class="freeze-reason-option" type="button" role="radio" aria-checked="false" data-freeze-reason="其它">其它</button>
+          </div>
+          <div class="freeze-reason-options" id="unfreezeReasonOptions" role="radiogroup" aria-label="解冻原因" hidden>
+            <button class="freeze-reason-option selected" type="button" role="radio" aria-checked="true" data-unfreeze-reason="风控核查通过">风控核查通过</button>
+            <button class="freeze-reason-option" type="button" role="radio" aria-checked="false" data-unfreeze-reason="违规状态解除">违规状态解除</button>
+            <button class="freeze-reason-option" type="button" role="radio" aria-checked="false" data-unfreeze-reason="账户安全恢复">账户安全恢复</button>
+            <button class="freeze-reason-option" type="button" role="radio" aria-checked="false" data-unfreeze-reason="其它">其它</button>
+          </div>
+        </div>
+        <div class="field" style="margin-top:12px"><input id="freezeReasonInput" aria-label="冻结原因补充说明" value="恶意刷分"></div>
       </div>
       <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div>
     </div>
@@ -634,11 +685,22 @@
       <div class="panel-hd"><h3 id="listTitle">黑名单管理</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd">
         <div class="notice" id="listNotice"></div>
-        <div class="field" style="margin-top:12px">
-          <label class="required">名单类型</label>
-          <input id="listType" value="黑名单" readonly>
+        <div class="field" id="listReasonPresetField" style="margin-top:12px">
+          <label id="listReasonLabel">拉黑原因</label>
+          <div class="list-reason-options" id="addListReasonOptions" role="radiogroup" aria-label="拉黑原因">
+            <button class="list-reason-option selected" type="button" role="radio" aria-checked="true" data-list-reason="同IP多账号批量操作">同IP多账号批量操作</button>
+            <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-list-reason="频繁兑换同一商品或异常高频兑换">频繁兑换同一商品或异常高频兑换</button>
+            <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-list-reason="账户异常或涉嫌非真实交易">账户异常或涉嫌非真实交易</button>
+            <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-list-reason="违反平台规则或存在不良记录">违反平台规则或存在不良记录</button>
+            <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-list-reason="其它">其它</button>
+          </div>
+          <div class="list-reason-options" id="removeListReasonOptions" role="radiogroup" aria-label="取消黑名单原因" hidden>
+            <button class="list-reason-option selected" type="button" role="radio" aria-checked="true" data-remove-list-reason="违规行为已纠正">违规行为已纠正</button>
+            <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-remove-list-reason="误判或系统错误">误判或系统错误</button>
+            <button class="list-reason-option" type="button" role="radio" aria-checked="false" data-remove-list-reason="其它">其它</button>
+          </div>
         </div>
-        <div class="field" style="margin-top:12px"><label class="required">操作原因</label><input value="异常行为黑名单处理"></div>
+        <div class="field" style="margin-top:12px"><input id="listReasonInput" aria-label="拉黑原因补充说明" value="同IP多账号批量操作"></div>
       </div>
       <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="listConfirm">确认</button></div>
     </div>
@@ -1296,10 +1358,47 @@
     }
     document.querySelectorAll("[data-freeze]").forEach(el => {
       el.addEventListener("click", () => {
-        const copy = freezeCopy[el.dataset.freeze] || freezeCopy.freeze;
+        const action = el.dataset.freeze;
+        const copy = freezeCopy[action] || freezeCopy.freeze;
+        const isFreezeAction = action === "freeze" || action === "batch-freeze";
         document.getElementById("freezeTitle").textContent = copy[0];
         document.getElementById("freezeNotice").innerHTML = `<strong>${copy[0]}</strong>${copy[1]}`;
+        document.getElementById("freezeReasonLabel").textContent = isFreezeAction ? "冻结原因" : "解冻原因";
+        document.getElementById("freezeReasonOptions").hidden = !isFreezeAction;
+        document.getElementById("unfreezeReasonOptions").hidden = isFreezeAction;
+        document.getElementById("freezeReasonInput").value = isFreezeAction ? "恶意刷分" : "风控核查通过";
+        document.getElementById("freezeReasonInput").setAttribute("aria-label", isFreezeAction ? "冻结原因补充说明" : "解冻原因补充说明");
+        document.querySelectorAll("[data-freeze-reason]").forEach(option => {
+          const selected = option.dataset.freezeReason === "恶意刷分";
+          option.classList.toggle("selected", selected);
+          option.setAttribute("aria-checked", String(selected));
+        });
+        document.querySelectorAll("[data-unfreeze-reason]").forEach(option => {
+          const selected = option.dataset.unfreezeReason === "风控核查通过";
+          option.classList.toggle("selected", selected);
+          option.setAttribute("aria-checked", String(selected));
+        });
         document.getElementById("freezeModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-freeze-reason]").forEach(option => {
+      option.addEventListener("click", () => {
+        document.querySelectorAll("[data-freeze-reason]").forEach(item => {
+          const selected = item === option;
+          item.classList.toggle("selected", selected);
+          item.setAttribute("aria-checked", String(selected));
+        });
+        document.getElementById("freezeReasonInput").value = option.dataset.freezeReason;
+      });
+    });
+    document.querySelectorAll("[data-unfreeze-reason]").forEach(option => {
+      option.addEventListener("click", () => {
+        document.querySelectorAll("[data-unfreeze-reason]").forEach(item => {
+          const selected = item === option;
+          item.classList.toggle("selected", selected);
+          item.setAttribute("aria-checked", String(selected));
+        });
+        document.getElementById("freezeReasonInput").value = option.dataset.unfreezeReason;
       });
     });
     document.querySelectorAll(".member-table tbody tr").forEach(row => {
@@ -1321,11 +1420,47 @@
     document.querySelectorAll("[data-list]").forEach(el => {
       el.addEventListener("click", () => {
         activeListTrigger = el;
-        const copy = listCopy[el.dataset.list] || listCopy["add-black"];
+        const action = el.dataset.list;
+        const copy = listCopy[action] || listCopy["add-black"];
+        const isAddBlackAction = action === "add-black" || action === "batch-add-black";
         document.getElementById("listTitle").textContent = copy[0];
         document.getElementById("listNotice").innerHTML = `<strong>${copy[0]}</strong>${copy[1]}`;
-        document.getElementById("listType").value = "黑名单";
+        document.getElementById("listReasonLabel").textContent = isAddBlackAction ? "拉黑原因" : "取消黑名单原因";
+        document.getElementById("addListReasonOptions").hidden = !isAddBlackAction;
+        document.getElementById("removeListReasonOptions").hidden = isAddBlackAction;
+        document.getElementById("listReasonInput").value = isAddBlackAction ? "同IP多账号批量操作" : "违规行为已纠正";
+        document.getElementById("listReasonInput").setAttribute("aria-label", isAddBlackAction ? "拉黑原因补充说明" : "取消黑名单原因补充说明");
+        document.querySelectorAll("[data-list-reason]").forEach(option => {
+          const selected = option.dataset.listReason === "同IP多账号批量操作";
+          option.classList.toggle("selected", selected);
+          option.setAttribute("aria-checked", String(selected));
+        });
+        document.querySelectorAll("[data-remove-list-reason]").forEach(option => {
+          const selected = option.dataset.removeListReason === "违规行为已纠正";
+          option.classList.toggle("selected", selected);
+          option.setAttribute("aria-checked", String(selected));
+        });
         document.getElementById("listModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-list-reason]").forEach(option => {
+      option.addEventListener("click", () => {
+        document.querySelectorAll("[data-list-reason]").forEach(item => {
+          const selected = item === option;
+          item.classList.toggle("selected", selected);
+          item.setAttribute("aria-checked", String(selected));
+        });
+        document.getElementById("listReasonInput").value = option.dataset.listReason;
+      });
+    });
+    document.querySelectorAll("[data-remove-list-reason]").forEach(option => {
+      option.addEventListener("click", () => {
+        document.querySelectorAll("[data-remove-list-reason]").forEach(item => {
+          const selected = item === option;
+          item.classList.toggle("selected", selected);
+          item.setAttribute("aria-checked", String(selected));
+        });
+        document.getElementById("listReasonInput").value = option.dataset.removeListReason;
       });
     });
     function applyListState(row, inBlackList) {

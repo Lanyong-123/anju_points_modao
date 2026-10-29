@@ -12,6 +12,38 @@
       color: var(--red);
       font-weight: 700;
     }
+    .account-reason-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .account-reason-options[hidden] {
+      display: none;
+    }
+    .account-reason-option {
+      min-width: 92px;
+      height: 34px;
+      padding: 0 16px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      background: #fff;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .account-reason-option:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+    .account-reason-option.selected {
+      border-color: var(--brand);
+      background: var(--brand-soft);
+      color: var(--brand-deep);
+      box-shadow: 0 0 0 1px var(--brand) inset;
+    }
     .audit-record-table th,
     .audit-record-table td {
       white-space: normal;
@@ -246,7 +278,21 @@
           <button class="page-btn" id="freezeNext">下一页</button>
           <span style="margin-left:auto">可多选积分记录后统一操作</span>
         </div>
-        <div class="field" style="margin-top:12px"><label class="required">操作原因</label><input id="freezeReason" value="疑似恶意兑换，临时冻结积分"></div>
+        <div class="field" style="margin-top:12px">
+          <label id="accountReasonLabel">冻结原因</label>
+          <div class="account-reason-options" id="accountFreezeReasonOptions" role="radiogroup" aria-label="冻结原因">
+            <button class="account-reason-option selected" type="button" role="radio" aria-checked="true" data-account-freeze-reason="恶意刷分">恶意刷分</button>
+            <button class="account-reason-option" type="button" role="radio" aria-checked="false" data-account-freeze-reason="虚假认证">虚假认证</button>
+            <button class="account-reason-option" type="button" role="radio" aria-checked="false" data-account-freeze-reason="其它">其它</button>
+          </div>
+          <div class="account-reason-options" id="accountUnfreezeReasonOptions" role="radiogroup" aria-label="解冻原因" hidden>
+            <button class="account-reason-option selected" type="button" role="radio" aria-checked="true" data-account-unfreeze-reason="风控核查通过">风控核查通过</button>
+            <button class="account-reason-option" type="button" role="radio" aria-checked="false" data-account-unfreeze-reason="违规状态解除">违规状态解除</button>
+            <button class="account-reason-option" type="button" role="radio" aria-checked="false" data-account-unfreeze-reason="账户安全恢复">账户安全恢复</button>
+            <button class="account-reason-option" type="button" role="radio" aria-checked="false" data-account-unfreeze-reason="其它">其它</button>
+          </div>
+        </div>
+        <div class="field" style="margin-top:12px"><input id="freezeReason" aria-label="冻结原因补充说明" value="恶意刷分"></div>
       </div>
       <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div>
     </div>
@@ -490,20 +536,55 @@
       });
     });
     const freezeCopy = {
-      "freeze": ["积分冻结", "冻结后对应积分状态标记为冻结，会员不可使用该部分积分。", "疑似恶意兑换，临时冻结积分", true],
-      "unfreeze": ["积分解冻", "解冻后冻结积分恢复为可用状态，请记录解冻原因。", "风险已解除，恢复积分可用", false],
-      "batch-freeze": ["批量积分冻结", "将对已勾选积分账户批量冻结积分，冻结后不可使用。", "批量风控冻结积分", true],
-      "batch-unfreeze": ["批量积分解冻", "将对已勾选积分账户批量解冻积分，恢复可用状态。", "批量解除积分冻结", false]
+      "freeze": ["积分冻结", "冻结后对应积分状态标记为冻结，会员不可使用该部分积分。", true],
+      "unfreeze": ["积分解冻", "解冻后冻结积分恢复为可用状态，请记录解冻原因。", false],
+      "batch-freeze": ["批量积分冻结", "将对已勾选积分账户批量冻结积分，冻结后不可使用。", true],
+      "batch-unfreeze": ["批量积分解冻", "将对已勾选积分账户批量解冻积分，恢复可用状态。", false]
     };
     document.querySelectorAll("[data-freeze]").forEach(el => {
       el.addEventListener("click", () => {
         const copy = freezeCopy[el.dataset.freeze] || freezeCopy.freeze;
+        const isFreezeAction = copy[2];
         document.getElementById("freezeTitle").textContent = copy[0];
         document.getElementById("freezeNotice").innerHTML = `<strong>${copy[0]}</strong>${copy[1]}`;
-        document.getElementById("freezeReason").value = copy[2];
+        document.getElementById("accountReasonLabel").textContent = isFreezeAction ? "冻结原因" : "解冻原因";
+        document.getElementById("accountFreezeReasonOptions").hidden = !isFreezeAction;
+        document.getElementById("accountUnfreezeReasonOptions").hidden = isFreezeAction;
+        document.getElementById("freezeReason").value = isFreezeAction ? "恶意刷分" : "风控核查通过";
+        document.getElementById("freezeReason").setAttribute("aria-label", isFreezeAction ? "冻结原因补充说明" : "解冻原因补充说明");
+        document.querySelectorAll("[data-account-freeze-reason]").forEach(option => {
+          const selected = option.dataset.accountFreezeReason === "恶意刷分";
+          option.classList.toggle("selected", selected);
+          option.setAttribute("aria-checked", String(selected));
+        });
+        document.querySelectorAll("[data-account-unfreeze-reason]").forEach(option => {
+          const selected = option.dataset.accountUnfreezeReason === "风控核查通过";
+          option.classList.toggle("selected", selected);
+          option.setAttribute("aria-checked", String(selected));
+        });
         document.getElementById("freezeOrgFilter").value = "全部组织";
         renderFreezeRecords(true);
         document.getElementById("freezeModal").classList.add("open");
+      });
+    });
+    document.querySelectorAll("[data-account-freeze-reason]").forEach(option => {
+      option.addEventListener("click", () => {
+        document.querySelectorAll("[data-account-freeze-reason]").forEach(item => {
+          const selected = item === option;
+          item.classList.toggle("selected", selected);
+          item.setAttribute("aria-checked", String(selected));
+        });
+        document.getElementById("freezeReason").value = option.dataset.accountFreezeReason;
+      });
+    });
+    document.querySelectorAll("[data-account-unfreeze-reason]").forEach(option => {
+      option.addEventListener("click", () => {
+        document.querySelectorAll("[data-account-unfreeze-reason]").forEach(item => {
+          const selected = item === option;
+          item.classList.toggle("selected", selected);
+          item.setAttribute("aria-checked", String(selected));
+        });
+        document.getElementById("freezeReason").value = option.dataset.accountUnfreezeReason;
       });
     });
     document.querySelectorAll("[data-close-modal]").forEach(el => {
