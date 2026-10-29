@@ -12,6 +12,35 @@
       color: var(--red);
       font-weight: 700;
     }
+    .level-member-modal {
+      width: min(1240px, calc(100vw - 40px));
+    }
+    .level-member-modal .panel-bd {
+      max-height: calc(100vh - 180px);
+      overflow: auto;
+    }
+    .level-member-filter {
+      grid-template-columns: 1.5fr repeat(3, minmax(140px, 1fr)) auto auto;
+      margin-bottom: 12px;
+      box-shadow: none;
+    }
+    .level-member-table-wrap {
+      overflow-x: auto;
+    }
+    .level-member-table {
+      min-width: 1160px;
+      font-size: 12px;
+    }
+    .level-member-table th,
+    .level-member-table td {
+      padding-right: 7px;
+      padding-left: 7px;
+      white-space: nowrap;
+    }
+    .level-member-pagination {
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
   </style>
 </head>
 <body>
@@ -46,10 +75,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td>V1展露头角</td><td>1</td><td>0</td><td><span class="badge green">启用</span></td><td>896,430</td><td>2026-05-20 09:30</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>V2小有名气</td><td>2</td><td>2,000</td><td><span class="badge green">启用</span></td><td>282,160</td><td>2026-05-18 15:42</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>V3远近闻名</td><td>3</td><td>8,000</td><td><span class="badge green">启用</span></td><td>96,720</td><td>2026-05-16 11:08</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>V4名扬四海</td><td>4</td><td>30,000</td><td><span class="badge red">停用</span></td><td>1,120</td><td>2026-05-10 10:16</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="enable">启用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>V1展露头角</td><td>1</td><td>0</td><td><span class="badge green">启用</span></td><td><span class="link" data-level-members="V1展露头角" data-member-total="896,430">896,430</span></td><td>2026-05-20 09:30</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>V2小有名气</td><td>2</td><td>2,000</td><td><span class="badge green">启用</span></td><td><span class="link" data-level-members="V2小有名气" data-member-total="282,160">282,160</span></td><td>2026-05-18 15:42</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>V3远近闻名</td><td>3</td><td>8,000</td><td><span class="badge green">启用</span></td><td><span class="link" data-level-members="V3远近闻名" data-member-total="96,720">96,720</span></td><td>2026-05-16 11:08</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="disable">停用</span>　<span class="link" data-delete>删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>V4名扬四海</td><td>4</td><td>30,000</td><td><span class="badge red">停用</span></td><td><span class="link" data-level-members="V4名扬四海" data-member-total="1,120">1,120</span></td><td>2026-05-10 10:16</td><td><span class="link" data-open-level="edit">编辑</span>　<span class="link" data-toggle-level="enable">启用</span>　<span class="link" data-delete>删除</span></td></tr>
           </tbody>
         </table>
         <div class="pagination">
@@ -60,6 +89,37 @@
           <button class="page-btn active">1</button>
           <button class="page-btn">下一页</button>
           <span>跳至</span><input value="1"><span>页</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="levelMemberModal">
+    <div class="modal level-member-modal">
+      <div class="panel-hd"><h3 id="levelMemberTitle">等级会员信息</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="filter level-member-filter">
+          <div class="field"><label>会员搜索</label><input id="levelMemberKeyword" placeholder="请输入会员名称或手机号"></div>
+          <div class="field"><label>认证状态</label><select id="levelMemberAuth"><option>全部认证状态</option><option>实名认证</option><option>未认证</option></select></div>
+          <div class="field"><label>用户类型</label><select id="levelMemberType"><option>全部用户类型</option><option>项目住户</option><option>租户</option><option>游客</option></select></div>
+          <div class="field"><label>账号状态</label><select id="levelMemberStatus"><option>全部账号状态</option><option>正常</option><option>冻结</option></select></div>
+          <button class="btn primary" id="levelMemberSearch">查询</button>
+          <button class="btn" id="levelMemberReset">重置</button>
+        </div>
+        <div class="level-member-table-wrap">
+          <table class="level-member-table">
+            <thead><tr><th>会员名称</th><th>手机号</th><th>会员等级</th><th>认证状态</th><th>用户类型</th><th>名单状态</th><th>账号状态</th><th>消费积分/商品/权益</th><th>碳积分</th><th>注册来源</th><th>最近操作</th></tr></thead>
+            <tbody id="levelMemberRows"></tbody>
+          </table>
+        </div>
+        <div class="pagination level-member-pagination">
+          <span id="levelMemberTotal">共 0 条</span>
+          <span>每页</span>
+          <select id="levelMemberPageSize"><option selected>5 条</option><option>10 条</option><option>20 条</option></select>
+          <button class="page-btn" id="levelMemberPrev">上一页</button>
+          <button class="page-btn active" id="levelMemberPageNo">1</button>
+          <button class="page-btn" id="levelMemberNext">下一页</button>
+          <span>跳至</span><input id="levelMemberJump" value="1"><span>页</span>
         </div>
       </div>
     </div>
@@ -139,6 +199,105 @@
 
   <script>
     const levelModal = document.getElementById("levelModal");
+    const levelMemberSeeds = {
+      "V1展露头角": ["王强", "林悦", "赵晨", "孙晓雨", "周凯", "刘敏", "高远", "郑女士"],
+      "V2小有名气": ["周女士", "陈先生", "何静", "许文", "罗佳", "邓伟", "蒋欣"],
+      "V3远近闻名": ["李明", "赵女士", "冯浩", "唐琳", "郭先生", "袁敏"],
+      "V4名扬四海": ["顾先生", "沈女士", "方诚", "秦悦"]
+    };
+    const levelMemberSources = ["自在安居小程序", "物业服务平台", "营销活动注册", "客服批量导入"];
+    const levelMemberTypes = ["项目住户", "租户", "游客"];
+    function buildLevelMembers(level, names, levelIndex) {
+      return names.map((name, index) => ({
+        name,
+        phone: `13${(6 + (index % 4))}****${String(2100 + levelIndex * 170 + index * 37).slice(-4)}`,
+        level,
+        auth: index % 4 === 2 ? "未认证" : "实名认证",
+        userType: levelMemberTypes[index % levelMemberTypes.length],
+        listStatus: index % 5 === 3 ? "黑名单" : "无名单",
+        accountStatus: index % 6 === 4 ? "冻结" : "正常",
+        assets: `${(1200 + levelIndex * 8600 + index * 730).toLocaleString()} / ${index % 6} / ${index % 4}`,
+        carbonPoints: (400 + levelIndex * 2100 + index * 280).toLocaleString(),
+        source: levelMemberSources[index % levelMemberSources.length],
+        lastAction: `2026-05-${String(26 - index).padStart(2, "0")} ${["签到", "领取权益", "积分兑换", "资料更新"][index % 4]}`
+      }));
+    }
+    const levelMemberData = Object.fromEntries(Object.entries(levelMemberSeeds).map(([level, names], index) => [level, buildLevelMembers(level, names, index)]));
+    const levelMemberState = { level: "V1展露头角", rows: [], filteredRows: [], page: 1 };
+    function levelMemberPageSize() {
+      return Number.parseInt(document.getElementById("levelMemberPageSize").value, 10) || 5;
+    }
+    function levelMemberBadge(value, type) {
+      if (type === "auth") return `<span class="badge ${value === "实名认证" ? "green" : "gray"}">${value}</span>`;
+      if (type === "list") return `<span class="badge ${value === "黑名单" ? "red" : "gray"}">${value}</span>`;
+      if (type === "account") return `<span class="badge ${value === "冻结" ? "red" : "green"}">${value}</span>`;
+      return value;
+    }
+    function renderLevelMemberRows() {
+      const pageSize = levelMemberPageSize();
+      const pageCount = Math.max(1, Math.ceil(levelMemberState.filteredRows.length / pageSize));
+      levelMemberState.page = Math.min(Math.max(1, levelMemberState.page), pageCount);
+      const start = (levelMemberState.page - 1) * pageSize;
+      const pageRows = levelMemberState.filteredRows.slice(start, start + pageSize);
+      document.getElementById("levelMemberRows").innerHTML = pageRows.length
+        ? pageRows.map(row => `<tr><td>${row.name}</td><td>${row.phone}</td><td><span class="badge gold">${row.level}</span></td><td>${levelMemberBadge(row.auth, "auth")}</td><td>${row.userType}</td><td>${levelMemberBadge(row.listStatus, "list")}</td><td>${levelMemberBadge(row.accountStatus, "account")}</td><td>${row.assets}</td><td>${row.carbonPoints}</td><td>${row.source}</td><td>${row.lastAction}</td></tr>`).join("")
+        : '<tr><td colspan="11" style="text-align:center;color:#667789">暂无匹配会员</td></tr>';
+      document.getElementById("levelMemberTotal").textContent = `共 ${levelMemberState.filteredRows.length} 条（原型示例）`;
+      document.getElementById("levelMemberPageNo").textContent = levelMemberState.page;
+      document.getElementById("levelMemberJump").value = levelMemberState.page;
+      document.getElementById("levelMemberPrev").disabled = levelMemberState.page <= 1;
+      document.getElementById("levelMemberNext").disabled = levelMemberState.page >= pageCount;
+    }
+    function applyLevelMemberFilter(resetPage = true) {
+      const keyword = document.getElementById("levelMemberKeyword").value.trim().toLowerCase();
+      const auth = document.getElementById("levelMemberAuth").value;
+      const userType = document.getElementById("levelMemberType").value;
+      const accountStatus = document.getElementById("levelMemberStatus").value;
+      levelMemberState.filteredRows = levelMemberState.rows.filter(row => {
+        const keywordMatch = !keyword || row.name.toLowerCase().includes(keyword) || row.phone.toLowerCase().includes(keyword);
+        const authMatch = auth === "全部认证状态" || row.auth === auth;
+        const userTypeMatch = userType === "全部用户类型" || row.userType === userType;
+        const accountMatch = accountStatus === "全部账号状态" || row.accountStatus === accountStatus;
+        return keywordMatch && authMatch && userTypeMatch && accountMatch;
+      });
+      if (resetPage) levelMemberState.page = 1;
+      renderLevelMemberRows();
+    }
+    document.querySelectorAll("[data-level-members]").forEach(trigger => {
+      trigger.addEventListener("click", () => {
+        const level = trigger.dataset.levelMembers;
+        levelMemberState.level = level;
+        levelMemberState.rows = levelMemberData[level] || [];
+        document.getElementById("levelMemberTitle").textContent = `${level} - 会员信息（共 ${trigger.dataset.memberTotal} 人）`;
+        document.getElementById("levelMemberKeyword").value = "";
+        document.getElementById("levelMemberAuth").value = "全部认证状态";
+        document.getElementById("levelMemberType").value = "全部用户类型";
+        document.getElementById("levelMemberStatus").value = "全部账号状态";
+        applyLevelMemberFilter(true);
+        document.getElementById("levelMemberModal").classList.add("open");
+      });
+    });
+    document.getElementById("levelMemberSearch").addEventListener("click", () => applyLevelMemberFilter(true));
+    document.getElementById("levelMemberReset").addEventListener("click", () => {
+      document.getElementById("levelMemberKeyword").value = "";
+      document.getElementById("levelMemberAuth").value = "全部认证状态";
+      document.getElementById("levelMemberType").value = "全部用户类型";
+      document.getElementById("levelMemberStatus").value = "全部账号状态";
+      applyLevelMemberFilter(true);
+    });
+    document.getElementById("levelMemberPageSize").addEventListener("change", () => applyLevelMemberFilter(true));
+    document.getElementById("levelMemberPrev").addEventListener("click", () => {
+      levelMemberState.page -= 1;
+      renderLevelMemberRows();
+    });
+    document.getElementById("levelMemberNext").addEventListener("click", () => {
+      levelMemberState.page += 1;
+      renderLevelMemberRows();
+    });
+    document.getElementById("levelMemberJump").addEventListener("change", event => {
+      levelMemberState.page = Number.parseInt(event.target.value, 10) || 1;
+      renderLevelMemberRows();
+    });
     const conditionValueOptions = {
       "业主身份": ["业主", "租户", "游客"]
     };

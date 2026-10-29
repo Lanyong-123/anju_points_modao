@@ -765,9 +765,9 @@
             <div class="product-control"><textarea id="editDesc" placeholder="请输入使用说明">兑换后进入会员券包，请在有效期内按券面说明使用。</textarea></div>
           </div>
           <div class="product-row">
-            <div class="product-label">附件上传</div>
+            <div class="product-label required">附件上传</div>
             <div class="product-control">
-              <input id="editAttachment" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+              <input id="editAttachment" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" required>
               <div class="product-hint">上传商品发布的凭证</div>
             </div>
           </div>
@@ -890,7 +890,7 @@
           </div>
         </div>
       </div>
-      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn" data-close-modal>暂存</button><button class="btn primary" data-close-modal>发布</button></div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn" data-close-modal>暂存</button><button class="btn primary" data-product-publish>发布</button></div>
     </div>
   </div>
 
@@ -1517,6 +1517,18 @@
         document.getElementById("statusReason").value = copy[2];
         document.getElementById("statusModal").classList.add("open");
       });
+    });
+
+    const productAttachment = document.getElementById("editAttachment");
+    productAttachment.addEventListener("change", () => productAttachment.setCustomValidity(""));
+    document.querySelector("[data-product-publish]").addEventListener("click", () => {
+      if (!productAttachment.files.length) {
+        productAttachment.setCustomValidity("请上传商品发布的凭证");
+        productAttachment.reportValidity();
+        return;
+      }
+      productAttachment.setCustomValidity("");
+      document.getElementById("editModal").classList.remove("open");
     });
 
     document.querySelectorAll("[data-close-modal]").forEach(el => {

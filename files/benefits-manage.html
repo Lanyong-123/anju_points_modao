@@ -352,8 +352,8 @@
             <div class="benefit-hint">图片尺寸为 200*200px，格式为 jpg/jpeg/png/gif/bmp，大小不超过 2MB</div>
           </div>
           <div class="field" style="grid-column:1/-1">
-            <label>附件上传</label>
-            <input id="editAttachment" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx">
+            <label class="required">附件上传</label>
+            <input id="editAttachment" type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" required>
             <div class="benefit-hint">权益发布的凭证</div>
           </div>
         </div>
@@ -421,7 +421,7 @@
           </div>
         </div>
       </div>
-      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn" data-close-modal>暂存</button><button class="btn primary" data-close-modal>发布</button></div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn" data-close-modal>暂存</button><button class="btn primary" data-benefit-publish>发布</button></div>
     </div>
   </div>
 
@@ -829,6 +829,18 @@
     document.querySelectorAll("[data-delete]").forEach(el => {
       el.addEventListener("click", () => document.getElementById("deleteModal").classList.add("open"));
     });
+    const benefitAttachment = document.getElementById("editAttachment");
+    benefitAttachment.addEventListener("change", () => benefitAttachment.setCustomValidity(""));
+    document.querySelector("[data-benefit-publish]").addEventListener("click", () => {
+      if (!benefitAttachment.files.length) {
+        benefitAttachment.setCustomValidity("请上传权益发布的凭证");
+        benefitAttachment.reportValidity();
+        return;
+      }
+      benefitAttachment.setCustomValidity("");
+      document.getElementById("editModal").classList.remove("open");
+    });
+
     document.querySelectorAll("[data-close-modal]").forEach(el => {
       el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
     });

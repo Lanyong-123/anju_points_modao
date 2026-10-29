@@ -791,7 +791,7 @@
     }
 
     function setRestrictedEditMode(restricted) {
-      const editableIds = new Set(["editValue", "editStart", "editEnd", "editDesc"]);
+      const editableIds = new Set(["editStart", "editEnd", "editDesc"]);
       document.querySelectorAll("#editModal input, #editModal select, #editModal textarea").forEach(control => {
         const editable = editableIds.has(control.id);
         control.disabled = restricted && !editable;

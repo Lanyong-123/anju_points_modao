@@ -7,7 +7,7 @@ const menuTree = document.getElementById("menuTree");
 const workTabs = document.getElementById("workTabs");
 const frame = document.getElementById("pageFrame");
 const pageTitle = document.getElementById("pageTitle");
-const BUILD_VERSION = "20261029-1";
+const BUILD_VERSION = "20261029-2";
 
 function versionedUrl(url) {
   const separator = url.includes("?") ? "&" : "?";
@@ -55,10 +55,10 @@ const DEFAULT_MENU = [
   {
     title: "风控管理",
     children: [
-      { title: "风控规则管理", url: "files/risk-rule.html" },
       { title: "发分主体风控", url: "files/risk-issuer.html" },
       { title: "风控预警中心", url: "files/risk-warning-center.html" },
-      { title: "风控预警报表", url: "files/risk-warning-report.html" }
+      { title: "风控预警报表", url: "files/risk-warning-report.html" },
+      { title: "风控规则管理", url: "files/risk-rule.html" }
     ]
   },
   {

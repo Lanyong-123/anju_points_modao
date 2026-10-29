@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../resources/style.css?v=20260908-2">
   <style>
     .writeoff-list-table {
-      min-width: 2250px;
+      min-width: 2350px;
     }
     .writeoff-list-table th,
     .writeoff-list-table td {
@@ -313,6 +313,7 @@
               <th>发放项目</th>
               <th>兑换方式</th>
               <th>成本（元）</th>
+              <th>消耗积分</th>
               <th>领取时间</th>
               <th>核销状态</th>
               <th>结算状态<span class="settlement-tip" tabindex="0" role="note" aria-label="已结算的礼券不能进行撤销核销" data-tip="已结算的礼券不能进行撤销核销。">i</span></th>
@@ -525,6 +526,19 @@
       document.querySelectorAll("[data-org-tree].open").forEach(tree => {
         if (!tree.contains(event.target)) tree.classList.remove("open");
       });
+    });
+    const writeoffConsumedPoints = {
+      CV202605260018: "2,000",
+      CV202605250091: "5,000",
+      CV202605240027: "500",
+      CV202605200076: "2,000",
+      CV202605190036: "500"
+    };
+    document.querySelectorAll(".writeoff-list-table tbody tr").forEach(row => {
+      const detailLink = row.querySelector("[data-detail]");
+      const consumedPointsCell = document.createElement("td");
+      consumedPointsCell.textContent = writeoffConsumedPoints[detailLink?.dataset.detail] || "-";
+      row.cells[10].after(consumedPointsCell);
     });
     const couponTitleFilter = document.getElementById("couponTitleFilter");
     const writeoffSearchButton = document.getElementById("writeoffSearchButton");

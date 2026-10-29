@@ -39,10 +39,10 @@
   {
     "title": "风控管理",
     "children": [
-      { "title": "风控规则管理", "url": "files/risk-rule.html" },
       { "title": "发分主体风控", "url": "files/risk-issuer.html" },
       { "title": "风控预警中心", "url": "files/risk-warning-center.html" },
-      { "title": "风控预警报表", "url": "files/risk-warning-report.html" }
+      { "title": "风控预警报表", "url": "files/risk-warning-report.html" },
+      { "title": "风控规则管理", "url": "files/risk-rule.html" }
     ]
   },
   {

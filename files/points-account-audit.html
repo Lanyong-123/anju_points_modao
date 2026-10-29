@@ -25,6 +25,36 @@
       width: 84px;
       white-space: nowrap;
     }
+    .audit-result-options {
+      display: flex;
+      gap: 20px;
+      margin-top: 8px;
+    }
+    .audit-result-options label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: auto;
+      margin: 0;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .audit-result-options input[type="radio"] {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      flex: 0 0 16px;
+    }
+    #drawerAuditOpinion {
+      width: 100%;
+      min-height: 86px;
+      padding: 9px 10px;
+      border: 1px solid #b8cfe3;
+      border-radius: 5px;
+      color: var(--ink);
+      font: inherit;
+      resize: vertical;
+    }
   </style>
 </head>
 <body>
@@ -72,7 +102,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td>李明</td><td>136****5520</td><td><span class="badge">消费积分</span></td><td>增加</td><td>+500</td><td>补偿积分</td><td><span class="link" data-attachment="小票图片.png">小票图片.png</span></td><td>运营管理员</td><td>2026-05-26 09:42</td><td><span class="badge gold">待审核</span></td><td><span class="link" data-detail="ADJ202605260018">详情</span>　<span class="link" data-audit="pass">审核通过</span>　<span class="link" data-audit="reject">审核不通过</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>李明</td><td>136****5520</td><td><span class="badge">消费积分</span></td><td>增加</td><td>+500</td><td>补偿积分</td><td><span class="link" data-attachment="小票图片.png">小票图片.png</span></td><td>运营管理员</td><td>2026-05-26 09:42</td><td><span class="badge gold">待审核</span></td><td><span class="link" data-review="ADJ202605260018">审核</span></td></tr>
             <tr><td><input type="checkbox"></td><td>周女士</td><td>139****6812</td><td><span class="badge green">碳积分</span></td><td>减少</td><td>-200</td><td>异常发放扣回</td><td><span class="link" data-attachment="小票图片.png">小票图片.png</span></td><td>积分专员</td><td>2026-05-25 16:18</td><td><span class="badge green">审核通过</span></td><td><span class="link" data-detail="ADJ202605250016">详情</span></td></tr>
             <tr><td><input type="checkbox"></td><td>王强</td><td>188****4019</td><td><span class="badge">消费积分</span></td><td>增加</td><td>+1,000</td><td>活动补录依据不足</td><td><span class="link" data-attachment="小票图片.png">小票图片.png</span></td><td>客服主管</td><td>2026-05-24 11:20</td><td><span class="badge red">审核不通过</span></td><td><span class="link" data-detail="ADJ202605240031">详情</span></td></tr>
           </tbody>
@@ -91,10 +121,12 @@
     </div>
   </div>
 
-  <aside class="drawer" id="auditDrawer" style="width:760px">
-    <div class="panel-hd"><h3>积分调整审核详情</h3><button class="btn" data-close-drawer>关闭</button></div>
+  <aside class="drawer" id="auditDrawer" style="width:min(900px, 92vw)">
+    <div class="panel-hd"><h3 id="auditDrawerTitle">积分调整审核详情</h3><button class="btn" data-close-drawer>关闭</button></div>
     <div class="panel-bd">
       <div class="detail-list">
+        <span>调整单号</span><strong id="dAdjustNo">ADJ202605260018</strong>
+        <span>积分账户</span><strong id="dAccount">PA202605180018</strong>
         <span>会员名称</span><strong id="dMember">李明</strong>
         <span>OneID</span><strong id="dMemberId">AJ202605180018</strong>
         <span>积分类型</span><strong id="dPointType">消费积分</strong>
@@ -114,19 +146,29 @@
           </table>
         </div>
       </div>
+      <div class="panel" id="auditActionPanel" style="margin-top:16px; box-shadow:none" hidden>
+        <div class="panel-hd"><h3>审核操作</h3></div>
+        <div class="panel-bd">
+          <div class="field">
+            <label><span style="color:var(--red)">*</span> 审核结果</label>
+            <div class="audit-result-options">
+              <label><input type="radio" name="auditResult" value="pass" checked>审核通过</label>
+              <label><input type="radio" name="auditResult" value="reject">审核不通过</label>
+            </div>
+          </div>
+          <div class="notice" id="drawerAuditNotice" style="margin-top:14px"><strong>审核通过</strong>通过后系统将按调整单更新会员积分账户，并生成积分流水。</div>
+          <div class="field" style="margin-top:14px">
+            <label><span style="color:var(--red)">*</span> 审核意见</label>
+            <textarea id="drawerAuditOpinion" required>调整依据充分，审核通过</textarea>
+          </div>
+          <div class="toolbar" style="justify-content:flex-end; margin-top:14px">
+            <button class="btn" type="button" data-close-drawer>取消</button>
+            <button class="btn primary" type="button" id="submitAuditResult">确认提交</button>
+          </div>
+        </div>
+      </div>
     </div>
   </aside>
-
-  <div class="modal-mask" id="auditModal">
-    <div class="modal">
-      <div class="panel-hd"><h3 id="auditTitle">积分调整审核</h3><button class="btn" data-close-modal>关闭</button></div>
-      <div class="panel-bd">
-        <div class="notice" id="auditNotice"><strong>审核通过</strong>通过后系统将按调整单更新会员积分账户，并生成积分流水。</div>
-        <div class="field" style="margin-top:12px"><label>审核意见</label><input id="auditOpinion" value="调整依据充分，审核通过"></div>
-      </div>
-      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认提交</button></div>
-    </div>
-  </div>
 
   <div class="modal-mask" id="attachmentModal">
     <div class="modal" style="width:880px">
@@ -196,42 +238,84 @@
     function renderAttachments(files) {
       return files.map(name => `<span class="link" data-attachment="${name}">${name}</span>`).join("　");
     }
-    document.querySelectorAll("[data-detail]").forEach(el => {
-      el.addEventListener("click", () => {
-        const data = auditRows[el.dataset.detail] || auditRows.ADJ202605260018;
-        document.getElementById("dMember").textContent = data.member;
-        document.getElementById("dMemberId").textContent = data.memberId;
-        document.getElementById("dPointType").textContent = data.pointType;
-        document.getElementById("dAdjustType").textContent = data.adjustType;
-        document.getElementById("dPoints").textContent = data.points;
-        document.getElementById("dReason").textContent = data.reason;
-        document.getElementById("dSubmitter").textContent = data.submitter;
-        document.getElementById("dSubmitTime").textContent = data.submitTime;
-        document.getElementById("dAttachments").innerHTML = renderAttachments(data.attachments);
-        document.getElementById("auditRecordRows").innerHTML = data.records.map(row => `
-          <tr>
-            <td>${row[0]}</td>
-            <td>${statusBadge(row[1])}</td>
-            <td>${row[2]}</td>
-            <td>${row[3]}</td>
-          </tr>
-        `).join("");
-        bindAttachments();
-        drawer.classList.add("open");
-      });
-    });
-    document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
-
-    function openAudit(type) {
+    let currentAuditNo = "";
+    function renderAuditRecords(data) {
+      document.getElementById("auditRecordRows").innerHTML = data.records.map(row => `
+        <tr>
+          <td>${row[0]}</td>
+          <td>${statusBadge(row[1])}</td>
+          <td>${row[2]}</td>
+          <td>${row[3]}</td>
+        </tr>
+      `).join("");
+    }
+    function syncAuditResult(type) {
       const pass = type === "pass";
-      document.getElementById("auditTitle").textContent = pass ? "审核通过" : "审核不通过";
-      document.getElementById("auditNotice").innerHTML = pass
+      document.getElementById("drawerAuditNotice").innerHTML = pass
         ? "<strong>审核通过</strong>通过后系统将按调整单更新会员积分账户，并生成积分流水。"
         : "<strong>审核不通过</strong>不通过后调整单驳回，积分账户不发生变动。";
-      document.getElementById("auditOpinion").value = pass ? "调整依据充分，审核通过" : "调整依据不足，审核不通过";
-      document.getElementById("auditModal").classList.add("open");
+      document.getElementById("drawerAuditOpinion").value = pass ? "调整依据充分，审核通过" : "调整依据不足，审核不通过";
+      document.getElementById("drawerAuditOpinion").setCustomValidity("");
     }
-    document.querySelectorAll("[data-audit]").forEach(el => el.addEventListener("click", () => openAudit(el.dataset.audit)));
+    function openAuditDrawer(no, reviewMode) {
+      const data = auditRows[no] || auditRows.ADJ202605260018;
+      currentAuditNo = data.no;
+      document.getElementById("auditDrawerTitle").textContent = reviewMode ? "积分调整审核" : "积分调整审核详情";
+      document.getElementById("dAdjustNo").textContent = data.no;
+      document.getElementById("dAccount").textContent = data.account;
+      document.getElementById("dMember").textContent = data.member;
+      document.getElementById("dMemberId").textContent = data.memberId;
+      document.getElementById("dPointType").textContent = data.pointType;
+      document.getElementById("dAdjustType").textContent = data.adjustType;
+      document.getElementById("dPoints").textContent = data.points;
+      document.getElementById("dReason").textContent = data.reason;
+      document.getElementById("dSubmitter").textContent = data.submitter;
+      document.getElementById("dSubmitTime").textContent = data.submitTime;
+      document.getElementById("dAttachments").innerHTML = renderAttachments(data.attachments);
+      renderAuditRecords(data);
+      document.getElementById("auditActionPanel").hidden = !reviewMode;
+      if (reviewMode) {
+        document.querySelector("input[name='auditResult'][value='pass']").checked = true;
+        syncAuditResult("pass");
+      }
+      bindAttachments();
+      drawer.classList.add("open");
+    }
+    document.addEventListener("click", event => {
+      const reviewTrigger = event.target.closest("[data-review]");
+      if (reviewTrigger) openAuditDrawer(reviewTrigger.dataset.review, true);
+      const detailTrigger = event.target.closest("[data-detail]");
+      if (detailTrigger) openAuditDrawer(detailTrigger.dataset.detail, false);
+    });
+    document.querySelectorAll("[data-close-drawer]").forEach(button => {
+      button.addEventListener("click", () => drawer.classList.remove("open"));
+    });
+    document.querySelectorAll("input[name='auditResult']").forEach(radio => {
+      radio.addEventListener("change", () => syncAuditResult(radio.value));
+    });
+    document.getElementById("submitAuditResult").addEventListener("click", () => {
+      const opinion = document.getElementById("drawerAuditOpinion");
+      if (!opinion.value.trim()) {
+        opinion.setCustomValidity("请输入审核意见");
+        opinion.reportValidity();
+        return;
+      }
+      opinion.setCustomValidity("");
+      const result = document.querySelector("input[name='auditResult']:checked").value === "pass" ? "审核通过" : "审核不通过";
+      const data = auditRows[currentAuditNo];
+      data.records = [["2026-05-26 10:16", result, "积分主管", opinion.value.trim()]];
+      renderAuditRecords(data);
+      document.getElementById("auditActionPanel").hidden = true;
+      document.getElementById("auditDrawerTitle").textContent = "积分调整审核详情";
+      const trigger = document.querySelector(`[data-review="${currentAuditNo}"]`);
+      if (trigger) {
+        const row = trigger.closest("tr");
+        const badge = row.cells[10].querySelector(".badge");
+        badge.textContent = result;
+        badge.className = `badge ${result === "审核通过" ? "green" : "red"}`;
+        row.cells[11].innerHTML = `<span class="link" data-detail="${currentAuditNo}">详情</span>`;
+      }
+    });
     function bindAttachments() {
       document.querySelectorAll("[data-attachment]").forEach(el => {
         if (el.dataset.boundAttachment) return;
