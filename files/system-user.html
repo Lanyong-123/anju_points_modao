@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../resources/style.css?v=20261009-1">
   <style>
     .user-filter {
-      grid-template-columns: minmax(260px, 1.2fr) minmax(160px, .7fr) minmax(220px, 1fr) auto auto;
+      grid-template-columns: minmax(240px, 1.2fr) minmax(150px, .7fr) minmax(150px, .7fr) minmax(210px, 1fr) auto auto;
     }
     .user-layout {
       display: grid;
@@ -213,6 +213,7 @@
   <div class="page">
     <div class="filter user-filter">
       <div class="field"><label>用户关键词</label><input placeholder="请输入姓名/手机/邮箱关键词"></div>
+      <div class="field"><label>用户来源</label><select><option>全部来源</option><option>本系统</option><option>同步</option></select></div>
       <div class="field"><label>状态</label><select><option>全部状态</option><option>启用</option><option>停用</option></select></div>
       <div class="field"><label>修改时间</label><input value="2026-06-01 至 2026-06-10"></div>
       <button class="btn primary">查询</button>
