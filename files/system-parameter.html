@@ -39,6 +39,67 @@
       font-size: 12px;
       line-height: 1.6;
     }
+    .reminder-config {
+      display: none;
+      margin-top: 4px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f8fafc;
+    }
+    .reminder-config.open {
+      display: block;
+    }
+    .reminder-list {
+      display: grid;
+      gap: 10px;
+    }
+    .reminder-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 150px auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .reminder-row .field {
+      min-width: 0;
+    }
+    .reminder-row .btn {
+      margin-bottom: 0;
+    }
+    .reminder-actions {
+      display: flex;
+      justify-content: flex-start;
+      margin-top: 12px;
+    }
+    .clear-rule-config {
+      display: none;
+      margin-top: 4px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f8fafc;
+    }
+    .clear-rule-config.open {
+      display: block;
+    }
+    .clear-rule-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .clear-rule-grid.fixed-mode {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .clear-rule-note {
+      grid-column: 1 / -1;
+      margin: 0;
+      padding: 9px 10px;
+      border-radius: 5px;
+      background: #eef7fc;
+      color: #4f6578;
+      font-size: 12px;
+      line-height: 1.55;
+    }
     .toast {
       position: fixed;
       right: 24px;
@@ -102,7 +163,20 @@
           <div class="field"><label>所属模块</label><input id="modalModule" readonly></div>
           <div class="field"><label>参数名称</label><input id="modalName" readonly></div>
           <div class="field" style="grid-column:1 / -1"><label>key值</label><input id="modalKey" readonly></div>
-          <div class="field" style="grid-column:1 / -1"><label>value值</label><input id="modalValue"><select id="modalRoleValue" style="display:none"></select></div>
+          <div class="field" id="modalValueField" style="grid-column:1 / -1"><label>value值</label><input id="modalValue"><select id="modalRoleValue" style="display:none"></select></div>
+          <div class="field" id="modalReminderField" style="grid-column:1 / -1; display:none">
+            <label>提醒时间</label>
+            <div class="reminder-config" id="modalReminderValue">
+              <div class="reminder-list" id="reminderList"></div>
+              <div class="reminder-actions"><button class="btn primary" type="button" id="addReminderBtn">新增提醒时间</button></div>
+            </div>
+          </div>
+          <div class="field" id="modalClearRuleField" style="grid-column:1 / -1; display:none">
+            <label>清零规则</label>
+            <div class="clear-rule-config" id="modalClearRuleValue">
+              <div class="clear-rule-grid" id="clearRuleFields"></div>
+            </div>
+          </div>
         </div>
         <p class="config-help" id="modalHelp"></p>
       </div>
@@ -127,6 +201,24 @@
         key: "points.cash_exchange_rate",
         value: "1积分兑0.004元",
         desc: "用于设置积分折算现金价值的兑换比例，例如1积分兑0.004元。"
+      },
+      {
+        module: "积分中心",
+        name: "积分即将过期提醒时间",
+        key: "points.expiry_reminder_times",
+        value: "1个月前、15天前",
+        valueType: "reminder",
+        reminders: [{ amount: 1, unit: "月" }, { amount: 15, unit: "天" }],
+        desc: "支持配置积分到期前的多个提醒时间，时间单位可选择月、周或天。"
+      },
+      {
+        module: "积分中心",
+        name: "积分清零时间",
+        key: "points.expiration_clear_rule",
+        value: "滚动清零：1年",
+        valueType: "clearRule",
+        clearRule: { mode: "rolling", amount: 1, unit: "年", intervalYears: 2, month: 12, day: 31 },
+        desc: "支持滚动清零或固定清零。滚动清零按每笔积分获得时间起算；固定清零按设置的间隔年数及指定月日统一清零。"
       },
       {
         module: "清算管理",
@@ -163,6 +255,79 @@
     let params = defaultParams.map(item => ({ ...item }));
     let currentRows = [];
     let editingKey = "";
+    let reminderDraft = [];
+    let clearRuleDraft = { mode: "rolling", amount: 1, unit: "年", intervalYears: 2, month: 12, day: 31 };
+
+    function formatReminderValue(reminders) {
+      return reminders.map(item => `${item.amount}${item.unit === "月" ? "个月" : item.unit}前`).join("、");
+    }
+
+    function renderReminderRows() {
+      const reminderList = document.getElementById("reminderList");
+      reminderList.innerHTML = reminderDraft.map((item, index) => `
+        <div class="reminder-row" data-reminder-row="${index}">
+          <div class="field"><label>提前时间</label><input type="number" min="1" step="1" value="${item.amount}" data-reminder-amount="${index}"></div>
+          <div class="field"><label>时间单位</label><select data-reminder-unit="${index}"><option${item.unit === "月" ? " selected" : ""}>月</option><option${item.unit === "周" ? " selected" : ""}>周</option><option${item.unit === "天" ? " selected" : ""}>天</option></select></div>
+          <button class="btn" type="button" data-remove-reminder="${index}">删除</button>
+        </div>
+      `).join("");
+      reminderList.querySelectorAll("[data-reminder-amount]").forEach(input => {
+        input.addEventListener("input", () => {
+          const index = Number(input.dataset.reminderAmount);
+          reminderDraft[index].amount = Math.max(1, Number(input.value) || 1);
+        });
+      });
+      reminderList.querySelectorAll("[data-reminder-unit]").forEach(select => {
+        select.addEventListener("change", () => {
+          reminderDraft[Number(select.dataset.reminderUnit)].unit = select.value;
+        });
+      });
+      reminderList.querySelectorAll("[data-remove-reminder]").forEach(button => {
+        button.addEventListener("click", () => {
+          reminderDraft.splice(Number(button.dataset.removeReminder), 1);
+          if (!reminderDraft.length) reminderDraft.push({ amount: 1, unit: "月" });
+          renderReminderRows();
+        });
+      });
+    }
+
+    function formatClearRuleValue(rule) {
+      return rule.mode === "rolling"
+        ? `滚动清零：${rule.amount}${rule.unit}`
+        : `固定清零：每${rule.intervalYears}年的${rule.month}月${rule.day}日`;
+    }
+
+    function renderClearRuleFields() {
+      const fields = document.getElementById("clearRuleFields");
+      fields.classList.toggle("fixed-mode", clearRuleDraft.mode === "fixed");
+      fields.innerHTML = `
+        <div class="field" style="grid-column:1 / -1"><label>清零方式</label><select id="clearRuleMode"><option value="rolling"${clearRuleDraft.mode === "rolling" ? " selected" : ""}>滚动清零</option><option value="fixed"${clearRuleDraft.mode === "fixed" ? " selected" : ""}>固定清零</option></select></div>
+        ${clearRuleDraft.mode === "rolling" ? `
+          <div class="field"><label>自然时长</label><input id="clearRuleAmount" type="number" min="1" step="1" value="${clearRuleDraft.amount}"></div>
+          <div class="field"><label>时间单位</label><select id="clearRuleUnit"><option${clearRuleDraft.unit === "年" ? " selected" : ""}>年</option><option${clearRuleDraft.unit === "月" ? " selected" : ""}>月</option><option${clearRuleDraft.unit === "天" ? " selected" : ""}>天</option></select></div>
+          <p class="clear-rule-note">按每笔积分的获得时间起算自然时长。例如设置1年，5月1日获得的积分将在次年5月1日清零。</p>
+        ` : `
+          <div class="field"><label>间隔年数</label><input id="clearRuleIntervalYears" type="number" min="1" step="1" value="${clearRuleDraft.intervalYears}"></div>
+          <div class="field"><label>清零月份</label><input id="clearRuleMonth" type="number" min="1" max="12" step="1" value="${clearRuleDraft.month}"></div>
+          <div class="field"><label>清零日期</label><input id="clearRuleDay" type="number" min="1" max="31" step="1" value="${clearRuleDraft.day}"></div>
+          <p class="clear-rule-note">按设置的间隔年数，在指定月日统一清零。例如设置间隔2年、12月31日，则积分将在间隔2年后的12月31日清零。</p>
+        `}
+      `;
+      document.getElementById("clearRuleMode").addEventListener("change", event => {
+        clearRuleDraft.mode = event.target.value;
+        renderClearRuleFields();
+      });
+      const amount = document.getElementById("clearRuleAmount");
+      const unit = document.getElementById("clearRuleUnit");
+      const intervalYears = document.getElementById("clearRuleIntervalYears");
+      const month = document.getElementById("clearRuleMonth");
+      const day = document.getElementById("clearRuleDay");
+      if (amount) amount.addEventListener("input", () => clearRuleDraft.amount = Math.max(1, Number(amount.value) || 1));
+      if (unit) unit.addEventListener("change", () => clearRuleDraft.unit = unit.value);
+      if (intervalYears) intervalYears.addEventListener("input", () => clearRuleDraft.intervalYears = Math.max(1, Number(intervalYears.value) || 1));
+      if (month) month.addEventListener("input", () => clearRuleDraft.month = Math.min(12, Math.max(1, Number(month.value) || 1)));
+      if (day) day.addEventListener("input", () => clearRuleDraft.day = Math.min(31, Math.max(1, Number(day.value) || 1)));
+    }
 
     function showToast(message) {
       const toast = document.getElementById("toast");
@@ -210,10 +375,32 @@
           document.getElementById("modalKey").value = item.key;
           const modalValue = document.getElementById("modalValue");
           const modalRoleValue = document.getElementById("modalRoleValue");
+          const modalValueField = document.getElementById("modalValueField");
+          const modalReminderField = document.getElementById("modalReminderField");
+          const modalReminderValue = document.getElementById("modalReminderValue");
+          const modalClearRuleField = document.getElementById("modalClearRuleField");
+          const modalClearRuleValue = document.getElementById("modalClearRuleValue");
+          modalValueField.style.display = "";
+          modalReminderField.style.display = "none";
+          modalReminderValue.classList.remove("open");
+          modalClearRuleField.style.display = "none";
+          modalClearRuleValue.classList.remove("open");
           if (item.valueType === "role") {
             modalValue.style.display = "none";
             modalRoleValue.style.display = "";
             modalRoleValue.innerHTML = roleOptions.map(role => `<option${role === item.value ? " selected" : ""}>${role}</option>`).join("");
+          } else if (item.valueType === "reminder") {
+            modalValueField.style.display = "none";
+            modalReminderField.style.display = "";
+            modalReminderValue.classList.add("open");
+            reminderDraft = (item.reminders || [{ amount: 1, unit: "月" }]).map(reminder => ({ ...reminder }));
+            renderReminderRows();
+          } else if (item.valueType === "clearRule") {
+            modalValueField.style.display = "none";
+            modalClearRuleField.style.display = "";
+            modalClearRuleValue.classList.add("open");
+            clearRuleDraft = { ...(item.clearRule || { mode: "rolling", amount: 1, unit: "年", intervalYears: 2, month: 12, day: 31 }) };
+            renderClearRuleFields();
           } else {
             modalValue.style.display = "";
             modalRoleValue.style.display = "none";
@@ -232,12 +419,24 @@
       document.getElementById("moduleFilter").value = "全部模块";
       renderRows();
     });
+    document.getElementById("addReminderBtn").addEventListener("click", () => {
+      reminderDraft.push({ amount: 1, unit: "月" });
+      renderReminderRows();
+    });
     document.getElementById("saveBtn").addEventListener("click", () => {
       const item = params.find(row => row.key === editingKey);
       if (item) {
-        item.value = item.valueType === "role"
-          ? document.getElementById("modalRoleValue").value
-          : (document.getElementById("modalValue").value.trim() || item.value);
+        if (item.valueType === "role") {
+          item.value = document.getElementById("modalRoleValue").value;
+        } else if (item.valueType === "reminder") {
+          item.reminders = reminderDraft.map(reminder => ({ ...reminder }));
+          item.value = formatReminderValue(item.reminders);
+        } else if (item.valueType === "clearRule") {
+          item.clearRule = { ...clearRuleDraft };
+          item.value = formatClearRuleValue(item.clearRule);
+        } else {
+          item.value = document.getElementById("modalValue").value.trim() || item.value;
+        }
       }
       document.getElementById("configModal").classList.remove("open");
       renderRows();

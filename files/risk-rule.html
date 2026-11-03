@@ -161,8 +161,8 @@
           <div class="panel-hd"><h3>规则条件配置</h3><button class="btn primary">新增条件块</button></div>
           <div class="panel-bd">
             <table><thead><tr><th class="required-head">指标</th><th class="required-head">判断关系</th><th class="required-head">阈值</th><th class="required-head">与上一行关系</th><th>操作</th></tr></thead><tbody>
-              <tr><td><select required><option>单会员单日积分获取上限</option><option>单会员单月积分获取上限</option><option>单会员单日积分消耗上限</option><option>单会员单月积分消耗上限</option><option>短时间同一IP多账号注册并获取积分</option><option>同一设备切换多账号刷取积分</option></select></td><td><select required><option>大于</option><option>等于</option><option>小于</option><option>命中</option></select></td><td><input required value="10000"></td><td><select required><option>起始条件</option><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
-              <tr><td><select required><option>短时间同一IP多账号注册并获取积分</option><option>同一设备切换多账号刷取积分</option><option>单会员单月积分获取上限</option><option>单会员单月积分消耗上限</option></select></td><td><select required><option>命中</option><option>大于</option><option>等于</option></select></td><td><input required value="3次/10分钟"></td><td><select required><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+              <tr><td><select required><option>单会员单日积分获取上限</option><option>单会员单月积分获取上限</option><option>单会员单日积分消耗上限</option><option>单会员单月积分消耗上限</option><option>单会员单日积分兑换次数上限</option></select></td><td><select required><option>大于</option><option>等于</option><option>小于</option><option>命中</option></select></td><td><input required value="10000"></td><td><select required><option>起始条件</option><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
+              <tr><td><select required><option>单会员单日积分兑换次数上限</option><option>单会员单月积分获取上限</option><option>单会员单月积分消耗上限</option></select></td><td><select required><option>大于</option><option>等于</option></select></td><td><input required value="10次"></td><td><select required><option>且</option><option>或</option></select></td><td><span class="link">删除</span></td></tr>
             </tbody></table>
           </div>
         </div>
@@ -199,7 +199,7 @@
         receiver: "风控管理员、积分运营主管",
         conditions: [
           ["单会员单日积分获取上限", "大于", "10,000积分", "起始条件"],
-          ["短时间同一IP多账号注册并获取积分", "命中", "3次/10分钟", "且"]
+          ["单会员单日积分兑换次数上限", "大于", "10次", "且"]
         ]
       },
       RK20260501002: {
