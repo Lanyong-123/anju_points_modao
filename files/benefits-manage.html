@@ -90,6 +90,39 @@
       width: 180px;
       white-space: nowrap;
     }
+    .member-detail-table.has-selection {
+      min-width: 1480px;
+    }
+    .member-detail-table.has-selection th:nth-child(1),
+    .member-detail-table.has-selection td:nth-child(1) {
+      width: 48px;
+      padding-left: 8px;
+      padding-right: 8px;
+      text-align: center;
+    }
+    .member-detail-table.has-selection th:nth-child(2),
+    .member-detail-table.has-selection td:nth-child(2),
+    .member-detail-table.has-selection th:nth-child(3),
+    .member-detail-table.has-selection td:nth-child(3) { width: 130px; }
+    .member-detail-table.has-selection th:nth-child(4),
+    .member-detail-table.has-selection td:nth-child(4) { width: 150px; }
+    .member-detail-table.has-selection th:nth-child(5),
+    .member-detail-table.has-selection td:nth-child(5),
+    .member-detail-table.has-selection th:nth-child(6),
+    .member-detail-table.has-selection td:nth-child(6),
+    .member-detail-table.has-selection th:nth-child(7),
+    .member-detail-table.has-selection td:nth-child(7) { width: 120px; }
+    .member-detail-table.has-selection th:nth-child(8),
+    .member-detail-table.has-selection td:nth-child(8) { width: 170px; }
+    .member-detail-table.has-selection th:nth-child(9),
+    .member-detail-table.has-selection td:nth-child(9),
+    .member-detail-table.has-selection th:nth-child(10),
+    .member-detail-table.has-selection td:nth-child(10),
+    .member-detail-table.has-selection th:nth-child(11),
+    .member-detail-table.has-selection td:nth-child(11) {
+      width: 180px;
+      white-space: nowrap;
+    }
     .benefit-hint {
       margin-top: 7px;
       color: #8a99a8;
@@ -468,7 +501,7 @@
           <button class="btn primary">导出列表</button>
         </div>
         <div class="member-detail-table-wrap">
-          <table class="member-detail-table">
+          <table class="member-detail-table" id="memberLogTable">
             <thead><tr id="memberLogHead"><th>微信昵称</th><th>用户名</th><th>手机号</th><th>会员等级</th><th>所属项目</th><th>核销状态</th><th>核销码</th><th>领取时间</th><th>核销时间</th><th>过期时间</th></tr></thead>
             <tbody id="memberLogRows"></tbody>
           </table>
@@ -739,18 +772,37 @@
         const rows = (memberLogData[name] && memberLogData[name][type]) || [];
         const titleMap = { claim: "领取会员明细", use: "核销会员明细", expired: "过期会员明细", unredeemed: "未核销会员明细" };
         const writeoffStatus = type === "use" ? "已核销" : "未核销";
+        const showSelection = type === "unredeemed";
+        const memberLogHeaders = ["微信昵称", "用户名", "手机号", "会员等级", "所属项目", "核销状态", "核销码", "领取时间", "核销时间", "过期时间"];
         currentUnredeemedBenefit = type === "unredeemed" ? name : "";
         document.getElementById("memberLogActions").style.display = type === "unredeemed" ? "flex" : "none";
         document.getElementById("memberLogTitle").textContent = `${name} - ${titleMap[type]}`;
         document.getElementById("memberLogWriteoffStatus").value = writeoffStatus;
         document.getElementById("memberLogTotal").textContent = `共 ${rows.length} 条`;
+        document.getElementById("memberLogTable").classList.toggle("has-selection", showSelection);
+        document.getElementById("memberLogHead").innerHTML = `${showSelection ? '<th><input type="checkbox" id="memberLogSelectAll" aria-label="全选未核销会员"></th>' : ""}${memberLogHeaders.map(header => `<th>${header}</th>`).join("")}`;
         document.getElementById("memberLogRows").innerHTML = rows.map(row => {
           const expireTime = type === "expired" ? row[5] : getBenefitExpireTime(name);
           const cells = type === "use"
             ? [row[0], row[0], row[2], row[3], row[4], "已核销", row[5], getClaimTime(row[8]), row[8], expireTime]
             : [row[0], row[0], row[2], row[3], row[4], "未核销", "", type === "expired" ? "" : row[5], "", expireTime];
-          return `<tr>${cells.map(cell => `<td>${cell}</td>`).join("")}</tr>`;
+          const selectionCell = showSelection ? `<td><input type="checkbox" class="member-log-checkbox" aria-label="选择${row[0]}"></td>` : "";
+          return `<tr>${selectionCell}${cells.map(cell => `<td>${cell}</td>`).join("")}</tr>`;
         }).join("");
+        if (showSelection) {
+          const selectAll = document.getElementById("memberLogSelectAll");
+          const rowCheckboxes = Array.from(document.querySelectorAll(".member-log-checkbox"));
+          const syncSelectAll = () => {
+            const checkedCount = rowCheckboxes.filter(checkbox => checkbox.checked).length;
+            selectAll.checked = rowCheckboxes.length > 0 && checkedCount === rowCheckboxes.length;
+            selectAll.indeterminate = checkedCount > 0 && checkedCount < rowCheckboxes.length;
+          };
+          selectAll.addEventListener("change", () => {
+            rowCheckboxes.forEach(checkbox => { checkbox.checked = selectAll.checked; });
+            selectAll.indeterminate = false;
+          });
+          rowCheckboxes.forEach(checkbox => checkbox.addEventListener("change", syncSelectAll));
+        }
         document.getElementById("memberLogModal").classList.add("open");
       });
     });
