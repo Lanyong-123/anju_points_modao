@@ -8,7 +8,7 @@
   <style>
     .tag-layout {
       display: grid;
-      grid-template-columns: 230px minmax(0, 1fr);
+      grid-template-columns: 300px minmax(0, 1fr);
       gap: 14px;
       align-items: start;
     }
@@ -70,6 +70,67 @@
       font-style: normal;
       font-weight: 700;
     }
+    .tag-node-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .tag-node-meta,
+    .tag-node-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tag-node-action {
+      position: relative;
+      width: 26px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid #b8cce3;
+      border-radius: 6px;
+      background: #fff;
+      color: #1472d0;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .tag-node-action:hover {
+      border-color: #1472d0;
+      background: #f0f7ff;
+    }
+    .tag-node-action.delete {
+      border-color: #ffc4c4;
+      color: #e53935;
+    }
+    .tag-node-action.delete:hover {
+      border-color: #e53935;
+      background: #fff5f5;
+    }
+    .tag-node-action.delete::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 9px;
+      width: 8px;
+      height: 9px;
+      border: 1.5px solid currentColor;
+      border-top: 0;
+      border-radius: 0 0 2px 2px;
+    }
+    .tag-node-action.delete::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 6px;
+      width: 12px;
+      height: 2px;
+      border-top: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+    }
     .tag-table {
       min-width: 1160px;
     }
@@ -121,95 +182,49 @@
       font-weight: 700;
     }
     .relation-builder {
-      position: relative;
       display: grid;
       gap: 12px;
-      padding-left: 22px;
     }
-    .relation-builder::before {
-      content: "";
-      position: absolute;
-      left: 6px;
-      top: 16px;
-      bottom: 16px;
-      width: 2px;
-      background: #1d6fd8;
-    }
-    .logic-node {
-      position: absolute;
-      left: -3px;
-      top: 50%;
-      z-index: 1;
-      width: 28px;
-      height: 32px;
-      border-radius: 3px;
-      background: #1d6fd8;
-      transform: translateY(-50%);
-    }
-    .logic-node select {
-      width: 100%;
-      height: 100%;
-      border: 0;
-      border-radius: 3px;
-      background: #1d6fd8;
-      color: #fff;
-      font-weight: 700;
-      text-align: center;
-      text-align-last: center;
-      cursor: pointer;
-      appearance: none;
-    }
-    .relation-group {
-      position: relative;
+    .condition-block {
       border: 1px solid #dfe6ee;
-      border-radius: 5px;
-      background: #fbfdff;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
     }
-    .relation-group-hd {
-      min-height: 44px;
+    .condition-block-hd {
+      min-height: 54px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       padding: 0 14px;
-      border-bottom: 1px solid #e8eef5;
+      border-bottom: 1px solid #cfdeed;
+      background: #f6fbff;
       color: var(--navy);
       font-weight: 700;
     }
-    .relation-group-hd span {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .toggle-symbol {
-      width: 14px;
-      height: 14px;
-      display: inline-grid;
-      place-items: center;
-      border: 1px solid #7b8a9b;
-      border-radius: 2px;
-      background: #fff;
-      color: #24384e;
-      font-size: 12px;
-      line-height: 1;
-    }
-    .add-condition {
-      border: 0;
-      background: transparent;
-      color: #0a63c7;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .relation-group-bd {
-      display: grid;
-      gap: 8px;
-      padding: 12px 14px;
-    }
+    .condition-grid-head,
     .relation-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, .72fr) minmax(0, 1fr) minmax(0, .62fr);
-      gap: 8px;
+      grid-template-columns: minmax(180px, 1.35fr) minmax(120px, .8fr) minmax(160px, 1fr) minmax(140px, .85fr) 72px;
+      gap: 10px;
       align-items: center;
+      padding: 0 12px;
+    }
+    .condition-grid-head {
+      min-height: 38px;
+      border-bottom: 1px solid #cfdeed;
+      background: #eaf6ff;
+      color: #34516f;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .relation-row {
+      min-height: 48px;
+      border-bottom: 1px solid #dfe7f0;
+    }
+    .relation-row:last-child {
+      border-bottom: 0;
     }
     .relation-row input,
     .relation-row select {
@@ -222,9 +237,12 @@
       background: #fff;
       color: var(--ink);
     }
-    .relation-empty {
-      color: #667789;
-      line-height: 1.7;
+    .delete-condition {
+      border: 0;
+      background: transparent;
+      color: #0878d1;
+      font-weight: 700;
+      cursor: pointer;
     }
     .tag-valid-period {
       display: none;
@@ -281,7 +299,7 @@
   <div class="page">
     <div class="filter">
       <div class="field"><label>标签名称</label><input id="tagNameFilter" placeholder="请输入标签名称"></div>
-      <div class="field"><label>标签分类</label><select id="tagCategoryFilter"><option>全部分类</option><option>基本标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option><option>高价值客户标签</option></select></div>
+      <div class="field"><label>标签分类</label><select id="tagCategoryFilter"><option>全部分类</option><option>基本标签</option><option>交易标签</option><option>商户标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option></select></div>
       <div class="field"><label>标签状态</label><select id="tagStatusFilter"><option>全部状态</option><option>启用</option><option>停用</option><option>草稿</option></select></div>
       <div class="field"><label>标签来源</label><select id="tagSourceFilter"><option>全部来源</option><option>自动标签</option><option>手动标签</option><option>同步标签</option></select></div>
       <button class="btn primary" id="tagQueryBtn">查询</button>
@@ -291,17 +309,20 @@
       <div class="panel">
         <div class="panel-hd">
           <h3>标签分类</h3>
-          <button class="btn" data-category>新增</button>
         </div>
         <div class="panel-bd">
           <div class="tag-tree">
-            <div class="tag-tree-item root active" data-filter-category="全部分类"><span>全部标签</span><em>128</em></div>
+            <div class="tag-tree-item root active" data-filter-category="全部分类">
+              <span class="tag-node-label">全部标签</span>
+              <span class="tag-node-meta"><em>85</em><span class="tag-node-actions"><button class="tag-node-action" type="button" data-category-add aria-label="新增全部标签下级分类" title="新增下级分类">＋</button></span></span>
+            </div>
             <div class="tag-tree-children">
-              <div class="tag-tree-item child" data-filter-category="基本标签"><span>基本标签</span><em>26</em></div>
-              <div class="tag-tree-item child" data-filter-category="行为标签"><span>行为标签</span><em>24</em></div>
-              <div class="tag-tree-item child" data-filter-category="偏好标签"><span>偏好标签</span><em>18</em></div>
-              <div class="tag-tree-item child" data-filter-category="营销响应标签"><span>营销响应标签</span><em>12</em></div>
-              <div class="tag-tree-item child" data-filter-category="高价值客户标签"><span>高价值客户标签</span><em>48</em></div>
+              <div class="tag-tree-item child" data-filter-category="基本标签"><span class="tag-node-label">基本标签</span><span class="tag-node-meta"><em>14</em><span class="tag-node-actions"><button class="tag-node-action" type="button" data-category-add aria-label="新增基本标签下级分类" title="新增下级分类">＋</button><button class="tag-node-action" type="button" data-category-edit aria-label="修改基本标签" title="修改">✎</button><button class="tag-node-action delete" type="button" data-category-delete aria-label="删除基本标签" title="删除"></button></span></span></div>
+              <div class="tag-tree-item child" data-filter-category="交易标签"><span class="tag-node-label">交易标签</span><span class="tag-node-meta"><em>21</em><span class="tag-node-actions"><button class="tag-node-action" type="button" data-category-add aria-label="新增交易标签下级分类" title="新增下级分类">＋</button><button class="tag-node-action" type="button" data-category-edit aria-label="修改交易标签" title="修改">✎</button><button class="tag-node-action delete" type="button" data-category-delete aria-label="删除交易标签" title="删除"></button></span></span></div>
+              <div class="tag-tree-item child" data-filter-category="商户标签"><span class="tag-node-label">商户标签</span><span class="tag-node-meta"><em>6</em><span class="tag-node-actions"><button class="tag-node-action" type="button" data-category-add aria-label="新增商户标签下级分类" title="新增下级分类">＋</button><button class="tag-node-action" type="button" data-category-edit aria-label="修改商户标签" title="修改">✎</button><button class="tag-node-action delete" type="button" data-category-delete aria-label="删除商户标签" title="删除"></button></span></span></div>
+              <div class="tag-tree-item child" data-filter-category="行为标签"><span class="tag-node-label">行为标签</span><span class="tag-node-meta"><em>14</em><span class="tag-node-actions"><button class="tag-node-action" type="button" data-category-add aria-label="新增行为标签下级分类" title="新增下级分类">＋</button><button class="tag-node-action" type="button" data-category-edit aria-label="修改行为标签" title="修改">✎</button><button class="tag-node-action delete" type="button" data-category-delete aria-label="删除行为标签" title="删除"></button></span></span></div>
+              <div class="tag-tree-item child" data-filter-category="偏好标签"><span class="tag-node-label">偏好标签</span><span class="tag-node-meta"><em>11</em><span class="tag-node-actions"><button class="tag-node-action" type="button" data-category-add aria-label="新增偏好标签下级分类" title="新增下级分类">＋</button><button class="tag-node-action" type="button" data-category-edit aria-label="修改偏好标签" title="修改">✎</button><button class="tag-node-action delete" type="button" data-category-delete aria-label="删除偏好标签" title="删除"></button></span></span></div>
+              <div class="tag-tree-item child" data-filter-category="营销响应标签"><span class="tag-node-label">营销响应标签</span><span class="tag-node-meta"><em>19</em><span class="tag-node-actions"><button class="tag-node-action" type="button" data-category-add aria-label="新增营销响应标签下级分类" title="新增下级分类">＋</button><button class="tag-node-action" type="button" data-category-edit aria-label="修改营销响应标签" title="修改">✎</button><button class="tag-node-action delete" type="button" data-category-delete aria-label="删除营销响应标签" title="删除"></button></span></span></div>
             </div>
           </div>
         </div>
@@ -332,19 +353,9 @@
                 <th>操作</th>
               </tr>
             </thead>
-            <tbody>
-              <tr data-category-row="基本标签" data-tag-name="身份类型" data-tag-source="同步标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="身份类型">身份类型</span></strong><span>年龄、性别、职业、城市、身份类型等</span></div></td><td>基本标签</td><td>同步标签</td><td>数据同步</td><td><span class="link" data-customer="身份类型">38,240</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 14:20</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="身份类型">详情</span>　<span class="link" data-edit="身份类型">编辑</span>　<span class="link" data-log="身份类型">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="行为标签" data-tag-name="签到频率" data-tag-source="自动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="签到频率">签到频率</span></strong><span>浏览偏好、点击习惯、签到频率等</span></div></td><td>行为标签</td><td>自动标签</td><td>规则自动</td><td><span class="link" data-customer="签到频率">8,936</span></td><td>周期更新 每周一 03:00</td><td>2026-06-08 03:10</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="签到频率">详情</span>　<span class="link" data-edit="签到频率">编辑</span>　<span class="link" data-log="签到频率">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="偏好标签" data-tag-name="服务需求偏好" data-tag-source="手动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="服务需求偏好">服务需求偏好</span></strong><span>产品偏好、服务需求偏好等</span></div></td><td>偏好标签</td><td>手动标签</td><td>手动维护</td><td><span class="link" data-customer="服务需求偏好">5,182</span></td><td>手动更新</td><td>2026-06-07 18:32</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="服务需求偏好">详情</span>　<span class="link" data-edit="服务需求偏好">编辑</span>　<span class="link" data-log="服务需求偏好">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="服务需求偏好">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="营销响应标签" data-tag-name="优惠券使用偏好" data-tag-source="自动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="优惠券使用偏好">优惠券使用偏好</span></strong><span>活动参与度、优惠券使用偏好等</span></div></td><td>营销响应标签</td><td>自动标签</td><td>规则自动</td><td><span class="link" data-customer="优惠券使用偏好">12,680</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 02:05</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="优惠券使用偏好">详情</span>　<span class="link" data-edit="优惠券使用偏好">编辑</span>　<span class="link" data-log="优惠券使用偏好">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="高价值客户标签" data-tag-name="活动参与类型热力点" data-tag-source="手动标签" data-tag-status="停用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="活动参与类型热力点">活动参与类型热力点</span></strong><span>高价值客户活动参与类型分布</span></div></td><td>高价值客户标签</td><td>手动标签</td><td>手动维护</td><td><span class="link" data-customer="活动参与类型热力点">326</span></td><td>手动更新</td><td>2026-06-06 10:16</td><td><span class="badge gray">停用</span></td><td><span class="link" data-detail="活动参与类型热力点">详情</span>　<span class="link" data-edit="活动参与类型热力点">编辑</span>　<span class="link" data-log="活动参与类型热力点">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="活动参与类型热力点">更新</button>　<span class="link" data-status="enable">启用</span></td></tr>
-              <tr data-category-row="高价值客户标签" data-tag-name="个人表达意愿强烈" data-tag-source="手动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="个人表达意愿强烈">个人表达意愿强烈</span></strong><span>高价值客户主动反馈和表达倾向</span></div></td><td>高价值客户标签</td><td>手动标签</td><td>手动维护</td><td><span class="link" data-customer="个人表达意愿强烈">1,286</span></td><td>手动更新</td><td>2026-06-06 11:20</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="个人表达意愿强烈">详情</span>　<span class="link" data-edit="个人表达意愿强烈">编辑</span>　<span class="link" data-log="个人表达意愿强烈">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="个人表达意愿强烈">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="高价值客户标签" data-tag-name="多次参与社区活动 / 公益" data-tag-source="自动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="多次参与社区活动 / 公益">多次参与社区活动 / 公益</span></strong><span>高价值客户社区活动和公益参与度</span></div></td><td>高价值客户标签</td><td>自动标签</td><td>规则自动</td><td><span class="link" data-customer="多次参与社区活动 / 公益">2,406</span></td><td>周期更新 每周一 03:00</td><td>2026-06-08 03:12</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="多次参与社区活动 / 公益">详情</span>　<span class="link" data-edit="多次参与社区活动 / 公益">编辑</span>　<span class="link" data-log="多次参与社区活动 / 公益">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="高价值客户标签" data-tag-name="社群主理人" data-tag-source="手动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="社群主理人">社群主理人</span></strong><span>高价值客户社群组织和带动能力</span></div></td><td>高价值客户标签</td><td>手动标签</td><td>手动维护</td><td><span class="link" data-customer="社群主理人">428</span></td><td>手动更新</td><td>2026-06-05 16:42</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="社群主理人">详情</span>　<span class="link" data-edit="社群主理人">编辑</span>　<span class="link" data-log="社群主理人">日志</span><button class="btn tag-update-btn" type="button" data-update-tag="社群主理人">更新</button>　<span class="link" data-status="disable">停用</span></td></tr>
-              <tr data-category-row="高价值客户标签" data-tag-name="积分高 / 使用频繁" data-tag-source="自动标签" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="积分高 / 使用频繁">积分高 / 使用频繁</span></strong><span>高价值客户积分沉淀和使用活跃度</span></div></td><td>高价值客户标签</td><td>自动标签</td><td>规则自动</td><td><span class="link" data-customer="积分高 / 使用频繁">3,618</span></td><td>周期更新 每日 02:00</td><td>2026-06-08 02:18</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="积分高 / 使用频繁">详情</span>　<span class="link" data-edit="积分高 / 使用频繁">编辑</span>　<span class="link" data-log="积分高 / 使用频繁">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>
-            </tbody>
+            <tbody id="tagTableBody"></tbody>
           </table>
-          <div class="pagination"><span>共 128 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button><button class="page-btn">下一页</button><select><option>10 条/页</option><option>20 条/页</option></select></div>
+          <div class="pagination"><span id="tagTotalCount">共 85 条</span><button class="page-btn" id="tagPrevPage" type="button">上一页</button><button class="page-btn active" id="tagCurrentPage" type="button">1</button><button class="page-btn" id="tagNextPage" type="button">下一页</button><select id="tagPageSize"><option value="10">10 条/页</option><option value="20">20 条/页</option></select></div>
         </div>
       </div>
     </div>
@@ -383,8 +394,11 @@
       <div class="panel-hd"><h3 id="editTitle">新增标签</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd">
         <div class="grid cols-2">
+          <div class="field" style="grid-column:1/-1"><label>标准标签模板</label><select id="standardTagTemplate"><option value="">请选择标准标签，或直接手工维护</option></select></div>
+          <div class="field"><label class="required">标签ID</label><input id="editTagId" value="AJ-BAS-001"></div>
+          <div class="field"><label class="required">标签类型</label><select id="editTagType"><option>原子标签</option><option selected>规则标签</option></select></div>
           <div class="field"><label class="required">标签名称</label><input id="editName" value="身份类型"></div>
-          <div class="field"><label class="required">标签分类</label><select id="editCategory"><option>基本标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option><option>高价值客户标签</option></select></div>
+          <div class="field"><label class="required">标签分类</label><select id="editCategory"><option>基本标签</option><option>交易标签</option><option>商户标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option></select></div>
           <div class="field"><label class="required">更新方式</label><select id="editFrequency"><option>周期更新</option><option>手动更新</option></select></div>
           <div class="field"><label class="required">标签状态</label><select id="editStatus"><option>启用</option><option>停用</option><option>草稿</option></select></div>
           <div class="field"><label class="required">标签有效期</label><select id="editValidity"><option>永久有效</option><option>指定周期有效</option></select></div>
@@ -403,64 +417,20 @@
         </div>
 
         <div class="panel" style="margin-top:14px; box-shadow:none">
-          <div class="panel-hd"><h3 class="tag-required">标签规则</h3><span class="muted">依赖实体管理配置的表级关系，通过且/或条件限定标签命中范围</span></div>
+          <div class="panel-hd">
+            <h3 class="tag-required">标签规则</h3>
+            <div class="toolbar"><span class="muted">通过条件块和条件行限定标签命中范围</span><button class="btn primary" type="button" id="addConditionBlock">新增条件块</button></div>
+          </div>
           <div class="panel-bd">
-            <div class="relation-builder">
-              <div class="logic-node"><select aria-label="规则组关系"><option>且</option><option>或</option></select></div>
-              <div class="relation-group">
-                <div class="relation-group-hd"><span><i class="toggle-symbol">+</i>用户属性满足</span><button class="add-condition" type="button" data-add-condition>+ 添加</button></div>
-                <div class="relation-group-bd">
-                  <div class="relation-row">
-                    <select><option>用户主表</option><option>住户认证表</option><option>合同关系表</option></select>
-                    <select><option>用户主表.会员ID = 住户认证表.会员ID</option><option>用户主表.手机号 = 合同关系表.联系电话</option></select>
-                    <select><option>认证状态</option><option>所属项目</option><option>会员等级</option><option>注册渠道</option></select>
-                    <select><option>等于</option><option>包含</option><option>不等于</option><option>为空</option></select>
-                    <input value="身份类型">
-                    <select><option>起始条件</option><option>且</option><option>或</option></select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="relation-group">
-                <div class="relation-group-hd"><span><i class="toggle-symbol">+</i>用户行为满足</span><button class="add-condition" type="button" data-add-condition>+ 添加</button></div>
-                <div class="relation-group-bd">
-                  <div class="relation-row">
-                    <select><option>消费订单表</option><option>积分流水表</option><option>权益领取表</option></select>
-                    <select><option>用户主表.会员ID = 消费订单表.会员ID</option><option>用户主表.会员ID = 积分流水表.会员ID</option></select>
-                    <select><option>近90天消费金额</option><option>近30天积分获取次数</option><option>权益领取次数</option></select>
-                    <select><option>大于</option><option>大于等于</option><option>等于</option><option>小于</option></select>
-                    <input value="3000">
-                    <select><option>且</option><option>或</option></select>
-                  </div>
-                  <div class="relation-row">
-                    <select><option>权益领取表</option><option>消费订单表</option><option>积分流水表</option></select>
-                    <select><option>用户主表.会员ID = 权益领取表.会员ID</option><option>用户主表.会员ID = 消费订单表.会员ID</option></select>
-                    <select><option>权益领取次数</option><option>核销次数</option><option>领取后未核销次数</option></select>
-                    <select><option>大于等于</option><option>大于</option><option>等于</option></select>
-                    <input value="2">
-                    <select><option>且</option><option>或</option></select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="relation-group">
-                <div class="relation-group-hd"><span><i class="toggle-symbol">-</i>行为序列满足</span><button class="add-condition" type="button" data-add-condition>+ 添加</button></div>
-                <div class="relation-group-bd">
-                  <div class="relation-row">
-                    <select><option>活动报名表</option><option>活动签到表</option><option>权益核销表</option></select>
-                    <select><option>活动报名表.会员ID = 活动签到表.会员ID</option><option>权益领取表.券码 = 权益核销表.核销码</option></select>
-                    <select><option>报名后未签到次数</option><option>领取后核销次数</option><option>连续参与活动次数</option></select>
-                    <select><option>大于等于</option><option>大于</option><option>等于</option></select>
-                    <input value="3">
-                    <select><option>或</option><option>且</option></select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="relation-group">
-                <div class="relation-group-hd"><span><i class="toggle-symbol">+</i>用户标签满足</span><button class="add-condition" type="button" data-add-condition>+ 添加</button></div>
-                <div class="relation-group-bd">
-                  <div class="relation-empty">可选择已有标签作为限定条件，例如“身份类型”且“签到频率”，用于组合生成基本标签或行为标签。</div>
+            <div class="relation-builder" id="tagRuleBuilder">
+              <div class="condition-block">
+                <div class="condition-block-hd"><span data-condition-block-title>条件块 1</span><div class="toolbar"><button class="btn" type="button" data-add-condition-row>新增条件行</button><button class="btn" type="button" data-delete-condition-block>删除条件块</button></div></div>
+                <div class="condition-grid-head"><span>条件字段</span><span>判断关系</span><span>条件值</span><span>与上一行关系</span><span>操作</span></div>
+                <div class="condition-rows">
+                  <div class="relation-row"><select><option>认证状态</option><option>所属项目</option><option>会员等级</option><option>注册渠道</option><option>已有标签</option></select><select><option>等于</option><option>包含</option><option>不等于</option><option>为空</option></select><input value="身份类型"><select><option>起始条件</option><option>且</option><option>或</option></select><button class="delete-condition" type="button" data-delete-condition-row>删除</button></div>
+                  <div class="relation-row"><select><option>近90天消费金额</option><option>近30天积分获取次数</option><option>权益领取次数</option></select><select><option>大于</option><option>大于等于</option><option>等于</option><option>小于</option></select><input value="3000"><select><option>且</option><option>或</option></select><button class="delete-condition" type="button" data-delete-condition-row>删除</button></div>
+                  <div class="relation-row"><select><option>权益领取次数</option><option>核销次数</option><option>领取后未核销次数</option></select><select><option>大于等于</option><option>大于</option><option>等于</option></select><input value="2"><select><option>且</option><option>或</option></select><button class="delete-condition" type="button" data-delete-condition-row>删除</button></div>
+                  <div class="relation-row"><select><option>报名后未签到次数</option><option>领取后核销次数</option><option>连续参与活动次数</option></select><select><option>大于等于</option><option>大于</option><option>等于</option></select><input value="3"><select><option>或</option><option>且</option></select><button class="delete-condition" type="button" data-delete-condition-row>删除</button></div>
                 </div>
               </div>
             </div>
@@ -557,28 +527,68 @@
 
   <div class="modal-mask" id="categoryModal">
     <div class="modal">
-      <div class="panel-hd"><h3>新增标签分类</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-hd"><h3 id="categoryModalTitle">新增标签分类</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd">
-        <div class="field"><label class="required">分类名称</label><input value="客户偏好"></div>
-        <div class="field" style="margin-top:12px"><label class="required">上级分类</label><select><option>基本标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option><option>高价值客户标签</option></select></div>
-        <div class="field" style="margin-top:12px"><label class="required">分类说明</label><input value="用于承载客户属性、行为、偏好和营销响应相关标签。"></div>
+        <div class="field"><label class="required">分类名称</label><input id="categoryNameInput" value="客户偏好"></div>
+        <div class="field" style="margin-top:12px"><label>分类说明</label><input id="categoryDescInput" value="用于承载客户属性、行为、偏好和营销响应相关标签。"></div>
       </div>
-      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="saveCategoryBtn" type="button">确认保存</button></div>
     </div>
   </div>
 
+  <div class="modal-mask" id="deleteCategoryModal">
+    <div class="modal">
+      <div class="panel-hd"><h3>删除标签分类</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="notice danger" id="deleteCategoryNotice"><strong>删除确认</strong>确定删除所选标签分类吗？</div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn danger" id="confirmDeleteCategoryBtn" type="button">确认删除</button></div>
+    </div>
+  </div>
+
+  <script src="../data/customer-tag-standard.js?v=20261110-1"></script>
   <script>
-    const tagData = {
-      "身份类型": ["身份类型", "基本标签", "38,240", "周期更新 每日 02:00", "由年龄、性别、职业、城市、身份类型等基础资料生成。", "会员中心、住户认证、租赁系统", "启用"],
-      "签到频率": ["签到频率", "行为标签", "8,936", "周期更新 每周一 03:00", "统计浏览偏好、点击习惯、签到频率等行为特征。", "积分中心、营销活动、行为日志", "启用"],
-      "服务需求偏好": ["服务需求偏好", "偏好标签", "5,182", "手动更新", "识别产品偏好、服务需求偏好，用于服务推荐和运营触达。", "权益中心、手动维护", "启用"],
-      "优惠券使用偏好": ["优惠券使用偏好", "营销响应标签", "12,680", "周期更新 每日 02:00", "统计活动参与度、优惠券领取与使用偏好。", "营销中心、优惠券中心", "启用"],
-      "活动参与类型热力点": ["活动参与类型热力点", "高价值客户标签", "326", "手动更新", "识别高价值客户活动参与类型分布，用于活动推荐和服务运营。", "活动中心、积分中心、手动维护", "停用"],
-      "个人表达意愿强烈": ["个人表达意愿强烈", "高价值客户标签", "1,286", "手动更新", "识别主动反馈、建议、评论和表达频次较高的高价值客户。", "客户互动、社区活动、手动维护", "启用"],
-      "多次参与社区活动 / 公益": ["多次参与社区活动 / 公益", "高价值客户标签", "2,406", "周期更新 每周一 03:00", "识别多次参与社区活动或公益活动的高价值客户。", "活动中心、公益活动", "启用"],
-      "社群主理人": ["社群主理人", "高价值客户标签", "428", "手动更新", "识别具备社群组织、活动发起和成员带动能力的高价值客户。", "社群运营、手动维护", "启用"],
-      "积分高 / 使用频繁": ["积分高 / 使用频繁", "高价值客户标签", "3,618", "周期更新 每日 02:00", "识别积分余额较高或积分使用频繁的高价值客户。", "积分中心、兑换记录", "启用"]
-    };
+    const standardTags = window.customerTagStandard || [];
+    function standardFrequencyText(tag) {
+      if (tag.frequency === "变更时") return "手动更新";
+      if (tag.frequency.includes("周")) return "周期更新 每周一 03:00";
+      if (tag.frequency.includes("月")) return "周期更新 每月1日 02:00";
+      return "周期更新 每日 02:00";
+    }
+    function standardCoverage(index, category) {
+      const base = category === "商户标签" ? 480 : category === "营销响应标签" ? 6200 : 12000;
+      return (base + ((index * 1379) % 26000)).toLocaleString("zh-CN");
+    }
+    function escapeTagHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char]));
+    }
+    const tagData = Object.fromEntries(standardTags.map((tag, index) => [
+      tag.name,
+      [tag.name, tag.category, standardCoverage(index, tag.category), standardFrequencyText(tag), tag.rule, tag.source, "启用", tag]
+    ]));
+    function renderStandardTagRows() {
+      const body = document.getElementById("tagTableBody");
+      body.innerHTML = standardTags.map((tag, index) => {
+        const sourceType = tag.tagType === "原子标签" ? "同步标签" : "自动标签";
+        const method = tag.tagType === "原子标签" ? "数据同步" : "规则自动";
+        const coverage = standardCoverage(index, tag.category);
+        const summary = tag.values.length > 42 ? `${tag.values.slice(0, 42)}…` : tag.values;
+        const time = `2026-06-${String(8 - (index % 3)).padStart(2, "0")} ${String(14 - (index % 5)).padStart(2, "0")}:${String((index * 7) % 60).padStart(2, "0")}`;
+        const name = escapeTagHtml(tag.name);
+        return `<tr data-category-row="${escapeTagHtml(tag.category)}" data-tag-name="${name}" data-tag-source="${sourceType}" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="${name}">${name}</span></strong><span title="${escapeTagHtml(tag.values)}">${escapeTagHtml(summary)}</span></div></td><td>${escapeTagHtml(tag.category)}</td><td>${sourceType}</td><td>${method}</td><td><span class="link" data-customer="${name}">${coverage}</span></td><td>${standardFrequencyText(tag)}</td><td>${time}</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="${name}">详情</span>　<span class="link" data-edit="${name}">编辑</span>　<span class="link" data-log="${name}">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>`;
+      }).join("");
+    }
+    renderStandardTagRows();
+
+    const standardTagTemplate = document.getElementById("standardTagTemplate");
+    [...new Set(standardTags.map(tag => tag.category))].forEach(category => {
+      const group = document.createElement("optgroup");
+      group.label = category;
+      standardTags.filter(tag => tag.category === category).forEach(tag => {
+        group.appendChild(new Option(`${tag.name}（${tag.id}）`, tag.id));
+      });
+      standardTagTemplate.appendChild(group);
+    });
 
     const drawer = document.getElementById("detailDrawer");
     function updateScheduleVisibility() {
@@ -599,7 +609,7 @@
       updateScheduleVisibility();
     }
     function fillDrawer(name) {
-      const data = tagData[name] || tagData["身份类型"];
+      const data = tagData[name] || tagData["用户类型"];
       ["Name", "Category", "Count", "Frequency", "Rule", "Source", "Status"].forEach((key, index) => {
         document.getElementById(`d${key}`).textContent = data[index];
       });
@@ -615,16 +625,33 @@
     document.querySelectorAll("[data-edit]").forEach(el => {
       el.addEventListener("click", () => {
         const data = tagData[el.dataset.edit];
+        const tag = data ? data[7] : null;
         document.getElementById("editTitle").textContent = data ? "编辑标签" : "新增标签";
-        document.getElementById("editName").value = data ? data[0] : "身份类型";
+        standardTagTemplate.value = tag ? tag.id : "";
+        document.getElementById("editTagId").value = tag ? tag.id : "";
+        document.getElementById("editTagType").value = tag ? tag.tagType : "规则标签";
+        document.getElementById("editName").value = data ? data[0] : "";
         document.getElementById("editCategory").value = data ? data[1] : "基本标签";
         setScheduleByText(data ? data[3] : "周期更新 每日 02:00");
         document.getElementById("editStatus").value = data ? data[6] : "草稿";
         document.getElementById("editValidity").value = "永久有效";
         document.getElementById("validPeriodFields").classList.remove("show");
-        document.getElementById("editDesc").value = data ? data[4] : "用于识别客户服务偏好，支持后续人群圈选和权益推荐。";
+        document.getElementById("editDesc").value = data ? data[4] : "";
+        renderTagRule(tag);
         document.getElementById("editModal").classList.add("open");
       });
+    });
+
+    standardTagTemplate.addEventListener("change", event => {
+      const tag = standardTags.find(item => item.id === event.target.value);
+      if (!tag) return;
+      document.getElementById("editTagId").value = tag.id;
+      document.getElementById("editTagType").value = tag.tagType;
+      document.getElementById("editName").value = tag.name;
+      document.getElementById("editCategory").value = tag.category;
+      setScheduleByText(standardFrequencyText(tag));
+      document.getElementById("editDesc").value = tag.rule;
+      renderTagRule(tag);
     });
 
     document.getElementById("editValidity").addEventListener("change", event => {
@@ -633,38 +660,99 @@
     document.getElementById("editFrequency").addEventListener("change", updateScheduleVisibility);
     document.getElementById("scheduleType").addEventListener("change", updateScheduleVisibility);
 
-    document.querySelectorAll("[data-add-condition]").forEach(button => {
-      button.addEventListener("click", () => {
-        const body = button.closest(".relation-group").querySelector(".relation-group-bd");
-        const empty = body.querySelector(".relation-empty");
-        if (empty) empty.remove();
-        body.insertAdjacentHTML("beforeend", `<div class="relation-row"><select><option>用户主表</option><option>住户认证表</option><option>消费订单表</option><option>积分流水表</option><option>权益领取表</option></select><select><option>用户主表.会员ID = 关联表.会员ID</option><option>用户主表.手机号 = 关联表.手机号</option><option>权益领取表.券码 = 权益核销表.核销码</option></select><select><option>请选择字段</option><option>认证状态</option><option>近90天消费金额</option><option>积分获取次数</option><option>权益领取次数</option><option>已有标签</option></select><select><option>等于</option><option>大于</option><option>大于等于</option><option>包含</option><option>命中</option></select><input value=""><select><option>且</option><option>或</option></select></div>`);
+    const tagRuleBuilder = document.getElementById("tagRuleBuilder");
+    function conditionFieldOptions(selectedId = "") {
+      const groups = [...new Set(standardTags.map(tag => tag.category))];
+      return `<option value="">请选择条件字段</option>${groups.map(category => `<optgroup label="${category}">${standardTags.filter(tag => tag.category === category).map(tag => `<option value="${tag.id}"${tag.id === selectedId ? " selected" : ""}>${tag.name}（${tag.field}）</option>`).join("")}</optgroup>`).join("")}`;
+    }
+    function conditionRowTemplate(firstRow = false, tag = null) {
+      const operator = tag ? (tag.tagType === "原子标签" ? "直接取值" : "按口径计算") : "等于";
+      const value = tag ? escapeTagHtml(tag.values) : "";
+      return `<div class="relation-row"><select>${conditionFieldOptions(tag ? tag.id : "")}</select><select><option${operator === "直接取值" ? " selected" : ""}>直接取值</option><option${operator === "按口径计算" ? " selected" : ""}>按口径计算</option><option${operator === "等于" ? " selected" : ""}>等于</option><option>大于</option><option>大于等于</option><option>包含</option><option>不等于</option><option>为空</option></select><input value="${value}"><select>${firstRow ? "<option>起始条件</option>" : ""}<option>且</option><option>或</option></select><button class="delete-condition" type="button" data-delete-condition-row>删除</button></div>`;
+    }
+    function renderTagRule(tag) {
+      tagRuleBuilder.innerHTML = `<div class="condition-block"><div class="condition-block-hd"><span data-condition-block-title>条件块 1</span><div class="toolbar"><button class="btn" type="button" data-add-condition-row>新增条件行</button><button class="btn" type="button" data-delete-condition-block>删除条件块</button></div></div><div class="condition-grid-head"><span>条件字段</span><span>判断关系</span><span>条件值</span><span>与上一行关系</span><span>操作</span></div><div class="condition-rows">${conditionRowTemplate(true, tag)}</div></div>`;
+    }
+    function renumberConditionBlocks() {
+      tagRuleBuilder.querySelectorAll("[data-condition-block-title]").forEach((title, index) => {
+        title.textContent = `条件块 ${index + 1}`;
       });
+    }
+    document.getElementById("addConditionBlock").addEventListener("click", () => {
+      tagRuleBuilder.insertAdjacentHTML("beforeend", `<div class="condition-block"><div class="condition-block-hd"><span data-condition-block-title></span><div class="toolbar"><button class="btn" type="button" data-add-condition-row>新增条件行</button><button class="btn" type="button" data-delete-condition-block>删除条件块</button></div></div><div class="condition-grid-head"><span>条件字段</span><span>判断关系</span><span>条件值</span><span>与上一行关系</span><span>操作</span></div><div class="condition-rows">${conditionRowTemplate(true)}</div></div>`);
+      renumberConditionBlocks();
+    });
+    tagRuleBuilder.addEventListener("click", event => {
+      const addRowButton = event.target.closest("[data-add-condition-row]");
+      const deleteRowButton = event.target.closest("[data-delete-condition-row]");
+      const deleteBlockButton = event.target.closest("[data-delete-condition-block]");
+      if (addRowButton) {
+        addRowButton.closest(".condition-block").querySelector(".condition-rows").insertAdjacentHTML("beforeend", conditionRowTemplate(false));
+      }
+      if (deleteRowButton) {
+        deleteRowButton.closest(".relation-row").remove();
+      }
+      if (deleteBlockButton) {
+        deleteBlockButton.closest(".condition-block").remove();
+        renumberConditionBlocks();
+      }
     });
 
-    function applyTagFilters() {
+    let tagCurrentPage = 1;
+    function applyTagFilters(resetPage = false) {
+      if (resetPage) tagCurrentPage = 1;
       const name = document.getElementById("tagNameFilter").value.trim();
       const category = document.getElementById("tagCategoryFilter").value;
       const status = document.getElementById("tagStatusFilter").value;
       const source = document.getElementById("tagSourceFilter").value;
-      document.querySelectorAll("[data-category-row]").forEach(row => {
+      const rows = Array.from(document.querySelectorAll("[data-category-row]"));
+      const matchedRows = rows.filter(row => {
         const matchedName = !name || row.dataset.tagName.includes(name);
         const matchedCategory = category === "全部分类" || row.dataset.categoryRow === category;
         const matchedStatus = status === "全部状态" || row.dataset.tagStatus === status;
         const matchedSource = source === "全部来源" || row.dataset.tagSource === source;
-        row.style.display = matchedName && matchedCategory && matchedStatus && matchedSource ? "" : "none";
+        return matchedName && matchedCategory && matchedStatus && matchedSource;
       });
+      const pageSize = Number(document.getElementById("tagPageSize").value);
+      const totalPages = Math.max(1, Math.ceil(matchedRows.length / pageSize));
+      tagCurrentPage = Math.min(tagCurrentPage, totalPages);
+      const start = (tagCurrentPage - 1) * pageSize;
+      rows.forEach(row => row.style.display = "none");
+      matchedRows.slice(start, start + pageSize).forEach(row => row.style.display = "");
+      document.getElementById("tagTotalCount").textContent = `共 ${matchedRows.length} 条`;
+      document.getElementById("tagCurrentPage").textContent = tagCurrentPage;
+      document.getElementById("tagPrevPage").disabled = tagCurrentPage === 1;
+      document.getElementById("tagNextPage").disabled = tagCurrentPage === totalPages;
     }
 
-    document.querySelectorAll("[data-filter-category]").forEach(el => {
-      el.addEventListener("click", () => {
-        document.querySelectorAll("[data-filter-category]").forEach(item => item.classList.remove("active"));
-        el.classList.add("active");
-        document.getElementById("tagCategoryFilter").value = el.dataset.filterCategory;
-        applyTagFilters();
+    let selectedCategory = "全部分类";
+    let categoryAction = "add";
+
+    function selectCategoryNode(el) {
+      document.querySelectorAll("[data-filter-category]").forEach(item => item.classList.remove("active"));
+      el.classList.add("active");
+      selectedCategory = el.dataset.filterCategory;
+      document.getElementById("tagCategoryFilter").value = selectedCategory;
+      applyTagFilters(true);
+    }
+
+    function bindCategoryNode(el) {
+      el.addEventListener("click", event => {
+        if (event.target.closest(".tag-node-actions")) return;
+        selectCategoryNode(el);
       });
+    }
+    document.querySelectorAll("[data-filter-category]").forEach(bindCategoryNode);
+    document.getElementById("tagQueryBtn").addEventListener("click", () => applyTagFilters(true));
+    document.getElementById("tagPrevPage").addEventListener("click", () => {
+      if (tagCurrentPage > 1) tagCurrentPage -= 1;
+      applyTagFilters();
     });
-    document.getElementById("tagQueryBtn").addEventListener("click", applyTagFilters);
+    document.getElementById("tagNextPage").addEventListener("click", () => {
+      tagCurrentPage += 1;
+      applyTagFilters();
+    });
+    document.getElementById("tagPageSize").addEventListener("change", () => applyTagFilters(true));
     document.getElementById("openTagImport").addEventListener("click", () => {
       document.getElementById("tagImportModal").classList.add("open");
     });
@@ -678,7 +766,74 @@
       link.click();
     });
 
-    document.querySelector("[data-category]").addEventListener("click", () => document.getElementById("categoryModal").classList.add("open"));
+    function openAddCategory() {
+      categoryAction = "add";
+      document.getElementById("categoryModalTitle").textContent = "新增标签分类";
+      document.getElementById("categoryNameInput").value = "";
+      document.getElementById("categoryDescInput").value = "";
+      document.getElementById("categoryModal").classList.add("open");
+    }
+    function openEditCategory() {
+      categoryAction = "edit";
+      document.getElementById("categoryModalTitle").textContent = "修改标签分类";
+      document.getElementById("categoryNameInput").value = selectedCategory;
+      document.getElementById("categoryDescInput").value = `用于维护${selectedCategory}及其关联标签。`;
+      document.getElementById("categoryModal").classList.add("open");
+    }
+    function openDeleteCategory() {
+      document.getElementById("deleteCategoryNotice").innerHTML = `<strong>删除确认</strong>确定删除“${selectedCategory}”吗？分类下存在标签时请先迁移标签。`;
+      document.getElementById("deleteCategoryModal").classList.add("open");
+    }
+    document.querySelector(".tag-tree").addEventListener("click", event => {
+      const action = event.target.closest(".tag-node-action");
+      if (!action) return;
+      event.stopPropagation();
+      const node = action.closest("[data-filter-category]");
+      selectCategoryNode(node);
+      if (action.hasAttribute("data-category-add")) openAddCategory();
+      if (action.hasAttribute("data-category-edit")) openEditCategory();
+      if (action.hasAttribute("data-category-delete")) openDeleteCategory();
+    });
+    document.getElementById("saveCategoryBtn").addEventListener("click", () => {
+      const name = document.getElementById("categoryNameInput").value.trim();
+      if (!name) {
+        document.getElementById("categoryNameInput").focus();
+        return;
+      }
+      if (categoryAction === "edit") {
+        const node = document.querySelector(`[data-filter-category="${selectedCategory}"]`);
+        node.querySelector(".tag-node-label").textContent = name;
+        node.querySelector("[data-category-add]").setAttribute("aria-label", `新增${name}下级分类`);
+        node.querySelector("[data-category-edit]").setAttribute("aria-label", `修改${name}`);
+        node.querySelector("[data-category-delete]").setAttribute("aria-label", `删除${name}`);
+        node.dataset.filterCategory = name;
+        Array.from(document.getElementById("tagCategoryFilter").options).forEach(option => {
+          if (option.value === selectedCategory) option.textContent = name;
+        });
+        selectedCategory = name;
+      } else {
+        const node = document.createElement("div");
+        node.className = "tag-tree-item child";
+        node.dataset.filterCategory = name;
+        node.innerHTML = `<span class="tag-node-label">${name}</span><span class="tag-node-meta"><em>0</em><span class="tag-node-actions"><button class="tag-node-action" type="button" data-category-add aria-label="新增${name}下级分类" title="新增下级分类">＋</button><button class="tag-node-action" type="button" data-category-edit aria-label="修改${name}" title="修改">✎</button><button class="tag-node-action delete" type="button" data-category-delete aria-label="删除${name}" title="删除"></button></span></span>`;
+        document.querySelector(".tag-tree-children").appendChild(node);
+        bindCategoryNode(node);
+        document.getElementById("tagCategoryFilter").add(new Option(name, name));
+      }
+      document.getElementById("categoryModal").classList.remove("open");
+    });
+    document.getElementById("confirmDeleteCategoryBtn").addEventListener("click", () => {
+      const node = document.querySelector(`[data-filter-category="${selectedCategory}"]`);
+      if (node) node.remove();
+      Array.from(document.getElementById("tagCategoryFilter").options).forEach(option => {
+        if (option.value === selectedCategory) option.remove();
+      });
+      selectedCategory = "全部分类";
+      document.querySelector('[data-filter-category="全部分类"]').classList.add("active");
+      document.getElementById("tagCategoryFilter").value = "全部分类";
+      document.getElementById("deleteCategoryModal").classList.remove("open");
+      applyTagFilters();
+    });
     document.querySelectorAll("[data-log]").forEach(el => {
       el.addEventListener("click", () => {
         document.getElementById("logTitle").textContent = `${el.dataset.log} - 标签日志`;
@@ -715,6 +870,7 @@
     document.querySelectorAll("[data-close-modal]").forEach(el => {
       el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open"));
     });
+    applyTagFilters(true);
   </script>
   <script src="../resources/project-tree.js?v=20261010-1"></script>
 </body>
