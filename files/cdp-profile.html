@@ -301,11 +301,11 @@
     }
     .chart-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr);
       gap: 12px;
     }
     .mini-chart {
-      min-height: 170px;
+      min-height: 96px;
       border: 1px solid var(--line);
       border-radius: 6px;
       background: #fff;
@@ -315,27 +315,6 @@
       margin: 0 0 12px;
       color: var(--navy);
       font-size: 14px;
-    }
-    .radar {
-      width: 128px;
-      height: 128px;
-      margin: 0 auto;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle, #fff 0 34%, transparent 35%),
-        conic-gradient(#1f5f99 0 24%, #c9a35b 24% 46%, #16845b 46% 68%, #b81f2d 68% 82%, #8a99a8 82% 100%);
-    }
-    .radar span {
-      width: 72px;
-      height: 72px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: #fff;
-      color: var(--navy);
-      font-weight: 800;
     }
     .compact-detail {
       width: min(980px, calc(100vw - 48px));
@@ -560,19 +539,17 @@
       <div class="panel-hd"><h3>高价值客户画像 - 画像结果</h3><button class="btn" data-close-modal>关闭</button></div>
       <div class="panel-bd">
         <div class="chart-grid">
-          <div class="mini-chart"><h4>画像评分分布</h4><div class="radar"><span>82分</span></div></div>
           <div class="mini-chart"><h4>核心特征</h4><div class="tag-cloud"><span>V4名扬四海</span><span>签到频率高</span><span>积分使用频繁</span><span>权益领取活跃</span><span>社区活动参与</span></div></div>
-          <div class="mini-chart"><h4>推荐业务动作</h4><div class="tag-cloud"><span>权益推荐</span><span>专属服务</span><span>活动邀约</span><span>客户分群</span><span>第三方系统调用</span></div></div>
         </div>
         <div class="form-section" style="margin-top:14px;">
           <div class="form-section-hd">画像客户明细</div>
           <div class="form-section-bd">
             <table>
-              <thead><tr><th>微信昵称</th><th>用户名</th><th>会员ID</th><th>联系方式</th><th>画像评分</th><th>命中标签</th><th>所属项目</th><th>更新时间</th></tr></thead>
+              <thead><tr><th>微信昵称</th><th>用户名</th><th>会员ID</th><th>联系方式</th><th>命中标签</th><th>所属项目</th><th>更新时间</th></tr></thead>
               <tbody>
-                <tr><td>这一刻</td><td>李明</td><td>AJ202605180018</td><td>136****5520</td><td>92</td><td>积分高 / 使用频繁、签到频率</td><td>南山项目</td><td>2026-06-08 02:35</td></tr>
-                <tr><td>周女士</td><td>周女士</td><td>AJ202604220091</td><td>139****6812</td><td>88</td><td>服务需求偏好、优惠券使用偏好</td><td>福田项目</td><td>2026-06-08 02:35</td></tr>
-                <tr><td>骏丰大健测试</td><td>王先生</td><td>AJ202605300031</td><td>183****1328</td><td>84</td><td>活动参与类型热力点</td><td>集团总部</td><td>2026-06-08 02:35</td></tr>
+                <tr><td>这一刻</td><td>李明</td><td>AJ202605180018</td><td>136****5520</td><td>积分高 / 使用频繁、签到频率</td><td>南山项目</td><td>2026-06-08 02:35</td></tr>
+                <tr><td>周女士</td><td>周女士</td><td>AJ202604220091</td><td>139****6812</td><td>服务需求偏好、优惠券使用偏好</td><td>福田项目</td><td>2026-06-08 02:35</td></tr>
+                <tr><td>骏丰大健测试</td><td>王先生</td><td>AJ202605300031</td><td>183****1328</td><td>活动参与类型热力点</td><td>集团总部</td><td>2026-06-08 02:35</td></tr>
               </tbody>
             </table>
           </div>
