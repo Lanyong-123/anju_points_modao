@@ -103,6 +103,12 @@
       font-size: 12px;
       font-weight: 700;
     }
+    .calculated-input[readonly] {
+      border-color: #d7dee7;
+      background: #eef1f5;
+      color: #7a8796;
+      cursor: not-allowed;
+    }
     .customer-scope {
       display: grid;
       gap: 12px;
@@ -237,12 +243,6 @@
     .org-tree-level-3 { padding-left: 52px; }
     .org-tree-level-4 { padding-left: 76px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
-    .field-hint {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
     .trigger-value-row {
       display: none;
       align-items: center;
@@ -357,7 +357,6 @@
                   <input type="hidden" id="editIssuerOrg" value="商业板块 / 安计部">
                   <div class="org-tree-panel"></div>
                 </div>
-                <div class="field-hint">请选择营销活动的发放组织。</div>
               </div>
               <div class="field">
                 <label class="required">发放项目</label>
@@ -366,7 +365,6 @@
                   <input type="hidden" id="editProject" value="广东省 / 深圳市 / 南山区 / 高新安荟邻">
                   <div class="org-tree-panel"></div>
                 </div>
-                <div class="field-hint">按省、市、区、具体项目选择发放项目。</div>
               </div>
               <div class="field">
                 <label class="required">触发条件</label>
@@ -396,10 +394,10 @@
               <div class="field points-reward-field" id="pointsReward">
                 <label class="required">积分发放配置</label>
                 <div class="reward-row points-reward-row">
-                  <span>发放量</span><input value="10000"><span>份</span>
-                  <span>每份积分</span><input value="100"><span>分</span>
-                  <span>每份积分成本</span><input value="1.00"><span>元/份</span>
-                  <span class="cost-note">预计成本 10,000 元</span>
+                  <span>发放量</span><input id="issueQuantity" value="10000"><span>份</span>
+                  <span>每份积分</span><input id="pointsPerIssue" value="100"><span>分</span>
+                  <span>每份积分成本</span><input class="calculated-input" id="pointsUnitCost" value="0.40" readonly aria-readonly="true"><span>元/份</span>
+                  <span class="cost-note" id="estimatedCost">预计成本 4,000 元</span>
                 </div>
               </div>
               <div class="field" id="couponReward" style="display:none">
@@ -421,7 +419,7 @@
               <div class="field repeat-setting-field" id="repeatSetting" style="display:none">
                 <label>重复触达设置</label>
                 <div class="frequency-row">
-                  <span>每</span><input value="7"><select><option>天</option><option>小时</option><option>分钟</option></select><span>触达，用户最多被重复触达</span><input value="3"><span>次</span>
+                  <span>每</span><input value="1"><select><option>天</option><option>小时</option><option>分钟</option></select><span>触达，用户最多被重复触达</span><input value="3"><span>次</span>
                 </div>
               </div>
             </div>
@@ -677,6 +675,14 @@
       document.getElementById("pointsReward").style.display = method === "发放积分" ? "block" : "none";
       document.getElementById("couponReward").style.display = method === "发放礼券" ? "block" : "none";
     }
+    function refreshPointsCost() {
+      const quantity = Math.max(0, Number(document.getElementById("issueQuantity").value) || 0);
+      const points = Math.max(0, Number(document.getElementById("pointsPerIssue").value) || 0);
+      const unitCost = points * 0.004;
+      const totalCost = quantity * unitCost;
+      document.getElementById("pointsUnitCost").value = unitCost.toFixed(2);
+      document.getElementById("estimatedCost").textContent = `预计成本 ${totalCost.toLocaleString("zh-CN", { maximumFractionDigits: 2 })} 元`;
+    }
     const triggerValueConfig = {
       "累计消费积分达到指定值": { prefix: "累计消费积分", unit: "积分", placeholder: "请输入指定值" },
       "累计碳积分达到指定值": { prefix: "累计碳积分", unit: "碳积分", placeholder: "请输入指定值" },
@@ -703,10 +709,13 @@
     }
     document.querySelectorAll("input[name='touchFrequency']").forEach(el => el.addEventListener("change", refreshFrequency));
     document.getElementById("marketingMethod").addEventListener("change", refreshMarketingMethod);
+    document.getElementById("issueQuantity").addEventListener("input", refreshPointsCost);
+    document.getElementById("pointsPerIssue").addEventListener("input", refreshPointsCost);
     document.getElementById("triggerCondition").addEventListener("change", refreshTriggerValue);
     document.querySelectorAll("[data-action-toast]").forEach(el => el.addEventListener("click", () => showActionToast(el.dataset.actionToast)));
     refreshFrequency();
     refreshMarketingMethod();
+    refreshPointsCost();
     refreshTriggerValue();
   </script>
 </body>
