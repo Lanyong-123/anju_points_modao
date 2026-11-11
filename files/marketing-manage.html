@@ -429,7 +429,7 @@
                 <label class="required" for="couponQuantity">发放礼券数</label>
                 <input id="couponQuantity" type="number" min="1" step="1" value="1">
               </div>
-              <div class="field">
+              <div class="field" id="touchFrequencyField" style="display:none">
                 <label class="required">触达频次</label>
                 <div class="frequency-row">
                   <label class="inline-radio"><input type="radio" name="touchFrequency" value="single" checked> 单次触达</label>
@@ -685,7 +685,7 @@
     document.querySelectorAll("[data-close-modal]").forEach(el => el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open")));
     function refreshFrequency() {
       const multiple = document.querySelector("input[name='touchFrequency'][value='multiple']").checked;
-      document.getElementById("repeatSetting").style.display = multiple ? "block" : "none";
+      document.getElementById("repeatSetting").style.display = document.getElementById("touchFrequencyField").style.display !== "none" && multiple ? "block" : "none";
     }
     function refreshMarketingMethod() {
       const method = document.getElementById("marketingMethod").value;
