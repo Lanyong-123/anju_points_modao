@@ -164,6 +164,17 @@
     .participant-modal {
       width: min(1180px, calc(100vw - 48px));
     }
+    .marketing-list-scroll {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .marketing-list-table {
+      min-width: 1480px;
+    }
+    .marketing-list-table th,
+    .marketing-list-table td {
+      white-space: nowrap;
+    }
     .participant-modal .panel-bd {
       max-height: calc(100vh - 180px);
       overflow: auto;
@@ -308,7 +319,8 @@
         </div>
       </div>
       <div class="panel-bd">
-        <table>
+        <div class="marketing-list-scroll">
+        <table class="marketing-list-table">
           <thead>
             <tr>
               <th><input type="checkbox"></th>
@@ -318,16 +330,21 @@
               <th>活动时间</th>
               <th>触发条件</th>
               <th>营销方式</th>
-              <th>已参与</th>
+              <th>发放数量</th>
+              <th>已领取数</th>
+              <th>已核销数</th>
+              <th>过期数</th>
+              <th>未核销数</th>
               <th>活动状态</th>
               <th>操作</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td>MK202605001</td><td><span class="link" data-detail="MK202605001">积分即将到期提醒</span></td><td>安居集团</td><td>2026-06-01 至 2026-06-30</td><td>积分即将到期</td><td>发放积分</td><td><span class="link" data-participants="MK202605001">12,860</span></td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="MK202605001">详情</span>　<span class="link" data-edit="MK202605001">修改</span>　<span class="link" data-status="pause">暂停</span>　<span class="link" data-delete="MK202605001">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>MK202605003</td><td><span class="link" data-detail="MK202605003">会员实名认证成功</span></td><td>福田项目</td><td>2026-06-10 至 2026-07-10</td><td>会员实名认证成功</td><td>发放积分</td><td><span class="link" data-participants="MK202605003">1,208</span></td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="MK202605003">详情</span>　<span class="link" data-edit="MK202605003">修改</span>　<span class="link" data-delete="MK202605003">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>MK202605001</td><td><span class="link" data-detail="MK202605001">积分即将到期提醒</span></td><td>安居集团</td><td>2026-06-01 至 2026-06-30</td><td>积分即将到期</td><td>发放积分</td><td><span class="link" data-participants="MK202605001">12,860</span></td><td>-</td><td>-</td><td>-</td><td>-</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="MK202605001">详情</span>　<span class="link" data-edit="MK202605001">修改</span>　<span class="link" data-status="pause">暂停</span>　<span class="link" data-delete="MK202605001">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>MK202605003</td><td><span class="link" data-detail="MK202605003">会员实名认证成功</span></td><td>福田项目</td><td>2026-06-10 至 2026-07-10</td><td>会员实名认证成功</td><td>发放礼券</td><td><span class="link" data-participants="MK202605003">1,208</span></td><td>1,050</td><td>720</td><td>80</td><td>250</td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="MK202605003">详情</span>　<span class="link" data-edit="MK202605003">修改</span>　<span class="link" data-delete="MK202605003">删除</span></td></tr>
           </tbody>
         </table>
+        </div>
         <div class="pagination"><span>共 67 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><span>跳至</span><input value="1"><span>页</span></div>
       </div>
     </div>
@@ -639,7 +656,7 @@
     };
     const marketingData = {
       MK202605001: ["MK202605001", "积分即将到期提醒", "安居集团", "2026-06-01 至 2026-06-30", "多次触达", "积分即将到期（到期前30天）", "发放积分", "会员等级=V3远近闻名，且身份标签=项目住户", "12,860", "进行中"],
-      MK202605003: ["MK202605003", "会员实名认证成功", "福田项目", "2026-06-10 至 2026-07-10", "单次触达", "会员实名认证成功", "发放积分", "会员等级=V1展露头角，或身份标签=项目住户", "1,208", "已结束"]
+      MK202605003: ["MK202605003", "会员实名认证成功", "福田项目", "2026-06-10 至 2026-07-10", "单次触达", "会员实名认证成功", "发放礼券", "会员等级=V1展露头角，或身份标签=项目住户", "1,208", "已结束"]
     };
     const drawer = document.getElementById("detailDrawer");
     document.querySelectorAll("[data-detail]").forEach(el => el.addEventListener("click", () => {
@@ -670,6 +687,8 @@
       document.getElementById("triggerCondition").value = trigger;
       document.getElementById("triggerValue").value = marketingTriggerValues[el.dataset.edit] || "";
       refreshTriggerValue();
+      document.getElementById("marketingMethod").value = data ? data[6] : "发放积分";
+      refreshMarketingMethod();
       setOrgTreeValue(document.getElementById("editIssuerOrgTree"), issueScope.org);
       setOrgTreeValue(document.getElementById("editProjectTree"), issueScope.project);
       document.getElementById("editModal").classList.add("open");
