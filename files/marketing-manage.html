@@ -58,6 +58,9 @@
     .points-reward-field {
       grid-column: 1 / -1;
     }
+    .repeat-setting-field {
+      grid-column: 1 / -1;
+    }
     .points-reward-row {
       flex-wrap: nowrap;
       white-space: nowrap;
@@ -251,20 +254,6 @@
             <div class="grid cols-2">
               <div class="field"><label class="required">活动名称</label><input id="editName" value="优惠券领取后7天未核销"></div>
               <div class="field"><label class="required">发放组织</label><select><option>安居集团</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option></select></div>
-              <div class="field"><label class="required">活动时间</label><input value="2026-06-01 至 2026-06-30"></div>
-              <div class="field">
-                <label class="required">触达频次</label>
-                <div class="frequency-row">
-                  <label class="inline-radio"><input type="radio" name="touchFrequency" value="single" checked> 单次触达</label>
-                  <label class="inline-radio"><input type="radio" name="touchFrequency" value="multiple"> 多次触达</label>
-                </div>
-              </div>
-              <div class="field" id="repeatSetting" style="display:none">
-                <label>重复触达设置</label>
-                <div class="frequency-row">
-                  <span>每</span><input value="7"><select><option>天</option><option>小时</option><option>分钟</option></select><span>触达，用户最多被重复触达</span><input value="3"><span>次</span>
-                </div>
-              </div>
               <div class="field">
                 <label class="required">触发条件</label>
                 <select id="triggerCondition">
@@ -296,6 +285,20 @@
                   <option>500积分兑礼物</option>
                   <option>500积分兑场地预约优先</option>
                 </select>
+              </div>
+              <div class="field"><label class="required">活动时间</label><input value="2026-06-01 至 2026-06-30"></div>
+              <div class="field">
+                <label class="required">触达频次</label>
+                <div class="frequency-row">
+                  <label class="inline-radio"><input type="radio" name="touchFrequency" value="single" checked> 单次触达</label>
+                  <label class="inline-radio"><input type="radio" name="touchFrequency" value="multiple"> 多次触达</label>
+                </div>
+              </div>
+              <div class="field repeat-setting-field" id="repeatSetting" style="display:none">
+                <label>重复触达设置</label>
+                <div class="frequency-row">
+                  <span>每</span><input value="7"><select><option>天</option><option>小时</option><option>分钟</option></select><span>触达，用户最多被重复触达</span><input value="3"><span>次</span>
+                </div>
               </div>
             </div>
           </div>
