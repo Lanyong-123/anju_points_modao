@@ -166,6 +166,83 @@
       grid-template-columns: 1.2fr 1fr 1fr 1fr auto auto;
       margin-bottom: 12px;
     }
+    .org-tree-select {
+      position: relative;
+      width: 100%;
+    }
+    .org-tree-trigger {
+      width: 100%;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 7px 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      line-height: 1.25;
+      text-align: left;
+      cursor: pointer;
+    }
+    .org-tree-trigger::after {
+      content: "⌄";
+      color: #667789;
+      font-size: 13px;
+      flex: 0 0 auto;
+    }
+    .org-tree-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 30;
+      display: none;
+      width: 360px;
+      max-height: 320px;
+      padding: 8px;
+      border: 1px solid #c9d8e8;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 14px 34px rgba(18, 49, 82, .18);
+      overflow: auto;
+    }
+    .org-tree-select.open .org-tree-panel {
+      display: block;
+    }
+    .org-tree-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 30px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      color: #34465c;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .org-tree-row:hover {
+      background: #eef6ff;
+      color: var(--brand);
+    }
+    .org-tree-toggle {
+      width: 16px;
+      color: #667789;
+      text-align: center;
+      flex: 0 0 16px;
+    }
+    .org-tree-level-2 { padding-left: 28px; }
+    .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-level-4 { padding-left: 76px; }
+    .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .field-hint {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
@@ -253,7 +330,24 @@
           <div class="section-body">
             <div class="grid cols-2">
               <div class="field"><label class="required">活动名称</label><input id="editName" value="优惠券领取后7天未核销"></div>
-              <div class="field"><label class="required">发放组织</label><select><option>安居集团</option><option>南山项目</option><option>福田项目</option><option>宝安项目</option></select></div>
+              <div class="field">
+                <label class="required">发放组织</label>
+                <div class="org-tree-select" data-org-tree data-tree-type="org" id="editIssuerOrgTree" data-org-default="商业板块 / 安计部">
+                  <button class="org-tree-trigger" type="button">商业板块 / 安计部</button>
+                  <input type="hidden" id="editIssuerOrg" value="商业板块 / 安计部">
+                  <div class="org-tree-panel"></div>
+                </div>
+                <div class="field-hint">请选择营销活动的发放组织。</div>
+              </div>
+              <div class="field">
+                <label class="required">发放项目</label>
+                <div class="org-tree-select" data-org-tree data-tree-type="project" id="editProjectTree" data-org-default="广东省 / 深圳市 / 南山区 / 高新安荟邻">
+                  <button class="org-tree-trigger" type="button">广东省 / 深圳市 / 南山区 / 高新安荟邻</button>
+                  <input type="hidden" id="editProject" value="广东省 / 深圳市 / 南山区 / 高新安荟邻">
+                  <div class="org-tree-panel"></div>
+                </div>
+                <div class="field-hint">按省、市、区、具体项目选择发放项目。</div>
+              </div>
               <div class="field">
                 <label class="required">触发条件</label>
                 <select id="triggerCondition">
@@ -396,6 +490,96 @@
   <div class="toast" id="actionToast" style="position:fixed; right:24px; bottom:24px; z-index:20; display:none; min-width:180px; padding:12px 14px; border-radius:6px; background:#123152; color:#fff; box-shadow:0 14px 32px rgba(18,49,82,.22); font-size:13px; font-weight:700"></div>
 
   <script>
+    const projectTreeData = [{
+      name: "广东省",
+      children: [
+        { name: "深圳市", children: [
+          { name: "南山区", children: ["高新安荟邻", "高新花园"] },
+          { name: "福田区", children: ["景田安荟邻"] },
+          { name: "坪山区", children: ["秀馨苑"] },
+          { name: "宝安区", children: ["宝安人才园"] }
+        ] },
+        { name: "广州市", children: [
+          { name: "天河区", children: ["天河安居项目"] },
+          { name: "海珠区", children: ["海珠安居项目"] }
+        ] }
+      ]
+    }];
+    const orgTreeData = [
+      { name: "商业板块", children: ["安计部", "数字运营部", "商业运营部", "招商管理部"] },
+      { name: "住宅板块", children: ["住宅运营部", "营销管理部", "客户服务部", "工程管理部"] },
+      { name: "物业板块", children: ["物业管理部", "品质管理部", "安全管理部", "环境管理部"] },
+      { name: "集团职能", children: ["财务管理部", "人力资源部", "信息技术部", "审计风控部"] }
+    ];
+    const projectExpandedKeys = [
+      "广东省", "广东省/深圳市", "广东省/深圳市/南山区", "广东省/深圳市/福田区",
+      "广东省/深圳市/坪山区", "广东省/深圳市/宝安区", "广东省/广州市",
+      "广东省/广州市/天河区", "广东省/广州市/海珠区"
+    ];
+    const orgExpandedKeys = ["商业板块", "住宅板块", "物业板块", "集团职能"];
+    function renderOrgTree(tree, expanded) {
+      const treeData = tree.dataset.treeType === "org" ? orgTreeData : projectTreeData;
+      const rows = [];
+      const renderNodes = (nodes, parents = [], depth = 1) => {
+        nodes.forEach(node => {
+          const item = typeof node === "string" ? { name: node } : node;
+          const key = [...parents, item.name].join("/");
+          const path = [...parents, item.name].join(" / ");
+          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+          const isOpen = expanded.has(key);
+          rows.push(`<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-org-toggle="${key}"` : `data-org-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`);
+          if (hasChildren && isOpen) renderNodes(item.children, [...parents, item.name], depth + 1);
+        });
+      };
+      renderNodes(treeData);
+      tree.querySelector(".org-tree-panel").innerHTML = rows.join("");
+    }
+    function setOrgTreeValue(tree, value) {
+      tree.querySelector(".org-tree-trigger").textContent = value;
+      tree.querySelector("input").value = value;
+    }
+    function initOrgTrees() {
+      document.querySelectorAll("[data-org-tree]").forEach(tree => {
+        const expanded = new Set(tree.dataset.treeType === "org" ? orgExpandedKeys : projectExpandedKeys);
+        const trigger = tree.querySelector(".org-tree-trigger");
+        const panel = tree.querySelector(".org-tree-panel");
+        setOrgTreeValue(tree, tree.dataset.orgDefault);
+        renderOrgTree(tree, expanded);
+        trigger.addEventListener("click", event => {
+          event.stopPropagation();
+          document.querySelectorAll("[data-org-tree].open").forEach(openTree => {
+            if (openTree !== tree) openTree.classList.remove("open");
+          });
+          tree.classList.toggle("open");
+        });
+        panel.addEventListener("click", event => {
+          const row = event.target.closest(".org-tree-row");
+          if (!row) return;
+          const toggle = row.dataset.orgToggle;
+          if (toggle) {
+            if (expanded.has(toggle)) expanded.delete(toggle);
+            else expanded.add(toggle);
+            renderOrgTree(tree, expanded);
+            return;
+          }
+          if (row.dataset.orgPath) {
+            setOrgTreeValue(tree, row.dataset.orgPath);
+            tree.classList.remove("open");
+          }
+        });
+      });
+      document.addEventListener("click", event => {
+        document.querySelectorAll("[data-org-tree].open").forEach(tree => {
+          if (!tree.contains(event.target)) tree.classList.remove("open");
+        });
+      });
+    }
+    initOrgTrees();
+    const marketingIssueScope = {
+      MK202605001: { org: "商业板块 / 安计部", project: "广东省 / 深圳市 / 南山区 / 高新安荟邻" },
+      MK202605002: { org: "住宅板块 / 营销管理部", project: "广东省 / 深圳市 / 南山区 / 高新花园" },
+      MK202605003: { org: "集团职能 / 信息技术部", project: "广东省 / 深圳市 / 福田区 / 景田安荟邻" }
+    };
     const marketingData = {
       MK202605001: ["MK202605001", "优惠券领取后7天未核销", "安居集团", "2026-06-01 至 2026-06-30", "多次触达", "优惠券领取后7天未核销", "发放积分", "会员等级=V3远近闻名，且身份标签=项目住户", "12,860", "进行中"],
       MK202605002: ["MK202605002", "新会员注册", "南山项目", "2026-06-01 至 2026-06-30", "单次触达", "新会员注册", "发放礼券", "身份标签=新入会客户，且特定项目=南山项目", "8,326", "待发布"],
@@ -416,12 +600,18 @@
     document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
     document.querySelectorAll("[data-edit]").forEach(el => el.addEventListener("click", () => {
       const data = marketingData[el.dataset.edit];
+      const issueScope = marketingIssueScope[el.dataset.edit] || {
+        org: "商业板块 / 安计部",
+        project: "广东省 / 深圳市 / 南山区 / 高新安荟邻"
+      };
       document.getElementById("editTitle").textContent = data ? "编辑营销活动" : "新增营销活动";
       if (data) {
         document.getElementById("editName").value = data[1];
       } else {
         document.getElementById("editName").value = "优惠券领取后7天未核销";
       }
+      setOrgTreeValue(document.getElementById("editIssuerOrgTree"), issueScope.org);
+      setOrgTreeValue(document.getElementById("editProjectTree"), issueScope.project);
       document.getElementById("editModal").classList.add("open");
     }));
     const statusCopy = {
