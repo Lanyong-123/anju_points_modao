@@ -245,23 +245,39 @@
     .org-tree-leaf .org-tree-toggle { color: transparent; }
     .trigger-value-row {
       display: none;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
+      margin-top: 10px;
+    }
+    .trigger-value-row.show {
+      display: block;
+    }
+    .trigger-value-label {
+      display: block;
+      margin-bottom: 6px;
       color: #34465c;
       font-size: 13px;
       font-weight: 700;
     }
-    .trigger-value-row.show {
-      display: flex;
+    .trigger-value-control {
+      position: relative;
+      width: 100%;
     }
-    .trigger-value-row input {
-      width: 160px;
+    .trigger-value-control input {
+      width: 100%;
       height: 34px;
-      padding: 0 10px;
+      padding: 0 68px 0 10px;
       border: 1px solid #cfd9e5;
       border-radius: 5px;
       background: #fff;
+    }
+    .trigger-value-unit {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      transform: translateY(-50%);
+      pointer-events: none;
     }
   </style>
 </head>
@@ -379,9 +395,11 @@
                   <option>积分即将到期</option>
                 </select>
                 <div class="trigger-value-row" id="triggerValueRow">
-                  <span id="triggerValuePrefix">指定值</span>
-                  <input id="triggerValue" type="number" min="1" step="1" placeholder="请输入指定值">
-                  <span id="triggerValueUnit">积分</span>
+                  <label class="required trigger-value-label" id="triggerValuePrefix" for="triggerValue">指定值</label>
+                  <div class="trigger-value-control">
+                    <input id="triggerValue" type="number" min="1" step="1" placeholder="请输入指定值">
+                    <span class="trigger-value-unit" id="triggerValueUnit">积分</span>
+                  </div>
                 </div>
               </div>
               <div class="field">
