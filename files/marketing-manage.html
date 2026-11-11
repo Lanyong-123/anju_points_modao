@@ -365,6 +365,7 @@
           <div class="section-body">
             <div class="grid cols-2">
               <div class="field"><label class="required">活动名称</label><input id="editName" value="会员实名认证成功营销活动"></div>
+              <div class="field"><label class="required">活动时间</label><input value="2026-06-01 至 2026-06-30"></div>
               <div class="field">
                 <label class="required">发放组织</label>
                 <div class="org-tree-select" data-org-tree data-tree-type="org" id="editIssuerOrgTree" data-org-default="商业板块 / 安计部">
@@ -424,7 +425,10 @@
                   <option>场地预约优先</option>
                 </select>
               </div>
-              <div class="field"><label class="required">活动时间</label><input value="2026-06-01 至 2026-06-30"></div>
+              <div class="field" id="couponQuantityField" style="display:none">
+                <label class="required" for="couponQuantity">发放礼券数</label>
+                <input id="couponQuantity" type="number" min="1" step="1" value="1">
+              </div>
               <div class="field">
                 <label class="required">触达频次</label>
                 <div class="frequency-row">
@@ -687,6 +691,7 @@
       const method = document.getElementById("marketingMethod").value;
       document.getElementById("pointsReward").style.display = method === "发放积分" ? "block" : "none";
       document.getElementById("couponReward").style.display = method === "发放礼券" ? "block" : "none";
+      document.getElementById("couponQuantityField").style.display = method === "发放礼券" ? "block" : "none";
     }
     function refreshPointsCost() {
       const quantity = Math.max(0, Number(document.getElementById("issueQuantity").value) || 0);
