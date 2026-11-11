@@ -245,10 +245,15 @@
     .org-tree-leaf .org-tree-toggle { color: transparent; }
     .trigger-value-row {
       display: none;
-      margin-top: 10px;
     }
     .trigger-value-row.show {
       display: block;
+    }
+    .trigger-condition-field.has-trigger-value {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: end;
     }
     .trigger-value-label {
       display: block;
@@ -382,17 +387,19 @@
                   <div class="org-tree-panel"></div>
                 </div>
               </div>
-              <div class="field">
-                <label class="required">触发条件</label>
-                <select id="triggerCondition">
-                  <option>会员实名认证成功</option>
-                  <option>累计消费积分达到指定值</option>
-                  <option>累计碳积分达到指定值</option>
-                  <option>活动参与次数达到指定值</option>
-                  <option>积分余额达到指定值</option>
-                  <option>连续签到达到指定值</option>
-                  <option>积分即将到期</option>
-                </select>
+              <div class="field trigger-condition-field" id="triggerConditionField">
+                <div>
+                  <label class="required">触发条件</label>
+                  <select id="triggerCondition">
+                    <option>会员实名认证成功</option>
+                    <option>累计消费积分达到指定值</option>
+                    <option>累计碳积分达到指定值</option>
+                    <option>活动参与次数达到指定值</option>
+                    <option>积分余额达到指定值</option>
+                    <option>连续签到达到指定值</option>
+                    <option>积分即将到期</option>
+                  </select>
+                </div>
                 <div class="trigger-value-row" id="triggerValueRow">
                   <label class="required trigger-value-label" id="triggerValuePrefix" for="triggerValue">指定值</label>
                   <div class="trigger-value-control">
@@ -713,6 +720,7 @@
       const config = triggerValueConfig[document.getElementById("triggerCondition").value];
       const row = document.getElementById("triggerValueRow");
       row.classList.toggle("show", Boolean(config));
+      document.getElementById("triggerConditionField").classList.toggle("has-trigger-value", Boolean(config));
       if (!config) return;
       document.getElementById("triggerValuePrefix").textContent = config.prefix;
       document.getElementById("triggerValueUnit").textContent = config.unit;
