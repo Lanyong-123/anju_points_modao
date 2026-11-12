@@ -362,24 +362,19 @@
       <div class="detail-list">
         <span>活动编号</span><strong id="dCode">MK202605001</strong>
         <span>活动名称</span><strong id="dName">优惠券领取后7天未核销</strong>
-        <span>发放组织</span><strong id="dOrg">安居集团</strong>
         <span>活动时间</span><strong id="dTime">2026-06-01 至 2026-06-30</strong>
-        <span>触达频次</span><strong id="dFrequency">多次触达</strong>
+        <span>发放组织</span><strong id="dIssuerOrg">商业板块 / 安计部</strong>
+        <span>发放项目</span><strong id="dProject">广东省 / 深圳市 / 南山区 / 高新安荟邻</strong>
         <span>触发条件</span><strong id="dTrigger">积分即将到期（到期前30天）</strong>
         <span>营销方式</span><strong id="dMethod">发放积分</strong>
-        <span id="dRewardLabel">发放积分</span><strong id="dRewardValue">100积分/人</strong>
+        <span class="points-detail">发放量</span><strong class="points-detail" id="dPointQuantity">12,860份</strong>
+        <span class="points-detail">每份积分</span><strong class="points-detail" id="dPointsPerIssue">100分</strong>
+        <span class="points-detail">每份积分成本</span><strong class="points-detail" id="dPointsUnitCost">0.40元/份</strong>
+        <span class="points-detail">预计成本</span><strong class="points-detail" id="dEstimatedCost">5,144元</strong>
+        <span class="coupon-detail" style="display:none">礼券发放配置</span><strong class="coupon-detail" id="dCouponConfig" style="display:none">贴身管家服务</strong>
+        <span class="coupon-detail" style="display:none">发放礼券数</span><strong class="coupon-detail" id="dCouponQuantity" style="display:none">1,208张</strong>
         <span>客户范围</span><strong id="dScope">会员等级=V3远近闻名，且身份标签=项目住户</strong>
-        <span>发放数量</span><strong id="dJoin">12,860</strong>
         <span>活动状态</span><strong id="dStatus">进行中</strong>
-      </div>
-      <div class="panel" style="margin-top:14px; box-shadow:none">
-        <div class="panel-hd"><h3>活动效果</h3></div>
-        <div class="panel-bd">
-          <table><thead><tr><th>日期</th><th>发放会员数</th><th id="dEffectRewardLabel">发放积分</th><th id="dEffectUsageLabel">使用情况</th><th>转化率</th></tr></thead><tbody>
-            <tr><td>2026-05-26</td><td>826</td><td id="dEffectReward1">82,600积分</td><td id="dEffectUsage1">-</td><td id="dEffectRate1">100%</td></tr>
-            <tr><td>2026-05-25</td><td>792</td><td id="dEffectReward2">79,200积分</td><td id="dEffectUsage2">-</td><td id="dEffectRate2">100%</td></tr>
-          </tbody></table>
-        </div>
       </div>
     </div>
   </aside>
@@ -687,18 +682,23 @@
     const drawer = document.getElementById("detailDrawer");
     document.querySelectorAll("[data-detail]").forEach(el => el.addEventListener("click", () => {
       const data = marketingData[el.dataset.detail] || marketingData.MK202605001;
-      ["Code", "Name", "Org", "Time", "Frequency", "Trigger", "Method", "Scope", "Join", "Status"].forEach((key, index) => document.getElementById(`d${key}`).textContent = data[index]);
+      const issueScope = marketingIssueScope[el.dataset.detail] || marketingIssueScope.MK202605001;
+      [["Code", 0], ["Name", 1], ["Time", 3], ["Trigger", 5], ["Method", 6], ["Scope", 7], ["Status", 9]].forEach(([key, index]) => document.getElementById(`d${key}`).textContent = data[index]);
+      document.getElementById("dIssuerOrg").textContent = issueScope.org;
+      document.getElementById("dProject").textContent = issueScope.project;
       const isCoupon = data[6] === "发放礼券";
-      document.getElementById("dRewardLabel").textContent = isCoupon ? "关联礼券" : "发放积分";
-      document.getElementById("dRewardValue").textContent = data[10];
-      document.getElementById("dEffectRewardLabel").textContent = isCoupon ? "发放礼券" : "发放积分";
-      document.getElementById("dEffectUsageLabel").textContent = isCoupon ? "核销数" : "使用情况";
-      document.getElementById("dEffectReward1").textContent = isCoupon ? "826张" : "82,600积分";
-      document.getElementById("dEffectReward2").textContent = isCoupon ? "792张" : "79,200积分";
-      document.getElementById("dEffectUsage1").textContent = isCoupon ? "318" : "-";
-      document.getElementById("dEffectUsage2").textContent = isCoupon ? "306" : "-";
-      document.getElementById("dEffectRate1").textContent = isCoupon ? "38.5%" : "100%";
-      document.getElementById("dEffectRate2").textContent = isCoupon ? "38.6%" : "100%";
+      document.querySelectorAll(".points-detail").forEach(item => item.style.display = isCoupon ? "none" : "");
+      document.querySelectorAll(".coupon-detail").forEach(item => item.style.display = isCoupon ? "" : "none");
+      if (isCoupon) {
+        document.getElementById("dCouponConfig").textContent = data[10];
+        document.getElementById("dCouponQuantity").textContent = `${data[8]}张`;
+      } else {
+        const pointQuantity = Number(data[8].replace(/,/g, ""));
+        document.getElementById("dPointQuantity").textContent = `${data[8]}份`;
+        document.getElementById("dPointsPerIssue").textContent = "100分";
+        document.getElementById("dPointsUnitCost").textContent = "0.40元/份";
+        document.getElementById("dEstimatedCost").textContent = `${(pointQuantity * 0.4).toLocaleString("zh-CN", { maximumFractionDigits: 2 })}元`;
+      }
       drawer.classList.add("open");
     }));
     document.querySelectorAll("[data-issue-detail]").forEach(el => el.addEventListener("click", () => {
