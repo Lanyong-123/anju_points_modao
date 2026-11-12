@@ -315,14 +315,21 @@
       transform: translateY(-50%);
       pointer-events: none;
     }
+    .activity-time-range {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+    }
+    .activity-time-range span { color: var(--muted); }
   </style>
 </head>
 <body>
   <div class="page">
-    <div class="filter">
+    <div class="filter" style="grid-template-columns:repeat(5,minmax(0,1fr)) auto">
       <div class="field"><label>活动名称/编号</label><input placeholder="活动名称、活动编号"></div>
       <div class="field"><label>触发条件</label><select><option>全部触发条件</option><option>会员实名认证成功</option><option>累计消费积分达到指定值</option><option>累计碳积分达到指定值</option><option>活动参与次数达到指定值</option><option>积分余额达到指定值</option><option>连续签到达到指定值</option><option>积分即将到期</option></select></div>
-      <div class="field"><label>活动状态</label><select><option>全部状态</option><option>草稿</option><option>待发布</option><option>进行中</option><option>已暂停</option><option>已结束</option></select></div>
+      <div class="field"><label>活动状态</label><select><option>全部状态</option><option>草稿</option><option>待发布</option><option>进行中</option><option>已结束</option></select></div>
       <div class="field"><label>发放组织</label><select><option>全部组织</option><option>安居集团</option><option>南山项目</option><option>福田项目</option></select></div>
       <div class="field"><label>活动时间</label><input value="2026-05-01 至 2026-05-31"></div>
       <button class="btn primary">查询</button>
@@ -333,8 +340,6 @@
         <h3>营销活动列表</h3>
         <div class="toolbar">
           <button class="btn primary" data-edit="new">新增活动</button>
-          <button class="btn" data-status="batch-publish">批量发布</button>
-          <button class="btn" data-status="batch-pause">批量暂停</button>
           <button class="btn">导出</button>
         </div>
       </div>
@@ -344,7 +349,6 @@
           <thead>
             <tr>
               <th><input type="checkbox"></th>
-              <th>活动编号</th>
               <th>活动名称</th>
               <th>发放组织</th>
               <th>活动时间</th>
@@ -360,8 +364,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td>MK202605001</td><td><span class="link" data-detail="MK202605001">积分即将到期提醒</span></td><td>安居集团</td><td>2026-06-01 至 2026-06-30</td><td>积分即将到期</td><td>发放积分</td><td><span class="link" data-issue-detail="MK202605001" data-detail-metric="发放数量">12,860</span></td><td>-</td><td>-</td><td>-</td><td>-</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="MK202605001">详情</span>　<span class="link" data-edit="MK202605001">修改</span>　<span class="link" data-status="pause">暂停</span>　<span class="link" data-delete="MK202605001">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>MK202605003</td><td><span class="link" data-detail="MK202605003">会员实名认证成功</span></td><td>福田项目</td><td>2026-06-10 至 2026-07-10</td><td>会员实名认证成功</td><td>发放礼券</td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="发放数量">1,208</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="已领取数">1,050</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="已核销数">720</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="过期数">80</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="未核销数">250</span></td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="MK202605003">详情</span>　<span class="link" data-edit="MK202605003">修改</span>　<span class="link" data-delete="MK202605003">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="MK202605001">积分即将到期提醒</span></td><td>安居集团</td><td>2026-06-01 至 2026-06-30</td><td>积分即将到期</td><td>发放积分</td><td><span class="link" data-issue-detail="MK202605001" data-detail-metric="发放数量">12,860</span></td><td>-</td><td>-</td><td>-</td><td>-</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="MK202605001">详情</span>　<span class="link" data-time-edit="MK202605001">修改</span>　<span class="link" data-delete="MK202605001">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td><span class="link" data-detail="MK202605003">会员实名认证成功</span></td><td>福田项目</td><td>2026-06-10 至 2026-07-10</td><td>会员实名认证成功</td><td>发放礼券</td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="发放数量">1,208</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="已领取数">1,050</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="已核销数">720</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="过期数">80</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="未核销数">250</span></td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="MK202605003">详情</span></td></tr>
           </tbody>
         </table>
         </div>
@@ -538,8 +542,17 @@
     </div>
   </div>
 
-  <div class="modal-mask" id="statusModal">
-    <div class="modal"><div class="panel-hd"><h3 id="statusTitle">活动状态设置</h3><button class="btn" data-close-modal>关闭</button></div><div class="panel-bd"><div class="notice" id="statusNotice"><strong>暂停活动</strong>暂停后活动不再对会员展示，已领取权益不受影响。</div><div class="field" style="margin-top:12px"><label>操作原因</label><input value="运营节奏调整"></div></div><div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认</button></div></div>
+  <div class="modal-mask" id="timeEditModal">
+    <div class="modal">
+      <div class="panel-hd"><h3>修改活动时间</h3><button class="btn" data-close-modal>关闭</button></div>
+      <div class="panel-bd">
+        <div class="field">
+          <label class="required">活动时间</label>
+          <div class="activity-time-range"><input id="runningStartDate" type="date" value="2026-06-01"><span>至</span><input id="runningEndDate" type="date" value="2026-06-30"></div>
+        </div>
+      </div>
+      <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-action-toast="活动时间修改成功" data-close-modal>确认修改</button></div>
+    </div>
   </div>
 
   <div class="modal-mask" id="deleteModal">
@@ -785,18 +798,12 @@
       setOrgTreeValue(document.getElementById("editProjectTree"), issueScope.project);
       document.getElementById("editModal").classList.add("open");
     }));
-    const statusCopy = {
-      publish: ["发布活动", "发布后活动按配置时间和对象在小程序端展示。", "确认活动配置无误"],
-      pause: ["暂停活动", "暂停后活动不再对会员展示，已领取权益不受影响。", "运营节奏调整"],
-      "batch-publish": ["批量发布活动", "将对已勾选活动批量发布。", "批量上线"],
-      "batch-pause": ["批量暂停活动", "将对已勾选活动批量暂停。", "批量运营调整"]
-    };
-    document.querySelectorAll("[data-status]").forEach(el => el.addEventListener("click", () => {
-      const copy = statusCopy[el.dataset.status] || statusCopy.pause;
-      document.getElementById("statusTitle").textContent = copy[0];
-      document.getElementById("statusNotice").innerHTML = `<strong>${copy[0]}</strong>${copy[1]}`;
-      document.querySelector("#statusModal input").value = copy[2];
-      document.getElementById("statusModal").classList.add("open");
+    document.querySelectorAll("[data-time-edit]").forEach(el => el.addEventListener("click", () => {
+      const data = marketingData[el.dataset.timeEdit] || marketingData.MK202605001;
+      const [startDate, endDate] = data[3].split(" 至 ");
+      document.getElementById("runningStartDate").value = startDate;
+      document.getElementById("runningEndDate").value = endDate;
+      document.getElementById("timeEditModal").classList.add("open");
     }));
     document.querySelectorAll("[data-delete]").forEach(el => el.addEventListener("click", () => document.getElementById("deleteModal").classList.add("open")));
     document.querySelectorAll("[data-close-modal]").forEach(el => el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open")));
