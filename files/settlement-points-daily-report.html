@@ -32,6 +32,15 @@
     .org-tree-level-3 { padding-left: 52px; }
     .org-tree-level-4 { padding-left: 76px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .dimension-field[hidden] { display: none; }
+    .report-context {
+      display: flex; align-items: center; min-height: 32px; margin-bottom: 12px; padding: 7px 12px;
+      border: 1px solid #d9e9f4; border-radius: 5px; background: #f6fbff; color: var(--muted); font-size: 13px;
+    }
+    .report-context .link { margin: 0 4px; }
+    .report-context strong { color: var(--ink); }
+    .drill-link { display: inline-flex; align-items: center; gap: 5px; }
+    .drill-link::after { content: "›"; font-size: 16px; line-height: 1; }
   </style>
 </head>
 <body>
@@ -39,21 +48,22 @@
     <div class="filter" style="grid-template-columns:repeat(5,minmax(0,1fr))">
       <div class="field"><label>清算日期</label><input value="2026-05-26"></div>
       <div class="field"><label>积分类型</label><select><option>全部类型</option><option>消费积分</option><option>碳积分</option></select></div>
-      <div class="field"><label>发分组织</label>
+      <div class="field"><label>统计目标</label><select id="statisticsTarget"><option value="org" selected>发放组织</option><option value="project">发放项目</option></select></div>
+      <div class="field dimension-field" id="orgFilter"><label>发放组织</label>
         <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织" data-org-default="全部组织">
           <button class="org-tree-trigger" type="button">全部组织</button>
           <input type="hidden" value="全部组织">
           <div class="org-tree-panel"></div>
         </div>
       </div>
-      <div class="field"><label>发分项目</label>
+      <div class="field dimension-field" id="projectFilter" hidden><label>发放项目</label>
         <div class="org-tree-select" data-org-tree data-tree-type="project" data-org-all="全部项目" data-org-default="全部项目">
           <button class="org-tree-trigger" type="button">全部项目</button>
           <input type="hidden" value="全部项目">
           <div class="org-tree-panel"></div>
         </div>
       </div>
-      <button class="btn primary">查询</button>
+      <button class="btn primary" id="searchButton">查询</button>
     </div>
 
     <div class="panel">
@@ -62,14 +72,12 @@
         <div class="toolbar"><button class="btn">导出</button></div>
       </div>
       <div class="panel-bd">
+        <div class="report-context" id="reportContext"></div>
         <table>
-          <thead><tr><th>清算日期</th><th>积分类型</th><th>当日发分总量</th><th>当日兑分总量</th><th>今日冻结积分</th><th>今日解冻积分</th><th>今日过期积分</th><th>结余总量</th></tr></thead>
-          <tbody>
-            <tr><td>2026-05-26</td><td><span class="badge">消费积分</span></td><td><a class="link" href="points-detail.html">986,430</a></td><td><a class="link" href="points-detail.html">426,180</a></td><td><a class="link" href="points-detail.html">18,200</a></td><td><a class="link" href="points-detail.html">9,600</a></td><td><a class="link" href="points-detail.html">12,800</a></td><td>8,620,000</td></tr>
-            <tr><td>2026-05-26</td><td><span class="badge green">碳积分</span></td><td><a class="link" href="points-detail.html">300,000</a></td><td><a class="link" href="points-detail.html">100,000</a></td><td><a class="link" href="points-detail.html">3,500</a></td><td><a class="link" href="points-detail.html">1,200</a></td><td><a class="link" href="points-detail.html">4,600</a></td><td>2,180,000</td></tr>
-          </tbody>
+          <thead><tr><th>清算日期</th><th>积分类型</th><th id="dimensionHeader">发放组织</th><th>当日发分总量</th><th>当日兑分总量</th><th>今日冻结积分</th><th>今日解冻积分</th><th>今日过期积分</th><th>结余总量</th></tr></thead>
+          <tbody id="reportRows"></tbody>
         </table>
-        <div class="pagination"><span>共 2 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+        <div class="pagination"><span id="totalCount">共 0 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
       </div>
     </div>
   </div>
@@ -101,6 +109,80 @@
       "广东省/广州市/天河区", "广东省/广州市/海珠区"
     ];
     const orgExpandedKeys = ["商业板块", "住宅板块", "物业板块", "集团职能"];
+
+    const orgReportData = [
+      { name: "商业板块", type: "消费积分", metrics: ["286,430", "126,180", "5,200", "2,600", "3,800", "2,420,000"], children: [
+        { name: "安计部", type: "消费积分", metrics: ["82,600", "31,200", "1,200", "600", "900", "680,000"] },
+        { name: "数字运营部", type: "消费积分", metrics: ["78,230", "35,680", "1,500", "800", "1,100", "620,000"] },
+        { name: "商业运营部", type: "消费积分", metrics: ["69,600", "32,300", "1,400", "700", "1,000", "590,000"] },
+        { name: "招商管理部", type: "消费积分", metrics: ["56,000", "27,000", "1,100", "500", "800", "530,000"] }
+      ] },
+      { name: "住宅板块", type: "消费积分", metrics: ["350,000", "150,000", "6,000", "3,000", "4,500", "2,900,000"], children: [
+        { name: "住宅运营部", type: "消费积分", metrics: ["105,000", "42,000", "1,800", "900", "1,200", "860,000"] },
+        { name: "营销管理部", type: "消费积分", metrics: ["98,000", "45,000", "1,600", "800", "1,100", "820,000"] },
+        { name: "客户服务部", type: "消费积分", metrics: ["79,000", "35,000", "1,400", "700", "1,200", "660,000"] },
+        { name: "工程管理部", type: "消费积分", metrics: ["68,000", "28,000", "1,200", "600", "1,000", "560,000"] }
+      ] },
+      { name: "物业板块", type: "消费积分", metrics: ["220,000", "100,000", "4,000", "2,000", "3,000", "1,900,000"], children: [
+        { name: "物业管理部", type: "消费积分", metrics: ["70,000", "32,000", "1,300", "700", "1,000", "620,000"] },
+        { name: "品质管理部", type: "消费积分", metrics: ["58,000", "26,000", "1,000", "500", "800", "500,000"] },
+        { name: "安全管理部", type: "消费积分", metrics: ["49,000", "23,000", "900", "400", "700", "430,000"] },
+        { name: "环境管理部", type: "消费积分", metrics: ["43,000", "19,000", "800", "400", "500", "350,000"] }
+      ] },
+      { name: "集团职能", type: "碳积分", metrics: ["300,000", "150,000", "6,500", "3,200", "6,100", "3,580,000"], children: [
+        { name: "财务管理部", type: "碳积分", metrics: ["81,000", "41,000", "1,800", "900", "1,700", "960,000"] },
+        { name: "人力资源部", type: "碳积分", metrics: ["75,000", "37,000", "1,600", "800", "1,500", "880,000"] },
+        { name: "信息技术部", type: "碳积分", metrics: ["79,000", "40,000", "1,700", "900", "1,600", "940,000"] },
+        { name: "审计风控部", type: "碳积分", metrics: ["65,000", "32,000", "1,400", "600", "1,300", "800,000"] }
+      ] }
+    ];
+
+    const projectReportData = [
+      { name: "高新安荟邻", type: "消费积分", metrics: ["326,430", "146,180", "6,200", "3,100", "4,200", "2,860,000"] },
+      { name: "高新花园", type: "消费积分", metrics: ["260,000", "110,000", "4,800", "2,400", "3,600", "2,210,000"] },
+      { name: "景田安荟邻", type: "消费积分", metrics: ["180,000", "80,000", "3,200", "1,600", "2,500", "1,540,000"] },
+      { name: "秀馨苑", type: "碳积分", metrics: ["150,000", "70,000", "3,000", "1,400", "2,300", "1,260,000"] },
+      { name: "宝安人才园", type: "碳积分", metrics: ["140,000", "60,000", "2,500", "1,200", "2,000", "1,100,000"] }
+    ];
+
+    const targetSelect = document.getElementById("statisticsTarget");
+    const orgFilter = document.getElementById("orgFilter");
+    const projectFilter = document.getElementById("projectFilter");
+    const dimensionHeader = document.getElementById("dimensionHeader");
+    const reportRows = document.getElementById("reportRows");
+    const reportContext = document.getElementById("reportContext");
+    const totalCount = document.getElementById("totalCount");
+    let drillPath = [];
+
+    function metricLinks(metrics) {
+      return metrics.map((value, index) => index < 5 ? `<td><a class="link" href="points-detail.html">${value}</a></td>` : `<td>${value}</td>`).join("");
+    }
+
+    function renderReport() {
+      const isOrg = targetSelect.value === "org";
+      const dimensionName = isOrg ? "发放组织" : "发放项目";
+      let rows = isOrg ? orgReportData : projectReportData;
+      if (isOrg && drillPath.length) {
+        const parent = orgReportData.find(item => item.name === drillPath[0]);
+        rows = parent && parent.children ? parent.children : rows;
+      }
+      dimensionHeader.textContent = dimensionName;
+      reportContext.innerHTML = `<strong>当前统计维度：</strong>${dimensionName}<span style="margin:0 10px;color:#b7c7d4">|</span><strong>统计层级：</strong>${isOrg ? `<a class="link" href="#" data-drill-home>全部发放组织</a>${drillPath.map(name => ` / <span>${name}</span>`).join("")}` : "发放项目"}`;
+      reportRows.innerHTML = rows.map(item => {
+        const canDrill = isOrg && Array.isArray(item.children) && item.children.length;
+        const dimension = canDrill ? `<a class="link drill-link" href="#" data-drill-name="${item.name}">${item.name}</a>` : item.name;
+        return `<tr><td>2026-05-26</td><td><span class="badge${item.type === "碳积分" ? " green" : ""}">${item.type}</span></td><td>${dimension}</td>${metricLinks(item.metrics)}</tr>`;
+      }).join("");
+      totalCount.textContent = `共 ${rows.length} 条`;
+    }
+
+    function syncTarget() {
+      const isOrg = targetSelect.value === "org";
+      orgFilter.hidden = !isOrg;
+      projectFilter.hidden = isOrg;
+      drillPath = [];
+      renderReport();
+    }
 
     function renderOrgTree(tree, expanded) {
       const allLabel = tree.dataset.orgAll;
@@ -154,6 +236,25 @@
         if (!tree.contains(event.target)) tree.classList.remove("open");
       });
     });
+    targetSelect.addEventListener("change", syncTarget);
+    document.getElementById("searchButton").addEventListener("click", () => {
+      drillPath = [];
+      renderReport();
+    });
+    reportRows.addEventListener("click", event => {
+      const drillLink = event.target.closest("[data-drill-name]");
+      if (!drillLink) return;
+      event.preventDefault();
+      drillPath = [drillLink.dataset.drillName];
+      renderReport();
+    });
+    reportContext.addEventListener("click", event => {
+      if (!event.target.closest("[data-drill-home]")) return;
+      event.preventDefault();
+      drillPath = [];
+      renderReport();
+    });
+    syncTarget();
   </script>
 </body>
 </html>
