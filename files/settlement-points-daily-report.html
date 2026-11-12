@@ -74,7 +74,7 @@
       <div class="panel-bd">
         <div class="report-context" id="reportContext"></div>
         <table>
-          <thead><tr><th>清算日期</th><th>积分类型</th><th id="dimensionHeader">发放组织</th><th>当日发分总量</th><th>当日兑分总量</th><th>今日冻结积分</th><th>今日解冻积分</th><th>今日过期积分</th><th>结余总量</th></tr></thead>
+          <thead><tr><th id="dimensionHeader">发放组织</th><th>清算日期</th><th>积分类型</th><th>当日发分总量</th><th>当日兑分总量</th><th>今日冻结积分</th><th>今日解冻积分</th><th>今日过期积分</th><th>结余总量</th></tr></thead>
           <tbody id="reportRows"></tbody>
         </table>
         <div class="pagination"><span id="totalCount">共 0 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
@@ -171,7 +171,7 @@
       reportRows.innerHTML = rows.map(item => {
         const canDrill = isOrg && Array.isArray(item.children) && item.children.length;
         const dimension = canDrill ? `<a class="link drill-link" href="#" data-drill-name="${item.name}">${item.name}</a>` : item.name;
-        return `<tr><td>2026-05-26</td><td><span class="badge${item.type === "碳积分" ? " green" : ""}">${item.type}</span></td><td>${dimension}</td>${metricLinks(item.metrics)}</tr>`;
+        return `<tr><td>${dimension}</td><td>2026-05-26</td><td><span class="badge${item.type === "碳积分" ? " green" : ""}">${item.type}</span></td>${metricLinks(item.metrics)}</tr>`;
       }).join("");
       totalCount.textContent = `共 ${rows.length} 条`;
     }

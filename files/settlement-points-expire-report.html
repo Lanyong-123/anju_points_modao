@@ -68,7 +68,7 @@
     </div>
     <div class="panel"><div class="panel-hd"><h3>过期积分统计列表</h3><div class="toolbar"><button class="btn">导出</button></div></div><div class="panel-bd">
       <div class="report-context" id="reportContext"></div>
-      <table><thead><tr><th>积分类型</th><th id="dimensionHeader">发放组织</th><th>过期会员数</th><th>过期积分</th><th>操作</th></tr></thead><tbody id="reportRows"></tbody></table>
+      <table><thead><tr><th id="dimensionHeader">发放组织</th><th>积分类型</th><th>过期会员数</th><th>过期积分</th><th>操作</th></tr></thead><tbody id="reportRows"></tbody></table>
       <div class="pagination"><span id="totalCount">共 0 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
     </div></div>
   </div>
@@ -145,7 +145,7 @@
       reportRows.innerHTML = rows.map(item => {
         const canDrill = isOrg && Array.isArray(item.children) && item.children.length;
         const dimension = canDrill ? `<a class="link drill-link" href="#" data-drill-name="${item.name}">${item.name}</a>` : item.name;
-        return `<tr><td><span class="badge${item.type === "碳积分" ? " green" : ""}">${item.type}</span></td><td>${dimension}</td><td>${item.members}</td><td>${item.points}</td><td><a class="link" href="points-detail.html">详情</a></td></tr>`;
+        return `<tr><td>${dimension}</td><td><span class="badge${item.type === "碳积分" ? " green" : ""}">${item.type}</span></td><td>${item.members}</td><td>${item.points}</td><td><a class="link" href="points-detail.html">详情</a></td></tr>`;
       }).join("");
       totalCount.textContent = `共 ${rows.length} 条`;
     }
