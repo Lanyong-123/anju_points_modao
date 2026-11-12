@@ -3,9 +3,10 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>小程序-通知中心</title><link rel="stylesheet" href="../resources/style.css"><link rel="stylesheet" href="../resources/mini.css"></head>
 <body class="mini-sky-page mini-notifications-page">
   <div class="mini-stage"><div class="phone">
-    <div class="phone-top"><div class="status"><span>9:41</span><span>安居积分</span><span class="status-icons">▮▮▮ ))) ▰</span></div><div class="wechat-menu"><span>•••</span><i></i></div><div class="title-row"><h1>通知中心</h1><span class="tag red">未读 3</span></div><div class="skyline"><i class="building b1"></i><i class="building b2"></i><i class="building b3"></i><i class="house"></i><i class="tree t1"></i><i class="tree t2"></i></div></div>
+    <div class="phone-top"><div class="status"><span>9:41</span><span>安居积分</span><span class="status-icons">▮▮▮ ))) ▰</span></div><div class="wechat-menu"><span>•••</span><i></i></div><div class="title-row"><h1>通知中心</h1><span class="tag red">未读 4</span></div><div class="skyline"><i class="building b1"></i><i class="building b2"></i><i class="building b3"></i><i class="house"></i><i class="tree t1"></i><i class="tree t2"></i></div></div>
     <div class="mini-body">
       <div class="mini-card"><h3>消息列表</h3>
+        <div class="notice-item" id="marketingActivityNotice"><span class="mini-dot"></span><div><b>营销活动通知</b><br><span id="marketingActivityText">会员实名认证成功营销活动积分领取，请确认是否领取。</span><div class="notice-actions" id="marketingActivityActions"><button type="button" class="confirm" id="confirmMarketingActivity">确认</button><button type="button" class="cancel" id="dismissMarketingActivity">取消</button></div></div><span>刚刚</span></div>
         <div class="notice-item"><span class="mini-dot"></span><div><b>权益领取成功</b><br><span>优先选房权益已领取，请在有效期内使用。</span></div><span>09:18</span></div>
         <div class="notice-item"><span class="mini-dot"></span><div><b>积分即将过期</b><br><span>1,200积分将在2026-06-30到期，建议尽快兑换。</span></div><span>昨天</span></div>
         <div class="notice-item cancel-confirm-item" id="cancelConfirmNotice"><span class="mini-dot"></span><div><b>请确认是否注销</b><br><span id="cancelConfirmText">确认注销会员积分将清除，请确认是否清除。</span><div class="notice-actions"><button type="button" class="confirm" id="confirmCancel">确认</button><button type="button" class="cancel" id="dismissCancel">取消</button></div></div><span>刚刚</span></div>
@@ -15,6 +16,20 @@
     <div class="bottom-nav"><div class="nav-item" onclick="location.href='mini-member.html'"><i></i>会员</div><div class="nav-item active" onclick="location.href='mini-notifications.html'"><i></i>通知</div></div>
   </div></div>
   <script>
+    const marketingActivityNotice = document.getElementById("marketingActivityNotice");
+    const marketingActivityText = document.getElementById("marketingActivityText");
+    const marketingActivityActions = document.getElementById("marketingActivityActions");
+    function finishMarketingActivity(message) {
+      marketingActivityText.textContent = message;
+      marketingActivityActions.remove();
+      marketingActivityNotice.querySelector(".mini-dot").classList.remove("mini-dot");
+    }
+    document.getElementById("confirmMarketingActivity").addEventListener("click", () => {
+      finishMarketingActivity("领取成功，活动积分已发放至您的积分账户。");
+    });
+    document.getElementById("dismissMarketingActivity").addEventListener("click", () => {
+      finishMarketingActivity("已取消领取本次营销活动积分。");
+    });
     const cancelConfirmNotice = document.getElementById("cancelConfirmNotice");
     const cancelConfirmText = document.getElementById("cancelConfirmText");
     const noticeActions = cancelConfirmNotice.querySelector(".notice-actions");
