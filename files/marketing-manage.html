@@ -183,6 +183,12 @@
       grid-template-columns: 1.2fr 1fr 1fr 1fr auto auto;
       margin-bottom: 12px;
     }
+    #participantModal.points-mode .participant-filter {
+      grid-template-columns: 1.4fr 1fr auto auto;
+    }
+    #participantModal.points-mode .coupon-only {
+      display: none;
+    }
     .org-tree-select {
       position: relative;
       width: 100%;
@@ -340,8 +346,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td><input type="checkbox"></td><td>MK202605001</td><td><span class="link" data-detail="MK202605001">积分即将到期提醒</span></td><td>安居集团</td><td>2026-06-01 至 2026-06-30</td><td>积分即将到期</td><td>发放积分</td><td><span class="link" data-participants="MK202605001">12,860</span></td><td>-</td><td>-</td><td>-</td><td>-</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="MK202605001">详情</span>　<span class="link" data-edit="MK202605001">修改</span>　<span class="link" data-status="pause">暂停</span>　<span class="link" data-delete="MK202605001">删除</span></td></tr>
-            <tr><td><input type="checkbox"></td><td>MK202605003</td><td><span class="link" data-detail="MK202605003">会员实名认证成功</span></td><td>福田项目</td><td>2026-06-10 至 2026-07-10</td><td>会员实名认证成功</td><td>发放礼券</td><td><span class="link" data-participants="MK202605003">1,208</span></td><td>1,050</td><td>720</td><td>80</td><td>250</td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="MK202605003">详情</span>　<span class="link" data-edit="MK202605003">修改</span>　<span class="link" data-delete="MK202605003">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>MK202605001</td><td><span class="link" data-detail="MK202605001">积分即将到期提醒</span></td><td>安居集团</td><td>2026-06-01 至 2026-06-30</td><td>积分即将到期</td><td>发放积分</td><td><span class="link" data-issue-detail="MK202605001" data-detail-metric="发放数量">12,860</span></td><td>-</td><td>-</td><td>-</td><td>-</td><td><span class="badge green">进行中</span></td><td><span class="link" data-detail="MK202605001">详情</span>　<span class="link" data-edit="MK202605001">修改</span>　<span class="link" data-status="pause">暂停</span>　<span class="link" data-delete="MK202605001">删除</span></td></tr>
+            <tr><td><input type="checkbox"></td><td>MK202605003</td><td><span class="link" data-detail="MK202605003">会员实名认证成功</span></td><td>福田项目</td><td>2026-06-10 至 2026-07-10</td><td>会员实名认证成功</td><td>发放礼券</td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="发放数量">1,208</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="已领取数">1,050</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="已核销数">720</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="过期数">80</span></td><td><span class="link" data-issue-detail="MK202605003" data-detail-metric="未核销数">250</span></td><td><span class="badge gray">已结束</span></td><td><span class="link" data-detail="MK202605003">详情</span>　<span class="link" data-edit="MK202605003">修改</span>　<span class="link" data-delete="MK202605003">删除</span></td></tr>
           </tbody>
         </table>
         </div>
@@ -525,13 +531,13 @@
       <div class="panel-bd">
         <div class="filter participant-filter">
           <div class="field"><label>会员关键词</label><input placeholder="微信昵称/用户名/会员ID/联系方式"></div>
-          <div class="field"><label>领取时间</label><input value="2026-06-01 至 2026-06-10"></div>
-          <div class="field"><label>商品核销状态</label><select><option>全部状态</option><option>未核销</option><option>已核销</option><option>已失效</option></select></div>
-          <div class="field"><label>商品到期状态</label><select><option>全部状态</option><option>未到期</option><option>即将到期</option><option>已到期</option></select></div>
+          <div class="field"><label id="participantTimeLabel">领取时间</label><input value="2026-06-01 至 2026-06-10"></div>
+          <div class="field coupon-only"><label>商品核销状态</label><select><option>全部状态</option><option>未核销</option><option>已核销</option><option>已失效</option></select></div>
+          <div class="field coupon-only"><label>商品到期状态</label><select><option>全部状态</option><option>未到期</option><option>即将到期</option><option>已到期</option></select></div>
           <button class="btn primary">查询</button>
           <button class="btn">重置</button>
         </div>
-        <table>
+        <table id="couponDetailTable">
           <thead>
             <tr>
               <th>微信昵称</th>
@@ -550,6 +556,23 @@
             <tr><td>周女士</td><td>周敏</td><td>AJ202604220091</td><td>136****8519</td><td>2026-06-03 09:46</td><td>HX202606030091</td><td><span class="badge">未核销</span></td><td><span class="badge gold">即将到期</span></td><td>-</td></tr>
             <tr><td>陈先生</td><td>陈宇</td><td>AJ202605010027</td><td>139****5208</td><td>2026-06-05 14:12</td><td>HX202606050027</td><td><span class="badge">未核销</span></td><td><span class="badge green">未到期</span></td><td>-</td></tr>
             <tr><td>Sunny</td><td>王珊</td><td>AJ202603150062</td><td>137****1866</td><td>2026-06-07 18:30</td><td>HX202606070062</td><td><span class="badge gray">已失效</span></td><td><span class="badge gray">已到期</span></td><td>-</td></tr>
+          </tbody>
+        </table>
+        <table id="pointsDetailTable" style="display:none">
+          <thead>
+            <tr>
+              <th>微信昵称</th>
+              <th>用户名</th>
+              <th>会员ID</th>
+              <th>联系方式</th>
+              <th>发放时间</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>海风</td><td>李明</td><td>AJ202605180018</td><td>138****6021</td><td>2026-06-02 10:18</td></tr>
+            <tr><td>周女士</td><td>周敏</td><td>AJ202604220091</td><td>136****8519</td><td>2026-06-03 09:46</td></tr>
+            <tr><td>陈先生</td><td>陈宇</td><td>AJ202605010027</td><td>139****5208</td><td>2026-06-05 14:12</td></tr>
+            <tr><td>Sunny</td><td>王珊</td><td>AJ202603150062</td><td>137****1866</td><td>2026-06-07 18:30</td></tr>
           </tbody>
         </table>
         <div class="pagination"><span>共 12,860 条</span><button class="page-btn">上一页</button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">下一页</button><select><option>10 条/页</option></select></div>
@@ -664,11 +687,20 @@
       ["Code", "Name", "Org", "Time", "Frequency", "Trigger", "Method", "Scope", "Join", "Status"].forEach((key, index) => document.getElementById(`d${key}`).textContent = data[index]);
       drawer.classList.add("open");
     }));
-    document.querySelectorAll("[data-participants]").forEach(el => el.addEventListener("click", () => {
-      const data = marketingData[el.dataset.participants] || marketingData.MK202605001;
-      document.getElementById("participantTitle").textContent = `${data[1]} - 会员领取明细清单`;
-      document.querySelector("#participantModal .pagination span").textContent = `共 ${data[8]} 条`;
-      document.getElementById("participantModal").classList.add("open");
+    document.querySelectorAll("[data-issue-detail]").forEach(el => el.addEventListener("click", () => {
+      const data = marketingData[el.dataset.issueDetail] || marketingData.MK202605001;
+      const isCoupon = data[6] === "发放礼券";
+      const metric = el.dataset.detailMetric || "发放数量";
+      const modal = document.getElementById("participantModal");
+      modal.classList.toggle("points-mode", !isCoupon);
+      document.getElementById("participantTitle").textContent = isCoupon
+        ? `${data[1]} - ${metric}明细清单`
+        : `${data[1]} - 积分发放会员明细`;
+      document.getElementById("participantTimeLabel").textContent = isCoupon ? "领取时间" : "发放时间";
+      document.getElementById("couponDetailTable").style.display = isCoupon ? "table" : "none";
+      document.getElementById("pointsDetailTable").style.display = isCoupon ? "none" : "table";
+      document.querySelector("#participantModal .pagination span").textContent = `共 ${el.textContent.trim()} 条`;
+      modal.classList.add("open");
     }));
     document.querySelector("[data-close-drawer]").addEventListener("click", () => drawer.classList.remove("open"));
     document.querySelectorAll("[data-edit]").forEach(el => el.addEventListener("click", () => {
