@@ -32,34 +32,42 @@
     .org-tree-level-3 { padding-left: 52px; }
     .org-tree-level-4 { padding-left: 76px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .dimension-field[hidden] { display: none; }
+    .report-context {
+      display: flex; align-items: center; min-height: 32px; margin-bottom: 12px; padding: 7px 12px;
+      border: 1px solid #d9e9f4; border-radius: 5px; background: #f6fbff; color: var(--muted); font-size: 13px;
+    }
+    .report-context .link { margin: 0 4px; }
+    .report-context strong { color: var(--ink); }
+    .drill-link { display: inline-flex; align-items: center; gap: 5px; }
+    .drill-link::after { content: "›"; font-size: 16px; line-height: 1; }
   </style>
 </head>
 <body>
   <div class="page">
     <div class="filter" style="grid-template-columns: repeat(3, minmax(0, 1fr)) auto;">
       <div class="field"><label>月结月份</label><input value="2026-05"></div>
-      <div class="field"><label>发分组织</label>
+      <div class="field"><label>统计目标</label><select id="statisticsTarget"><option value="org" selected>发放组织</option><option value="project">发放项目</option></select></div>
+      <div class="field dimension-field" id="orgFilter"><label>发放组织</label>
         <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织" data-org-default="全部组织">
           <button class="org-tree-trigger" type="button">全部组织</button>
           <input type="hidden" value="全部组织">
           <div class="org-tree-panel"></div>
         </div>
       </div>
-      <div class="field"><label>发分项目</label>
+      <div class="field dimension-field" id="projectFilter" hidden><label>发放项目</label>
         <div class="org-tree-select" data-org-tree data-tree-type="project" data-org-all="全部项目" data-org-default="全部项目">
           <button class="org-tree-trigger" type="button">全部项目</button>
           <input type="hidden" value="全部项目">
           <div class="org-tree-panel"></div>
         </div>
       </div>
-      <button class="btn primary">查询</button>
+      <button class="btn primary" id="searchButton">查询</button>
     </div>
     <div class="panel"><div class="panel-hd"><h3>积分兑分月结报表</h3><div class="toolbar"><button class="btn">导出</button></div></div><div class="panel-bd">
-      <table><thead><tr><th>月结批次</th><th>月结月份</th><th>发分组织</th><th>发分项目</th><th>本月兑分</th><th>本月成本金额</th><th>过期清零</th><th>操作</th></tr></thead><tbody>
-        <tr><td>MTH202605001</td><td>2026-05</td><td>住宅板块 / 营销管理部</td><td>高新花园</td><td>12,420,000</td><td>¥124,200.00</td><td>3,286,430</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
-        <tr><td>MTH202605002</td><td>2026-05</td><td>集团职能 / 信息技术部</td><td>高新安荟邻</td><td>1,260,000</td><td>¥12,600.00</td><td>320,000</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
-        <tr><td>MTH202604001</td><td>2026-04</td><td>物业板块 / 物业管理部</td><td>宝安人才园</td><td>10,260,000</td><td>¥102,600.00</td><td>930,000</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
-      </tbody></table>
+      <div class="report-context" id="reportContext"></div>
+      <table><thead><tr><th>月结批次</th><th>月结月份</th><th id="dimensionHeader">发放组织</th><th>本月兑分</th><th>本月成本金额</th><th>过期清零</th><th>操作</th></tr></thead><tbody id="reportRows"></tbody></table>
+      <div class="pagination"><span id="totalCount">共 0 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
     </div></div>
   </div>
   <script>
@@ -90,6 +98,63 @@
       "广东省/广州市/天河区", "广东省/广州市/海珠区"
     ];
     const orgExpandedKeys = ["商业板块", "住宅板块", "物业板块", "集团职能"];
+
+    const orgReportData = [
+      { batch: "MTH202605001", month: "2026-05", name: "住宅板块", exchange: "12,420,000", cost: "¥124,200.00", expired: "3,286,430", children: [
+        { batch: "MTH202605001-01", month: "2026-05", name: "营销管理部", exchange: "5,420,000", cost: "¥54,200.00", expired: "1,486,430" },
+        { batch: "MTH202605001-02", month: "2026-05", name: "客户服务部", exchange: "4,000,000", cost: "¥40,000.00", expired: "1,000,000" },
+        { batch: "MTH202605001-03", month: "2026-05", name: "住宅运营部", exchange: "3,000,000", cost: "¥30,000.00", expired: "800,000" }
+      ] },
+      { batch: "MTH202605002", month: "2026-05", name: "集团职能", exchange: "1,260,000", cost: "¥12,600.00", expired: "320,000", children: [
+        { batch: "MTH202605002-01", month: "2026-05", name: "信息技术部", exchange: "560,000", cost: "¥5,600.00", expired: "140,000" },
+        { batch: "MTH202605002-02", month: "2026-05", name: "人力资源部", exchange: "400,000", cost: "¥4,000.00", expired: "100,000" },
+        { batch: "MTH202605002-03", month: "2026-05", name: "财务管理部", exchange: "300,000", cost: "¥3,000.00", expired: "80,000" }
+      ] },
+      { batch: "MTH202604001", month: "2026-04", name: "物业板块", exchange: "10,260,000", cost: "¥102,600.00", expired: "930,000", children: [
+        { batch: "MTH202604001-01", month: "2026-04", name: "物业管理部", exchange: "4,260,000", cost: "¥42,600.00", expired: "390,000" },
+        { batch: "MTH202604001-02", month: "2026-04", name: "品质管理部", exchange: "3,200,000", cost: "¥32,000.00", expired: "290,000" },
+        { batch: "MTH202604001-03", month: "2026-04", name: "环境管理部", exchange: "2,800,000", cost: "¥28,000.00", expired: "250,000" }
+      ] }
+    ];
+    const projectReportData = [
+      { batch: "MTH202605001", month: "2026-05", name: "高新花园", exchange: "12,420,000", cost: "¥124,200.00", expired: "3,286,430" },
+      { batch: "MTH202605002", month: "2026-05", name: "高新安荟邻", exchange: "1,260,000", cost: "¥12,600.00", expired: "320,000" },
+      { batch: "MTH202604001", month: "2026-04", name: "宝安人才园", exchange: "10,260,000", cost: "¥102,600.00", expired: "930,000" }
+    ];
+    const targetSelect = document.getElementById("statisticsTarget");
+    const orgFilter = document.getElementById("orgFilter");
+    const projectFilter = document.getElementById("projectFilter");
+    const dimensionHeader = document.getElementById("dimensionHeader");
+    const reportContext = document.getElementById("reportContext");
+    const reportRows = document.getElementById("reportRows");
+    const totalCount = document.getElementById("totalCount");
+    let drillPath = [];
+
+    function renderReport() {
+      const isOrg = targetSelect.value === "org";
+      const dimensionName = isOrg ? "发放组织" : "发放项目";
+      let rows = isOrg ? orgReportData : projectReportData;
+      if (isOrg && drillPath.length) {
+        const parent = orgReportData.find(item => item.name === drillPath[0]);
+        rows = parent && parent.children ? parent.children : rows;
+      }
+      dimensionHeader.textContent = dimensionName;
+      reportContext.innerHTML = `<strong>当前统计维度：</strong>${dimensionName}<span style="margin:0 10px;color:#b7c7d4">|</span><strong>统计层级：</strong>${isOrg ? `<a class="link" href="#" data-drill-home>全部发放组织</a>${drillPath.map(name => ` / <span>${name}</span>`).join("")}` : "发放项目"}`;
+      reportRows.innerHTML = rows.map(item => {
+        const canDrill = isOrg && Array.isArray(item.children) && item.children.length;
+        const dimension = canDrill ? `<a class="link drill-link" href="#" data-drill-name="${item.name}">${item.name}</a>` : item.name;
+        return `<tr><td>${item.batch}</td><td>${item.month}</td><td>${dimension}</td><td>${item.exchange}</td><td>${item.cost}</td><td>${item.expired}</td><td><a class="link" href="points-detail.html">详情</a></td></tr>`;
+      }).join("");
+      totalCount.textContent = `共 ${rows.length} 条`;
+    }
+
+    function syncTarget() {
+      const isOrg = targetSelect.value === "org";
+      orgFilter.hidden = !isOrg;
+      projectFilter.hidden = isOrg;
+      drillPath = [];
+      renderReport();
+    }
 
     function renderOrgTree(tree, expanded) {
       const allLabel = tree.dataset.orgAll;
@@ -143,5 +208,24 @@
         if (!tree.contains(event.target)) tree.classList.remove("open");
       });
     });
+    targetSelect.addEventListener("change", syncTarget);
+    document.getElementById("searchButton").addEventListener("click", () => {
+      drillPath = [];
+      renderReport();
+    });
+    reportRows.addEventListener("click", event => {
+      const drillLink = event.target.closest("[data-drill-name]");
+      if (!drillLink) return;
+      event.preventDefault();
+      drillPath = [drillLink.dataset.drillName];
+      renderReport();
+    });
+    reportContext.addEventListener("click", event => {
+      if (!event.target.closest("[data-drill-home]")) return;
+      event.preventDefault();
+      drillPath = [];
+      renderReport();
+    });
+    syncTarget();
   </script>
 </body></html>
