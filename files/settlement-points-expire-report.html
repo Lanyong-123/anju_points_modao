@@ -32,6 +32,12 @@
     .org-tree-level-3 { padding-left: 52px; }
     .org-tree-level-4 { padding-left: 76px; }
     .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .dimension-field[hidden] { display: none; }
+    .report-context {
+      display: flex; align-items: center; min-height: 32px; margin-bottom: 12px; padding: 7px 12px;
+      border: 1px solid #d9e9f4; border-radius: 5px; background: #f6fbff; color: var(--muted); font-size: 13px;
+    }
+    .report-context strong { color: var(--ink); }
   </style>
 </head>
 <body>
@@ -40,29 +46,27 @@
       <div class="field"><label>统计周期</label><select><option>按年</option><option>按季</option><option selected>按月</option></select></div>
       <div class="field"><label>统计时间</label><input value="2026-05"></div>
       <div class="field"><label>积分类型</label><select><option>全部类型</option><option>消费积分</option><option>碳积分</option></select></div>
-      <div class="field"><label>发放组织</label>
+      <div class="field"><label>统计目标</label><select id="statisticsTarget"><option value="org" selected>发放组织</option><option value="project">发放项目</option></select></div>
+      <div class="field dimension-field" id="orgFilter"><label>发放组织</label>
         <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织" data-org-default="全部组织">
           <button class="org-tree-trigger" type="button">全部组织</button>
           <input type="hidden" value="全部组织">
           <div class="org-tree-panel"></div>
         </div>
       </div>
-      <div class="field"><label>发放项目</label>
+      <div class="field dimension-field" id="projectFilter" hidden><label>发放项目</label>
         <div class="org-tree-select" data-org-tree data-tree-type="project" data-org-all="全部项目" data-org-default="全部项目">
           <button class="org-tree-trigger" type="button">全部项目</button>
           <input type="hidden" value="全部项目">
           <div class="org-tree-panel"></div>
         </div>
       </div>
-      <button class="btn primary">查询</button>
+      <button class="btn primary" id="searchButton">查询</button>
     </div>
     <div class="panel"><div class="panel-hd"><h3>过期积分统计列表</h3><div class="toolbar"><button class="btn">导出</button></div></div><div class="panel-bd">
-      <table><thead><tr><th>积分类型</th><th>发放组织</th><th>发放项目</th><th>过期会员数</th><th>过期积分</th><th>操作</th></tr></thead><tbody>
-        <tr><td><span class="badge">消费积分</span></td><td>住宅板块 / 营销管理部</td><td>高新花园</td><td>3,860</td><td>1,526,430</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
-        <tr><td><span class="badge green">碳积分</span></td><td>集团职能 / 信息技术部</td><td>高新安荟邻</td><td>2,180</td><td>860,000</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
-        <tr><td><span class="badge">消费积分</span></td><td>物业板块 / 物业管理部</td><td>宝安人才园</td><td>2,220</td><td>900,000</td><td><a class="link" href="points-detail.html">详情</a></td></tr>
-      </tbody></table>
-      <div class="pagination"><span>共 3 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
+      <div class="report-context" id="reportContext"></div>
+      <table><thead><tr><th>积分类型</th><th id="dimensionHeader">发放组织</th><th>过期会员数</th><th>过期积分</th><th>操作</th></tr></thead><tbody id="reportRows"></tbody></table>
+      <div class="pagination"><span id="totalCount">共 0 条</span><span>每页</span><select><option selected>20 条</option></select><button class="page-btn active">1</button></div>
     </div></div>
   </div>
   <script>
@@ -93,6 +97,35 @@
       "广东省/广州市/天河区", "广东省/广州市/海珠区"
     ];
     const orgExpandedKeys = ["商业板块", "住宅板块", "物业板块", "集团职能"];
+
+    const reportData = [
+      { type: "消费积分", org: "住宅板块 / 营销管理部", project: "高新花园", members: "3,860", points: "1,526,430" },
+      { type: "碳积分", org: "集团职能 / 信息技术部", project: "高新安荟邻", members: "2,180", points: "860,000" },
+      { type: "消费积分", org: "物业板块 / 物业管理部", project: "宝安人才园", members: "2,220", points: "900,000" }
+    ];
+    const targetSelect = document.getElementById("statisticsTarget");
+    const orgFilter = document.getElementById("orgFilter");
+    const projectFilter = document.getElementById("projectFilter");
+    const dimensionHeader = document.getElementById("dimensionHeader");
+    const reportContext = document.getElementById("reportContext");
+    const reportRows = document.getElementById("reportRows");
+    const totalCount = document.getElementById("totalCount");
+
+    function renderReport() {
+      const isOrg = targetSelect.value === "org";
+      const dimensionName = isOrg ? "发放组织" : "发放项目";
+      dimensionHeader.textContent = dimensionName;
+      reportContext.innerHTML = `<strong>当前统计维度：</strong>${dimensionName}`;
+      reportRows.innerHTML = reportData.map(item => `<tr><td><span class="badge${item.type === "碳积分" ? " green" : ""}">${item.type}</span></td><td>${isOrg ? item.org : item.project}</td><td>${item.members}</td><td>${item.points}</td><td><a class="link" href="points-detail.html">详情</a></td></tr>`).join("");
+      totalCount.textContent = `共 ${reportData.length} 条`;
+    }
+
+    function syncTarget() {
+      const isOrg = targetSelect.value === "org";
+      orgFilter.hidden = !isOrg;
+      projectFilter.hidden = isOrg;
+      renderReport();
+    }
 
     function renderOrgTree(tree, expanded) {
       const allLabel = tree.dataset.orgAll;
@@ -146,5 +179,8 @@
         if (!tree.contains(event.target)) tree.classList.remove("open");
       });
     });
+    targetSelect.addEventListener("change", syncTarget);
+    document.getElementById("searchButton").addEventListener("click", renderReport);
+    syncTarget();
   </script>
 </body></html>
