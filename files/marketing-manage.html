@@ -189,6 +189,20 @@
     #participantModal.points-mode .coupon-only {
       display: none;
     }
+    .marketing-detail-drawer {
+      width: min(980px, calc(100vw - 48px));
+    }
+    .marketing-detail-drawer .panel-bd {
+      padding: 14px;
+    }
+    .marketing-detail-drawer .detail-list {
+      grid-template-columns: 120px minmax(0, 1fr) 120px minmax(0, 1fr);
+      gap: 14px 16px;
+    }
+    .readonly-scope-table td {
+      color: #24374d;
+      font-weight: 700;
+    }
     .org-tree-select {
       position: relative;
       width: 100%;
@@ -356,25 +370,36 @@
     </div>
   </div>
 
-  <aside class="drawer" id="detailDrawer">
+  <aside class="drawer marketing-detail-drawer" id="detailDrawer">
     <div class="panel-hd"><h3>营销活动详情</h3><button class="btn" data-close-drawer>关闭</button></div>
     <div class="panel-bd">
-      <div class="detail-list">
-        <span>活动编号</span><strong id="dCode">MK202605001</strong>
-        <span>活动名称</span><strong id="dName">优惠券领取后7天未核销</strong>
-        <span>活动时间</span><strong id="dTime">2026-06-01 至 2026-06-30</strong>
-        <span>发放组织</span><strong id="dIssuerOrg">商业板块 / 安计部</strong>
-        <span>发放项目</span><strong id="dProject">广东省 / 深圳市 / 南山区 / 高新安荟邻</strong>
-        <span>触发条件</span><strong id="dTrigger">积分即将到期（到期前30天）</strong>
-        <span>营销方式</span><strong id="dMethod">发放积分</strong>
-        <span class="points-detail">发放量</span><strong class="points-detail" id="dPointQuantity">12,860份</strong>
-        <span class="points-detail">每份积分</span><strong class="points-detail" id="dPointsPerIssue">100分</strong>
-        <span class="points-detail">每份积分成本</span><strong class="points-detail" id="dPointsUnitCost">0.40元/份</strong>
-        <span class="points-detail">预计成本</span><strong class="points-detail" id="dEstimatedCost">5,144元</strong>
-        <span class="coupon-detail" style="display:none">礼券发放配置</span><strong class="coupon-detail" id="dCouponConfig" style="display:none">贴身管家服务</strong>
-        <span class="coupon-detail" style="display:none">发放礼券数</span><strong class="coupon-detail" id="dCouponQuantity" style="display:none">1,208张</strong>
-        <span>客户范围</span><strong id="dScope">会员等级=V3远近闻名，且身份标签=项目住户</strong>
-        <span>活动状态</span><strong id="dStatus">进行中</strong>
+      <div class="marketing-form-section" style="margin-top:0">
+        <div class="section-title"><h4>1. 进入条件</h4></div>
+        <div class="section-body">
+          <div class="detail-list">
+            <span>活动编号</span><strong id="dCode">MK202605001</strong>
+            <span>活动名称</span><strong id="dName">积分即将到期提醒</strong>
+            <span>活动时间</span><strong id="dTime">2026-06-01 至 2026-06-30</strong>
+            <span>发放组织</span><strong id="dIssuerOrg">商业板块 / 安计部</strong>
+            <span>发放项目</span><strong id="dProject">广东省 / 深圳市 / 南山区 / 高新安荟邻</strong>
+            <span>触发条件</span><strong id="dTrigger">积分即将到期（到期前30天）</strong>
+            <span>营销方式</span><strong id="dMethod">发放积分</strong>
+            <span class="points-detail">发放量</span><strong class="points-detail" id="dPointQuantity">12,860份</strong>
+            <span class="points-detail">每份积分</span><strong class="points-detail" id="dPointsPerIssue">100分</strong>
+            <span class="points-detail">每份积分成本</span><strong class="points-detail" id="dPointsUnitCost">0.40元/份</strong>
+            <span class="points-detail">预计成本</span><strong class="points-detail" id="dEstimatedCost">5,144元</strong>
+            <span class="coupon-detail" style="display:none">礼券发放配置</span><strong class="coupon-detail" id="dCouponConfig" style="display:none">贴身管家服务</strong>
+            <span class="coupon-detail" style="display:none">发放礼券数</span><strong class="coupon-detail" id="dCouponQuantity" style="display:none">1,208张</strong>
+            <span>活动状态</span><strong id="dStatus">进行中</strong>
+          </div>
+        </div>
+      </div>
+      <div class="marketing-form-section">
+        <div class="section-title"><h4>2. 客户范围</h4></div>
+        <div class="section-body">
+          <div class="customer-scope" id="detailScopeBlocks"></div>
+          <p class="form-tip">条件块内按“且/或”关系组合，多个条件块之间按“或”关系合并目标客户。</p>
+        </div>
       </div>
     </div>
   </aside>
@@ -679,11 +704,31 @@
       MK202605001: ["MK202605001", "积分即将到期提醒", "安居集团", "2026-06-01 至 2026-06-30", "多次触达", "积分即将到期（到期前30天）", "发放积分", "会员等级=V3远近闻名，且身份标签=项目住户", "12,860", "进行中", "100积分/人"],
       MK202605003: ["MK202605003", "会员实名认证成功", "福田项目", "2026-06-10 至 2026-07-10", "单次触达", "会员实名认证成功", "发放礼券", "会员等级=V1展露头角，或身份标签=项目住户", "1,208", "已结束", "贴身管家服务"]
     };
+    const marketingScopeBlocks = {
+      MK202605001: [
+        [["会员等级", "V3远近闻名", "起始条件"], ["身份标签", "项目住户", "且"]],
+        [["特定项目", "南山项目", "起始条件"]]
+      ],
+      MK202605003: [
+        [["会员等级", "V1展露头角", "起始条件"], ["身份标签", "项目住户", "或"]],
+        [["特定项目", "福田项目", "起始条件"]]
+      ]
+    };
+    function renderDetailScope(blocks) {
+      document.getElementById("detailScopeBlocks").innerHTML = blocks.map((rows, blockIndex) => `
+        <div class="condition-block">
+          <div class="condition-block-hd"><h4>条件块 ${blockIndex + 1}</h4></div>
+          <table class="condition-table readonly-scope-table">
+            <thead><tr><th>关联条件</th><th>发布对象</th><th>与上一行关系</th></tr></thead>
+            <tbody>${rows.map(row => `<tr><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td></tr>`).join("")}</tbody>
+          </table>
+        </div>`).join("");
+    }
     const drawer = document.getElementById("detailDrawer");
     document.querySelectorAll("[data-detail]").forEach(el => el.addEventListener("click", () => {
       const data = marketingData[el.dataset.detail] || marketingData.MK202605001;
       const issueScope = marketingIssueScope[el.dataset.detail] || marketingIssueScope.MK202605001;
-      [["Code", 0], ["Name", 1], ["Time", 3], ["Trigger", 5], ["Method", 6], ["Scope", 7], ["Status", 9]].forEach(([key, index]) => document.getElementById(`d${key}`).textContent = data[index]);
+      [["Code", 0], ["Name", 1], ["Time", 3], ["Trigger", 5], ["Method", 6], ["Status", 9]].forEach(([key, index]) => document.getElementById(`d${key}`).textContent = data[index]);
       document.getElementById("dIssuerOrg").textContent = issueScope.org;
       document.getElementById("dProject").textContent = issueScope.project;
       const isCoupon = data[6] === "发放礼券";
@@ -699,6 +744,7 @@
         document.getElementById("dPointsUnitCost").textContent = "0.40元/份";
         document.getElementById("dEstimatedCost").textContent = `${(pointQuantity * 0.4).toLocaleString("zh-CN", { maximumFractionDigits: 2 })}元`;
       }
+      renderDetailScope(marketingScopeBlocks[el.dataset.detail] || marketingScopeBlocks.MK202605001);
       drawer.classList.add("open");
     }));
     document.querySelectorAll("[data-issue-detail]").forEach(el => el.addEventListener("click", () => {
