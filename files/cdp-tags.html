@@ -275,6 +275,42 @@
     .schedule-field.show {
       display: block;
     }
+    .tag-description textarea,
+    .sql-config textarea {
+      width: 100%;
+      min-height: 88px;
+      padding: 10px 12px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+      color: var(--ink);
+      line-height: 1.6;
+      resize: vertical;
+    }
+    .option-config-body { display: grid; gap: 12px; }
+    .config-mode { display: flex; align-items: center; gap: 22px; }
+    .config-mode label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+    .config-panel { display: none; }
+    .config-panel.show { display: grid; gap: 10px; }
+    .static-option-list { display: grid; gap: 10px; }
+    .static-option-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 72px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #dfe6ee;
+      border-radius: 6px;
+      background: #fbfdff;
+    }
+    .static-option-row input {
+      min-width: 0;
+      width: 100%;
+      height: 34px;
+      padding: 0 10px;
+      border: 1px solid #cfd9e5;
+      border-radius: 5px;
+    }
+    .add-option-btn { width: 100%; border-style: dashed; }
     .wide-modal {
       width: min(1080px, calc(100vw - 48px));
       max-height: calc(100vh - 24px);
@@ -395,12 +431,13 @@
       <div class="panel-bd">
         <div class="grid cols-2">
           <div class="field" style="grid-column:1/-1"><label>标准标签模板</label><select id="standardTagTemplate"><option value="">请选择标准标签，或直接手工维护</option></select></div>
-          <div class="field"><label class="required">标签ID</label><input id="editTagId" value="AJ-BAS-001"></div>
-          <div class="field"><label class="required">标签类型</label><select id="editTagType"><option>原子标签</option><option selected>规则标签</option></select></div>
           <div class="field"><label class="required">标签名称</label><input id="editName" value="身份类型"></div>
+          <div class="field"><label class="required">状态</label><select id="editStatus"><option>启用</option><option>停用</option><option>草稿</option></select></div>
           <div class="field"><label class="required">标签分类</label><select id="editCategory"><option>基本标签</option><option>交易标签</option><option>商户标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option></select></div>
+          <div class="field"><label class="required">标签字段名称</label><input id="editFieldName" value="身份类型"></div>
+          <div class="field"><label class="required">字段类型</label><select id="editFieldType"><option selected>下拉字符串</option><option>文本</option><option>数值</option><option>日期</option><option>布尔值</option></select></div>
+          <div class="field"><label class="required">字段名规则</label><select id="editFieldRule"><option selected>静态</option><option>动态</option></select></div>
           <div class="field"><label class="required">更新方式</label><select id="editFrequency"><option>周期更新</option><option>手动更新</option></select></div>
-          <div class="field"><label class="required">标签状态</label><select id="editStatus"><option>启用</option><option>停用</option><option>草稿</option></select></div>
           <div class="field"><label class="required">标签有效期</label><select id="editValidity"><option>永久有效</option><option>指定周期有效</option></select></div>
           <div class="field tag-valid-period" id="validPeriodFields">
             <div><label class="required">开始时间</label><input value="2026-06-08"></div>
@@ -412,6 +449,29 @@
               <div class="field schedule-field" id="weeklyField"><label class="required">每周几</label><select><option>每周一</option><option>每周二</option><option>每周三</option><option>每周四</option><option>每周五</option><option>每周六</option><option>每周日</option></select></div>
               <div class="field schedule-field" id="monthlyField"><label class="required">每月哪日</label><select><option>1日</option><option>5日</option><option>10日</option><option>15日</option><option>20日</option><option>25日</option><option>月底</option></select></div>
               <div class="field"><label class="required">具体时间点</label><input id="scheduleTime" value="02:00"></div>
+            </div>
+          </div>
+          <div class="field tag-description" style="grid-column:1/-1">
+            <label class="required">标签说明</label>
+            <textarea id="editDesc" maxlength="200">识别高贡献、高活跃客户，用于权益推荐、营销活动和客户分层运营。</textarea>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px; box-shadow:none">
+          <div class="panel-hd"><h3>选项值配置</h3></div>
+          <div class="panel-bd option-config-body">
+            <div class="config-mode">
+              <strong>配置方式</strong>
+              <label><input type="radio" name="optionConfigMode" value="sql"> SQL查询</label>
+              <label><input type="radio" name="optionConfigMode" value="static" checked> 静态配置</label>
+            </div>
+            <div class="config-panel sql-config" id="sqlConfigPanel">
+              <label class="required">SQL查询语句</label>
+              <textarea id="sqlQueryText">select value as option_value, name as option_name from customer_tag_option where tag_name = '${tagName}'</textarea>
+            </div>
+            <div class="config-panel show" id="staticConfigPanel">
+              <div class="static-option-list" id="staticOptionList"></div>
+              <button class="btn add-option-btn" type="button" id="addStaticOption">＋ 添加选项</button>
             </div>
           </div>
         </div>
@@ -437,10 +497,6 @@
           </div>
         </div>
 
-        <div class="field" style="margin-top:14px">
-          <label class="required">标签说明</label>
-          <input id="editDesc" value="识别高贡献、高活跃客户，用于权益推荐、营销活动和客户分层运营。">
-        </div>
       </div>
       <div class="modal-ft"><button class="btn" data-close-modal>取消</button><button class="btn primary" data-close-modal>确认保存</button></div>
     </div>
@@ -585,7 +641,7 @@
       const group = document.createElement("optgroup");
       group.label = category;
       standardTags.filter(tag => tag.category === category).forEach(tag => {
-        group.appendChild(new Option(`${tag.name}（${tag.id}）`, tag.id));
+        group.appendChild(new Option(tag.name, tag.id));
       });
       standardTagTemplate.appendChild(group);
     });
@@ -628,15 +684,18 @@
         const tag = data ? data[7] : null;
         document.getElementById("editTitle").textContent = data ? "编辑标签" : "新增标签";
         standardTagTemplate.value = tag ? tag.id : "";
-        document.getElementById("editTagId").value = tag ? tag.id : "";
-        document.getElementById("editTagType").value = tag ? tag.tagType : "规则标签";
         document.getElementById("editName").value = data ? data[0] : "";
         document.getElementById("editCategory").value = data ? data[1] : "基本标签";
+        document.getElementById("editFieldName").value = tag ? tag.field : (data ? data[0] : "");
+        document.getElementById("editFieldType").value = "下拉字符串";
+        document.getElementById("editFieldRule").value = "静态";
         setScheduleByText(data ? data[3] : "周期更新 每日 02:00");
         document.getElementById("editStatus").value = data ? data[6] : "草稿";
         document.getElementById("editValidity").value = "永久有效";
         document.getElementById("validPeriodFields").classList.remove("show");
         document.getElementById("editDesc").value = data ? data[4] : "";
+        renderStaticOptions(tag ? tag.values : "高净值用户、中净值用户、低净值用户");
+        setOptionConfigMode("static");
         renderTagRule(tag);
         document.getElementById("editModal").classList.add("open");
       });
@@ -645,12 +704,15 @@
     standardTagTemplate.addEventListener("change", event => {
       const tag = standardTags.find(item => item.id === event.target.value);
       if (!tag) return;
-      document.getElementById("editTagId").value = tag.id;
-      document.getElementById("editTagType").value = tag.tagType;
       document.getElementById("editName").value = tag.name;
       document.getElementById("editCategory").value = tag.category;
+      document.getElementById("editFieldName").value = tag.field;
+      document.getElementById("editFieldType").value = "下拉字符串";
+      document.getElementById("editFieldRule").value = "静态";
       setScheduleByText(standardFrequencyText(tag));
       document.getElementById("editDesc").value = tag.rule;
+      renderStaticOptions(tag.values);
+      setOptionConfigMode("static");
       renderTagRule(tag);
     });
 
@@ -659,6 +721,33 @@
     });
     document.getElementById("editFrequency").addEventListener("change", updateScheduleVisibility);
     document.getElementById("scheduleType").addEventListener("change", updateScheduleVisibility);
+
+    const staticOptionList = document.getElementById("staticOptionList");
+    function staticOptionRow(value = "", name = value) {
+      return `<div class="static-option-row"><input aria-label="选项值" placeholder="请输入选项值" value="${escapeTagHtml(value)}"><input aria-label="选项名称" placeholder="请输入选项名称" value="${escapeTagHtml(name)}"><button class="btn" type="button" data-delete-static-option>删除</button></div>`;
+    }
+    function renderStaticOptions(values = "") {
+      const options = String(values || "").split(/[、，,；;\/｜|]/).map(value => value.trim()).filter(Boolean).slice(0, 6);
+      const normalized = options.length ? options : ["高净值用户", "中净值用户", "低净值用户"];
+      staticOptionList.innerHTML = normalized.map(value => staticOptionRow(value)).join("");
+    }
+    function setOptionConfigMode(mode) {
+      const selected = document.querySelector(`input[name="optionConfigMode"][value="${mode}"]`);
+      if (selected) selected.checked = true;
+      document.getElementById("sqlConfigPanel").classList.toggle("show", mode === "sql");
+      document.getElementById("staticConfigPanel").classList.toggle("show", mode === "static");
+    }
+    document.querySelectorAll('input[name="optionConfigMode"]').forEach(radio => {
+      radio.addEventListener("change", event => setOptionConfigMode(event.target.value));
+    });
+    document.getElementById("addStaticOption").addEventListener("click", () => {
+      staticOptionList.insertAdjacentHTML("beforeend", staticOptionRow());
+    });
+    staticOptionList.addEventListener("click", event => {
+      const deleteButton = event.target.closest("[data-delete-static-option]");
+      if (deleteButton) deleteButton.closest(".static-option-row").remove();
+    });
+    renderStaticOptions();
 
     const tagRuleBuilder = document.getElementById("tagRuleBuilder");
     function conditionFieldOptions(selectedId = "") {
