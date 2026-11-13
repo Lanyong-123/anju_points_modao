@@ -48,8 +48,10 @@
 </head>
 <body>
   <div class="page">
-    <div class="filter">
-      <div class="field"><label>结算日期</label><div class="date-range"><input type="date" value="2026-05-01" aria-label="结算开始日期"><span>至</span><input type="date" value="2026-05-26" aria-label="结算结束日期"></div></div>
+    <div class="filter" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+      <div class="field"><label>统计周期</label><select id="periodType"><option value="day">日</option><option value="month" selected>月</option><option value="quarter">季</option><option value="year">年</option></select></div>
+      <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
+      <div class="field" style="grid-column: span 2;"><label>结算日期</label><div class="date-range"><input type="date" value="2026-05-01" aria-label="结算开始日期"><span>至</span><input type="date" value="2026-05-26" aria-label="结算结束日期"></div></div>
       <div class="field"><label>优惠券/礼券名称</label><input placeholder="优惠券、礼券名称"></div>
       <div class="field"><label>统计目标</label><select id="statisticsTarget"><option value="org" selected>发放组织</option><option value="project">发放项目</option></select></div>
       <div class="field dimension-field" id="orgFilter"><label>发放组织</label>
@@ -118,6 +120,8 @@
       { name: "高新花园", points: "3,074", amount: "848.00元" },
       { name: "景田安荟邻", points: "2,126", amount: "636.60元" }
     ];
+    const periodType = document.getElementById("periodType");
+    const periodValue = document.getElementById("periodValue");
     const targetSelect = document.getElementById("statisticsTarget");
     const orgFilter = document.getElementById("orgFilter");
     const projectFilter = document.getElementById("projectFilter");
@@ -126,6 +130,16 @@
     const reportRows = document.getElementById("reportRows");
     const totalCount = document.getElementById("totalCount");
     let drillPath = [];
+
+    function syncPeriodOptions() {
+      const options = {
+        day: ["2026-05-26", "2026-05-25", "2026-05-24", "2026-05-23"],
+        month: ["2026-05", "2026-04", "2026-03", "2026-02"],
+        quarter: ["2026年第2季度", "2026年第1季度", "2025年第4季度", "2025年第3季度"],
+        year: ["2026年", "2025年", "2024年", "2023年"]
+      };
+      periodValue.innerHTML = options[periodType.value].map(value => `<option>${value}</option>`).join("");
+    }
 
     function renderReport() {
       const isOrg = targetSelect.value === "org";
@@ -205,6 +219,7 @@
         if (!tree.contains(event.target)) tree.classList.remove("open");
       });
     });
+    periodType.addEventListener("change", syncPeriodOptions);
     targetSelect.addEventListener("change", syncTarget);
     document.getElementById("searchButton").addEventListener("click", () => {
       drillPath = [];
@@ -223,6 +238,7 @@
       drillPath = [];
       renderReport();
     });
+    syncPeriodOptions();
     syncTarget();
   </script>
 </body></html>
