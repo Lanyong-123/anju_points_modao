@@ -62,11 +62,10 @@
 </head>
 <body>
   <div class="page">
-    <div class="filter" style="grid-template-columns:repeat(6,minmax(0,1fr)) auto auto">
+    <div class="filter" style="grid-template-columns:repeat(5,minmax(0,1fr)) auto auto">
       <div class="field"><label>统计周期</label><select id="periodType"><option selected>月</option><option>季</option><option>年</option></select></div>
       <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
       <div class="field"><label>发放渠道</label><select id="channelFilter"><option>全部渠道</option><option>商品发放</option><option>营销活动</option><option>会员权益</option></select></div>
-      <div class="field"><label>结算主体</label><select id="settleFilter"><option>全部主体</option><option>集团运营中心</option><option>安居集团</option><option>南山项目</option><option>合作商户</option></select></div>
       <div class="field"><label>统计目标</label><select id="statisticsTarget"><option value="org" selected>发放组织</option><option value="project">发放项目</option></select></div>
       <div class="field dimension-field" id="orgFilter"><label>发放组织</label>
         <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织">
@@ -112,7 +111,6 @@
               <th id="dimensionHeader">发放组织</th>
               <th>统计周期</th>
               <th>发放渠道</th>
-              <th>结算主体</th>
               <th>发放数量</th>
               <th>核销数量</th>
               <th>核销率</th>
@@ -255,7 +253,6 @@
       const key = periodKey();
       const periodValue = document.getElementById("periodValue").value;
       const channel = document.getElementById("channelFilter").value;
-      const entity = document.getElementById("settleFilter").value;
       const isOrg = targetSelect.value === "org";
       const filter = (isOrg ? orgFilter : projectFilter).querySelector("input").value;
       const allLabel = isOrg ? "全部组织" : "全部项目";
@@ -263,10 +260,9 @@
       return reportData.filter(item => {
         const matchPeriod = item[key] === periodValue;
         const matchChannel = channel === "全部渠道" || item.channel === channel;
-        const matchEntity = entity === "全部主体" || item.entity === entity;
         const matchDimension = filter === allLabel || (isOrg ? item.org === filterLeaf : item.project === filterLeaf);
         const matchDrill = !isOrg || !drillPath.length || item.orgRoot === drillPath[0];
-        return matchPeriod && matchChannel && matchEntity && matchDimension && matchDrill;
+        return matchPeriod && matchChannel && matchDimension && matchDrill;
       });
     }
 
@@ -278,9 +274,9 @@
       getBaseRows().forEach(item => {
         const channelLabel = selectedChannel === "全部渠道" ? "全部渠道" : item.channel;
         const dimension = dimensionValue(item);
-        const groupKey = `${dimension}|${item[key]}|${channelLabel}|${item.entity}`;
+        const groupKey = `${dimension}|${item[key]}|${channelLabel}`;
         if (!grouped.has(groupKey)) {
-          grouped.set(groupKey, { dimension, period: item[key], channel: channelLabel, entity: item.entity, issued: 0, used: 0, writeoffAmount: 0, settleAmount: 0, groupKey });
+          grouped.set(groupKey, { dimension, period: item[key], channel: channelLabel, issued: 0, used: 0, writeoffAmount: 0, settleAmount: 0, groupKey });
           currentDetails.set(groupKey, []);
         }
         const row = grouped.get(groupKey);
@@ -350,7 +346,6 @@
             <td>${dimension}</td>
             <td>${item.period}</td>
             <td>${item.channel}</td>
-            <td>${item.entity}</td>
             <td>${format(item.issued)}</td>
             <td>${format(item.used)}</td>
             <td><span class="rate-cell"><span>${usedRate.toFixed(1)}%</span><i class="rate-track"><i class="rate-fill" style="width:${Math.min(usedRate, 100)}%"></i></i></span></td>
@@ -429,12 +424,11 @@
     }
 
     function exportRows() {
-      const headers = [dimensionName(), "统计周期", "发放渠道", "结算主体", "发放数量", "核销数量", "核销率", "核销金额", "结算金额"];
+      const headers = [dimensionName(), "统计周期", "发放渠道", "发放数量", "核销数量", "核销率", "核销金额", "结算金额"];
       const lines = currentRows.map(item => [
         item.dimension,
         item.period,
         item.channel,
-        item.entity,
         item.issued,
         item.used,
         `${rate(item.used, item.issued).toFixed(1)}%`,
@@ -525,7 +519,6 @@
       document.getElementById("periodType").value = "月";
       syncPeriodOptions();
       document.getElementById("channelFilter").value = "全部渠道";
-      document.getElementById("settleFilter").value = "全部主体";
       targetSelect.value = "org";
       document.querySelectorAll("[data-org-tree]").forEach(tree => {
         const allLabel = tree.dataset.orgAll;
