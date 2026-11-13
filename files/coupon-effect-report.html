@@ -22,28 +22,6 @@
     .rate-track { height: 6px; border-radius: 999px; background: #eef4fb; overflow: hidden; }
     .rate-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2f6fbd, #2f9b6b); }
     .money { color: var(--navy); font-weight: 800; }
-    .org-tree-select { position: relative; width: 100%; }
-    .org-tree-trigger {
-      width: 100%; height: 34px; padding: 0 32px 0 12px; border: 1px solid var(--line);
-      border-radius: 5px; background: #fff; color: var(--text); text-align: left; cursor: pointer;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative;
-    }
-    .org-tree-trigger::after { content: "⌄"; position: absolute; right: 11px; top: 50%; transform: translateY(-55%); color: #667789; }
-    .org-tree-panel {
-      display: none; position: absolute; z-index: 30; top: calc(100% + 4px); left: 0;
-      min-width: 100%; width: max-content; max-width: 420px; max-height: 320px; overflow: auto;
-      padding: 6px 0; border: 1px solid var(--line); border-radius: 5px; background: #fff;
-      box-shadow: 0 8px 24px rgba(31, 55, 78, .16);
-    }
-    .org-tree-select.open .org-tree-panel { display: block; }
-    .org-tree-row { display: flex; align-items: center; gap: 6px; min-width: 210px; padding: 7px 12px; color: #334a62; cursor: pointer; white-space: nowrap; }
-    .org-tree-row:hover { background: #eef6ff; color: var(--brand); }
-    .org-tree-toggle { width: 16px; flex: 0 0 16px; color: #667789; text-align: center; }
-    .org-tree-level-2 { padding-left: 28px; }
-    .org-tree-level-3 { padding-left: 52px; }
-    .org-tree-level-4 { padding-left: 76px; }
-    .org-tree-leaf .org-tree-toggle { color: transparent; }
-    .dimension-field[hidden] { display: none; }
     @media (max-width: 1180px) {
       .report-grid { grid-template-columns: 1fr; }
       .bar-row { grid-template-columns: 96px 1fr; }
@@ -53,20 +31,9 @@
 </head>
 <body>
   <div class="page">
-    <div class="filter" style="grid-template-columns:repeat(4,minmax(0,1fr)) auto auto">
+    <div class="filter" style="grid-template-columns:repeat(2,minmax(0,1fr)) auto auto">
       <div class="field"><label>统计周期</label><select id="periodType"><option value="day">日</option><option value="month" selected>月</option><option value="quarter">季</option><option value="year">年</option></select></div>
       <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
-      <div class="field"><label>统计目标</label><select id="statisticsTarget"><option value="org" selected>发放组织</option><option value="project">发放项目</option></select></div>
-      <div class="field dimension-field" id="orgFilter"><label>发放组织</label>
-        <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织">
-          <button class="org-tree-trigger" type="button">全部组织</button><input type="hidden" value="全部组织"><div class="org-tree-panel"></div>
-        </div>
-      </div>
-      <div class="field dimension-field" id="projectFilter" hidden><label>发放项目</label>
-        <div class="org-tree-select" data-org-tree data-tree-type="project" data-org-all="全部项目">
-          <button class="org-tree-trigger" type="button">全部项目</button><input type="hidden" value="全部项目"><div class="org-tree-panel"></div>
-        </div>
-      </div>
       <button class="btn primary" id="queryBtn">查询</button>
       <button class="btn" id="resetBtn">重置</button>
     </div>
@@ -90,7 +57,7 @@
       <div class="panel-bd">
         <table>
           <thead>
-            <tr><th>优惠券类型</th><th>发放数量</th><th>领取数量</th><th>领取率</th><th>核销数量</th><th>核销率</th><th>核销金额</th></tr>
+            <tr><th>优惠券类型</th><th>领取数量</th><th>领取率</th><th>核销数量</th><th>核销率</th><th>核销金额</th></tr>
           </thead>
           <tbody id="effectRows"></tbody>
         </table>
@@ -100,30 +67,6 @@
   </div>
 
   <script>
-    const projectTreeData = [{
-      name: "广东省",
-      children: [
-        { name: "深圳市", children: [
-          { name: "南山区", children: ["高新安荟邻", "高新花园"] },
-          { name: "福田区", children: ["景田安荟邻"] },
-          { name: "坪山区", children: ["秀馨苑"] },
-          { name: "宝安区", children: ["宝安人才园"] }
-        ] },
-        { name: "广州市", children: [
-          { name: "天河区", children: ["天河安居项目"] },
-          { name: "海珠区", children: ["海珠安居项目"] }
-        ] }
-      ]
-    }];
-    const orgTreeData = [
-      { name: "商业板块", children: ["安计部", "数字运营部", "商业运营部", "招商管理部"] },
-      { name: "住宅板块", children: ["住宅运营部", "营销管理部", "客户服务部", "工程管理部"] },
-      { name: "物业板块", children: ["物业管理部", "品质管理部", "安全管理部", "环境管理部"] },
-      { name: "集团职能", children: ["财务管理部", "人力资源部", "信息技术部", "审计风控部"] }
-    ];
-    const projectExpandedKeys = ["广东省", "广东省/深圳市", "广东省/广州市"];
-    const orgExpandedKeys = ["商业板块", "住宅板块", "物业板块", "集团职能"];
-
     const effectData = [
       { period: "2026-06-01 至 2026-06-30", start: "2026-06-01", end: "2026-06-30", type: "电子礼券", issuer: "集团运营中心", issued: 36000, claimed: 28600, used: 16820, writeoffAmount: 336400, salesAmount: 2268000 },
       { period: "2026-06-01 至 2026-06-30", start: "2026-06-01", end: "2026-06-30", type: "实物礼券", issuer: "安居集团", issued: 18000, claimed: 12360, used: 6320, writeoffAmount: 442400, salesAmount: 1386000 },
@@ -136,9 +79,6 @@
     let currentRows = [];
     const periodType = document.getElementById("periodType");
     const periodValue = document.getElementById("periodValue");
-    const targetSelect = document.getElementById("statisticsTarget");
-    const orgFilter = document.getElementById("orgFilter");
-    const projectFilter = document.getElementById("projectFilter");
 
     function syncPeriodOptions() {
       const options = {
@@ -148,12 +88,6 @@
         year: ["2026年", "2025年", "2024年", "2023年"]
       };
       periodValue.innerHTML = options[periodType.value].map(value => `<option>${value}</option>`).join("");
-    }
-
-    function syncTarget() {
-      const isOrg = targetSelect.value === "org";
-      orgFilter.hidden = !isOrg;
-      projectFilter.hidden = isOrg;
     }
 
     function format(num) {
@@ -215,7 +149,6 @@
         return `
             <tr>
               <td>${item.type}</td>
-              <td>${format(item.issued)}</td>
             <td>${format(item.claimed)}</td>
             <td><span class="rate-cell"><span>${claimRate.toFixed(1)}%</span><i class="rate-track"><i class="rate-fill" style="width:${Math.min(claimRate, 100)}%"></i></i></span></td>
             <td>${format(item.used)}</td>
@@ -228,10 +161,9 @@
     }
 
     function exportRows() {
-      const headers = ["优惠券类型", "发放数量", "领取数量", "领取率", "核销数量", "核销率", "核销金额"];
+      const headers = ["优惠券类型", "领取数量", "领取率", "核销数量", "核销率", "核销金额"];
       const lines = currentRows.map(item => [
         item.type,
-        item.issued,
         item.claimed,
         `${percent(item.claimed, item.issued).toFixed(1)}%`,
         item.used,
@@ -248,67 +180,15 @@
       URL.revokeObjectURL(url);
     }
 
-    function renderOrgTree(tree, expanded) {
-      const allLabel = tree.dataset.orgAll;
-      const treeData = tree.dataset.treeType === "org" ? orgTreeData : projectTreeData;
-      const rows = [`<div class="org-tree-row org-tree-leaf" data-org-path="${allLabel}"><span class="org-tree-toggle">·</span><span>${allLabel}</span></div>`];
-      const renderNodes = (nodes, parents = [], depth = 1) => {
-        nodes.forEach(node => {
-          const item = typeof node === "string" ? { name: node } : node;
-          const key = [...parents, item.name].join("/");
-          const path = [...parents, item.name].join(" / ");
-          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
-          const isOpen = expanded.has(key);
-          rows.push(`<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-org-toggle="${key}"` : `data-org-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`);
-          if (hasChildren && isOpen) renderNodes(item.children, [...parents, item.name], depth + 1);
-        });
-      };
-      renderNodes(treeData);
-      tree.querySelector(".org-tree-panel").innerHTML = rows.join("");
-    }
-
-    document.querySelectorAll("[data-org-tree]").forEach(tree => {
-      const expanded = new Set(tree.dataset.treeType === "org" ? orgExpandedKeys : projectExpandedKeys);
-      const trigger = tree.querySelector(".org-tree-trigger");
-      const hiddenInput = tree.querySelector("input");
-      const panel = tree.querySelector(".org-tree-panel");
-      renderOrgTree(tree, expanded);
-      trigger.addEventListener("click", event => {
-        event.stopPropagation();
-        document.querySelectorAll("[data-org-tree].open").forEach(item => { if (item !== tree) item.classList.remove("open"); });
-        tree.classList.toggle("open");
-      });
-      panel.addEventListener("click", event => {
-        const row = event.target.closest(".org-tree-row");
-        if (!row) return;
-        if (row.dataset.orgToggle) {
-          expanded.has(row.dataset.orgToggle) ? expanded.delete(row.dataset.orgToggle) : expanded.add(row.dataset.orgToggle);
-          renderOrgTree(tree, expanded);
-          return;
-        }
-        if (row.dataset.orgPath) {
-          trigger.textContent = row.dataset.orgPath;
-          hiddenInput.value = row.dataset.orgPath;
-          tree.classList.remove("open");
-        }
-      });
-    });
-    document.addEventListener("click", event => {
-      document.querySelectorAll("[data-org-tree].open").forEach(tree => { if (!tree.contains(event.target)) tree.classList.remove("open"); });
-    });
     periodType.addEventListener("change", () => { syncPeriodOptions(); renderAll(); });
-    targetSelect.addEventListener("change", syncTarget);
     document.getElementById("queryBtn").addEventListener("click", renderAll);
     document.getElementById("resetBtn").addEventListener("click", () => {
       periodType.value = "month";
-      targetSelect.value = "org";
       syncPeriodOptions();
-      syncTarget();
       renderAll();
     });
     document.getElementById("panelExportBtn").addEventListener("click", exportRows);
     syncPeriodOptions();
-    syncTarget();
     renderAll();
   </script>
 </body>
