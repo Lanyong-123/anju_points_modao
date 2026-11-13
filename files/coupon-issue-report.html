@@ -23,6 +23,36 @@
     .rate-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2f6fbd, #2f9b6b); }
     .money { color: var(--navy); font-weight: 800; }
     .detail-filter { margin-bottom: 12px; }
+    .org-tree-select { position: relative; width: 100%; }
+    .org-tree-trigger {
+      width: 100%; height: 34px; padding: 0 32px 0 12px; border: 1px solid var(--line);
+      border-radius: 5px; background: #fff; color: var(--text); text-align: left; cursor: pointer;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative;
+    }
+    .org-tree-trigger::after { content: "⌄"; position: absolute; right: 11px; top: 50%; transform: translateY(-55%); color: #667789; }
+    .org-tree-panel {
+      display: none; position: absolute; z-index: 30; top: calc(100% + 4px); left: 0;
+      min-width: 100%; width: max-content; max-width: 420px; max-height: 320px; overflow: auto;
+      padding: 6px 0; border: 1px solid var(--line); border-radius: 5px; background: #fff;
+      box-shadow: 0 8px 24px rgba(31, 55, 78, .16);
+    }
+    .org-tree-select.open .org-tree-panel { display: block; }
+    .org-tree-row { display: flex; align-items: center; gap: 6px; min-width: 210px; padding: 7px 12px; color: #334a62; cursor: pointer; white-space: nowrap; }
+    .org-tree-row:hover { background: #eef6ff; color: var(--brand); }
+    .org-tree-toggle { width: 16px; flex: 0 0 16px; color: #667789; text-align: center; }
+    .org-tree-level-2 { padding-left: 28px; }
+    .org-tree-level-3 { padding-left: 52px; }
+    .org-tree-level-4 { padding-left: 76px; }
+    .org-tree-leaf .org-tree-toggle { color: transparent; }
+    .dimension-field[hidden] { display: none; }
+    .report-context {
+      display: flex; align-items: center; min-height: 32px; margin-bottom: 12px; padding: 7px 12px;
+      border: 1px solid #d9e9f4; border-radius: 5px; background: #f6fbff; color: var(--muted); font-size: 13px;
+    }
+    .report-context .link { margin: 0 4px; }
+    .report-context strong { color: var(--ink); }
+    .drill-link { display: inline-flex; align-items: center; gap: 5px; }
+    .drill-link::after { content: "›"; font-size: 16px; line-height: 1; }
     @media (max-width: 1180px) {
       .report-grid { grid-template-columns: 1fr; }
       .bar-row { grid-template-columns: 96px 1fr; }
@@ -32,11 +62,22 @@
 </head>
 <body>
   <div class="page">
-    <div class="filter">
+    <div class="filter" style="grid-template-columns:repeat(6,minmax(0,1fr)) auto auto">
       <div class="field"><label>统计周期</label><select id="periodType"><option selected>月</option><option>季</option><option>年</option></select></div>
       <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
-      <div class="field"><label>发放渠道</label><select id="channelFilter"><option>全部渠道</option><option>商品发放</option><option>营销活动</option><option>会员权益</option><option>人工补发</option></select></div>
+      <div class="field"><label>发放渠道</label><select id="channelFilter"><option>全部渠道</option><option>商品发放</option><option>营销活动</option><option>会员权益</option></select></div>
       <div class="field"><label>结算主体</label><select id="settleFilter"><option>全部主体</option><option>集团运营中心</option><option>安居集团</option><option>南山项目</option><option>合作商户</option></select></div>
+      <div class="field"><label>统计目标</label><select id="statisticsTarget"><option value="org" selected>发放组织</option><option value="project">发放项目</option></select></div>
+      <div class="field dimension-field" id="orgFilter"><label>发放组织</label>
+        <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织">
+          <button class="org-tree-trigger" type="button">全部组织</button><input type="hidden" value="全部组织"><div class="org-tree-panel"></div>
+        </div>
+      </div>
+      <div class="field dimension-field" id="projectFilter" hidden><label>发放项目</label>
+        <div class="org-tree-select" data-org-tree data-tree-type="project" data-org-all="全部项目">
+          <button class="org-tree-trigger" type="button">全部项目</button><input type="hidden" value="全部项目"><div class="org-tree-panel"></div>
+        </div>
+      </div>
       <button class="btn primary" id="queryBtn">查询</button>
       <button class="btn" id="resetBtn">重置</button>
     </div>
@@ -44,14 +85,14 @@
     <div class="report-grid">
       <div class="chart-wrap">
         <div class="chart-head">
-          <h3>发放数量结算主体排名</h3>
+          <h3 id="issuedRankingTitle">发放数量发放组织排名</h3>
           <span class="chart-note">按发放数量降序</span>
         </div>
         <div class="bar-list" id="issuedEntityBars"></div>
       </div>
       <div class="chart-wrap">
         <div class="chart-head">
-          <h3>核销率结算主体排名</h3>
+          <h3 id="rateRankingTitle">核销率发放组织排名</h3>
           <span class="chart-note">按核销率降序</span>
         </div>
         <div class="bar-list" id="rateEntityBars"></div>
@@ -64,9 +105,11 @@
         <div class="toolbar"><button class="btn" id="panelExportBtn">导出</button></div>
       </div>
       <div class="panel-bd">
+        <div class="report-context" id="reportContext"></div>
         <table>
           <thead>
             <tr>
+              <th id="dimensionHeader">发放组织</th>
               <th>统计周期</th>
               <th>发放渠道</th>
               <th>结算主体</th>
@@ -117,30 +160,63 @@
       "季": ["2026年第2季度", "2026年第1季度", "2025年第4季度"],
       "年": ["2026年", "2025年", "2024年"]
     };
+    const projectTreeData = [{
+      name: "广东省",
+      children: [
+        { name: "深圳市", children: [
+          { name: "南山区", children: ["高新安荟邻", "高新花园"] },
+          { name: "福田区", children: ["景田安荟邻"] },
+          { name: "坪山区", children: ["秀馨苑"] },
+          { name: "宝安区", children: ["宝安人才园"] }
+        ] },
+        { name: "广州市", children: [
+          { name: "天河区", children: ["天河安居项目"] },
+          { name: "海珠区", children: ["海珠安居项目"] }
+        ] }
+      ]
+    }];
+    const orgTreeData = [
+      { name: "商业板块", children: ["安计部", "数字运营部", "商业运营部", "招商管理部"] },
+      { name: "住宅板块", children: ["住宅运营部", "营销管理部", "客户服务部", "工程管理部"] },
+      { name: "物业板块", children: ["物业管理部", "品质管理部", "安全管理部", "环境管理部"] },
+      { name: "集团职能", children: ["财务管理部", "人力资源部", "信息技术部", "审计风控部"] }
+    ];
+    const projectExpandedKeys = [
+      "广东省", "广东省/深圳市", "广东省/深圳市/南山区", "广东省/深圳市/福田区",
+      "广东省/深圳市/坪山区", "广东省/深圳市/宝安区", "广东省/广州市",
+      "广东省/广州市/天河区", "广东省/广州市/海珠区"
+    ];
+    const orgExpandedKeys = ["商业板块", "住宅板块", "物业板块", "集团职能"];
 
     const reportData = [
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260601001", name: "2000积分兑家政服务", channel: "营销活动", entity: "集团运营中心", issueTime: "2026-06-01 09:30", issued: 18000, used: 7380, writeoffAmount: 147600, settleAmount: 140220 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260603002", name: "5000积分兑礼物", channel: "营销活动", entity: "集团运营中心", issueTime: "2026-06-03 10:00", issued: 9600, used: 4280, writeoffAmount: 85600, settleAmount: 81320 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260604003", name: "500积分兑场地预约优先", channel: "商品发放", entity: "集团运营中心", issueTime: "2026-06-04 11:20", issued: 6800, used: 2360, writeoffAmount: 47200, settleAmount: 44840 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260607004", name: "1000积分兑停车抵扣", channel: "会员权益", entity: "集团运营中心", issueTime: "2026-06-07 10:30", issued: 7600, used: 3100, writeoffAmount: 62000, settleAmount: 58900 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260611005", name: "300积分兑社区活动补偿", channel: "人工补发", entity: "集团运营中心", issueTime: "2026-06-11 16:40", issued: 3200, used: 980, writeoffAmount: 19600, settleAmount: 18620 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260615006", name: "800积分兑商城礼物", channel: "营销活动", entity: "集团运营中心", issueTime: "2026-06-15 09:50", issued: 5200, used: 2250, writeoffAmount: 45000, settleAmount: 42750 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260605002", name: "2000积分兑家政服务", channel: "商品发放", entity: "安居集团", issueTime: "2026-06-05 09:15", issued: 12000, used: 5326, writeoffAmount: 53260, settleAmount: 50597 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260606006", name: "1500积分兑深度保洁", channel: "商品发放", entity: "安居集团", issueTime: "2026-06-06 14:20", issued: 5200, used: 2106, writeoffAmount: 42120, settleAmount: 40014 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260608003", name: "1000积分兑停车抵扣", channel: "会员权益", entity: "南山项目", issueTime: "2026-06-08 11:00", issued: 6200, used: 1908, writeoffAmount: 38160, settleAmount: 36252 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260609007", name: "3000积分兑生日礼物", channel: "会员权益", entity: "南山项目", issueTime: "2026-06-09 15:36", issued: 4300, used: 1530, writeoffAmount: 30600, settleAmount: 29070 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260612004", name: "500积分兑场地预约优先", channel: "人工补发", entity: "合作商户", issueTime: "2026-06-12 16:10", issued: 8400, used: 2126, writeoffAmount: 63660, settleAmount: 60477 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260613008", name: "300积分兑社群活动券", channel: "人工补发", entity: "合作商户", issueTime: "2026-06-13 17:25", issued: 2600, used: 860, writeoffAmount: 17200, settleAmount: 16340 },
-      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260616005", name: "2000积分兑贴身管家", channel: "商品发放", entity: "合作商户", issueTime: "2026-06-16 10:45", issued: 3600, used: 1166, writeoffAmount: 46640, settleAmount: 44308 },
-      { month: "2026-05", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260503001", name: "800积分兑商城礼物", channel: "营销活动", entity: "集团运营中心", issueTime: "2026-05-03 10:00", issued: 15000, used: 8120, writeoffAmount: 81200, settleAmount: 77140 },
-      { month: "2026-04", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260412002", name: "600积分兑社区食堂抵扣", channel: "会员权益", entity: "安居集团", issueTime: "2026-04-12 09:00", issued: 9800, used: 4620, writeoffAmount: 92400, settleAmount: 87780 },
-      { month: "2026-03", quarter: "2026年第1季度", year: "2026年", batch: "CPB20260308001", name: "1200积分兑春季服务体验", channel: "商品发放", entity: "南山项目", issueTime: "2026-03-08 09:10", issued: 7600, used: 2380, writeoffAmount: 47600, settleAmount: 45220 }
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260601001", name: "2000积分兑家政服务", channel: "营销活动", entity: "集团运营中心", orgRoot: "商业板块", org: "安计部", project: "高新安荟邻", issueTime: "2026-06-01 09:30", issued: 18000, used: 7380, writeoffAmount: 147600, settleAmount: 140220 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260603002", name: "5000积分兑礼物", channel: "营销活动", entity: "集团运营中心", orgRoot: "商业板块", org: "数字运营部", project: "高新安荟邻", issueTime: "2026-06-03 10:00", issued: 9600, used: 4280, writeoffAmount: 85600, settleAmount: 81320 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260604003", name: "500积分兑场地预约优先", channel: "商品发放", entity: "集团运营中心", orgRoot: "商业板块", org: "商业运营部", project: "高新安荟邻", issueTime: "2026-06-04 11:20", issued: 6800, used: 2360, writeoffAmount: 47200, settleAmount: 44840 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260607004", name: "1000积分兑停车抵扣", channel: "会员权益", entity: "集团运营中心", orgRoot: "商业板块", org: "招商管理部", project: "高新安荟邻", issueTime: "2026-06-07 10:30", issued: 7600, used: 3100, writeoffAmount: 62000, settleAmount: 58900 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260611005", name: "300积分兑社区活动补偿", channel: "营销活动", entity: "集团运营中心", orgRoot: "商业板块", org: "安计部", project: "高新花园", issueTime: "2026-06-11 16:40", issued: 3200, used: 980, writeoffAmount: 19600, settleAmount: 18620 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260615006", name: "800积分兑商城礼物", channel: "营销活动", entity: "集团运营中心", orgRoot: "商业板块", org: "数字运营部", project: "高新花园", issueTime: "2026-06-15 09:50", issued: 5200, used: 2250, writeoffAmount: 45000, settleAmount: 42750 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260605002", name: "2000积分兑家政服务", channel: "商品发放", entity: "安居集团", orgRoot: "住宅板块", org: "住宅运营部", project: "高新花园", issueTime: "2026-06-05 09:15", issued: 12000, used: 5326, writeoffAmount: 53260, settleAmount: 50597 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260606006", name: "1500积分兑深度保洁", channel: "商品发放", entity: "安居集团", orgRoot: "住宅板块", org: "营销管理部", project: "高新花园", issueTime: "2026-06-06 14:20", issued: 5200, used: 2106, writeoffAmount: 42120, settleAmount: 40014 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260608003", name: "1000积分兑停车抵扣", channel: "会员权益", entity: "南山项目", orgRoot: "物业板块", org: "物业管理部", project: "景田安荟邻", issueTime: "2026-06-08 11:00", issued: 6200, used: 1908, writeoffAmount: 38160, settleAmount: 36252 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260609007", name: "3000积分兑生日礼物", channel: "会员权益", entity: "南山项目", orgRoot: "物业板块", org: "品质管理部", project: "景田安荟邻", issueTime: "2026-06-09 15:36", issued: 4300, used: 1530, writeoffAmount: 30600, settleAmount: 29070 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260612004", name: "500积分兑场地预约优先", channel: "会员权益", entity: "合作商户", orgRoot: "集团职能", org: "财务管理部", project: "秀馨苑", issueTime: "2026-06-12 16:10", issued: 8400, used: 2126, writeoffAmount: 63660, settleAmount: 60477 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260613008", name: "300积分兑社群活动券", channel: "营销活动", entity: "合作商户", orgRoot: "集团职能", org: "人力资源部", project: "秀馨苑", issueTime: "2026-06-13 17:25", issued: 2600, used: 860, writeoffAmount: 17200, settleAmount: 16340 },
+      { month: "2026-06", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260616005", name: "2000积分兑贴身管家", channel: "商品发放", entity: "合作商户", orgRoot: "集团职能", org: "信息技术部", project: "宝安人才园", issueTime: "2026-06-16 10:45", issued: 3600, used: 1166, writeoffAmount: 46640, settleAmount: 44308 },
+      { month: "2026-05", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260503001", name: "800积分兑商城礼物", channel: "营销活动", entity: "集团运营中心", orgRoot: "商业板块", org: "商业运营部", project: "高新安荟邻", issueTime: "2026-05-03 10:00", issued: 15000, used: 8120, writeoffAmount: 81200, settleAmount: 77140 },
+      { month: "2026-04", quarter: "2026年第2季度", year: "2026年", batch: "CPB20260412002", name: "600积分兑社区食堂抵扣", channel: "会员权益", entity: "安居集团", orgRoot: "住宅板块", org: "客户服务部", project: "高新花园", issueTime: "2026-04-12 09:00", issued: 9800, used: 4620, writeoffAmount: 92400, settleAmount: 87780 },
+      { month: "2026-03", quarter: "2026年第1季度", year: "2026年", batch: "CPB20260308001", name: "1200积分兑春季服务体验", channel: "商品发放", entity: "南山项目", orgRoot: "物业板块", org: "环境管理部", project: "景田安荟邻", issueTime: "2026-03-08 09:10", issued: 7600, used: 2380, writeoffAmount: 47600, settleAmount: 45220 }
     ];
 
     let currentRows = [];
     let currentDetails = new Map();
     let activeDetailRows = [];
     let detailPage = 1;
+    const targetSelect = document.getElementById("statisticsTarget");
+    const orgFilter = document.getElementById("orgFilter");
+    const projectFilter = document.getElementById("projectFilter");
+    const dimensionHeader = document.getElementById("dimensionHeader");
+    const reportContext = document.getElementById("reportContext");
+    let drillPath = [];
 
     function format(num) {
       return num.toLocaleString("zh-CN");
@@ -166,16 +242,31 @@
       ).join("");
     }
 
+    function dimensionName() {
+      return targetSelect.value === "org" ? "发放组织" : "发放项目";
+    }
+
+    function dimensionValue(item) {
+      if (targetSelect.value === "project") return item.project;
+      return drillPath.length ? item.org : item.orgRoot;
+    }
+
     function getBaseRows() {
       const key = periodKey();
       const periodValue = document.getElementById("periodValue").value;
       const channel = document.getElementById("channelFilter").value;
       const entity = document.getElementById("settleFilter").value;
+      const isOrg = targetSelect.value === "org";
+      const filter = (isOrg ? orgFilter : projectFilter).querySelector("input").value;
+      const allLabel = isOrg ? "全部组织" : "全部项目";
+      const filterLeaf = filter.split(" / ").pop();
       return reportData.filter(item => {
         const matchPeriod = item[key] === periodValue;
         const matchChannel = channel === "全部渠道" || item.channel === channel;
         const matchEntity = entity === "全部主体" || item.entity === entity;
-        return matchPeriod && matchChannel && matchEntity;
+        const matchDimension = filter === allLabel || (isOrg ? item.org === filterLeaf : item.project === filterLeaf);
+        const matchDrill = !isOrg || !drillPath.length || item.orgRoot === drillPath[0];
+        return matchPeriod && matchChannel && matchEntity && matchDimension && matchDrill;
       });
     }
 
@@ -186,9 +277,10 @@
       currentDetails = new Map();
       getBaseRows().forEach(item => {
         const channelLabel = selectedChannel === "全部渠道" ? "全部渠道" : item.channel;
-        const groupKey = `${item[key]}|${channelLabel}|${item.entity}`;
+        const dimension = dimensionValue(item);
+        const groupKey = `${dimension}|${item[key]}|${channelLabel}|${item.entity}`;
         if (!grouped.has(groupKey)) {
-          grouped.set(groupKey, { period: item[key], channel: channelLabel, entity: item.entity, issued: 0, used: 0, writeoffAmount: 0, settleAmount: 0, groupKey });
+          grouped.set(groupKey, { dimension, period: item[key], channel: channelLabel, entity: item.entity, issued: 0, used: 0, writeoffAmount: 0, settleAmount: 0, groupKey });
           currentDetails.set(groupKey, []);
         }
         const row = grouped.get(groupKey);
@@ -201,13 +293,14 @@
       return Array.from(grouped.values());
     }
 
-    function getEntityRanking() {
+    function getDimensionRanking() {
       const grouped = new Map();
       getBaseRows().forEach(item => {
-        if (!grouped.has(item.entity)) {
-          grouped.set(item.entity, { name: item.entity, issued: 0, used: 0 });
+        const dimension = dimensionValue(item);
+        if (!grouped.has(dimension)) {
+          grouped.set(dimension, { name: dimension, issued: 0, used: 0 });
         }
-        const row = grouped.get(item.entity);
+        const row = grouped.get(dimension);
         row.issued += item.issued;
         row.used += item.used;
       });
@@ -218,7 +311,10 @@
     }
 
     function renderRankingBars() {
-      const ranking = getEntityRanking();
+      const ranking = getDimensionRanking();
+      const name = dimensionName();
+      document.getElementById("issuedRankingTitle").textContent = `发放数量${name}排名`;
+      document.getElementById("rateRankingTitle").textContent = `核销率${name}排名`;
       const issuedRows = [...ranking].sort((a, b) => b.issued - a.issued);
       const rateRows = [...ranking].sort((a, b) => b.usedRate - a.usedRate);
       const maxIssued = Math.max(...issuedRows.map(item => item.issued), 1);
@@ -241,10 +337,17 @@
     function renderRows() {
       currentRows = getRows();
       renderRankingBars();
+      const isOrg = targetSelect.value === "org";
+      const name = dimensionName();
+      dimensionHeader.textContent = name;
+      reportContext.innerHTML = `<strong>当前统计维度：</strong>${name}<span style="margin:0 10px;color:#b7c7d4">|</span><strong>统计层级：</strong>${isOrg ? `<a class="link" href="#" data-drill-home>全部发放组织</a>${drillPath.map(item => ` / <span>${item}</span>`).join("")}` : "发放项目"}`;
       document.getElementById("reportRows").innerHTML = currentRows.map(item => {
         const usedRate = rate(item.used, item.issued);
+        const canDrill = isOrg && !drillPath.length && reportData.some(row => row.orgRoot === item.dimension && row.org !== item.dimension);
+        const dimension = canDrill ? `<a class="link drill-link" href="#" data-drill-name="${item.dimension}">${item.dimension}</a>` : item.dimension;
         return `
           <tr>
+            <td>${dimension}</td>
             <td>${item.period}</td>
             <td>${item.channel}</td>
             <td>${item.entity}</td>
@@ -326,8 +429,9 @@
     }
 
     function exportRows() {
-      const headers = ["统计周期", "发放渠道", "结算主体", "发放数量", "核销数量", "核销率", "核销金额", "结算金额"];
+      const headers = [dimensionName(), "统计周期", "发放渠道", "结算主体", "发放数量", "核销数量", "核销率", "核销金额", "结算金额"];
       const lines = currentRows.map(item => [
+        item.dimension,
         item.period,
         item.channel,
         item.entity,
@@ -347,16 +451,100 @@
       URL.revokeObjectURL(url);
     }
 
+    function syncTarget() {
+      const isOrg = targetSelect.value === "org";
+      orgFilter.hidden = !isOrg;
+      projectFilter.hidden = isOrg;
+      drillPath = [];
+      renderRows();
+    }
+
+    function renderOrgTree(tree, expanded) {
+      const allLabel = tree.dataset.orgAll;
+      const treeData = tree.dataset.treeType === "org" ? orgTreeData : projectTreeData;
+      const rows = [`<div class="org-tree-row org-tree-leaf" data-org-path="${allLabel}"><span class="org-tree-toggle">·</span><span>${allLabel}</span></div>`];
+      const renderNodes = (nodes, parents = [], depth = 1) => {
+        nodes.forEach(node => {
+          const item = typeof node === "string" ? { name: node } : node;
+          const key = [...parents, item.name].join("/");
+          const path = [...parents, item.name].join(" / ");
+          const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+          const isOpen = expanded.has(key);
+          rows.push(`<div class="org-tree-row org-tree-level-${Math.min(depth, 4)}${hasChildren ? "" : " org-tree-leaf"}" ${hasChildren ? `data-org-toggle="${key}"` : `data-org-path="${path}"`}><span class="org-tree-toggle">${hasChildren ? (isOpen ? "▾" : "▸") : "·"}</span><span>${item.name}</span></div>`);
+          if (hasChildren && isOpen) renderNodes(item.children, [...parents, item.name], depth + 1);
+        });
+      };
+      renderNodes(treeData);
+      tree.querySelector(".org-tree-panel").innerHTML = rows.join("");
+    }
+
+    document.querySelectorAll("[data-org-tree]").forEach(tree => {
+      const expanded = new Set(tree.dataset.treeType === "org" ? orgExpandedKeys : projectExpandedKeys);
+      const trigger = tree.querySelector(".org-tree-trigger");
+      const hiddenInput = tree.querySelector("input");
+      const panel = tree.querySelector(".org-tree-panel");
+      renderOrgTree(tree, expanded);
+      trigger.addEventListener("click", event => {
+        event.stopPropagation();
+        document.querySelectorAll("[data-org-tree].open").forEach(item => {
+          if (item !== tree) item.classList.remove("open");
+        });
+        tree.classList.toggle("open");
+      });
+      panel.addEventListener("click", event => {
+        const row = event.target.closest(".org-tree-row");
+        if (!row) return;
+        if (row.dataset.orgToggle) {
+          expanded.has(row.dataset.orgToggle) ? expanded.delete(row.dataset.orgToggle) : expanded.add(row.dataset.orgToggle);
+          renderOrgTree(tree, expanded);
+          return;
+        }
+        if (row.dataset.orgPath) {
+          trigger.textContent = row.dataset.orgPath;
+          hiddenInput.value = row.dataset.orgPath;
+          tree.classList.remove("open");
+        }
+      });
+    });
+    document.addEventListener("click", event => {
+      document.querySelectorAll("[data-org-tree].open").forEach(tree => {
+        if (!tree.contains(event.target)) tree.classList.remove("open");
+      });
+    });
+
     document.getElementById("periodType").addEventListener("change", () => {
       syncPeriodOptions();
       renderRows();
     });
-    document.getElementById("queryBtn").addEventListener("click", renderRows);
+    targetSelect.addEventListener("change", syncTarget);
+    document.getElementById("queryBtn").addEventListener("click", () => {
+      drillPath = [];
+      renderRows();
+    });
     document.getElementById("resetBtn").addEventListener("click", () => {
       document.getElementById("periodType").value = "月";
       syncPeriodOptions();
       document.getElementById("channelFilter").value = "全部渠道";
       document.getElementById("settleFilter").value = "全部主体";
+      targetSelect.value = "org";
+      document.querySelectorAll("[data-org-tree]").forEach(tree => {
+        const allLabel = tree.dataset.orgAll;
+        tree.querySelector(".org-tree-trigger").textContent = allLabel;
+        tree.querySelector("input").value = allLabel;
+      });
+      syncTarget();
+    });
+    document.getElementById("reportRows").addEventListener("click", event => {
+      const drillLink = event.target.closest("[data-drill-name]");
+      if (!drillLink) return;
+      event.preventDefault();
+      drillPath = [drillLink.dataset.drillName];
+      renderRows();
+    });
+    reportContext.addEventListener("click", event => {
+      if (!event.target.closest("[data-drill-home]")) return;
+      event.preventDefault();
+      drillPath = [];
       renderRows();
     });
     document.getElementById("panelExportBtn").addEventListener("click", exportRows);
@@ -390,7 +578,7 @@
     });
     document.querySelectorAll("[data-close-modal]").forEach(el => el.addEventListener("click", () => el.closest(".modal-mask").classList.remove("open")));
     syncPeriodOptions();
-    renderRows();
+    syncTarget();
   </script>
 </body>
 </html>
