@@ -33,7 +33,7 @@
 <body>
   <div class="page">
     <div class="filter">
-      <div class="field"><label>统计周期</label><select id="dimensionSelect"><option selected>日</option><option>周</option><option>月</option><option>年</option></select></div>
+      <div class="field"><label>统计周期</label><select id="dimensionSelect"><option selected>日</option><option>月</option><option>季</option><option>年</option></select></div>
       <div class="field"><label>统计时间</label><input id="periodInput" value="2026-06-01 至 2026-06-30"></div>
       <div class="field"><label>渠道</label><select id="channelSelect"><option>全部渠道</option><option>APP</option><option>小程序</option><option>公众号</option></select></div>
       <button class="btn primary" id="queryBtn">查询</button>
@@ -59,7 +59,7 @@
       <div class="panel-bd">
         <table>
           <thead>
-            <tr><th>统计周期</th><th>时间维度</th><th>渠道</th><th>会员新增数量</th><th>会员注销数量</th><th>净增数量</th><th>操作</th></tr>
+            <tr><th>时间维度</th><th>渠道</th><th>会员新增数量</th><th>会员注销数量</th><th>净增数量</th><th>操作</th></tr>
           </thead>
           <tbody id="reportRows"></tbody>
         </table>
@@ -96,8 +96,8 @@
 
     const periodByDimension = {
       "日": "2026-06-01 至 2026-06-30",
-      "周": "2026年第23周 至 2026年第26周",
       "月": "2026-01 至 2026-06",
+      "季": "2026年第1季度 至 2026年第2季度",
       "年": "2026年"
     };
 
@@ -129,7 +129,6 @@
         const net = item.added - item.canceled;
         return `
           <tr>
-            <td>${item.period}</td>
             <td>${item.dimension}</td>
             <td><span class="channel-pill">${item.channel}</span></td>
             <td>${format(item.added)}</td>

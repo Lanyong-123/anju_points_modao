@@ -72,7 +72,7 @@
 <body>
   <div class="page">
     <div class="filter" style="grid-template-columns:repeat(4,minmax(0,1fr)) auto auto">
-      <div class="field"><label>统计周期</label><select id="periodType"><option selected>月</option><option>季</option><option>年</option></select></div>
+      <div class="field"><label>统计周期</label><select id="periodType"><option>日</option><option selected>月</option><option>季</option><option>年</option></select></div>
       <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
       <div class="field"><label>统计目标</label><select id="statisticsTarget"><option value="org" selected>发放组织</option><option value="project">发放项目</option></select></div>
       <div class="field dimension-field" id="orgFilter"><label>发放组织</label>
@@ -118,7 +118,7 @@
         <div class="report-context" id="reportContext"></div>
         <table>
           <thead>
-            <tr><th id="dimensionHeader">发放组织</th><th>统计周期</th><th>消费发分</th><th>活动发分</th><th>补偿发分</th><th>发分总量</th><th>占比</th></tr>
+            <tr><th id="dimensionHeader">发放组织</th><th>消费发分</th><th>活动发分</th><th>补偿发分</th><th>发分总量</th><th>占比</th></tr>
           </thead>
           <tbody id="statRows"></tbody>
         </table>
@@ -288,7 +288,6 @@
         return `
           <tr>
             <td>${dimension}</td>
-            <td>${periodValueSelect.value || item.period}</td>
             <td>${format(item.consume)}</td>
             <td>${format(item.activity)}</td>
             <td>${format(item.compensate)}</td>
@@ -317,6 +316,7 @@
 
     function syncPeriodOptions() {
       const options = {
+        "日": ["2026-06-30", "2026-06-29", "2026-06-28", "2026-06-27"],
         "月": ["2026-06", "2026-05", "2026-04", "2026-03", "2026-02", "2026-01"],
         "季": ["2026年第2季度", "2026年第1季度", "2025年第4季度", "2025年第3季度"],
         "年": ["2026年", "2025年", "2024年"]

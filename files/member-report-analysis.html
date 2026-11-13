@@ -34,7 +34,7 @@
 <body>
   <div class="page">
     <div class="filter">
-      <div class="field"><label>统计周期</label><select id="dimensionSelect"><option>日</option><option selected>月</option><option>年</option></select></div>
+      <div class="field"><label>统计周期</label><select id="dimensionSelect"><option>日</option><option selected>月</option><option>季</option><option>年</option></select></div>
       <div class="field"><label>统计时间</label><input id="periodInput" value="2026-01 至 2026-06"></div>
       <button class="btn primary" id="queryBtn">查询</button>
       <button class="btn" id="resetBtn">重置</button>
@@ -71,7 +71,7 @@
       <div class="panel-bd">
         <table>
           <thead>
-            <tr><th>统计周期</th><th>会员总数</th><th>V1展露头角占比</th><th>V2小有名气占比</th><th>V3远近闻名占比</th><th>V4名扬四海占比</th><th>认证会员占比</th></tr>
+            <tr><th>会员总数</th><th>V1展露头角占比</th><th>V2小有名气占比</th><th>V3远近闻名占比</th><th>V4名扬四海占比</th><th>认证会员占比</th></tr>
           </thead>
           <tbody id="analysisRows"></tbody>
         </table>
@@ -97,6 +97,7 @@
     const periodByDimension = {
       "日": "2026-06-01 至 2026-06-30",
       "月": "2026-01 至 2026-06",
+      "季": "2026年第1季度 至 2026年第2季度",
       "年": "2026年"
     };
 
@@ -171,7 +172,6 @@
     function renderRows() {
       document.getElementById("analysisRows").innerHTML = periods.map(item => `
         <tr>
-          <td>${item.period}</td>
           <td><a class="link" href="member-info.html" data-member-info>${format(item.total)}</a></td>
           <td><span class="level-pill">${item.normal}%</span></td>
           <td><span class="level-pill">${item.silver}%</span></td>

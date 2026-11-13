@@ -76,17 +76,16 @@
     .exchange-table { width: 100%; table-layout: fixed; }
     .exchange-table th,
     .exchange-table td { white-space: normal; overflow-wrap: anywhere; }
-    .exchange-table th:nth-child(1) { width: 7%; }
-    .exchange-table th:nth-child(2) { width: 11%; }
-    .exchange-table th:nth-child(3) { width: 8%; }
-    .exchange-table th:nth-child(4),
-    .exchange-table th:nth-child(5) { width: 13%; }
+    .exchange-table th:nth-child(1) { width: 12%; }
+    .exchange-table th:nth-child(2) { width: 8%; }
+    .exchange-table th:nth-child(3),
+    .exchange-table th:nth-child(4) { width: 15%; }
+    .exchange-table th:nth-child(5) { width: 10%; }
     .exchange-table th:nth-child(6),
-    .exchange-table th:nth-child(9) { width: 9%; }
     .exchange-table th:nth-child(7),
-    .exchange-table th:nth-child(8) { width: 8%; }
-    .exchange-table th:nth-child(10),
-    .exchange-table th:nth-child(11) { width: 7%; }
+    .exchange-table th:nth-child(10) { width: 8%; }
+    .exchange-table th:nth-child(8) { width: 9%; }
+    .exchange-table th:nth-child(9) { width: 7%; }
     @media (max-width: 1180px) {
       .exchange-filter { grid-template-columns: repeat(3, minmax(180px, 1fr)); }
       .report-grid { grid-template-columns: 1fr; }
@@ -145,7 +144,7 @@
       <div class="panel-bd">
         <table class="exchange-table">
           <thead>
-            <tr><th>统计周期</th><th>兑换商品</th><th>礼券类型</th><th>发分主体</th><th>商品归属主体</th><th>兑换类型</th><th>兑分次数</th><th>兑分单价</th><th>总分</th><th>成本（单位）</th><th>总成本</th></tr>
+            <tr><th>兑换商品</th><th>礼券类型</th><th>发分主体</th><th>商品归属主体</th><th>兑换类型</th><th>兑分次数</th><th>兑分单价</th><th>总分</th><th>成本（单位）</th><th>总成本</th></tr>
           </thead>
           <tbody id="exchangeRows"></tbody>
         </table>
@@ -302,17 +301,9 @@
       return rows;
     }
 
-    function getPeriodLabel() {
-      return document.getElementById("periodType").value === "日"
-        ? document.getElementById("periodRange").value
-        : document.getElementById("periodValue").value;
-    }
-
     function renderRows(rows) {
-      const periodLabel = getPeriodLabel();
       document.getElementById("exchangeRows").innerHTML = rows.map(item => `
         <tr>
-          <td>${periodLabel}</td>
           <td>${item.product}</td>
           <td>${item.giftType}</td>
           <td>${item.issuer}</td>

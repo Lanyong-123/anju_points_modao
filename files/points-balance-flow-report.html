@@ -63,7 +63,7 @@
 <body>
   <div class="page">
     <div class="filter" style="grid-template-columns:repeat(5,minmax(0,1fr)) auto auto">
-      <div class="field"><label>统计周期</label><select id="periodType"><option selected>月</option><option>季</option><option>年</option></select></div>
+      <div class="field"><label>统计周期</label><select id="periodType"><option>日</option><option selected>月</option><option>季</option><option>年</option></select></div>
       <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
       <div class="field"><label>积分类型</label><select id="pointsType"><option selected>消费积分</option><option>碳积分</option></select></div>
       <div class="field"><label>统计目标</label><select id="statisticsTarget"><option value="org" selected>发放组织</option><option value="project">发放项目</option></select></div>
@@ -107,7 +107,7 @@
         <div class="report-context" id="reportContext"></div>
         <table>
           <thead>
-            <tr><th id="dimensionHeader">发放组织</th><th>统计周期</th><th>期初余额</th><th>本期新增</th><th>本期消耗</th><th>本期过期</th><th>期末余额</th></tr>
+            <tr><th id="dimensionHeader">发放组织</th><th>期初余额</th><th>本期新增</th><th>本期消耗</th><th>本期过期</th><th>期末余额</th></tr>
           </thead>
           <tbody id="flowRows"></tbody>
         </table>
@@ -252,7 +252,6 @@
         return `
           <tr>
             <td>${dimension}</td>
-            <td>${periodValueSelect.value}</td>
             <td>${format(item.opening)}</td>
             <td>${format(item.added)}</td>
             <td>${format(item.consumed)}</td>
@@ -273,6 +272,7 @@
 
     function syncPeriodOptions() {
       const options = {
+        "日": ["2026-06-30", "2026-06-29", "2026-06-28", "2026-06-27"],
         "月": ["2026-06", "2026-05", "2026-04", "2026-03", "2026-02", "2026-01"],
         "季": ["2026年第2季度", "2026年第1季度", "2025年第4季度", "2025年第3季度"],
         "年": ["2026年", "2025年", "2024年"]
