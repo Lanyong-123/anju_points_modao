@@ -71,8 +71,9 @@
 </head>
 <body>
   <div class="page">
-    <div class="filter" style="grid-template-columns:repeat(3,minmax(0,1fr)) auto auto">
-      <div class="field"><label>统计时间</label><input value="2026-06-01 至 2026-06-30"></div>
+    <div class="filter" style="grid-template-columns:repeat(4,minmax(0,1fr)) auto auto">
+      <div class="field"><label>统计周期</label><select id="periodType"><option selected>月</option><option>季</option><option>年</option></select></div>
+      <div class="field"><label>统计时间</label><select id="periodValue"></select></div>
       <div class="field"><label>统计目标</label><select id="statisticsTarget"><option value="org" selected>发放组织</option><option value="project">发放项目</option></select></div>
       <div class="field dimension-field" id="orgFilter"><label>发放组织</label>
         <div class="org-tree-select" data-org-tree data-tree-type="org" data-org-all="全部组织">
@@ -206,6 +207,8 @@
       return list.reduce((sum, item) => sum + item.total, 0);
     }
 
+    const periodTypeSelect = document.getElementById("periodType");
+    const periodValueSelect = document.getElementById("periodValue");
     const targetSelect = document.getElementById("statisticsTarget");
     const orgFilter = document.getElementById("orgFilter");
     const projectFilter = document.getElementById("projectFilter");
@@ -285,7 +288,7 @@
         return `
           <tr>
             <td>${dimension}</td>
-            <td>${item.period}</td>
+            <td>${periodValueSelect.value || item.period}</td>
             <td>${format(item.consume)}</td>
             <td>${format(item.activity)}</td>
             <td>${format(item.compensate)}</td>
@@ -310,6 +313,17 @@
       projectFilter.hidden = isOrg;
       drillPath = [];
       renderAll();
+    }
+
+    function syncPeriodOptions() {
+      const options = {
+        "月": ["2026-06", "2026-05", "2026-04", "2026-03", "2026-02", "2026-01"],
+        "季": ["2026年第2季度", "2026年第1季度", "2025年第4季度", "2025年第3季度"],
+        "年": ["2026年", "2025年", "2024年"]
+      };
+      periodValueSelect.innerHTML = options[periodTypeSelect.value].map((item, index) =>
+        `<option ${index === 0 ? "selected" : ""}>${item}</option>`
+      ).join("");
     }
 
     function renderOrgTree(tree, expanded) {
@@ -364,12 +378,15 @@
         if (!tree.contains(event.target)) tree.classList.remove("open");
       });
     });
+    periodTypeSelect.addEventListener("change", syncPeriodOptions);
     targetSelect.addEventListener("change", syncTarget);
     document.getElementById("queryBtn").addEventListener("click", () => {
       drillPath = [];
       renderAll();
     });
     document.getElementById("resetBtn").addEventListener("click", () => {
+      periodTypeSelect.value = "月";
+      syncPeriodOptions();
       targetSelect.value = "org";
       document.querySelectorAll("[data-org-tree]").forEach(tree => {
         const allLabel = tree.dataset.orgAll;
@@ -391,6 +408,7 @@
       drillPath = [];
       renderAll();
     });
+    syncPeriodOptions();
     syncTarget();
   </script>
 </body>
