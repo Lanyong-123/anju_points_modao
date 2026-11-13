@@ -59,7 +59,7 @@
       <div class="panel-bd">
         <table>
           <thead>
-            <tr><th>时间维度</th><th>渠道</th><th>会员新增数量</th><th>会员注销数量</th><th>净增数量</th><th>操作</th></tr>
+            <tr><th>渠道</th><th>会员新增数量</th><th>会员注销数量</th><th>净增数量</th><th>操作</th></tr>
           </thead>
           <tbody id="reportRows"></tbody>
         </table>
@@ -129,7 +129,6 @@
         const net = item.added - item.canceled;
         return `
           <tr>
-            <td>${item.dimension}</td>
             <td><span class="channel-pill">${item.channel}</span></td>
             <td>${format(item.added)}</td>
             <td>${format(item.canceled)}</td>
