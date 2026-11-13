@@ -109,7 +109,6 @@
           <thead>
             <tr>
               <th id="dimensionHeader">发放组织</th>
-              <th>统计周期</th>
               <th>发放渠道</th>
               <th>发放数量</th>
               <th>核销数量</th>
@@ -344,7 +343,6 @@
         return `
           <tr>
             <td>${dimension}</td>
-            <td>${item.period}</td>
             <td>${item.channel}</td>
             <td>${format(item.issued)}</td>
             <td>${format(item.used)}</td>
@@ -424,10 +422,9 @@
     }
 
     function exportRows() {
-      const headers = [dimensionName(), "统计周期", "发放渠道", "发放数量", "核销数量", "核销率", "核销金额", "结算金额"];
+      const headers = [dimensionName(), "发放渠道", "发放数量", "核销数量", "核销率", "核销金额", "结算金额"];
       const lines = currentRows.map(item => [
         item.dimension,
-        item.period,
         item.channel,
         item.issued,
         item.used,
