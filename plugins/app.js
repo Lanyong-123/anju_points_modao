@@ -7,7 +7,7 @@ const menuTree = document.getElementById("menuTree");
 const workTabs = document.getElementById("workTabs");
 const frame = document.getElementById("pageFrame");
 const pageTitle = document.getElementById("pageTitle");
-const BUILD_VERSION = "20261112-12";
+const BUILD_VERSION = "20261113-1";
 
 function versionedUrl(url) {
   const separator = url.includes("?") ? "&" : "?";
@@ -72,7 +72,7 @@ const DEFAULT_MENU = [
     children: [
       { title: "会员新增/注销报表", url: "files/member-report-growth.html" },
       { title: "会员增长分析报表", url: "files/member-report-analysis.html" },
-      { title: "积分发分统计表", url: "files/points-issue-stat-report.html" },
+      { title: "积分发分统计报表", url: "files/points-issue-stat-report.html" },
       { title: "积分兑存报表", url: "files/points-balance-flow-report.html" },
       { title: "积分本场兑分报表", url: "files/points-local-exchange-report.html" },
       { title: "优惠券发放报表", url: "files/coupon-issue-report.html" },
