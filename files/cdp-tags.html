@@ -132,7 +132,7 @@
       border-bottom: 1.5px solid currentColor;
     }
     .tag-table {
-      min-width: 1160px;
+      min-width: 1080px;
     }
     .tag-table th,
     .tag-table td {
@@ -289,7 +289,6 @@
                 <th>标签来源</th>
                 <th>打标方式</th>
                 <th>覆盖客户数</th>
-                <th>更新方式</th>
                 <th>最后执行时间</th>
                 <th>状态</th>
                 <th>操作</th>
@@ -501,7 +500,7 @@
         const summary = tag.values.length > 42 ? `${tag.values.slice(0, 42)}…` : tag.values;
         const time = `2026-06-${String(8 - (index % 3)).padStart(2, "0")} ${String(14 - (index % 5)).padStart(2, "0")}:${String((index * 7) % 60).padStart(2, "0")}`;
         const name = escapeTagHtml(tag.name);
-        return `<tr data-category-row="${escapeTagHtml(tag.category)}" data-tag-name="${name}" data-tag-source="${sourceType}" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="${name}">${name}</span></strong><span title="${escapeTagHtml(tag.values)}">${escapeTagHtml(summary)}</span></div></td><td>${escapeTagHtml(tag.category)}</td><td>${sourceType}</td><td>${method}</td><td><span class="link" data-customer="${name}">${coverage}</span></td><td>${standardFrequencyText(tag)}</td><td>${time}</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="${name}">详情</span>　<span class="link" data-edit="${name}">编辑</span>　<span class="link" data-log="${name}">日志</span>　<span class="link" data-status="disable">停用</span></td></tr>`;
+        return `<tr data-category-row="${escapeTagHtml(tag.category)}" data-tag-name="${name}" data-tag-source="${sourceType}" data-tag-status="启用"><td><input type="checkbox"></td><td><div class="tag-name-cell"><strong><span class="link" data-detail="${name}">${name}</span></strong><span title="${escapeTagHtml(tag.values)}">${escapeTagHtml(summary)}</span></div></td><td>${escapeTagHtml(tag.category)}</td><td>${sourceType}</td><td>${method}</td><td><span class="link" data-customer="${name}">${coverage}</span></td><td>${time}</td><td><span class="badge green">启用</span></td><td><span class="link" data-detail="${name}">详情</span>　<span class="link" data-edit="${name}">编辑</span>　<span class="link" data-status="disable">停用</span></td></tr>`;
       }).join("");
     }
     renderStandardTagRows();
@@ -701,12 +700,6 @@
       document.getElementById("tagCategoryFilter").value = "全部分类";
       document.getElementById("deleteCategoryModal").classList.remove("open");
       applyTagFilters();
-    });
-    document.querySelectorAll("[data-log]").forEach(el => {
-      el.addEventListener("click", () => {
-        document.getElementById("logTitle").textContent = `${el.dataset.log} - 标签日志`;
-        document.getElementById("logModal").classList.add("open");
-      });
     });
     document.querySelector("[data-log-from-drawer]").addEventListener("click", () => {
       document.getElementById("logTitle").textContent = `${document.getElementById("dName").textContent} - 标签日志`;
