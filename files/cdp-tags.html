@@ -275,6 +275,28 @@
       color: #d93025;
       cursor: pointer;
     }
+    .tag-estimate {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 0 16px 6px;
+    }
+    .tag-estimate-title {
+      color: var(--navy);
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .tag-estimate-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .tag-estimate-result {
+      display: none;
+      color: #0878d1;
+      font-weight: 700;
+    }
+    .tag-estimate-result.show { display: inline; }
     .wide-modal {
       width: min(1080px, calc(100vw - 48px));
       max-height: calc(100vh - 24px);
@@ -428,6 +450,14 @@
                 <div class="tag-condition-body" data-condition-list></div>
               </section>
             </div>
+          </div>
+        </div>
+
+        <div class="tag-estimate">
+          <div class="tag-estimate-title">预估人数</div>
+          <div class="tag-estimate-actions">
+            <button class="btn primary" type="button" id="estimateTagAudience">预估</button>
+            <span class="tag-estimate-result" id="estimateTagAudienceResult">预估人数：12,680 人</span>
           </div>
         </div>
 
@@ -619,6 +649,7 @@
         group.querySelector("[data-condition-list]").innerHTML = index === 0 ? tagConditionRow(group.dataset.conditionKind, value) : "";
         setTagConditionOpen(group, index === 0);
       });
+      document.getElementById("estimateTagAudienceResult").classList.remove("show");
     }
     tagConditionGroups.addEventListener("click", event => {
       const group = event.target.closest("[data-condition-kind]");
@@ -634,6 +665,13 @@
       }
       const deleteButton = event.target.closest("[data-delete-tag-condition]");
       if (deleteButton) deleteButton.closest(".tag-condition-row").remove();
+    });
+    document.getElementById("estimateTagAudience").addEventListener("click", () => {
+      const conditionCount = tagConditionGroups.querySelectorAll(".tag-condition-row").length;
+      const estimateCount = Math.max(1280, 12680 - Math.max(0, conditionCount - 1) * 1860);
+      const result = document.getElementById("estimateTagAudienceResult");
+      result.textContent = `预估人数：${estimateCount.toLocaleString("zh-CN")} 人`;
+      result.classList.add("show");
     });
     resetTagConditions();
 
