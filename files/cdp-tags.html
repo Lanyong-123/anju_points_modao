@@ -191,7 +191,44 @@
       line-height: 1.6;
       resize: vertical;
     }
+    .tag-condition-builder {
+      position: relative;
+      padding-right: 44px;
+    }
     .tag-condition-groups { display: grid; gap: 12px; }
+    .tag-condition-relation {
+      position: absolute;
+      top: 10px;
+      right: 0;
+      bottom: 10px;
+      width: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tag-condition-relation::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      border-left: 2px solid #1683e2;
+    }
+    .tag-condition-relation button {
+      position: relative;
+      z-index: 1;
+      width: 30px;
+      height: 30px;
+      display: inline-grid;
+      place-items: center;
+      border: 0;
+      border-radius: 4px;
+      background: #0878d1;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 0 4px #fff;
+    }
     .tag-condition-group {
       overflow: hidden;
       border: 1px solid #d9e3ee;
@@ -427,28 +464,33 @@
         <div class="panel" style="margin-top:14px; box-shadow:none">
           <div class="panel-hd"><h3>选项值配置</h3></div>
           <div class="panel-bd">
-            <div class="tag-condition-groups" id="tagConditionGroups">
-              <section class="tag-condition-group open" data-condition-kind="attribute">
-                <div class="tag-condition-head">
-                  <button class="tag-condition-title" type="button" data-toggle-tag-condition><span class="tag-condition-toggle">−</span>用户属性满足</button>
-                  <button class="tag-condition-add" type="button" data-add-tag-condition>添加</button>
-                </div>
-                <div class="tag-condition-body" data-condition-list></div>
-              </section>
-              <section class="tag-condition-group" data-condition-kind="behavior">
-                <div class="tag-condition-head">
-                  <button class="tag-condition-title" type="button" data-toggle-tag-condition><span class="tag-condition-toggle">＋</span>用户行为满足</button>
-                  <button class="tag-condition-add" type="button" data-add-tag-condition>添加</button>
-                </div>
-                <div class="tag-condition-body" data-condition-list></div>
-              </section>
-              <section class="tag-condition-group" data-condition-kind="tag">
-                <div class="tag-condition-head">
-                  <button class="tag-condition-title" type="button" data-toggle-tag-condition><span class="tag-condition-toggle">＋</span>用户标签满足</button>
-                  <button class="tag-condition-add" type="button" data-add-tag-condition>添加</button>
-                </div>
-                <div class="tag-condition-body" data-condition-list></div>
-              </section>
+            <div class="tag-condition-builder">
+              <div class="tag-condition-groups" id="tagConditionGroups">
+                <section class="tag-condition-group open" data-condition-kind="attribute">
+                  <div class="tag-condition-head">
+                    <button class="tag-condition-title" type="button" data-toggle-tag-condition><span class="tag-condition-toggle">−</span>用户属性满足</button>
+                    <button class="tag-condition-add" type="button" data-add-tag-condition>添加</button>
+                  </div>
+                  <div class="tag-condition-body" data-condition-list></div>
+                </section>
+                <section class="tag-condition-group" data-condition-kind="behavior">
+                  <div class="tag-condition-head">
+                    <button class="tag-condition-title" type="button" data-toggle-tag-condition><span class="tag-condition-toggle">＋</span>用户行为满足</button>
+                    <button class="tag-condition-add" type="button" data-add-tag-condition>添加</button>
+                  </div>
+                  <div class="tag-condition-body" data-condition-list></div>
+                </section>
+                <section class="tag-condition-group" data-condition-kind="tag">
+                  <div class="tag-condition-head">
+                    <button class="tag-condition-title" type="button" data-toggle-tag-condition><span class="tag-condition-toggle">＋</span>用户标签满足</button>
+                    <button class="tag-condition-add" type="button" data-add-tag-condition>添加</button>
+                  </div>
+                  <div class="tag-condition-body" data-condition-list></div>
+                </section>
+              </div>
+              <div class="tag-condition-relation">
+                <button type="button" id="tagConditionRelation" aria-label="条件组关系，当前为且" title="点击切换且/或">且</button>
+              </div>
             </div>
           </div>
         </div>
@@ -649,6 +691,9 @@
         group.querySelector("[data-condition-list]").innerHTML = index === 0 ? tagConditionRow(group.dataset.conditionKind, value) : "";
         setTagConditionOpen(group, index === 0);
       });
+      const relation = document.getElementById("tagConditionRelation");
+      relation.textContent = "且";
+      relation.setAttribute("aria-label", "条件组关系，当前为且");
       document.getElementById("estimateTagAudienceResult").classList.remove("show");
     }
     tagConditionGroups.addEventListener("click", event => {
@@ -665,6 +710,12 @@
       }
       const deleteButton = event.target.closest("[data-delete-tag-condition]");
       if (deleteButton) deleteButton.closest(".tag-condition-row").remove();
+    });
+    document.getElementById("tagConditionRelation").addEventListener("click", event => {
+      const nextRelation = event.currentTarget.textContent.trim() === "且" ? "或" : "且";
+      event.currentTarget.textContent = nextRelation;
+      event.currentTarget.setAttribute("aria-label", `条件组关系，当前为${nextRelation}`);
+      document.getElementById("estimateTagAudienceResult").classList.remove("show");
     });
     document.getElementById("estimateTagAudience").addEventListener("click", () => {
       const conditionCount = tagConditionGroups.querySelectorAll(".tag-condition-row").length;
