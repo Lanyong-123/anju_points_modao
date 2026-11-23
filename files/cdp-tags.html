@@ -181,8 +181,7 @@
       color: var(--red);
       font-weight: 700;
     }
-    .tag-description textarea,
-    .sql-config textarea {
+    .tag-description textarea {
       width: 100%;
       min-height: 88px;
       padding: 10px 12px;
@@ -192,31 +191,90 @@
       line-height: 1.6;
       resize: vertical;
     }
-    .option-config-body { display: grid; gap: 12px; }
-    .config-mode { display: flex; align-items: center; gap: 22px; }
-    .config-mode label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
-    .config-panel { display: none; }
-    .config-panel.show { display: grid; gap: 10px; }
-    .static-option-list { display: grid; gap: 10px; }
-    .static-option-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 72px;
-      gap: 10px;
-      align-items: center;
-      padding: 10px;
-      border: 1px solid #dfe6ee;
+    .tag-condition-groups { display: grid; gap: 12px; }
+    .tag-condition-group {
+      overflow: hidden;
+      border: 1px solid #d9e3ee;
       border-radius: 6px;
+      background: #fff;
+    }
+    .tag-condition-head {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 14px;
       background: #fbfdff;
     }
-    .static-option-row input {
+    .tag-condition-title,
+    .tag-condition-add {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+    .tag-condition-title {
+      color: var(--navy);
+      font-weight: 700;
+    }
+    .tag-condition-toggle {
+      width: 15px;
+      height: 15px;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid #6f8091;
+      border-radius: 2px;
+      font-size: 12px;
+      line-height: 1;
+    }
+    .tag-condition-add {
+      color: #0878d1;
+      font-weight: 700;
+    }
+    .tag-condition-add::before {
+      content: "+";
+      width: 16px;
+      height: 16px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #0878d1;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1;
+    }
+    .tag-condition-body {
+      display: none;
+      gap: 10px;
+      padding: 12px;
+      border-top: 1px solid #d9e3ee;
+    }
+    .tag-condition-group.open .tag-condition-body { display: grid; }
+    .tag-condition-row {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.35fr) 150px minmax(180px, 1fr) 64px;
+      gap: 10px;
+      align-items: center;
+    }
+    .tag-condition-row input,
+    .tag-condition-row select {
       min-width: 0;
       width: 100%;
-      height: 34px;
+      height: 36px;
       padding: 0 10px;
       border: 1px solid #cfd9e5;
       border-radius: 5px;
+      background: #fff;
     }
-    .add-option-btn { width: 100%; border-style: dashed; }
+    .tag-condition-delete {
+      border: 0;
+      background: transparent;
+      color: #d93025;
+      cursor: pointer;
+    }
     .wide-modal {
       width: min(1080px, calc(100vw - 48px));
       max-height: calc(100vh - 24px);
@@ -338,9 +396,6 @@
           <div class="field"><label class="required">标签名称</label><input id="editName" value="身份类型"></div>
           <div class="field"><label class="required">状态</label><select id="editStatus"><option>启用</option><option>停用</option><option>草稿</option></select></div>
           <div class="field"><label class="required">标签分类</label><select id="editCategory"><option>基本标签</option><option>交易标签</option><option>商户标签</option><option>行为标签</option><option>偏好标签</option><option>营销响应标签</option></select></div>
-          <div class="field"><label class="required">标签字段名称</label><input id="editFieldName" value="身份类型"></div>
-          <div class="field"><label class="required">字段类型</label><select id="editFieldType"><option selected>下拉字符串</option><option>文本</option><option>数值</option><option>日期</option><option>布尔值</option></select></div>
-          <div class="field"><label class="required">字段名规则</label><select id="editFieldRule"><option selected>静态</option><option>动态</option></select></div>
           <div class="field tag-description" style="grid-column:1/-1">
             <label class="required">标签说明</label>
             <textarea id="editDesc" maxlength="200">识别高贡献、高活跃客户，用于权益推荐、营销活动和客户分层运营。</textarea>
@@ -349,19 +404,29 @@
 
         <div class="panel" style="margin-top:14px; box-shadow:none">
           <div class="panel-hd"><h3>选项值配置</h3></div>
-          <div class="panel-bd option-config-body">
-            <div class="config-mode">
-              <strong>配置方式</strong>
-              <label><input type="radio" name="optionConfigMode" value="sql"> SQL查询</label>
-              <label><input type="radio" name="optionConfigMode" value="static" checked> 静态配置</label>
-            </div>
-            <div class="config-panel sql-config" id="sqlConfigPanel">
-              <label class="required">SQL查询语句</label>
-              <textarea id="sqlQueryText">select value as option_value, name as option_name from customer_tag_option where tag_name = '${tagName}'</textarea>
-            </div>
-            <div class="config-panel show" id="staticConfigPanel">
-              <div class="static-option-list" id="staticOptionList"></div>
-              <button class="btn add-option-btn" type="button" id="addStaticOption">＋ 添加选项</button>
+          <div class="panel-bd">
+            <div class="tag-condition-groups" id="tagConditionGroups">
+              <section class="tag-condition-group open" data-condition-kind="attribute">
+                <div class="tag-condition-head">
+                  <button class="tag-condition-title" type="button" data-toggle-tag-condition><span class="tag-condition-toggle">−</span>用户属性满足</button>
+                  <button class="tag-condition-add" type="button" data-add-tag-condition>添加</button>
+                </div>
+                <div class="tag-condition-body" data-condition-list></div>
+              </section>
+              <section class="tag-condition-group" data-condition-kind="behavior">
+                <div class="tag-condition-head">
+                  <button class="tag-condition-title" type="button" data-toggle-tag-condition><span class="tag-condition-toggle">＋</span>用户行为满足</button>
+                  <button class="tag-condition-add" type="button" data-add-tag-condition>添加</button>
+                </div>
+                <div class="tag-condition-body" data-condition-list></div>
+              </section>
+              <section class="tag-condition-group" data-condition-kind="tag">
+                <div class="tag-condition-head">
+                  <button class="tag-condition-title" type="button" data-toggle-tag-condition><span class="tag-condition-toggle">＋</span>用户标签满足</button>
+                  <button class="tag-condition-add" type="button" data-add-tag-condition>添加</button>
+                </div>
+                <div class="tag-condition-body" data-condition-list></div>
+              </section>
             </div>
           </div>
         </div>
@@ -527,43 +592,50 @@
         document.getElementById("editTitle").textContent = data ? "编辑标签" : "新增标签";
         document.getElementById("editName").value = data ? data[0] : "";
         document.getElementById("editCategory").value = data ? data[1] : "基本标签";
-        document.getElementById("editFieldName").value = tag ? tag.field : (data ? data[0] : "");
-        document.getElementById("editFieldType").value = "下拉字符串";
-        document.getElementById("editFieldRule").value = "静态";
         document.getElementById("editStatus").value = data ? data[6] : "草稿";
         document.getElementById("editDesc").value = data ? data[4] : "";
-        renderStaticOptions(tag ? tag.values : "高净值用户、中净值用户、低净值用户");
-        setOptionConfigMode("static");
+        resetTagConditions(tag ? tag.values : "");
         document.getElementById("editModal").classList.add("open");
       });
     });
 
-    const staticOptionList = document.getElementById("staticOptionList");
-    function staticOptionRow(value = "", name = value) {
-      return `<div class="static-option-row"><input aria-label="选项值" placeholder="请输入选项值" value="${escapeTagHtml(value)}"><input aria-label="选项名称" placeholder="请输入选项名称" value="${escapeTagHtml(name)}"><button class="btn" type="button" data-delete-static-option>删除</button></div>`;
+    const tagConditionGroups = document.getElementById("tagConditionGroups");
+    const relationOptions = ["等于", "不等于", "相似", "不相似", "包含于", "不包含于", "为空", "非空"];
+    const conditionFields = {
+      attribute: '<option value="">请选择用户属性</option><optgroup label="用户基本属性"><option>会员等级</option><option>性别</option><option>年龄</option><option>注册时间</option></optgroup><optgroup label="数据有效用户属性"><option>手机号有效</option><option>实名认证状态</option></optgroup><optgroup label="线索属性"><option>线索来源</option><option>意向等级</option></optgroup>',
+      behavior: '<option value="">请选择用户行为</option><optgroup label="访问行为"><option>最近访问时间</option><option>累计访问次数</option></optgroup><optgroup label="交易行为"><option>最近消费时间</option><option>累计消费金额</option><option>累计消费次数</option></optgroup><optgroup label="营销行为"><option>活动参与次数</option><option>优惠券核销次数</option></optgroup>',
+      tag: '<option value="">请选择用户标签</option><optgroup label="基本标签"><option>身份类型</option><option>客户价值等级</option></optgroup><optgroup label="行为标签"><option>活跃度</option><option>到访偏好</option></optgroup><optgroup label="偏好标签"><option>业态偏好</option><option>营销响应偏好</option></optgroup>'
+    };
+    function tagConditionRow(kind, value = "") {
+      const relations = relationOptions.map(item => `<option>${item}</option>`).join("");
+      return `<div class="tag-condition-row"><select aria-label="条件字段">${conditionFields[kind]}</select><select aria-label="判断关系">${relations}</select><input aria-label="条件值" placeholder="请输入条件值" value="${escapeTagHtml(value)}"><button class="tag-condition-delete" type="button" data-delete-tag-condition>删除</button></div>`;
     }
-    function renderStaticOptions(values = "") {
-      const options = String(values || "").split(/[、，,；;\/｜|]/).map(value => value.trim()).filter(Boolean).slice(0, 6);
-      const normalized = options.length ? options : ["高净值用户", "中净值用户", "低净值用户"];
-      staticOptionList.innerHTML = normalized.map(value => staticOptionRow(value)).join("");
+    function setTagConditionOpen(group, open) {
+      group.classList.toggle("open", open);
+      group.querySelector(".tag-condition-toggle").textContent = open ? "−" : "＋";
     }
-    function setOptionConfigMode(mode) {
-      const selected = document.querySelector(`input[name="optionConfigMode"][value="${mode}"]`);
-      if (selected) selected.checked = true;
-      document.getElementById("sqlConfigPanel").classList.toggle("show", mode === "sql");
-      document.getElementById("staticConfigPanel").classList.toggle("show", mode === "static");
+    function resetTagConditions(value = "") {
+      tagConditionGroups.querySelectorAll("[data-condition-kind]").forEach((group, index) => {
+        group.querySelector("[data-condition-list]").innerHTML = index === 0 ? tagConditionRow(group.dataset.conditionKind, value) : "";
+        setTagConditionOpen(group, index === 0);
+      });
     }
-    document.querySelectorAll('input[name="optionConfigMode"]').forEach(radio => {
-      radio.addEventListener("change", event => setOptionConfigMode(event.target.value));
+    tagConditionGroups.addEventListener("click", event => {
+      const group = event.target.closest("[data-condition-kind]");
+      if (!group) return;
+      if (event.target.closest("[data-toggle-tag-condition]")) {
+        setTagConditionOpen(group, !group.classList.contains("open"));
+        return;
+      }
+      if (event.target.closest("[data-add-tag-condition]")) {
+        group.querySelector("[data-condition-list]").insertAdjacentHTML("beforeend", tagConditionRow(group.dataset.conditionKind));
+        setTagConditionOpen(group, true);
+        return;
+      }
+      const deleteButton = event.target.closest("[data-delete-tag-condition]");
+      if (deleteButton) deleteButton.closest(".tag-condition-row").remove();
     });
-    document.getElementById("addStaticOption").addEventListener("click", () => {
-      staticOptionList.insertAdjacentHTML("beforeend", staticOptionRow());
-    });
-    staticOptionList.addEventListener("click", event => {
-      const deleteButton = event.target.closest("[data-delete-static-option]");
-      if (deleteButton) deleteButton.closest(".static-option-row").remove();
-    });
-    renderStaticOptions();
+    resetTagConditions();
 
     let tagCurrentPage = 1;
     function applyTagFilters(resetPage = false) {
